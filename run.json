@@ -932,7 +932,7 @@
     "kind": "running"
   },
   "status_updated_at": "2026-05-13T10:32:12.953137662Z",
-  "last_event_at": "2026-05-13T10:32:26.712953557Z",
+  "last_event_at": "2026-05-13T10:32:30.450380318Z",
   "pending_control": null,
   "checkpoints": [
     {
@@ -1204,9 +1204,9 @@
       }
     },
     {
-      "seq": 0,
+      "seq": 57,
       "checkpoint": {
-        "timestamp": "2026-05-13T10:32:28.096293042Z",
+        "timestamp": "2026-05-13T10:32:30.444979714Z",
         "current_node": "data_source_smoke",
         "completed_nodes": [
           "start",
@@ -1217,17 +1217,119 @@
         ],
         "node_retries": {},
         "context_values": {
+          "graph.persona": "code-factory",
+          "graph.outputs": "application, ci_report, eval_report, review_consensus, handoff",
+          "failure_class": "",
+          "graph.model_stylesheet": "\n            *          { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: low; }\n            .review    { provider: openrouter; model: google/gemini-3.1-pro-preview; reasoning_effort: high; }\n            .cheap     { provider: openrouter; model: deepseek/deepseek-v4-flash; reasoning_effort: low; }\n        ",
+          "internal.run_id": "01KRGE9QQP3MQBYCR6WZPDSCXH",
+          "internal.work_dir": "/home/daytona/workspace",
+          "thread.wait_for_support_files.current_node": "bootstrap_spec",
+          "internal.retry_count.spec_kitty_gate": 0,
+          "outcome": "succeeded",
+          "graph.default_max_retries": "2",
+          "graph.fallback_retry_target": "generate_app",
+          "internal.retry_count.wait_for_support_files": 0,
           "internal.retry_count.start": 0,
+          "internal.retry_count.data_source_smoke": 0,
+          "thread.bootstrap_spec.current_node": "spec_kitty_gate",
+          "thread.start.current_node": "wait_for_support_files",
+          "graph.retry_target": "generate_app",
+          "graph.goal": "Build Consumer App Radar from spec with CI, eval, and model review",
+          "graph.rankdir": "LR",
+          "graph.inputs": "app_dir, spec_path, real_mode, allow_fixture_fallback, allow_quality_fallback, minimum_active_reviews",
           "command.output": "blob://sha256/a8ca954fe505c8ca7b5c226df024af9918c0c366df5145c23ac164541a74abbc",
+          "internal.fidelity": "compact",
+          "thread.spec_kitty_gate.current_node": "data_source_smoke",
+          "current_node": "data_source_smoke",
+          "failure_signature": "",
+          "internal.node_visit_count": 1,
+          "internal.retry_count.bootstrap_spec": 0,
+          "internal.thread_id": "spec_kitty_gate"
+        },
+        "node_outcomes": {
+          "data_source_smoke": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/a8ca954fe505c8ca7b5c226df024af9918c0c366df5145c23ac164541a74abbc"
+            },
+            "notes": "Script completed: node scripts/consumer-radar/data-source-smoke.mjs --output .workflow/consumer-radar/data-source-smoke.json --real-mode 'true' --allow-fixture-fallback 'true'",
+            "usage": null
+          },
+          "spec_kitty_gate": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/a9b191d00675c7b8495cbeb5475762d35fbef8ab2705efb774f77919bc99b2a3"
+            },
+            "notes": "Script completed: node scripts/consumer-radar/bootstrap-spec.mjs --spec 'specs/consumer-app-radar/spec.md' --app-dir 'apps/generated-consumer-app-radar' --spec-kitty",
+            "usage": null
+          },
+          "start": {
+            "status": "succeeded",
+            "usage": null
+          },
+          "bootstrap_spec": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/69993f8688096a5a7651fa7491d7abd07112c05d590b65a6ef6add7bd9699997"
+            },
+            "notes": "Script completed: node scripts/consumer-radar/bootstrap-spec.mjs --spec 'specs/consumer-app-radar/spec.md' --app-dir 'apps/generated-consumer-app-radar'",
+            "usage": null
+          },
+          "wait_for_support_files": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/a993020942c3b2f319b954a99b0a9f056f2f684e6388311672cad5808190f591"
+            },
+            "notes": "Script completed: for i in $(seq 1 90); do if [ -f scripts/consumer-radar/generate-app.mjs ] && [ -f 'specs/consumer-app-radar/spec.md' ]; then echo support-files-ready; exit 0; fi; sleep 2; done; echo 'missing consumer radar support files' >&2; exit 1",
+            "usage": null
+          }
+        },
+        "next_node_id": "generate_app",
+        "git_commit_sha": "300e94e2d45879636770d3512192647f24903675",
+        "node_visits": {
+          "wait_for_support_files": 1,
+          "data_source_smoke": 1,
+          "start": 1,
+          "spec_kitty_gate": 1,
+          "bootstrap_spec": 1
+        }
+      },
+      "diff": {
+        "summary": {
+          "files_changed": 0,
+          "additions": 0,
+          "deletions": 0
+        }
+      }
+    },
+    {
+      "seq": 0,
+      "checkpoint": {
+        "timestamp": "2026-05-13T10:32:31.774289277Z",
+        "current_node": "generate_app",
+        "completed_nodes": [
+          "start",
+          "wait_for_support_files",
+          "bootstrap_spec",
+          "spec_kitty_gate",
+          "data_source_smoke",
+          "generate_app"
+        ],
+        "node_retries": {},
+        "context_values": {
+          "internal.retry_count.start": 0,
+          "command.output": "blob://sha256/e13919244f75906e6e71bd55689542b555b043361da8bca8c82ef7a95a136f3a",
           "graph.outputs": "application, ci_report, eval_report, review_consensus, handoff",
           "thread.wait_for_support_files.current_node": "bootstrap_spec",
           "internal.retry_count.data_source_smoke": 0,
           "internal.fidelity": "compact",
-          "internal.thread_id": "spec_kitty_gate",
+          "internal.thread_id": "data_source_smoke",
           "failure_class": "",
           "graph.default_max_retries": "2",
+          "internal.retry_count.generate_app": 0,
           "internal.retry_count.bootstrap_spec": 0,
           "internal.work_dir": "/home/daytona/workspace",
+          "thread.data_source_smoke.current_node": "generate_app",
           "graph.model_stylesheet": "\n            *          { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: low; }\n            .review    { provider: openrouter; model: google/gemini-3.1-pro-preview; reasoning_effort: high; }\n            .cheap     { provider: openrouter; model: deepseek/deepseek-v4-flash; reasoning_effort: low; }\n        ",
           "internal.retry_count.wait_for_support_files": 0,
           "internal.run_id": "01KRGE9QQP3MQBYCR6WZPDSCXH",
@@ -1243,7 +1345,7 @@
           "graph.rankdir": "LR",
           "graph.retry_target": "generate_app",
           "thread.spec_kitty_gate.current_node": "data_source_smoke",
-          "current_node": "data_source_smoke",
+          "current_node": "generate_app",
           "graph.fallback_retry_target": "generate_app"
         },
         "node_outcomes": {
@@ -1282,15 +1384,24 @@
             },
             "notes": "Script completed: for i in $(seq 1 90); do if [ -f scripts/consumer-radar/generate-app.mjs ] && [ -f 'specs/consumer-app-radar/spec.md' ]; then echo support-files-ready; exit 0; fi; sleep 2; done; echo 'missing consumer radar support files' >&2; exit 1",
             "usage": null
+          },
+          "generate_app": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/e13919244f75906e6e71bd55689542b555b043361da8bca8c82ef7a95a136f3a"
+            },
+            "notes": "Script completed: node scripts/consumer-radar/generate-app.mjs --app-dir 'apps/generated-consumer-app-radar'",
+            "usage": null
           }
         },
-        "next_node_id": "generate_app",
+        "next_node_id": "native_checks",
         "node_visits": {
           "wait_for_support_files": 1,
           "spec_kitty_gate": 1,
           "start": 1,
           "data_source_smoke": 1,
-          "bootstrap_spec": 1
+          "bootstrap_spec": 1,
+          "generate_app": 1
         }
       },
       "diff": {}
@@ -1399,6 +1510,33 @@
       },
       "state": "succeeded"
     },
+    "generate_app@1": {
+      "first_event_seq": 60,
+      "prompt": null,
+      "response": null,
+      "completion": null,
+      "provider_used": null,
+      "diff": null,
+      "script_invocation": {
+        "script": "node scripts/consumer-radar/generate-app.mjs --app-dir 'apps/generated-consumer-app-radar'",
+        "command": "exec 2>&1\nnode scripts/consumer-radar/generate-app.mjs --app-dir 'apps/generated-consumer-app-radar'",
+        "language": "shell"
+      },
+      "script_timing": null,
+      "parallel_results": null,
+      "output": null,
+      "started_at": "2026-05-13T10:32:30.449839328Z",
+      "handler": "command",
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "total_tokens": 0,
+        "reasoning_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "state": "running"
+    },
     "start@1": {
       "first_event_seq": 16,
       "prompt": null,
@@ -1475,7 +1613,12 @@
       "first_event_seq": 50,
       "prompt": null,
       "response": null,
-      "completion": null,
+      "completion": {
+        "outcome": "succeeded",
+        "notes": "Script completed: node scripts/consumer-radar/data-source-smoke.mjs --output .workflow/consumer-radar/data-source-smoke.json --real-mode 'true' --allow-fixture-fallback 'true'",
+        "failure_reason": null,
+        "timestamp": "2026-05-13T10:32:28.094732529Z"
+      },
       "provider_used": null,
       "diff": null,
       "script_invocation": {
@@ -1483,11 +1626,22 @@
         "command": "exec 2>&1\nnode scripts/consumer-radar/data-source-smoke.mjs --output .workflow/consumer-radar/data-source-smoke.json --real-mode 'true' --allow-fixture-fallback 'true'",
         "language": "shell"
       },
-      "script_timing": null,
+      "script_timing": {
+        "output": "blob://sha256/a8ca954fe505c8ca7b5c226df024af9918c0c366df5145c23ac164541a74abbc",
+        "exit_code": 0,
+        "duration_ms": 1377,
+        "termination": "exited",
+        "output_bytes": 540,
+        "live_streaming": true
+      },
       "parallel_results": null,
       "output": null,
+      "output_bytes": 540,
+      "live_streaming": true,
+      "termination": "exited",
       "started_at": "2026-05-13T10:32:26.712042175Z",
       "handler": "command",
+      "duration_ms": 1382,
       "usage": {
         "input_tokens": 0,
         "output_tokens": 0,
@@ -1496,7 +1650,7 @@
         "cache_read_tokens": 0,
         "cache_write_tokens": 0
       },
-      "state": "running"
+      "state": "succeeded"
     }
   }
 }
