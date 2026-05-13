@@ -1,0 +1,1110 @@
+{
+  "title": "Implement Consumer Radar live discovery and enrichment with strict real-data gates",
+  "spec": {
+    "run_id": "01KRHNNG41TCPN7S1VZ24SWDKR",
+    "settings": {
+      "project": {
+        "name": "maestro-os",
+        "description": null,
+        "metadata": {}
+      },
+      "workflow": {
+        "name": null,
+        "description": null,
+        "graph": "workflow.fabro",
+        "metadata": {}
+      },
+      "run": {
+        "goal": {
+          "type": "inline",
+          "value": "Implement Consumer Radar live discovery and enrichment with strict real-data gates"
+        },
+        "working_dir": null,
+        "metadata": {},
+        "inputs": {
+          "allow_fixture_fallback": false,
+          "app_dir": "apps/generated-consumer-app-radar",
+          "minimum_active_reviews": 2,
+          "real_mode": true,
+          "minimum_review_samples": 12,
+          "minimum_live_apps": 8,
+          "minimum_social_examples": 8
+        },
+        "model": {
+          "provider": "anthropic",
+          "name": "claude-sonnet-4-6",
+          "fallbacks": []
+        },
+        "git": {
+          "author": null
+        },
+        "prepare": {
+          "commands": [],
+          "timeout_ms": 300000
+        },
+        "execution": {
+          "mode": "normal",
+          "approval": "auto"
+        },
+        "checkpoint": {
+          "exclude_globs": []
+        },
+        "sandbox": {
+          "provider": "daytona",
+          "preserve": true,
+          "stop_on_terminal": true,
+          "devcontainer": false,
+          "env": {
+            "DAYTONA_API_URL": "${{ secrets.DAYTONA_API_URL }}",
+            "APIFY_TIKTOK_ACTOR": "clockworks/tiktok-scraper",
+            "APIFY_INSTAGRAM_ACTOR": "apify/instagram-scraper",
+            "APIFY_TOKEN": "${{ secrets.APIFY_TOKEN }}",
+            "LINEAR_API_KEY": "${{ secrets.LINEAR_API_KEY }}",
+            "LINEAR_API_URL": "${{ secrets.LINEAR_API_URL }}",
+            "FABRO_SLACK_BOT_TOKEN": "${{ secrets.FABRO_SLACK_BOT_TOKEN }}",
+            "MAESTRO_AGENT_STATE_DIR": "/home/daytona/agent-state",
+            "OPENROUTER_API_KEY": "${{ secrets.OPENROUTER_API_KEY }}",
+            "PROMPTFOO_DISABLE_TELEMETRY": "1",
+            "FABRO_DEV_TOKEN": "${{ secrets.FABRO_DEV_TOKEN }}",
+            "FABRO_SERVER": "${{ secrets.FABRO_SERVER }}",
+            "APIFY_APPSTORE_ACTOR": "crawlerbros/appstore-scraper",
+            "DAYTONA_API_KEY": "${{ secrets.DAYTONA_API_KEY }}",
+            "FABRO_SLACK_CHANNEL_ID": "${{ secrets.FABRO_SLACK_CHANNEL_ID }}"
+          },
+          "docker": {
+            "image": "buildpack-deps:noble",
+            "network_mode": null,
+            "memory_limit": 4000000000,
+            "cpu_quota": 200000,
+            "env_vars": {},
+            "skip_clone": false
+          },
+          "daytona": {
+            "auto_stop_interval": 60,
+            "labels": {
+              "purpose": "code-factory",
+              "project": "maestro-os"
+            },
+            "volumes": [
+              {
+                "volume_id": "beefe1da-59a0-48f6-9e19-a513d1790ce3",
+                "mount_path": "/home/daytona/agent-state",
+                "subpath": "agent-auth"
+              }
+            ],
+            "snapshot": {
+              "name": "maestro-code-factory-v5",
+              "cpu": 2,
+              "memory_gb": 4,
+              "disk_gb": 10,
+              "dockerfile": {
+                "type": "inline",
+                "value": "FROM ubuntu:24.04\n\nENV DEBIAN_FRONTEND=noninteractive\nENV BUN_INSTALL=/root/.bun\nENV PATH=\"/root/.fabro/bin:/root/.bun/bin:/root/.local/bin:/root/.qlty/bin:${PATH}\"\nWORKDIR /home/daytona\n\nRUN apt-get update && apt-get install -y --no-install-recommends bash ca-certificates curl git jq openssh-client python3 python3-pip pipx ripgrep shellcheck unzip xz-utils && rm -rf /var/lib/apt/lists/*\n\nRUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash - && apt-get update && apt-get install -y --no-install-recommends nodejs && npm install -g @anthropic-ai/claude-code @openai/codex promptfoo && npm cache clean --force && rm -rf /var/lib/apt/lists/*\n\nRUN curl -fsSL https://bun.sh/install | bash -s \"bun-v1.2.22\" && ln -sf /root/.bun/bin/bun /usr/local/bin/bun\n\nRUN pipx install spec-kitty-cli==3.1.8 && curl -fsSL https://qlty.sh | sh && ln -sf /root/.qlty/bin/qlty /usr/local/bin/qlty\n\nRUN set -eux; target=\"x86_64-unknown-linux-gnu\"; asset=\"fabro-${target}.tar.gz\"; url=\"$(curl -fsSL https://api.github.com/repos/fabro-sh/fabro/releases/latest | jq -r --arg asset \"$asset\" '.assets[] | select(.name == $asset) | .browser_download_url')\"; test -n \"$url\"; curl -fsSL \"$url\" -o /tmp/fabro.tar.gz; tar -xzf /tmp/fabro.tar.gz -C /tmp; install -m 0755 \"/tmp/fabro-${target}/fabro\" /usr/local/bin/fabro; rm -rf /tmp/fabro.tar.gz \"/tmp/fabro-${target}\"; fabro --version\n\nCMD [\"/bin/bash\"]\n"
+              }
+            },
+            "network": "allow_all",
+            "skip_clone": false
+          }
+        },
+        "notifications": {},
+        "interviews": {
+          "provider": null,
+          "slack": null
+        },
+        "agent": {
+          "permissions": "full",
+          "mcps": {}
+        },
+        "hooks": [],
+        "scm": {
+          "provider": null,
+          "owner": null,
+          "repository": null,
+          "github": null
+        },
+        "pull_request": null,
+        "artifacts": {
+          "include": [
+            ".workflow/**",
+            "reports/**",
+            "evals/output/**",
+            "apps/generated-*/README.md",
+            "apps/generated-*/.workflow-build.json",
+            "apps/generated-*/fixtures/**",
+            "apps/generated-*/public/**",
+            "apps/generated-*/src/**",
+            "apps/generated-*/tests/**"
+          ]
+        },
+        "integrations": {
+          "github": {
+            "permissions": {
+              "metadata": "read",
+              "pull_requests": "write",
+              "issues": "write",
+              "actions": "read",
+              "contents": "write"
+            }
+          }
+        }
+      }
+    },
+    "graph": {
+      "name": "ConsumerRadarLiveEnrichment",
+      "nodes": {
+        "plan_product_surface": {
+          "id": "plan_product_surface",
+          "attrs": {
+            "prompt": {
+              "String": "# Consumer Radar Live Enrichment Plan B: Product Surface First\n\nCreate implementation plan B for live Consumer Radar enrichment.\n\nWrite `.workflow/consumer-radar-live-enrichment/plans/product-surface-first.md`.\n\nRequired content:\n\n- Fetch-more-apps API and UI workflow\n- App review and example-content display workflow\n- Test-driven checks before code changes\n- Eval-driven checks for user value\n- Live data gates and non-cheating criteria\n- Simplification plan after implementation\n- Pairwise tradeoff against a source-first plan\n"
+            },
+            "model": {
+              "String": "qwen/qwen3.6-plus"
+            },
+            "provider": {
+              "String": "openrouter"
+            },
+            "reasoning_effort": {
+              "String": "high"
+            },
+            "label": {
+              "String": "Plan Product Surface"
+            },
+            "class": {
+              "String": "coding"
+            }
+          },
+          "classes": [
+            "coding"
+          ]
+        },
+        "start": {
+          "id": "start",
+          "attrs": {
+            "model": {
+              "String": "anthropic/claude-haiku-4-5"
+            },
+            "shape": {
+              "String": "Mdiamond"
+            },
+            "provider": {
+              "String": "openrouter"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "label": {
+              "String": "Start"
+            }
+          }
+        },
+        "native_checks": {
+          "id": "native_checks",
+          "attrs": {
+            "label": {
+              "String": "Native Checks"
+            },
+            "script": {
+              "String": "node scripts/consumer-radar/run-native-checks.mjs 'apps/generated-consumer-app-radar'"
+            },
+            "shape": {
+              "String": "parallelogram"
+            },
+            "goal_gate": {
+              "Boolean": true
+            },
+            "model": {
+              "String": "anthropic/claude-haiku-4-5"
+            },
+            "retry_target": {
+              "String": "implement_live_enrichment"
+            },
+            "provider": {
+              "String": "openrouter"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            }
+          }
+        },
+        "review_kimi": {
+          "id": "review_kimi",
+          "attrs": {
+            "provider": {
+              "String": "openrouter"
+            },
+            "label": {
+              "String": "Kimi Source Strategy Review"
+            },
+            "shape": {
+              "String": "parallelogram"
+            },
+            "script": {
+              "String": "node scripts/consumer-radar/openrouter-review.mjs --model moonshotai/kimi-k2.6 --role live_source_strategy --app-dir 'apps/generated-consumer-app-radar' --output reports/consumer-radar/live-enrichment-reviews/kimi.json --real-mode 'true'"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "model": {
+              "String": "deepseek/deepseek-v4-flash"
+            },
+            "class": {
+              "String": "cheap"
+            }
+          },
+          "classes": [
+            "cheap"
+          ]
+        },
+        "promptfoo_gate": {
+          "id": "promptfoo_gate",
+          "attrs": {
+            "label": {
+              "String": "Promptfoo Gate"
+            },
+            "script": {
+              "String": "node scripts/consumer-radar/promptfoo-or-fallback.mjs 'apps/generated-consumer-app-radar' --real-mode 'true' --allow-fallback 'false'"
+            },
+            "goal_gate": {
+              "Boolean": true
+            },
+            "shape": {
+              "String": "parallelogram"
+            },
+            "retry_target": {
+              "String": "simplification"
+            },
+            "model": {
+              "String": "anthropic/claude-haiku-4-5"
+            },
+            "provider": {
+              "String": "openrouter"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            }
+          }
+        },
+        "review_qwen": {
+          "id": "review_qwen",
+          "attrs": {
+            "provider": {
+              "String": "openrouter"
+            },
+            "script": {
+              "String": "node scripts/consumer-radar/openrouter-review.mjs --model qwen/qwen3.6-plus --role live_enrichment_implementation --app-dir 'apps/generated-consumer-app-radar' --output reports/consumer-radar/live-enrichment-reviews/qwen.json --real-mode 'true'"
+            },
+            "model": {
+              "String": "deepseek/deepseek-v4-flash"
+            },
+            "shape": {
+              "String": "parallelogram"
+            },
+            "label": {
+              "String": "Qwen Implementation Review"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "class": {
+              "String": "cheap"
+            }
+          },
+          "classes": [
+            "cheap"
+          ]
+        },
+        "plan_join": {
+          "id": "plan_join",
+          "attrs": {
+            "join_policy": {
+              "String": "wait_all"
+            },
+            "label": {
+              "String": "Plan Join"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "provider": {
+              "String": "openrouter"
+            },
+            "shape": {
+              "String": "tripleoctagon"
+            },
+            "model": {
+              "String": "anthropic/claude-haiku-4-5"
+            }
+          }
+        },
+        "plan_eval": {
+          "id": "plan_eval",
+          "attrs": {
+            "goal_gate": {
+              "Boolean": true
+            },
+            "label": {
+              "String": "Plan Eval"
+            },
+            "model": {
+              "String": "anthropic/claude-haiku-4-5"
+            },
+            "retry_target": {
+              "String": "implementation_plan_fanout"
+            },
+            "shape": {
+              "String": "parallelogram"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "script": {
+              "String": "node scripts/app-feedback/evaluate-enhancement-artifact.mjs --stage workflow --candidates .workflow/consumer-radar-live-enrichment/plans --out .workflow/consumer-radar-live-enrichment/plan-eval.json --minimum-candidates 2 --minimum-eval-score 0.72"
+            },
+            "provider": {
+              "String": "openrouter"
+            }
+          }
+        },
+        "prepare_review_reports": {
+          "id": "prepare_review_reports",
+          "attrs": {
+            "script": {
+              "String": "rm -rf reports/consumer-radar/live-enrichment-reviews && mkdir -p reports/consumer-radar/live-enrichment-reviews"
+            },
+            "model": {
+              "String": "anthropic/claude-haiku-4-5"
+            },
+            "label": {
+              "String": "Prepare Review Reports"
+            },
+            "goal_gate": {
+              "Boolean": true
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "shape": {
+              "String": "parallelogram"
+            },
+            "retry_target": {
+              "String": "promptfoo_gate"
+            },
+            "provider": {
+              "String": "openrouter"
+            }
+          }
+        },
+        "exit": {
+          "id": "exit",
+          "attrs": {
+            "provider": {
+              "String": "openrouter"
+            },
+            "shape": {
+              "String": "Msquare"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "label": {
+              "String": "Exit"
+            },
+            "model": {
+              "String": "anthropic/claude-haiku-4-5"
+            }
+          }
+        },
+        "qlty_gate": {
+          "id": "qlty_gate",
+          "attrs": {
+            "retry_target": {
+              "String": "simplification"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "provider": {
+              "String": "openrouter"
+            },
+            "label": {
+              "String": "Qlty Gate"
+            },
+            "goal_gate": {
+              "Boolean": true
+            },
+            "script": {
+              "String": "node scripts/consumer-radar/qlty-gate.mjs 'apps/generated-consumer-app-radar' --real-mode 'true' --allow-fallback 'false'"
+            },
+            "shape": {
+              "String": "parallelogram"
+            },
+            "model": {
+              "String": "anthropic/claude-haiku-4-5"
+            }
+          }
+        },
+        "live_source_preflight": {
+          "id": "live_source_preflight",
+          "attrs": {
+            "provider": {
+              "String": "openrouter"
+            },
+            "model": {
+              "String": "anthropic/claude-haiku-4-5"
+            },
+            "goal_gate": {
+              "Boolean": true
+            },
+            "script": {
+              "String": "echo APIFY_TOKEN live source preflight; node scripts/app-feedback/live-source-preflight.mjs --app-dir 'apps/generated-consumer-app-radar' --real-mode 'true' --allow-fixture-fallback 'false' --out .workflow/consumer-radar-live-enrichment/source-preflight.json"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "label": {
+              "String": "Live Source Preflight"
+            },
+            "retry_target": {
+              "String": "live_source_preflight"
+            },
+            "shape": {
+              "String": "parallelogram"
+            }
+          }
+        },
+        "simplification": {
+          "id": "simplification",
+          "attrs": {
+            "label": {
+              "String": "Code Simplification"
+            },
+            "retry_target": {
+              "String": "simplification"
+            },
+            "prompt": {
+              "String": "# Enhancement Simplification Plan\n\nYou are the simplification reviewer for the enhancement-discovery workflow.\n\nRead:\n\n- Generated enhancement workflow: `workflows/consumer-radar/live-enrichment.fabro`\n- Selected spec: `.workflow/enhancement-discovery/selected-spec.md`\n- Selected architecture: `.workflow/enhancement-discovery/selected-architecture.md`\n- Validation report: `.workflow/enhancement-discovery/generated-workflow-validation.json`\n\nWrite `.workflow/enhancement-discovery/simplification-plan.md`.\n\nRequired sections:\n\n- Behavior that must remain unchanged\n- Redundant stages, prompts, scripts, or data paths to remove\n- Acceptance gates that must not be weakened\n- Test-driven checks to rerun after simplification\n- Eval-driven checks to rerun after simplification\n- Pairwise comparison of pre-simplification vs post-simplification workflow quality\n- Final recommendation\n\nEnd with `VERDICT: APPROVED` only if simplification improves clarity without reducing behavior or evidence."
+            },
+            "reasoning_effort": {
+              "String": "high"
+            },
+            "goal_gate": {
+              "Boolean": true
+            },
+            "class": {
+              "String": "review"
+            },
+            "model": {
+              "String": "google/gemini-3.1-pro-preview"
+            },
+            "provider": {
+              "String": "openrouter"
+            }
+          },
+          "classes": [
+            "review"
+          ]
+        },
+        "plan_live_sources": {
+          "id": "plan_live_sources",
+          "attrs": {
+            "prompt": {
+              "String": "# Consumer Radar Live Enrichment Plan A: Source First\n\nCreate implementation plan A for live Consumer Radar enrichment.\n\nWrite `.workflow/consumer-radar-live-enrichment/plans/source-first.md`.\n\nRequired content:\n\n- Apify App Store discovery path\n- TikTok and Instagram social enrichment path\n- Apple review ingestion path\n- Test-driven checks before code changes\n- Eval-driven checks for source realism\n- Live data gates and non-cheating criteria\n- Simplification plan after implementation\n- Pairwise tradeoff against a product-surface-first plan\n"
+            },
+            "provider": {
+              "String": "openrouter"
+            },
+            "model": {
+              "String": "qwen/qwen3.6-plus"
+            },
+            "class": {
+              "String": "coding"
+            },
+            "label": {
+              "String": "Plan Live Sources"
+            },
+            "reasoning_effort": {
+              "String": "high"
+            }
+          },
+          "classes": [
+            "coding"
+          ]
+        },
+        "review_deepseek": {
+          "id": "review_deepseek",
+          "attrs": {
+            "shape": {
+              "String": "parallelogram"
+            },
+            "model": {
+              "String": "deepseek/deepseek-v4-flash"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "script": {
+              "String": "node scripts/consumer-radar/openrouter-review.mjs --model deepseek/deepseek-v4-pro,deepseek/deepseek-v4-flash --role simplification_and_ci --app-dir 'apps/generated-consumer-app-radar' --output reports/consumer-radar/live-enrichment-reviews/deepseek.json --real-mode 'true'"
+            },
+            "provider": {
+              "String": "openrouter"
+            },
+            "label": {
+              "String": "DeepSeek Simplification Review"
+            },
+            "class": {
+              "String": "cheap"
+            }
+          },
+          "classes": [
+            "cheap"
+          ]
+        },
+        "review_consensus": {
+          "id": "review_consensus",
+          "attrs": {
+            "provider": {
+              "String": "openrouter"
+            },
+            "shape": {
+              "String": "parallelogram"
+            },
+            "script": {
+              "String": "node scripts/consumer-radar/review-consensus.mjs --reviews reports/consumer-radar/live-enrichment-reviews --output reports/consumer-radar/live-enrichment-review-consensus.json --minimum-active-reviews '2'"
+            },
+            "model": {
+              "String": "anthropic/claude-haiku-4-5"
+            },
+            "retry_target": {
+              "String": "simplification"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "goal_gate": {
+              "Boolean": true
+            },
+            "label": {
+              "String": "Review Consensus"
+            }
+          }
+        },
+        "publish_handoff": {
+          "id": "publish_handoff",
+          "attrs": {
+            "model": {
+              "String": "anthropic/claude-haiku-4-5"
+            },
+            "label": {
+              "String": "Publish Handoff"
+            },
+            "script": {
+              "String": "node scripts/app-feedback/publish-enhancement-discovery-handoff.mjs --app-dir 'apps/generated-consumer-app-radar' --generated-workflow workflows/consumer-radar/live-enrichment.fabro --out .workflow/consumer-radar-live-enrichment/handoff.json"
+            },
+            "retry_target": {
+              "String": "review_consensus"
+            },
+            "shape": {
+              "String": "parallelogram"
+            },
+            "provider": {
+              "String": "openrouter"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "goal_gate": {
+              "Boolean": true
+            }
+          }
+        },
+        "live_data_gate": {
+          "id": "live_data_gate",
+          "attrs": {
+            "retry_target": {
+              "String": "implement_live_enrichment"
+            },
+            "provider": {
+              "String": "openrouter"
+            },
+            "label": {
+              "String": "Live Data Gate"
+            },
+            "model": {
+              "String": "anthropic/claude-haiku-4-5"
+            },
+            "shape": {
+              "String": "parallelogram"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "goal_gate": {
+              "Boolean": true
+            },
+            "script": {
+              "String": "node scripts/consumer-radar/assert-live-enrichment.mjs 'apps/generated-consumer-app-radar' --real-mode 'true' --allow-fixture-fallback 'false' --minimum-live-apps '8' --minimum-review-samples '12' --minimum-social-examples '8'"
+            }
+          }
+        },
+        "review_fanout": {
+          "id": "review_fanout",
+          "attrs": {
+            "model": {
+              "String": "anthropic/claude-haiku-4-5"
+            },
+            "provider": {
+              "String": "openrouter"
+            },
+            "label": {
+              "String": "Parallel Live Enrichment Review Fanout"
+            },
+            "shape": {
+              "String": "component"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            }
+          }
+        },
+        "implement_live_enrichment": {
+          "id": "implement_live_enrichment",
+          "attrs": {
+            "label": {
+              "String": "Implement Live Enrichment"
+            },
+            "prompt": {
+              "String": "# Consumer Radar Live Enrichment Implementation\n\nImplement the generated live-enrichment workflow for `apps/generated-consumer-app-radar`.\n\nRequired behavior:\n\n- Wire Apify actor execution into live app discovery and social-content enrichment.\n- Use Apple review ingestion for visible review samples.\n- Add API/UI controls to fetch more apps.\n- Fail real mode when required credentials or live results are missing and `allow_fixture_fallback=false`.\n- Persist evidence artifacts showing which rows are live-scraped vs fixture-backed.\n- Add deterministic tests before implementation changes.\n- Add a code simplification pass before final review.\n\nWrite a short implementation report to `.workflow/consumer-radar-live-enrichment/implementation-report.md`."
+            },
+            "goal_gate": {
+              "Boolean": true
+            },
+            "retry_target": {
+              "String": "implement_live_enrichment"
+            },
+            "provider": {
+              "String": "openrouter"
+            },
+            "class": {
+              "String": "coding"
+            },
+            "model": {
+              "String": "qwen/qwen3.6-plus"
+            },
+            "reasoning_effort": {
+              "String": "high"
+            }
+          },
+          "classes": [
+            "coding"
+          ]
+        },
+        "implementation_plan_fanout": {
+          "id": "implementation_plan_fanout",
+          "attrs": {
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "provider": {
+              "String": "openrouter"
+            },
+            "label": {
+              "String": "Implementation Plan Fanout"
+            },
+            "model": {
+              "String": "anthropic/claude-haiku-4-5"
+            },
+            "shape": {
+              "String": "component"
+            }
+          }
+        },
+        "review_join": {
+          "id": "review_join",
+          "attrs": {
+            "provider": {
+              "String": "openrouter"
+            },
+            "join_policy": {
+              "String": "wait_all"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "shape": {
+              "String": "tripleoctagon"
+            },
+            "model": {
+              "String": "anthropic/claude-haiku-4-5"
+            },
+            "label": {
+              "String": "Review Join"
+            }
+          }
+        }
+      },
+      "edges": [
+        {
+          "from": "start",
+          "to": "live_source_preflight",
+          "attrs": {}
+        },
+        {
+          "from": "live_source_preflight",
+          "to": "implementation_plan_fanout",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "live_source_preflight",
+          "to": "live_source_preflight",
+          "attrs": {
+            "label": {
+              "String": "Retry"
+            },
+            "loop_restart": {
+              "Boolean": true
+            }
+          }
+        },
+        {
+          "from": "implementation_plan_fanout",
+          "to": "plan_live_sources",
+          "attrs": {}
+        },
+        {
+          "from": "implementation_plan_fanout",
+          "to": "plan_product_surface",
+          "attrs": {}
+        },
+        {
+          "from": "plan_live_sources",
+          "to": "plan_join",
+          "attrs": {}
+        },
+        {
+          "from": "plan_product_surface",
+          "to": "plan_join",
+          "attrs": {}
+        },
+        {
+          "from": "plan_join",
+          "to": "plan_eval",
+          "attrs": {}
+        },
+        {
+          "from": "plan_eval",
+          "to": "implement_live_enrichment",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "plan_eval",
+          "to": "implementation_plan_fanout",
+          "attrs": {
+            "label": {
+              "String": "Replan"
+            }
+          }
+        },
+        {
+          "from": "implement_live_enrichment",
+          "to": "native_checks",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "implement_live_enrichment",
+          "to": "implement_live_enrichment",
+          "attrs": {
+            "loop_restart": {
+              "Boolean": true
+            },
+            "label": {
+              "String": "Retry"
+            }
+          }
+        },
+        {
+          "from": "native_checks",
+          "to": "live_data_gate",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "native_checks",
+          "to": "implement_live_enrichment",
+          "attrs": {
+            "label": {
+              "String": "Fix"
+            }
+          }
+        },
+        {
+          "from": "live_data_gate",
+          "to": "simplification",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "live_data_gate",
+          "to": "implement_live_enrichment",
+          "attrs": {
+            "label": {
+              "String": "Fix"
+            }
+          }
+        },
+        {
+          "from": "simplification",
+          "to": "qlty_gate",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "simplification",
+          "to": "simplification",
+          "attrs": {
+            "loop_restart": {
+              "Boolean": true
+            },
+            "label": {
+              "String": "Retry"
+            }
+          }
+        },
+        {
+          "from": "qlty_gate",
+          "to": "promptfoo_gate",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "qlty_gate",
+          "to": "simplification",
+          "attrs": {
+            "label": {
+              "String": "Fix"
+            }
+          }
+        },
+        {
+          "from": "promptfoo_gate",
+          "to": "prepare_review_reports",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "promptfoo_gate",
+          "to": "simplification",
+          "attrs": {
+            "label": {
+              "String": "Fix"
+            }
+          }
+        },
+        {
+          "from": "prepare_review_reports",
+          "to": "review_fanout",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "prepare_review_reports",
+          "to": "promptfoo_gate",
+          "attrs": {
+            "label": {
+              "String": "Fix"
+            }
+          }
+        },
+        {
+          "from": "review_fanout",
+          "to": "review_kimi",
+          "attrs": {}
+        },
+        {
+          "from": "review_fanout",
+          "to": "review_qwen",
+          "attrs": {}
+        },
+        {
+          "from": "review_fanout",
+          "to": "review_deepseek",
+          "attrs": {}
+        },
+        {
+          "from": "review_kimi",
+          "to": "review_join",
+          "attrs": {}
+        },
+        {
+          "from": "review_qwen",
+          "to": "review_join",
+          "attrs": {}
+        },
+        {
+          "from": "review_deepseek",
+          "to": "review_join",
+          "attrs": {}
+        },
+        {
+          "from": "review_join",
+          "to": "review_consensus",
+          "attrs": {}
+        },
+        {
+          "from": "review_consensus",
+          "to": "publish_handoff",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "review_consensus",
+          "to": "simplification",
+          "attrs": {
+            "label": {
+              "String": "Fix"
+            }
+          }
+        },
+        {
+          "from": "publish_handoff",
+          "to": "exit",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "publish_handoff",
+          "to": "review_consensus",
+          "attrs": {
+            "label": {
+              "String": "Fix"
+            }
+          }
+        }
+      ],
+      "attrs": {
+        "default_max_retries": {
+          "Integer": 2
+        },
+        "outputs": {
+          "String": "live_enriched_app, live_data_report, review_consensus, handoff"
+        },
+        "model_stylesheet": {
+          "String": "\n            *          { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: low; }\n            .coding    { provider: openrouter; model: qwen/qwen3.6-plus; reasoning_effort: high; }\n            .review    { provider: openrouter; model: google/gemini-3.1-pro-preview; reasoning_effort: high; }\n            .cheap     { provider: openrouter; model: deepseek/deepseek-v4-flash; reasoning_effort: low; }\n        "
+        },
+        "retry_target": {
+          "String": "implement_live_enrichment"
+        },
+        "inputs": {
+          "String": "app_dir, real_mode, allow_fixture_fallback, minimum_live_apps, minimum_review_samples, minimum_social_examples, minimum_active_reviews"
+        },
+        "goal": {
+          "String": "Implement Consumer Radar live discovery and enrichment with strict real-data gates"
+        },
+        "fallback_retry_target": {
+          "String": "implementation_plan_fanout"
+        },
+        "persona": {
+          "String": "consumer-radar-live-enrichment-builder"
+        },
+        "rankdir": {
+          "String": "LR"
+        }
+      }
+    },
+    "graph_source": "digraph ConsumerRadarLiveEnrichment {\n    graph [\n        goal=\"Implement real Consumer Radar live discovery and enrichment from evaluated enhancement spec\",\n        persona=\"consumer-radar-live-enrichment-builder\",\n        inputs=\"app_dir, real_mode, allow_fixture_fallback, minimum_live_apps, minimum_review_samples, minimum_social_examples, minimum_active_reviews\",\n        outputs=\"live_enriched_app, live_data_report, review_consensus, handoff\",\n        default_max_retries=2,\n        retry_target=\"implement_live_enrichment\",\n        fallback_retry_target=\"implementation_plan_fanout\",\n        model_stylesheet=\"\n            *          { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: low; }\n            .coding    { provider: openrouter; model: qwen/qwen3.6-plus; reasoning_effort: high; }\n            .review    { provider: openrouter; model: google/gemini-3.1-pro-preview; reasoning_effort: high; }\n            .cheap     { provider: openrouter; model: deepseek/deepseek-v4-flash; reasoning_effort: low; }\n        \"\n    ]\n    rankdir=LR\n\n    start [shape=Mdiamond, label=\"Start\"]\n    exit  [shape=Msquare, label=\"Exit\"]\n\n    live_source_preflight [\n        label=\"Live Source Preflight\",\n        shape=parallelogram,\n        goal_gate=true,\n        retry_target=\"live_source_preflight\",\n        script=\"echo APIFY_TOKEN live source preflight; node scripts/app-feedback/live-source-preflight.mjs --app-dir '{{ inputs.app_dir|default('apps/generated-consumer-app-radar') }}' --real-mode '{{ inputs.real_mode|default('true') }}' --allow-fixture-fallback '{{ inputs.allow_fixture_fallback|default('false') }}' --out .workflow/consumer-radar-live-enrichment/source-preflight.json\"\n    ]\n\n    implementation_plan_fanout [shape=component, label=\"Implementation Plan Fanout\"]\n    plan_live_sources [\n        label=\"Plan Live Sources\",\n        class=\"coding\",\n        prompt=\"@../../prompts/app-feedback/live-enrichment-plan-a.md\"\n    ]\n    plan_product_surface [\n        label=\"Plan Product Surface\",\n        class=\"coding\",\n        prompt=\"@../../prompts/app-feedback/live-enrichment-plan-b.md\"\n    ]\n    plan_join [shape=tripleoctagon, label=\"Plan Join\", join_policy=\"wait_all\"]\n\n    plan_eval [\n        label=\"Plan Eval\",\n        shape=parallelogram,\n        goal_gate=true,\n        retry_target=\"implementation_plan_fanout\",\n        script=\"node scripts/app-feedback/evaluate-enhancement-artifact.mjs --stage workflow --candidates .workflow/consumer-radar-live-enrichment/plans --out .workflow/consumer-radar-live-enrichment/plan-eval.json --minimum-candidates 2 --minimum-eval-score 0.72\"\n    ]\n\n    implement_live_enrichment [\n        label=\"Implement Live Enrichment\",\n        class=\"coding\",\n        goal_gate=true,\n        retry_target=\"implement_live_enrichment\",\n        prompt=\"@../../prompts/app-feedback/live-enrichment-implementation.md\"\n    ]\n\n    native_checks [\n        label=\"Native Checks\",\n        shape=parallelogram,\n        goal_gate=true,\n        retry_target=\"implement_live_enrichment\",\n        script=\"node scripts/consumer-radar/run-native-checks.mjs '{{ inputs.app_dir|default('apps/generated-consumer-app-radar') }}'\"\n    ]\n\n    live_data_gate [\n        label=\"Live Data Gate\",\n        shape=parallelogram,\n        goal_gate=true,\n        retry_target=\"implement_live_enrichment\",\n        script=\"node scripts/consumer-radar/assert-live-enrichment.mjs '{{ inputs.app_dir|default('apps/generated-consumer-app-radar') }}' --real-mode '{{ inputs.real_mode|default('true') }}' --allow-fixture-fallback '{{ inputs.allow_fixture_fallback|default('false') }}' --minimum-live-apps '{{ inputs.minimum_live_apps|default('8') }}' --minimum-review-samples '{{ inputs.minimum_review_samples|default('12') }}' --minimum-social-examples '{{ inputs.minimum_social_examples|default('8') }}'\"\n    ]\n\n    simplification [\n        label=\"Code Simplification\",\n        class=\"review\",\n        goal_gate=true,\n        retry_target=\"simplification\",\n        prompt=\"@../../prompts/app-feedback/simplification-plan.md\"\n    ]\n\n    qlty_gate [\n        label=\"Qlty Gate\",\n        shape=parallelogram,\n        goal_gate=true,\n        retry_target=\"simplification\",\n        script=\"node scripts/consumer-radar/qlty-gate.mjs '{{ inputs.app_dir|default('apps/generated-consumer-app-radar') }}' --real-mode '{{ inputs.real_mode|default('true') }}' --allow-fallback '{{ inputs.allow_fixture_fallback|default('false') }}'\"\n    ]\n\n    promptfoo_gate [\n        label=\"Promptfoo Gate\",\n        shape=parallelogram,\n        goal_gate=true,\n        retry_target=\"simplification\",\n        script=\"node scripts/consumer-radar/promptfoo-or-fallback.mjs '{{ inputs.app_dir|default('apps/generated-consumer-app-radar') }}' --real-mode '{{ inputs.real_mode|default('true') }}' --allow-fallback '{{ inputs.allow_fixture_fallback|default('false') }}'\"\n    ]\n\n    prepare_review_reports [\n        label=\"Prepare Review Reports\",\n        shape=parallelogram,\n        goal_gate=true,\n        retry_target=\"promptfoo_gate\",\n        script=\"rm -rf reports/consumer-radar/live-enrichment-reviews && mkdir -p reports/consumer-radar/live-enrichment-reviews\"\n    ]\n\n    review_fanout [shape=component, label=\"Parallel Live Enrichment Review Fanout\"]\n    review_kimi [\n        label=\"Kimi Source Strategy Review\",\n        class=\"cheap\",\n        shape=parallelogram,\n        script=\"node scripts/consumer-radar/openrouter-review.mjs --model moonshotai/kimi-k2.6 --role live_source_strategy --app-dir '{{ inputs.app_dir|default('apps/generated-consumer-app-radar') }}' --output reports/consumer-radar/live-enrichment-reviews/kimi.json --real-mode '{{ inputs.real_mode|default('true') }}'\"\n    ]\n    review_qwen [\n        label=\"Qwen Implementation Review\",\n        class=\"cheap\",\n        shape=parallelogram,\n        script=\"node scripts/consumer-radar/openrouter-review.mjs --model qwen/qwen3.6-plus --role live_enrichment_implementation --app-dir '{{ inputs.app_dir|default('apps/generated-consumer-app-radar') }}' --output reports/consumer-radar/live-enrichment-reviews/qwen.json --real-mode '{{ inputs.real_mode|default('true') }}'\"\n    ]\n    review_deepseek [\n        label=\"DeepSeek Simplification Review\",\n        class=\"cheap\",\n        shape=parallelogram,\n        script=\"node scripts/consumer-radar/openrouter-review.mjs --model deepseek/deepseek-v4-pro,deepseek/deepseek-v4-flash --role simplification_and_ci --app-dir '{{ inputs.app_dir|default('apps/generated-consumer-app-radar') }}' --output reports/consumer-radar/live-enrichment-reviews/deepseek.json --real-mode '{{ inputs.real_mode|default('true') }}'\"\n    ]\n    review_join [shape=tripleoctagon, label=\"Review Join\", join_policy=\"wait_all\"]\n\n    review_consensus [\n        label=\"Review Consensus\",\n        shape=parallelogram,\n        goal_gate=true,\n        retry_target=\"simplification\",\n        script=\"node scripts/consumer-radar/review-consensus.mjs --reviews reports/consumer-radar/live-enrichment-reviews --output reports/consumer-radar/live-enrichment-review-consensus.json --minimum-active-reviews '{{ inputs.minimum_active_reviews|default('2') }}'\"\n    ]\n\n    publish_handoff [\n        label=\"Publish Handoff\",\n        shape=parallelogram,\n        goal_gate=true,\n        retry_target=\"review_consensus\",\n        script=\"node scripts/app-feedback/publish-enhancement-discovery-handoff.mjs --app-dir '{{ inputs.app_dir|default('apps/generated-consumer-app-radar') }}' --generated-workflow workflows/consumer-radar/live-enrichment.fabro --out .workflow/consumer-radar-live-enrichment/handoff.json\"\n    ]\n\n    start -> live_source_preflight\n    live_source_preflight -> implementation_plan_fanout [condition=\"outcome=succeeded\"]\n    live_source_preflight -> live_source_preflight [label=\"Retry\", loop_restart=true]\n    implementation_plan_fanout -> plan_live_sources\n    implementation_plan_fanout -> plan_product_surface\n    plan_live_sources -> plan_join\n    plan_product_surface -> plan_join\n    plan_join -> plan_eval\n    plan_eval -> implement_live_enrichment [condition=\"outcome=succeeded\"]\n    plan_eval -> implementation_plan_fanout [label=\"Replan\"]\n    implement_live_enrichment -> native_checks [condition=\"outcome=succeeded\"]\n    implement_live_enrichment -> implement_live_enrichment [label=\"Retry\", loop_restart=true]\n    native_checks -> live_data_gate [condition=\"outcome=succeeded\"]\n    native_checks -> implement_live_enrichment [label=\"Fix\"]\n    live_data_gate -> simplification [condition=\"outcome=succeeded\"]\n    live_data_gate -> implement_live_enrichment [label=\"Fix\"]\n    simplification -> qlty_gate [condition=\"outcome=succeeded\"]\n    simplification -> simplification [label=\"Retry\", loop_restart=true]\n    qlty_gate -> promptfoo_gate [condition=\"outcome=succeeded\"]\n    qlty_gate -> simplification [label=\"Fix\"]\n    promptfoo_gate -> prepare_review_reports [condition=\"outcome=succeeded\"]\n    promptfoo_gate -> simplification [label=\"Fix\"]\n    prepare_review_reports -> review_fanout [condition=\"outcome=succeeded\"]\n    prepare_review_reports -> promptfoo_gate [label=\"Fix\"]\n    review_fanout -> review_kimi\n    review_fanout -> review_qwen\n    review_fanout -> review_deepseek\n    review_kimi -> review_join\n    review_qwen -> review_join\n    review_deepseek -> review_join\n    review_join -> review_consensus\n    review_consensus -> publish_handoff [condition=\"outcome=succeeded\"]\n    review_consensus -> simplification [label=\"Fix\"]\n    publish_handoff -> exit [condition=\"outcome=succeeded\"]\n    publish_handoff -> review_consensus [label=\"Fix\"]\n}\n",
+    "workflow_slug": "live-enrichment",
+    "source_directory": "/Users/timlife/Documents/claude code/maestro-os",
+    "provenance": {
+      "server": {
+        "version": "0.231.0-nightly.1"
+      },
+      "client": {
+        "user_agent": "fabro-cli/0.231.0-nightly.1",
+        "name": "fabro-cli",
+        "version": "0.231.0-nightly.1"
+      },
+      "subject": {
+        "kind": "user",
+        "identity": {
+          "issuer": "fabro:dev",
+          "subject": "dev"
+        },
+        "login": "dev",
+        "auth_method": "dev_token"
+      }
+    },
+    "manifest_blob": "b57287f0881b9062743f399ccbc99b1864db83a58ddf6ef73577c7fcbbe213fd",
+    "definition_blob": "1a5e3a64c71f33f7340fa791c9f64c6638ad7ca9ec3b17ad0f8a5ad1711e6b15",
+    "git": {
+      "origin_url": "https://github.com/kimprobably/maestro-os",
+      "branch": "spike/fabro-code-factory-v5",
+      "sha": "b92b5e43f82c7207fba26fe845d0cbb84db67422",
+      "dirty": "clean",
+      "push_outcome": {
+        "type": "not_attempted"
+      }
+    }
+  },
+  "web_url": "https://fabro-maestro-production.up.railway.app/runs/01KRHNNG41TCPN7S1VZ24SWDKR",
+  "start": null,
+  "status": {
+    "kind": "starting"
+  },
+  "status_updated_at": "2026-05-13T22:00:10.703751914Z",
+  "last_event_at": "2026-05-13T22:00:12.360482078Z",
+  "pending_control": null,
+  "checkpoints": [],
+  "conclusion": null,
+  "sandbox": {
+    "provider": "daytona",
+    "image": "buildpack-deps:noble",
+    "snapshot": "maestro-code-factory-v5",
+    "runtime": {
+      "id": "fabro-01KRHNNG41TCPN7S1VZ24SWDKR",
+      "working_directory": "/home/daytona/workspace",
+      "repo_cloned": true,
+      "clone_origin_url": "https://github.com/kimprobably/maestro-os",
+      "clone_branch": "spike/fabro-code-factory-v5"
+    }
+  },
+  "pull_request": null,
+  "superseded_by": null,
+  "pending_interviews": {},
+  "stages": {}
+}
