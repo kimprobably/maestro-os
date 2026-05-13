@@ -1758,7 +1758,7 @@
     "kind": "running"
   },
   "status_updated_at": "2026-05-13T18:19:47.605663104Z",
-  "last_event_at": "2026-05-13T18:21:08.654451874Z",
+  "last_event_at": "2026-05-13T18:21:15.020845143Z",
   "pending_control": null,
   "checkpoints": [
     {
@@ -2277,9 +2277,9 @@
       }
     },
     {
-      "seq": 0,
+      "seq": 140,
       "checkpoint": {
-        "timestamp": "2026-05-13T18:21:09.603672726Z",
+        "timestamp": "2026-05-13T18:21:13.178217198Z",
         "current_node": "ensure_spec_candidates",
         "completed_nodes": [
           "start",
@@ -2292,6 +2292,152 @@
         ],
         "node_retries": {},
         "context_values": {
+          "parallel.fan_in.best_id": "spec_candidate_b",
+          "internal.node_visit_count": 1,
+          "thread.start.current_node": "bootstrap",
+          "parallel.fan_in.best_outcome": "succeeded",
+          "current_node": "ensure_spec_candidates",
+          "parallel.results": [
+            {
+              "id": "spec_candidate_a",
+              "status": "failed",
+              "head_sha": "cce997015f0a86dc15687a6d57416c6d63d6e493"
+            },
+            {
+              "id": "spec_candidate_b",
+              "status": "succeeded",
+              "head_sha": "90f391a792f644097f3e407bb1e5040eb2ad0422"
+            },
+            {
+              "id": "spec_candidate_c",
+              "status": "failed",
+              "head_sha": "1427f8c92423a28a047f8f030aa46252a7f959b1"
+            }
+          ],
+          "graph.persona": "eval-driven-workflow-builder",
+          "parallel.branch_count": 3,
+          "failure_signature": "",
+          "graph.fallback_retry_target": "workflow_fanout",
+          "thread.capability_audit.current_node": "spec_fanout",
+          "thread.spec_fanout.current_node": "spec_join",
+          "thread.parse_requests.current_node": "capability_audit",
+          "internal.work_dir": "/home/daytona/workspace",
+          "internal.retry_count.bootstrap": 0,
+          "graph.outputs": "capability_audit, selected_spec, selected_architecture, generated_enhancement_workflow, eval_reports, simplification_plan, final_handoff",
+          "internal.retry_count.parse_requests": 0,
+          "parallel.fan_in.best_head_sha": "90f391a792f644097f3e407bb1e5040eb2ad0422",
+          "graph.inputs": "app_dir, feedback_path, target_adapter, generated_workflow, generated_run_config, real_mode, allow_fixture_fallback, execute_generated_workflow, minimum_spec_candidates, minimum_architecture_candidates, minimum_workflow_candidates, minimum_eval_score, max_eval_regression, minimum_active_reviews, require_simplification",
+          "thread.spec_join.current_node": "ensure_spec_candidates",
+          "graph.default_max_retries": "2",
+          "thread.bootstrap.current_node": "parse_requests",
+          "internal.retry_count.spec_fanout": 0,
+          "outcome": "succeeded",
+          "internal.run_id": "01KRH91QR7AVN4R2SQ2NM1MZTQ",
+          "internal.retry_count.capability_audit": 0,
+          "internal.thread_id": "spec_join",
+          "command.output": "blob://sha256/0495f05dcdeca796c9f80a4ceb603298c4d20efcd6687e039d410fa1c7cd4542",
+          "internal.retry_count.ensure_spec_candidates": 0,
+          "internal.retry_count.start": 0,
+          "graph.rankdir": "LR",
+          "internal.retry_count.spec_join": 0,
+          "failure_class": "",
+          "graph.model_stylesheet": "\n            *             { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: low; }\n            .spec          { provider: openrouter; model: google/gemini-3.1-pro-preview; reasoning_effort: high; }\n            .architecture  { provider: openrouter; model: qwen/qwen3.6-plus; reasoning_effort: high; }\n            .workflow      { provider: openrouter; model: moonshotai/kimi-k2.6; reasoning_effort: high; }\n            .eval          { provider: openrouter; model: deepseek/deepseek-v4-pro; reasoning_effort: high; }\n            .cheap         { provider: openrouter; model: deepseek/deepseek-v4-flash; reasoning_effort: low; }\n        ",
+          "graph.retry_target": "spec_fanout",
+          "graph.goal": "Use eval-driven development to discover the real Consumer Radar enhancement workflow required by product feedback",
+          "internal.fidelity": "compact"
+        },
+        "node_outcomes": {
+          "bootstrap": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/17c1b04b31687cffbb38c881b0ef8a6627d35f81c1821b18657bfc69bf73029b"
+            },
+            "notes": "Script completed: mkdir -p .workflow/enhancement-discovery/spec-candidates .workflow/enhancement-discovery/architecture-candidates .workflow/enhancement-discovery/workflow-candidates .workflow/enhancement-discovery/evals; test -f 'feedback/consumer-radar-product-feedback.md'; test -d 'apps/generated-consumer-app-radar'; echo eval_driven_development test_driven_development",
+            "usage": null
+          },
+          "capability_audit": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/2e78300898c34f783a2884184c50c33fefa4187fbe6f72d65e360ac55f308272"
+            },
+            "notes": "Script completed: node scripts/app-feedback/analyze-enhancement-capabilities.mjs --app-dir 'apps/generated-consumer-app-radar' --analysis .workflow/enhancement-discovery/request-analysis.json --target 'consumer-radar' --out .workflow/enhancement-discovery/capability-audit.json",
+            "usage": null
+          },
+          "parse_requests": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/b8ad9745eb032e1529021db56fb0316d1bbac9211156d215e74bdc779585d3f0"
+            },
+            "notes": "Script completed: node scripts/app-feedback/parse-feedback.mjs --feedback 'feedback/consumer-radar-product-feedback.md' --out .workflow/enhancement-discovery/request-analysis.json",
+            "usage": null
+          },
+          "spec_fanout": {
+            "status": "partially_succeeded",
+            "jump_to_node": "spec_join",
+            "notes": "Parallel node dispatched 3 branches (1 succeeded, 2 failed)",
+            "usage": null
+          },
+          "ensure_spec_candidates": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/0495f05dcdeca796c9f80a4ceb603298c4d20efcd6687e039d410fa1c7cd4542"
+            },
+            "notes": "Script completed: node scripts/app-feedback/ensure-enhancement-candidates.mjs --stage spec --dir .workflow/enhancement-discovery/spec-candidates --minimum '3' --out .workflow/enhancement-discovery/evals/spec-candidate-ensure.json",
+            "usage": null
+          },
+          "start": {
+            "status": "succeeded",
+            "usage": null
+          },
+          "spec_join": {
+            "status": "succeeded",
+            "context_updates": {
+              "parallel.fan_in.best_outcome": "succeeded",
+              "parallel.fan_in.best_id": "spec_candidate_b",
+              "parallel.fan_in.best_head_sha": "90f391a792f644097f3e407bb1e5040eb2ad0422"
+            },
+            "notes": "Selected best candidate: spec_candidate_b",
+            "usage": null
+          }
+        },
+        "next_node_id": "spec_eval_contract",
+        "git_commit_sha": "0c5f6253d8acb5108184a40b9b353b61bf07fc18",
+        "node_visits": {
+          "start": 1,
+          "ensure_spec_candidates": 1,
+          "spec_join": 1,
+          "capability_audit": 1,
+          "parse_requests": 1,
+          "bootstrap": 1,
+          "spec_fanout": 1
+        }
+      },
+      "diff": {
+        "summary": {
+          "files_changed": 0,
+          "additions": 0,
+          "deletions": 0
+        }
+      }
+    },
+    {
+      "seq": 0,
+      "checkpoint": {
+        "timestamp": "2026-05-13T18:21:15.178808654Z",
+        "current_node": "spec_eval_contract",
+        "completed_nodes": [
+          "start",
+          "bootstrap",
+          "parse_requests",
+          "capability_audit",
+          "spec_fanout",
+          "spec_join",
+          "ensure_spec_candidates",
+          "spec_eval_contract"
+        ],
+        "node_retries": {},
+        "context_values": {
+          "thread.ensure_spec_candidates.current_node": "spec_eval_contract",
           "internal.retry_count.bootstrap": 0,
           "graph.fallback_retry_target": "workflow_fanout",
           "outcome": "succeeded",
@@ -2326,6 +2472,7 @@
           "parallel.fan_in.best_id": "spec_candidate_b",
           "thread.start.current_node": "bootstrap",
           "internal.run_id": "01KRH91QR7AVN4R2SQ2NM1MZTQ",
+          "internal.retry_count.spec_eval_contract": 0,
           "graph.persona": "eval-driven-workflow-builder",
           "parallel.fan_in.best_head_sha": "90f391a792f644097f3e407bb1e5040eb2ad0422",
           "graph.rankdir": "LR",
@@ -2334,15 +2481,15 @@
           "parallel.branch_count": 3,
           "thread.parse_requests.current_node": "capability_audit",
           "internal.retry_count.start": 0,
-          "current_node": "ensure_spec_candidates",
-          "command.output": "blob://sha256/0495f05dcdeca796c9f80a4ceb603298c4d20efcd6687e039d410fa1c7cd4542",
+          "current_node": "spec_eval_contract",
+          "command.output": "blob://sha256/b0d23068b771871e18d1f5551790ddd2d557ccd53723f30d437eed79b1a0c239",
           "graph.inputs": "app_dir, feedback_path, target_adapter, generated_workflow, generated_run_config, real_mode, allow_fixture_fallback, execute_generated_workflow, minimum_spec_candidates, minimum_architecture_candidates, minimum_workflow_candidates, minimum_eval_score, max_eval_regression, minimum_active_reviews, require_simplification",
           "graph.goal": "Use eval-driven development to discover the real Consumer Radar enhancement workflow required by product feedback",
           "internal.work_dir": "/home/daytona/workspace",
           "internal.retry_count.capability_audit": 0,
           "internal.retry_count.spec_fanout": 0,
           "internal.fidelity": "compact",
-          "internal.thread_id": "spec_join",
+          "internal.thread_id": "ensure_spec_candidates",
           "thread.spec_join.current_node": "ensure_spec_candidates",
           "failure_class": ""
         },
@@ -2353,6 +2500,14 @@
               "command.output": "blob://sha256/17c1b04b31687cffbb38c881b0ef8a6627d35f81c1821b18657bfc69bf73029b"
             },
             "notes": "Script completed: mkdir -p .workflow/enhancement-discovery/spec-candidates .workflow/enhancement-discovery/architecture-candidates .workflow/enhancement-discovery/workflow-candidates .workflow/enhancement-discovery/evals; test -f 'feedback/consumer-radar-product-feedback.md'; test -d 'apps/generated-consumer-app-radar'; echo eval_driven_development test_driven_development",
+            "usage": null
+          },
+          "spec_eval_contract": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/b0d23068b771871e18d1f5551790ddd2d557ccd53723f30d437eed79b1a0c239"
+            },
+            "notes": "Script completed: node scripts/app-feedback/evaluate-enhancement-artifact.mjs --stage spec --candidates .workflow/enhancement-discovery/spec-candidates --out .workflow/enhancement-discovery/evals/spec-contract.json --minimum-candidates '3' --minimum-eval-score '0.78' --dataset evals/workflow-quality/datasets/enhancement-discovery-golden.jsonl --dataset-version workflow-quality-v1 --prompt-version app-feedback-spec-candidates-v1 --rubric-version enhancement-discovery-spec-rubric-v1 --judge-model deterministic-marker-v1 --baseline evals/workflow-quality/baselines/enhancement-discovery-spec.json --max-regression '0.05'",
             "usage": null
           },
           "parse_requests": {
@@ -2400,14 +2555,15 @@
             "usage": null
           }
         },
-        "next_node_id": "spec_eval_contract",
+        "next_node_id": "spec_eval_model",
         "node_visits": {
-          "spec_fanout": 1,
-          "parse_requests": 1,
           "ensure_spec_candidates": 1,
-          "bootstrap": 1,
           "capability_audit": 1,
           "spec_join": 1,
+          "spec_fanout": 1,
+          "parse_requests": 1,
+          "bootstrap": 1,
+          "spec_eval_contract": 1,
           "start": 1
         }
       },
@@ -2435,7 +2591,12 @@
       "first_event_seq": 129,
       "prompt": null,
       "response": null,
-      "completion": null,
+      "completion": {
+        "outcome": "succeeded",
+        "notes": "Script completed: node scripts/app-feedback/ensure-enhancement-candidates.mjs --stage spec --dir .workflow/enhancement-discovery/spec-candidates --minimum '3' --out .workflow/enhancement-discovery/evals/spec-candidate-ensure.json",
+        "failure_reason": null,
+        "timestamp": "2026-05-13T18:21:09.602730923Z"
+      },
       "provider_used": null,
       "diff": null,
       "script_invocation": {
@@ -2458,6 +2619,7 @@
       "termination": "exited",
       "started_at": "2026-05-13T18:21:06.642005888Z",
       "handler": "command",
+      "duration_ms": 2012,
       "usage": {
         "input_tokens": 0,
         "output_tokens": 0,
@@ -2466,7 +2628,7 @@
         "cache_read_tokens": 0,
         "cache_write_tokens": 0
       },
-      "state": "running"
+      "state": "succeeded"
     },
     "spec_candidate_b@1": {
       "first_event_seq": 76,
@@ -2733,6 +2895,43 @@
         "cache_write_tokens": 0
       },
       "state": "succeeded"
+    },
+    "spec_eval_contract@1": {
+      "first_event_seq": 143,
+      "prompt": null,
+      "response": null,
+      "completion": null,
+      "provider_used": null,
+      "diff": null,
+      "script_invocation": {
+        "script": "node scripts/app-feedback/evaluate-enhancement-artifact.mjs --stage spec --candidates .workflow/enhancement-discovery/spec-candidates --out .workflow/enhancement-discovery/evals/spec-contract.json --minimum-candidates '3' --minimum-eval-score '0.78' --dataset evals/workflow-quality/datasets/enhancement-discovery-golden.jsonl --dataset-version workflow-quality-v1 --prompt-version app-feedback-spec-candidates-v1 --rubric-version enhancement-discovery-spec-rubric-v1 --judge-model deterministic-marker-v1 --baseline evals/workflow-quality/baselines/enhancement-discovery-spec.json --max-regression '0.05'",
+        "command": "exec 2>&1\nnode scripts/app-feedback/evaluate-enhancement-artifact.mjs --stage spec --candidates .workflow/enhancement-discovery/spec-candidates --out .workflow/enhancement-discovery/evals/spec-contract.json --minimum-candidates '3' --minimum-eval-score '0.78' --dataset evals/workflow-quality/datasets/enhancement-discovery-golden.jsonl --dataset-version workflow-quality-v1 --prompt-version app-feedback-spec-candidates-v1 --rubric-version enhancement-discovery-spec-rubric-v1 --judge-model deterministic-marker-v1 --baseline evals/workflow-quality/baselines/enhancement-discovery-spec.json --max-regression '0.05'",
+        "language": "shell"
+      },
+      "script_timing": {
+        "output": "blob://sha256/b0d23068b771871e18d1f5551790ddd2d557ccd53723f30d437eed79b1a0c239",
+        "exit_code": 0,
+        "duration_ms": 1832,
+        "termination": "exited",
+        "output_bytes": 2032,
+        "live_streaming": true
+      },
+      "parallel_results": null,
+      "output": null,
+      "output_bytes": 2032,
+      "live_streaming": true,
+      "termination": "exited",
+      "started_at": "2026-05-13T18:21:13.182126663Z",
+      "handler": "command",
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "total_tokens": 0,
+        "reasoning_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "state": "running"
     }
   }
 }
