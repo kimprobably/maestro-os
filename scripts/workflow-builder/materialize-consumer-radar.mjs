@@ -1266,6 +1266,7 @@ if (realMode && !finalReport?.ok) process.exit(1);
 function reviewConsensusScript() {
   return `#!/usr/bin/env node
 import { existsSync, mkdirSync, readdirSync, readFileSync, statSync, writeFileSync } from "node:fs";
+import { spawnSync } from "node:child_process";
 import { dirname, join } from "node:path";
 
 function argValue(name, fallback) {
@@ -1304,11 +1305,37 @@ function readReview(file) {
   return { ...review, source: file, mtimeMs: statSync(file).mtimeMs };
 }
 
+function gitLines(args) {
+  const result = spawnSync("git", args, { encoding: "utf8" });
+  if (result.status !== 0) return [];
+  return result.stdout.split(/\\r?\\n/).map((line) => line.trim()).filter(Boolean);
+}
+
+function gitReviewObjects() {
+  const refs = gitLines(["for-each-ref", "--format=%(refname:short)", "refs/heads/fabro/run/parallel"]);
+  const reviews = [];
+  for (const ref of refs.filter((item) => item.includes("review-fanout"))) {
+    const files = gitLines(["ls-tree", "-r", "--name-only", ref, "--", ".workflow/consumer-radar/reviews"]);
+    for (const file of files.filter((item) => item.endsWith(".json"))) {
+      const result = spawnSync("git", ["show", ref + ":" + file], { encoding: "utf8" });
+      if (result.status !== 0) continue;
+      reviews.push({
+        ...JSON.parse(result.stdout),
+        source: "git:" + ref + ":" + file,
+        mtimeMs: Date.now()
+      });
+    }
+  }
+  return reviews;
+}
+
 const byReviewer = new Map();
-for (const review of [
+const fileReviews = [
   ...directReviewFiles(reviewDir),
   ...walkReviewFiles(".fabro/scratch")
-].map(readReview)) {
+].map(readReview);
+
+for (const review of [...fileReviews, ...gitReviewObjects()]) {
   const key = \`\${review.role || "unknown"}:\${review.model || review.source}\`;
   const existing = byReviewer.get(key);
   if (!existing || review.mtimeMs > existing.mtimeMs) byReviewer.set(key, review);

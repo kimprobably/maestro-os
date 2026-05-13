@@ -95,7 +95,7 @@ if (!dataSourceSmoke.includes("env_injected_by_fabro") || !dataSourceSmoke.inclu
 if (!openRouterReview.includes("realMode") || !openRouterReview.includes("process.exit(realMode ? 1 : 0)") || !openRouterReview.includes("OPENROUTER_API_KEY unavailable")) {
   throw new Error("OpenRouter review must support real-mode hard failure for missing credentials");
 }
-if (!reviewConsensus.includes("minimumActiveReviews") || !reviewConsensus.includes("active.length < minimumActiveReviews") || !reviewConsensus.includes(".fabro/scratch")) {
+if (!reviewConsensus.includes("minimumActiveReviews") || !reviewConsensus.includes("active.length < minimumActiveReviews") || !reviewConsensus.includes(".fabro/scratch") || !reviewConsensus.includes("refs/heads/fabro/run/parallel")) {
   throw new Error("review consensus must fail when all model reviews are skipped and collect parallel branch artifacts");
 }
 if (!promptfooGate.includes("allowFallback") || !promptfooGate.includes("Promptfoo failed in real mode")) {
