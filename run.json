@@ -1,0 +1,306 @@
+{
+  "title": "Verify the shared Daytona code-factory environment boots with the expected tools",
+  "spec": {
+    "run_id": "01KRGN9SJX8VQN58BY5HWHY179",
+    "settings": {
+      "project": {
+        "name": "maestro-os",
+        "description": null,
+        "metadata": {}
+      },
+      "workflow": {
+        "name": null,
+        "description": null,
+        "graph": "workflow.fabro",
+        "metadata": {}
+      },
+      "run": {
+        "goal": {
+          "type": "inline",
+          "value": "Verify the shared Daytona code-factory environment boots with the expected tools"
+        },
+        "working_dir": null,
+        "metadata": {},
+        "inputs": {},
+        "model": {
+          "provider": "anthropic",
+          "name": "claude-sonnet-4-6",
+          "fallbacks": []
+        },
+        "git": {
+          "author": null
+        },
+        "prepare": {
+          "commands": [],
+          "timeout_ms": 300000
+        },
+        "execution": {
+          "mode": "normal",
+          "approval": "auto"
+        },
+        "checkpoint": {
+          "exclude_globs": []
+        },
+        "sandbox": {
+          "provider": "daytona",
+          "preserve": false,
+          "stop_on_terminal": true,
+          "devcontainer": false,
+          "env": {
+            "APIFY_TOKEN": "${{ secrets.APIFY_TOKEN }}",
+            "FABRO_SLACK_BOT_TOKEN": "${{ secrets.FABRO_SLACK_BOT_TOKEN }}",
+            "FABRO_DEV_TOKEN": "${{ secrets.FABRO_DEV_TOKEN }}",
+            "APIFY_TIKTOK_ACTOR": "clockworks/tiktok-scraper",
+            "APIFY_INSTAGRAM_ACTOR": "apify/instagram-scraper",
+            "LINEAR_API_URL": "${{ secrets.LINEAR_API_URL }}",
+            "DAYTONA_API_URL": "${{ secrets.DAYTONA_API_URL }}",
+            "OPENROUTER_API_KEY": "${{ secrets.OPENROUTER_API_KEY }}",
+            "FABRO_SERVER": "${{ secrets.FABRO_SERVER }}",
+            "APIFY_APPSTORE_ACTOR": "crawlerbros/appstore-scraper",
+            "LINEAR_API_KEY": "${{ secrets.LINEAR_API_KEY }}",
+            "PROMPTFOO_DISABLE_TELEMETRY": "1",
+            "FABRO_SLACK_CHANNEL_ID": "${{ secrets.FABRO_SLACK_CHANNEL_ID }}",
+            "DAYTONA_API_KEY": "${{ secrets.DAYTONA_API_KEY }}"
+          },
+          "docker": {
+            "image": "buildpack-deps:noble",
+            "network_mode": null,
+            "memory_limit": 4000000000,
+            "cpu_quota": 200000,
+            "env_vars": {},
+            "skip_clone": false
+          },
+          "daytona": {
+            "auto_stop_interval": 30,
+            "labels": {
+              "project": "maestro-os",
+              "purpose": "code-factory"
+            },
+            "snapshot": {
+              "name": "maestro-code-factory-v3",
+              "cpu": 2,
+              "memory_gb": 4,
+              "disk_gb": 10,
+              "dockerfile": {
+                "type": "inline",
+                "value": "FROM ubuntu:24.04\n\nENV DEBIAN_FRONTEND=noninteractive\nENV BUN_INSTALL=/root/.bun\nENV PATH=\"/root/.bun/bin:/root/.local/bin:/root/.qlty/bin:${PATH}\"\nWORKDIR /home/daytona\n\nRUN apt-get update && apt-get install -y --no-install-recommends bash ca-certificates curl git jq openssh-client python3 python3-pip pipx ripgrep shellcheck unzip xz-utils && rm -rf /var/lib/apt/lists/*\n\nRUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash - && apt-get update && apt-get install -y --no-install-recommends nodejs && npm install -g @anthropic-ai/claude-code @openai/codex promptfoo && npm cache clean --force && rm -rf /var/lib/apt/lists/*\n\nRUN curl -fsSL https://bun.sh/install | bash -s \"bun-v1.2.22\" && ln -sf /root/.bun/bin/bun /usr/local/bin/bun\n\nRUN pipx install spec-kitty-cli==3.1.8 && curl -fsSL https://qlty.sh | sh && ln -sf /root/.qlty/bin/qlty /usr/local/bin/qlty\n\nCMD [\"/bin/bash\"]\n"
+              }
+            },
+            "network": "allow_all",
+            "skip_clone": false
+          }
+        },
+        "notifications": {},
+        "interviews": {
+          "provider": null,
+          "slack": null
+        },
+        "agent": {
+          "permissions": "full",
+          "mcps": {}
+        },
+        "hooks": [],
+        "scm": {
+          "provider": null,
+          "owner": null,
+          "repository": null,
+          "github": null
+        },
+        "pull_request": null,
+        "artifacts": {
+          "include": [
+            ".workflow/**",
+            "reports/**",
+            "evals/output/**",
+            "apps/generated-*/README.md",
+            "apps/generated-*/.workflow-build.json",
+            "apps/generated-*/fixtures/**",
+            "apps/generated-*/public/**",
+            "apps/generated-*/src/**",
+            "apps/generated-*/tests/**"
+          ]
+        },
+        "integrations": {
+          "github": {
+            "permissions": {
+              "pull_requests": "write",
+              "metadata": "read",
+              "actions": "read",
+              "contents": "write",
+              "issues": "write"
+            }
+          }
+        }
+      }
+    },
+    "graph": {
+      "name": "DaytonaEnvironmentSmoke",
+      "nodes": {
+        "exit": {
+          "id": "exit",
+          "attrs": {
+            "label": {
+              "String": "Exit"
+            },
+            "shape": {
+              "String": "Msquare"
+            }
+          }
+        },
+        "start": {
+          "id": "start",
+          "attrs": {
+            "shape": {
+              "String": "Mdiamond"
+            },
+            "label": {
+              "String": "Start"
+            }
+          }
+        },
+        "write_report": {
+          "id": "write_report",
+          "attrs": {
+            "label": {
+              "String": "Write Report"
+            },
+            "script": {
+              "String": "node -e \"const fs=require('fs'); const report=JSON.parse(fs.readFileSync('.workflow/fabro/daytona-environment-smoke.json','utf8')); const lines=['# Daytona Environment Smoke','', 'ok=' + report.ok, '', '## Tools', ...report.checks.map((check)=>'- ' + check.cmd + ' status=' + check.status + (check.stdout ? ' output=' + check.stdout.split('\\n')[0] : '')), '', '## Env', ...Object.entries(report.env).map(([key,value])=>'- ' + key + '=' + value)]; fs.writeFileSync('.workflow/fabro/daytona-environment-smoke.md', lines.join('\\n')+'\\n'); console.log(lines.join('\\n')); if(!report.ok) process.exit(1);\""
+            },
+            "type": {
+              "String": "command"
+            }
+          }
+        },
+        "check_environment": {
+          "id": "check_environment",
+          "attrs": {
+            "label": {
+              "String": "Check Environment"
+            },
+            "type": {
+              "String": "command"
+            },
+            "script": {
+              "String": "mkdir -p .workflow/fabro; node -e \"const fs=require('fs'); const {spawnSync}=require('child_process'); const run=(cmd,args=[])=>{const r=spawnSync(cmd,args,{encoding:'utf8',timeout:45000}); return {cmd:[cmd,...args].join(' '), status:r.status, stdout:(r.stdout||'').trim().slice(0,400), stderr:(r.stderr||'').trim().slice(0,400)};}; const checks=[run('node',['--version']),run('npm',['--version']),run('bun',['--version']),run('qlty',['--version']),run('spec-kitty',['--version']),run('promptfoo',['--version']),run('claude',['--version']),run('codex',['--version']),run('curl',['-fsS','--max-time','20','https://api.github.com/rate_limit'])]; const env=['OPENROUTER_API_KEY','DAYTONA_API_KEY','LINEAR_API_KEY','FABRO_SLACK_BOT_TOKEN','FABRO_SLACK_CHANNEL_ID','APIFY_TOKEN'].reduce((acc,key)=>{const value=process.env[key]||''; const unresolved=value.charCodeAt(0)===123 && value.charCodeAt(1)===123; acc[key]=Boolean(value && !unresolved); return acc;},{}); const required=['node --version','npm --version','bun --version','qlty --version','spec-kitty --version','promptfoo --version','curl -fsS --max-time 20 https://api.github.com/rate_limit']; const failed=checks.filter((check)=>required.includes(check.cmd) && check.status!==0); const report={ok:failed.length===0, failed, checks, env}; fs.writeFileSync('.workflow/fabro/daytona-environment-smoke.json', JSON.stringify(report,null,2)+'\\n'); console.log(JSON.stringify(report,null,2)); if(!report.ok) process.exit(1);\""
+            }
+          }
+        },
+        "fail_environment": {
+          "id": "fail_environment",
+          "attrs": {
+            "type": {
+              "String": "command"
+            },
+            "script": {
+              "String": "node -e \"const fs=require('fs'); const body=fs.existsSync('.workflow/fabro/daytona-environment-smoke.json') ? fs.readFileSync('.workflow/fabro/daytona-environment-smoke.json','utf8') : '{}'; console.error(body); process.exit(1);\""
+            },
+            "label": {
+              "String": "Fail Environment"
+            }
+          }
+        }
+      },
+      "edges": [
+        {
+          "from": "start",
+          "to": "check_environment",
+          "attrs": {}
+        },
+        {
+          "from": "check_environment",
+          "to": "write_report",
+          "attrs": {}
+        },
+        {
+          "from": "write_report",
+          "to": "exit",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "write_report",
+          "to": "fail_environment",
+          "attrs": {
+            "label": {
+              "String": "Fail"
+            }
+          }
+        }
+      ],
+      "attrs": {
+        "persona": {
+          "String": "workflow-registry"
+        },
+        "outputs": {
+          "String": "environment_report"
+        },
+        "goal": {
+          "String": "Verify the shared Daytona code-factory environment boots with the expected tools"
+        }
+      }
+    },
+    "graph_source": "digraph DaytonaEnvironmentSmoke {\n    graph [\n        goal=\"Verify the shared Daytona code-factory environment boots with the expected tools\",\n        persona=\"workflow-registry\",\n        outputs=\"environment_report\"\n    ]\n\n    start [shape=Mdiamond, label=\"Start\"]\n    exit [shape=Msquare, label=\"Exit\"]\n\n    check_environment [\n        label=\"Check Environment\",\n        type=\"command\",\n        script=\"mkdir -p .workflow/fabro; node -e \\\"const fs=require('fs'); const {spawnSync}=require('child_process'); const run=(cmd,args=[])=>{const r=spawnSync(cmd,args,{encoding:'utf8',timeout:45000}); return {cmd:[cmd,...args].join(' '), status:r.status, stdout:(r.stdout||'').trim().slice(0,400), stderr:(r.stderr||'').trim().slice(0,400)};}; const checks=[run('node',['--version']),run('npm',['--version']),run('bun',['--version']),run('qlty',['--version']),run('spec-kitty',['--version']),run('promptfoo',['--version']),run('claude',['--version']),run('codex',['--version']),run('curl',['-fsS','--max-time','20','https://api.github.com/rate_limit'])]; const env=['OPENROUTER_API_KEY','DAYTONA_API_KEY','LINEAR_API_KEY','FABRO_SLACK_BOT_TOKEN','FABRO_SLACK_CHANNEL_ID','APIFY_TOKEN'].reduce((acc,key)=>{const value=process.env[key]||''; const unresolved=value.charCodeAt(0)===123 && value.charCodeAt(1)===123; acc[key]=Boolean(value && !unresolved); return acc;},{}); const required=['node --version','npm --version','bun --version','qlty --version','spec-kitty --version','promptfoo --version','curl -fsS --max-time 20 https://api.github.com/rate_limit']; const failed=checks.filter((check)=>required.includes(check.cmd) && check.status!==0); const report={ok:failed.length===0, failed, checks, env}; fs.writeFileSync('.workflow/fabro/daytona-environment-smoke.json', JSON.stringify(report,null,2)+'\\\\n'); console.log(JSON.stringify(report,null,2)); if(!report.ok) process.exit(1);\\\"\"\n    ]\n\n    write_report [\n        label=\"Write Report\",\n        type=\"command\",\n        script=\"node -e \\\"const fs=require('fs'); const report=JSON.parse(fs.readFileSync('.workflow/fabro/daytona-environment-smoke.json','utf8')); const lines=['# Daytona Environment Smoke','', 'ok=' + report.ok, '', '## Tools', ...report.checks.map((check)=>'- ' + check.cmd + ' status=' + check.status + (check.stdout ? ' output=' + check.stdout.split('\\\\n')[0] : '')), '', '## Env', ...Object.entries(report.env).map(([key,value])=>'- ' + key + '=' + value)]; fs.writeFileSync('.workflow/fabro/daytona-environment-smoke.md', lines.join('\\\\n')+'\\\\n'); console.log(lines.join('\\\\n')); if(!report.ok) process.exit(1);\\\"\"\n    ]\n\n    fail_environment [\n        label=\"Fail Environment\",\n        type=\"command\",\n        script=\"node -e \\\"const fs=require('fs'); const body=fs.existsSync('.workflow/fabro/daytona-environment-smoke.json') ? fs.readFileSync('.workflow/fabro/daytona-environment-smoke.json','utf8') : '{}'; console.error(body); process.exit(1);\\\"\"\n    ]\n\n    start -> check_environment\n    check_environment -> write_report\n    write_report -> exit [condition=\"outcome=succeeded\"]\n    write_report -> fail_environment [label=\"Fail\"]\n}\n",
+    "workflow_slug": "daytona-environment-smoke",
+    "source_directory": "/Users/timlife/Documents/claude code/maestro-os",
+    "provenance": {
+      "server": {
+        "version": "0.231.0-nightly.1"
+      },
+      "client": {
+        "user_agent": "fabro-cli/0.231.0-nightly.1",
+        "name": "fabro-cli",
+        "version": "0.231.0-nightly.1"
+      },
+      "subject": {
+        "kind": "user",
+        "identity": {
+          "issuer": "fabro:dev",
+          "subject": "dev"
+        },
+        "login": "dev",
+        "auth_method": "dev_token"
+      }
+    },
+    "manifest_blob": "9f06f4286481e3ca7a4456efe15b0608f53b6d1d777dcf1b24e844e965d2d193",
+    "definition_blob": "e4b55d7799cd8a42d070ffdb79310b88ae62f907294a96f13df2b4e45d0ae2fa",
+    "git": {
+      "origin_url": "https://github.com/kimprobably/maestro-os",
+      "branch": "main",
+      "sha": "c99e79519c33d8055c30461bacd0b400da4691a7",
+      "dirty": "dirty",
+      "push_outcome": {
+        "type": "not_attempted"
+      }
+    }
+  },
+  "web_url": "http://127.0.0.1:32276/runs/01KRGN9SJX8VQN58BY5HWHY179",
+  "start": null,
+  "status": {
+    "kind": "starting"
+  },
+  "status_updated_at": "2026-05-13T12:34:32.711744Z",
+  "last_event_at": "2026-05-13T12:34:33.950563Z",
+  "pending_control": null,
+  "checkpoints": [],
+  "conclusion": null,
+  "sandbox": {
+    "provider": "daytona",
+    "image": "buildpack-deps:noble",
+    "snapshot": "maestro-code-factory-v3",
+    "runtime": {
+      "id": "fabro-01KRGN9SJX8VQN58BY5HWHY179",
+      "working_directory": "/home/daytona/workspace",
+      "repo_cloned": true,
+      "clone_origin_url": "https://github.com/kimprobably/maestro-os",
+      "clone_branch": "main"
+    }
+  },
+  "pull_request": null,
+  "superseded_by": null,
+  "pending_interviews": {},
+  "stages": {}
+}
