@@ -7,8 +7,7 @@ function argValue(name, fallback) {
   const index = process.argv.indexOf(name);
   if (index === -1) return fallback;
   const value = process.argv[index + 1];
-  if (!value || value.startsWith("--"))
-    throw new Error("Missing value for " + name);
+  if (!value || value.startsWith("--")) throw new Error("Missing value for " + name);
   return value;
 }
 
@@ -23,43 +22,21 @@ const allowFallback = argBool("--allow-fallback", true);
 mkdirSync(".workflow/consumer-radar", { recursive: true });
 
 function writeReport(report) {
-  for (const file of [
-    ".workflow/consumer-radar/qlty-report.json",
-    "reports/consumer-radar/quality/qlty-report.json",
-  ]) {
+  for (const file of [".workflow/consumer-radar/qlty-report.json", "reports/consumer-radar/quality/qlty-report.json"]) {
     mkdirSync(dirname(file), { recursive: true });
     writeFileSync(file, JSON.stringify(report, null, 2) + "\n");
   }
 }
 
 function run(cmd) {
-  return spawnSync("sh", ["-lc", cmd], {
-    cwd: appDir,
-    encoding: "utf8",
-    timeout: 180000,
-  });
+  return spawnSync("sh", ["-lc", cmd], { cwd: appDir, encoding: "utf8", timeout: 180000 });
 }
 
-let available =
-  spawnSync("sh", ["-lc", "command -v qlty >/dev/null 2>&1"], {
-    encoding: "utf8",
-  }).status === 0;
+let available = spawnSync("sh", ["-lc", "command -v qlty >/dev/null 2>&1"], { encoding: "utf8" }).status === 0;
 let install = null;
 if (!available) {
-  install = spawnSync(
-    "sh",
-    ["-lc", "curl -fsSL https://qlty.sh | sh >/tmp/qlty-install.log 2>&1"],
-    { encoding: "utf8", timeout: 180000 },
-  );
-  available =
-    spawnSync(
-      "sh",
-      [
-        "-lc",
-        "export PATH=$HOME/.qlty/bin:$PATH; command -v qlty >/dev/null 2>&1",
-      ],
-      { encoding: "utf8" },
-    ).status === 0;
+  install = spawnSync("sh", ["-lc", "curl -fsSL https://qlty.sh | sh >/tmp/qlty-install.log 2>&1"], { encoding: "utf8", timeout: 180000 });
+  available = spawnSync("sh", ["-lc", "export PATH=$HOME/.qlty/bin:$PATH; command -v qlty >/dev/null 2>&1"], { encoding: "utf8" }).status === 0;
 }
 
 let check = null;
@@ -67,9 +44,7 @@ let fmt = null;
 if (available) {
   const strictMode = realMode && !allowFallback;
   if (strictMode) {
-    fmt = run(
-      "export PATH=$HOME/.qlty/bin:$PATH; qlty fmt --all --no-progress --no-upgrade-check",
-    );
+    fmt = run("export PATH=$HOME/.qlty/bin:$PATH; qlty fmt --all --no-progress --no-upgrade-check");
   }
   const checkCommand = strictMode
     ? "export PATH=$HOME/.qlty/bin:$PATH; qlty check --all --no-progress --summary --no-upgrade-check"
@@ -80,10 +55,8 @@ if (available) {
 const hardFailures = [];
 if (realMode && !allowFallback) {
   if (!available) hardFailures.push("Qlty unavailable in real mode");
-  if (fmt && fmt.status !== 0)
-    hardFailures.push("Qlty formatter failed in real mode");
-  if (check && check.status !== 0)
-    hardFailures.push("Qlty check command failed in real mode");
+  if (fmt && fmt.status !== 0) hardFailures.push("Qlty formatter failed in real mode");
+  if (check && check.status !== 0) hardFailures.push("Qlty check command failed in real mode");
 }
 const report = {
   ok: hardFailures.length === 0,
@@ -95,9 +68,7 @@ const report = {
   check_status: check ? check.status : null,
   hard_failures: hardFailures,
   stdout: [fmt?.stdout, check?.stdout].filter(Boolean).join("\n").slice(-5000),
-  stderr:
-    [fmt?.stderr, check?.stderr].filter(Boolean).join("\n").slice(-5000) ||
-    "qlty unavailable; native checks remain the blocking gate",
+  stderr: [fmt?.stderr, check?.stderr].filter(Boolean).join("\n").slice(-5000) || "qlty unavailable; native checks remain the blocking gate"
 };
 writeReport(report);
 console.log(JSON.stringify(report, null, 2));
