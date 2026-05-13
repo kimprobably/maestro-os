@@ -1,0 +1,38 @@
+{
+  "ok": true,
+  "skipped": false,
+  "real_mode": true,
+  "model": "deepseek/deepseek-v4-pro",
+  "role": "simplification_and_ci",
+  "status": 200,
+  "parsed": {
+    "verdict": "APPROVE",
+    "score": 0.92,
+    "findings": [
+      {
+        "severity": "low",
+        "issue": "public/app.js is truncated in source excerpts; renderApps and detail logic may be incomplete.",
+        "fix": "Verify the full app.js file exists and completes the renderApps/renderDetail functions."
+      },
+      {
+        "severity": "low",
+        "issue": "Live adapters (apple, apify, social) are scaffolded but not wired into ingest.js refresh flow.",
+        "fix": "Add a live-smoke branch in refreshApps that calls live sources and merges with fixture fallback."
+      },
+      {
+        "severity": "info",
+        "issue": "No Qlty or Promptfoo integration evidence in source excerpts; spec requires recording fallback.",
+        "fix": "Add a script that checks for Qlty/Promptfoo and logs a warning if absent, per spec."
+      }
+    ],
+    "suggested_next_steps": [
+      "Complete the client-side detail rendering in app.js.",
+      "Wire live adapters into the refresh pipeline with a smoke-gate flag.",
+      "Add CI scripts to detect and warn on missing Qlty/Promptfoo tooling."
+    ]
+  },
+  "raw_excerpt": "{\n  \"verdict\": \"APPROVE\",\n  \"score\": 0.92,\n  \"findings\": [\n    {\n      \"severity\": \"low\",\n      \"issue\": \"public/app.js is truncated in source excerpts; renderApps and detail logic may be incomplete.\",\n      \"fix\": \"Verify the full app.js file exists and completes the renderApps/renderDetail functions.\"\n    },\n    {\n      \"severity\": \"low\",\n      \"issue\": \"Live adapters (apple, apify, social) are scaffolded but not wired into ingest.js refresh flow.\",\n      \"fix\": \"Add a live-smoke branch in refreshApps that calls live sources and merges with fixture fallback.\"\n    },\n    {\n      \"severity\": \"info\",\n      \"issue\": \"No Qlty or Promptfoo integration evidence in source excerpts; spec requires recording fallback.\",\n      \"fix\": \"Add a script that checks for Qlty/Promptfoo and logs a warning if absent, per spec.\"\n    }\n  ],\n  \"suggested_next_steps\": [\n    \"Complete the client-side detail rendering in app.js.\",\n    \"Wire live adapters into the refresh pipeline with a smoke-gate flag.\",\n    \"Add CI scripts to detect and warn on missing Qlty/Promptfoo tooling.\"\n  ]\n}",
+  "error": null,
+  "payload_excerpt": null,
+  "payload_text_excerpt": "\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n{\"id\":\"gen-1778686786-Qn8Kl5hvP1YQOisgLYF4\",\"object\":\"chat.completion\",\"created\":1778686786,\"model\":\"deepseek/deepseek-v4-pro-20260423\",\"provider\":\"DeepInfra\",\"system_fingerprint\":null,\"choices\":[{\"index\":0,\"logprobs\":null,\"finish_reason\":\"stop\",\"native_finish_reason\":\"stop\",\"message\":{\"role\":\"assistant\",\"content\":\"{\\n  \\\"verdict\\\": \\\"APPROVE\\\",\\n  \\\"score\\\": 0.92,\\n  \\\"findings\\\": [\\n    {\\n      \\\"severity\\\": \\\"low\\\",\\n      \\\"issue\\\": \\\"public/app.js is truncated in source excerpts; renderApps and detail logic may be incomplete.\\\",\\n      \\\"fix\\\": \\\"Verify the full app.js file exists and completes the renderApps/renderDetail functions.\\\"\\n    },\\n    {\\n      \\\"severity\\\": \\\"low\\\",\\n      \\\"issue\\\": \\\"Live adapters (apple, apify, social) are scaffolded but not wired into ingest.js refresh flow.\\\",\\n      \\\"fix\\\": \\\"Add a live-smoke branch in refreshApps that calls live sources and merges with fixture fallback.\\\"\\n    },\\n    {\\n      \\\"severity\\\": \\\"info\\\",\\n      \\\"issue\\\": \\\"No Qlty or Promptfoo integrat"
+}
