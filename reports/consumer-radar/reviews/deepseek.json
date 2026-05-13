@@ -6,31 +6,64 @@
   "role": "simplification_and_ci",
   "status": 200,
   "parsed": {
-    "verdict": "APPROVE",
-    "score": 0.82,
+    "verdict": "REVISE",
+    "score": 0.35,
     "findings": [
       {
-        "severity": "low",
-        "issue": "Missing recorded warning for Spec Kitty CLI absence, as prompted by the spec governance requirements.",
-        "fix": "Add a check in the workflow for the spec-kitty binary and emit a warning log if it is not found, maintaining compliance with the spec's fallback requirement."
+        "severity": "critical",
+        "issue": "No Fabro workflow file (fabro.yaml / fabro.json / .fabro/) is present in the generated app. The spec requires Fabro as the runtime and that the workflow runs in Daytona repository-relative. Build and execution are not orchestrated.",
+        "fix": "Generate a Fabro workflow definition with steps for install, lint, test, build, and artifact collection. Ensure all paths are repository-relative."
+      },
+      {
+        "severity": "critical",
+        "issue": "No Apify actor configuration or runner integration found. The spec requires Apify adapters with configurable actor IDs, fixtured fallback, and live smoke checks. Generated app only contains static fixture JSON.",
+        "fix": "Implement an Apify adapter module that can call Apple search/reviews and social scrapers, with environment variable or config-driven actor IDs, and a fallback to fixture data when Apify is unavailable or offline."
+      },
+      {
+        "severity": "critical",
+        "issue": "Missing /api/refresh endpoint and associated scoring engine. The spec requires POST /api/refresh to trigger data refresh, recalculating scores with acceleration, review velocity, social velocity, and review pain density.",
+        "fix": "Add the refresh endpoint, wire it to data adapters, and implement the scoring algorithm as specified: prioritize acceleration, review pain density, social velocity, and freshness penalties."
+      },
+      {
+        "severity": "critical",
+        "issue": "No multi-model review fanout implemented. Spec requires using OpenRouter for parallel model review (Kimi, Qwen, DeepSeek) with expensive models for scaffolding and cheap models for generation. No code found for this.",
+        "fix": "Create a review adapter that calls OpenRouter with the specified models, separates scaffolding vs. generation calls, and records consensus output."
+      },
+      {
+        "severity": "high",
+        "issue": "App detail view missing social strategy, feature requests, and suggested investigation angles. Current detail endpoint returns only raw fixture data without these derived fields.",
+        "fix": "Enhance the app detail endpoint to compute and expose social strategy analysis, aggregated feature requests from reviews, and investigation angles based on gap analysis."
+      },
+      {
+        "severity": "high",
+        "issue": "No CI/CD gates implemented: no Qlty checks, Promptfoo eval, or fallback eval. No artifact validator present. Spec requires these as gates.",
+        "fix": "Add a CI script that runs node --check, native tests, an artifact validator, attempts Qlty (warn if missing), and runs Promptfoo or a deterministic fallback eval."
+      },
+      {
+        "severity": "medium",
+        "issue": "Sorting and scoring on dashboard are not aligned with spec: fixtures are static and no growth-based scoring or week-over-week acceleration is computed.",
+        "fix": "Refactor dashboard API to calculate growth score, social deltas, review deltas, and opportunity score dynamically from the data, with proper sorting."
+      },
+      {
+        "severity": "medium",
+        "issue": "No smoke/live tests exist. Spec allows fixture data but requires live-source smoke checks. Only static data is present.",
+        "fix": "Add optional live-data smoke test that hits Apple RSS/iTunes endpoint with a small query, using a timeout and fallback, just to verify connectivity."
       },
       {
         "severity": "low",
-        "issue": "No deterministic fallback eval recorded when Promptfoo was unavailable.",
-        "fix": "Implement a placeholder eval step that outputs a clearly marked 'deterministic_fallback_eval_passed' artifact, ensuring the workflow records the fallback as mandated."
-      },
-      {
-        "severity": "low",
-        "issue": "Verification section lacks explicit documentation of artifact validator output or parallel model review consensus.",
-        "fix": "Strengthen the workflow runner or documentation to clearly capture and assert consensus results alongside artifact validation output in CI logs."
+        "issue": "No Spec Kitty integration or recorded warning when CLI absent. Spec mandates this.",
+        "fix": "Add a script or pre-check step that attempts to run spec-kitty, captures any absence warning, and logs it without blocking."
       }
     ],
     "suggested_next_steps": [
-      "Integrate the missing CLI and eval fallback warnings into the workflow to fully satisfy spec governance.",
-      "Expand smoke-check to validate live-source data retrieval with fixture fallback, not just offline-only validation.",
-      "Add a lightweight dashboard UI with sortable cards for the next iteration to validate frontend integration."
+      "Scaffold Fabro workflow definition as top priority to satisfy runtime requirement.",
+      "Implement core adapters (Apify, Apple RSS, OpenRouter) with configurable IDs and fixture fallback.",
+      "Add /api/refresh endpoint with complete scoring engine.",
+      "Enrich app detail view with social strategy, feature requests, and investigation angles.",
+      "Set up CI pipeline with native checks, artifact validator, Qlty, and Promptfoo/fallback.",
+      "Wire smoke tests and Spec Kitty presence check."
     ]
   },
-  "raw_excerpt": "{\n  \"verdict\": \"APPROVE\",\n  \"score\": 0.82,\n  \"findings\": [\n    {\n      \"severity\": \"low\",\n      \"issue\": \"Missing recorded warning for Spec Kitty CLI absence, as prompted by the spec governance requirements.\",\n      \"fix\": \"Add a check in the workflow for the spec-kitty binary and emit a warning log if it is not found, maintaining compliance with the spec's fallback requirement.\"\n    },\n    {\n      \"severity\": \"low\",\n      \"issue\": \"No deterministic fallback eval recorded when Promptfoo was unavailable.\",\n      \"fix\": \"Implement a placeholder eval step that outputs a clearly marked 'deterministic_fallback_eval_passed' artifact, ensuring the workflow records the fallback as mandated.\"\n    },\n    {\n      \"severity\": \"low\",\n      \"issue\": \"Verification section lacks explicit documentation of ",
+  "raw_excerpt": "{\n  \"verdict\": \"REVISE\",\n  \"score\": 0.35,\n  \"findings\": [\n    {\n      \"severity\": \"critical\",\n      \"issue\": \"No Fabro workflow file (fabro.yaml / fabro.json / .fabro/) is present in the generated app. The spec requires Fabro as the runtime and that the workflow runs in Daytona repository-relative. Build and execution are not orchestrated.\",\n      \"fix\": \"Generate a Fabro workflow definition with steps for install, lint, test, build, and artifact collection. Ensure all paths are repository-relative.\"\n    },\n    {\n      \"severity\": \"critical\",\n      \"issue\": \"No Apify actor configuration or runner integration found. The spec requires Apify adapters with configurable actor IDs, fixtured fallback, and live smoke checks. Generated app only contains static fixture JSON.\",\n      \"fix\": \"Implemen",
   "error": null
 }
