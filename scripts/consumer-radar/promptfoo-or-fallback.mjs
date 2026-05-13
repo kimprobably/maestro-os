@@ -25,6 +25,11 @@ let promptfooResult = null;
 if (promptfoo) {
   promptfooResult = spawnSync("sh", ["-lc", "npx -y promptfoo@latest eval -c evals/consumer-app-radar-quality.yaml --no-progress-bar"], {
     encoding: "utf8",
+    env: {
+      ...process.env,
+      OPENAI_API_KEY: process.env.OPENAI_API_KEY || process.env.OPENROUTER_API_KEY || "",
+      OPENAI_BASE_URL: process.env.OPENAI_BASE_URL || "https://openrouter.ai/api/v1"
+    },
     timeout: 240000
   });
 }
