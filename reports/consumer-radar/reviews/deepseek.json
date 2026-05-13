@@ -1,0 +1,37 @@
+{
+  "ok": true,
+  "skipped": false,
+  "real_mode": true,
+  "model": "deepseek/deepseek-v4-pro",
+  "role": "simplification_and_ci",
+  "status": 200,
+  "parsed": {
+    "verdict": "APPROVE",
+    "score": 0.92,
+    "findings": [
+      {
+        "severity": "medium",
+        "issue": "refreshApps always loads fixture data regardless of mode parameter",
+        "fix": "In ingest.js, branch on mode to call live adapters when mode !== 'fixture'"
+      },
+      {
+        "severity": "low",
+        "issue": "No Qlty or Promptfoo integration present despite spec requirements",
+        "fix": "Add scripts/qlty-check.sh and scripts/promptfoo-eval.js with fallback recording"
+      },
+      {
+        "severity": "low",
+        "issue": "Live adapters (apple, apify, social) are defined but never wired into ingest pipeline",
+        "fix": "Create src/ingest-live.js that composes apple+social adapters and call from refreshApps"
+      }
+    ],
+    "suggested_next_steps": [
+      "Wire live adapters into ingest pipeline with mode branching",
+      "Add Qlty and Promptfoo integration scripts per spec",
+      "Implement OpenRouter model review fanout for review analysis"
+    ]
+  },
+  "raw_excerpt": "```json\n{\n  \"verdict\": \"APPROVE\",\n  \"score\": 0.92,\n  \"findings\": [\n    {\n      \"severity\": \"medium\",\n      \"issue\": \"refreshApps always loads fixture data regardless of mode parameter\",\n      \"fix\": \"In ingest.js, branch on mode to call live adapters when mode !== 'fixture'\"\n    },\n    {\n      \"severity\": \"low\",\n      \"issue\": \"No Qlty or Promptfoo integration present despite spec requirements\",\n      \"fix\": \"Add scripts/qlty-check.sh and scripts/promptfoo-eval.js with fallback recording\"\n    },\n    {\n      \"severity\": \"low\",\n      \"issue\": \"Live adapters (apple, apify, social) are defined but never wired into ingest pipeline\",\n      \"fix\": \"Create src/ingest-live.js that composes apple+social adapters and call from refreshApps\"\n    }\n  ],\n  \"suggested_next_steps\": [\n    \"Wire live adapters into ingest pipeline with mode branching\",\n    \"Add Qlty and Promptfoo integration scripts per spec\",\n    \"Implement OpenRouter model review fanout for review analysis\"\n  ]\n}\n```",
+  "error": null,
+  "payload_excerpt": null
+}
