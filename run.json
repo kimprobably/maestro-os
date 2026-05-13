@@ -1758,7 +1758,7 @@
     "kind": "running"
   },
   "status_updated_at": "2026-05-13T18:39:09.481745407Z",
-  "last_event_at": "2026-05-13T19:05:25.910252614Z",
+  "last_event_at": "2026-05-13T19:05:29.177129860Z",
   "pending_control": null,
   "checkpoints": [
     {
@@ -9918,9 +9918,9 @@
       }
     },
     {
-      "seq": 0,
+      "seq": 904,
       "checkpoint": {
-        "timestamp": "2026-05-13T19:05:26.078137233Z",
+        "timestamp": "2026-05-13T19:05:29.176499545Z",
         "current_node": "publish_handoff",
         "completed_nodes": [
           "start",
@@ -9955,72 +9955,7 @@
         ],
         "node_retries": {},
         "context_values": {
-          "internal.retry_count.materialize_enhancement_workflow": 0,
-          "thread.promptfoo_workflow_quality.current_node": "publish_handoff",
-          "thread.ensure_architecture_candidates.current_node": "architecture_eval_contract",
-          "response.simplification_plan": "The simplification plan has been written to `.workflow/enhancement-discovery/simplification-plan.md` (151 lines). Here's a summary of the five simplification actions:\n\n| # | Action | Nodes removed | Impact |\n|---|--------|--------------|--------|\n| 1 | Remove `plan_eval` (self-referential contract eval on internal plans) | `plan_eval` | −1 node, −1 retry loop |\n| 2 | Remove `live_source_preflight`, fold APIFY_TOKEN check into `live_data_gate` | `live_source_preflight` | −1 node, unified token+data gate |\n| 3 | Collapse plan fanout (`plan_live_sources` + `plan_product_surface` → single `plan_implementation`) | `implementation_plan_fanout`, `plan_live_sources`, `plan_product_surface`, `plan_join` | −4 nodes, −1 prompt |\n| 4 | Remove `prepare_review_reports` (redundant mkdir, races with review nodes) | `prepare_review_reports` | −1 node |\n| 5 | Simplify `review_deepseek` fallback chain (2-model → single model) | — | −0 nodes, cleaner config |\n\n**Result**: 22 nodes → ~16 nodes, 35 edges → ~25 edges, zero goal gates weakened, all acceptance thresholds preserved. The plan also identifies the missing `assert-live-enrichment.mjs` script as a pre-simplification fix.",
-          "internal.retry_count.workflow_join": 0,
-          "internal.retry_count.simplification_plan": 0,
-          "internal.retry_count.architecture_fanout": 0,
-          "response.spec_eval_consensus": "The spec consensus is written and complete. Here's a summary:\n\n**Selected spec**: `fallback-data-truth.md` — scored 1.00 (6/6) against the enhancement-discovery rubric, +0.22 above the 0.78 baseline. All three fallback candidates scored perfectly; `data-truth` was selected as the evaluator's choice.\n\n**Five acceptance gates** are locked in:\n1. **growth-evidence-provenance** — live vs. fixture disclosure with confidence impact\n2. **visible-review-samples** — App Store reviews surfaced per opportunity\n3. **emerging-not-biggest-ranking** — velocity-based ranking excluding category leaders\n4. **visible-example-content** — social content examples with source provenance\n5. **add-app-research-seed** — add/research more apps via live sources\n\n**Non-cheating requirements** are explicit: real mode must fail without `APIFY_TOKEN` when fallback is disallowed, fixture-backed rows need visual disclosure, and all evidence must carry source provenance.\n\n**VERDICT: APPROVED** — all gates pass. Ready for the architecture stage.",
-          "internal.retry_count.final_eval_fanout": 0,
-          "parallel.branch_count": 2,
-          "thread.spec_fanout.current_node": "spec_join",
-          "response.workflow_eval_consensus": "`.workflow/enhancement-discovery/selected-workflow-design.md` has been written (209 lines). It covers:\n\n- **Fanout & retry**: 2-way (architecture/workflow) and 3-way (spec) fanout with `wait_all` join policy, retry targets with self-loops, max 2 retries, fallback generator for branch failures.\n- **Promptfoo quality gate**: `promptfoo-workflow-quality.mjs` attempts Promptfoo eval, falls back to deterministic checks (contract evals present, dataset lineage, baseline delta, validation passed).\n- **Compat child validation**: `validate-enhancement-discovery.mjs` checks 17 parent markers + 8 child markers; `fabro-validate-compat.mjs` validates DOT syntax.\n- **Child workflow execution plan**: 8-phase plan (preflight → plan → implement → verify → simplify → quality → review → handoff), with explicit stage types, retry targets, and non-cheating failure semantics.\n- **Simplification**: ≤10 new files, ≤200 line orchestrator, ≤30 line interface, ≤100 line evidence store, gate-preservation rule enforced by `review_deepseek`.\n\nVERDICT: APPROVED",
-          "thread.ensure_spec_candidates.current_node": "spec_eval_contract",
-          "internal.retry_count.bootstrap": 0,
-          "failure_signature": "",
-          "parallel.fan_in.best_head_sha": "b8ed0eb1c7183c8f65c3b289d4f57be108459819",
-          "thread.ensure_workflow_candidates.current_node": "workflow_eval_contract",
-          "internal.retry_count.capability_audit": 0,
-          "thread.capability_audit.current_node": "spec_fanout",
-          "internal.retry_count.publish_handoff": 0,
-          "internal.retry_count.final_eval_join": 0,
-          "response.final_eval_consensus": "The final eval consensus document has been written to `.workflow/enhancement-discovery/final-eval-consensus.md`.\n\n**VERDICT: APPROVED**\n\nAll seven rubric dimensions pass:\n\n| Dimension | Assessment |\n|-----------|------------|\n| **Intent fidelity** | All 5 acceptance requirements mapped to spec, architecture, and workflow features |\n| **Non-cheating** | Real-mode fail-fast, fixture disclosure, source provenance, liveScraped gating all enforced |\n| **Test-driven** | 9 deterministic gates: contract tests, native checks, live data minimums, qlty + promptfoo |\n| **Eval-driven** | Contract evals (all 1.00 vs 0.78 baseline, +0.22 delta), LLM consensus, promptfoo, multi-model review |\n| **Architecture quality** | Clear boundaries: adapter interface + registry + pipeline + evidence store, ≤10 new files |\n| **Workflow quality** | 22 nodes, 35 edges, fanout-join, retry paths, 9 goal gates, handoff artifact |\n| **Simplification** | Identified 5 concrete actions, all gates preserved, node count 22→16 with no coverage loss |\n\nThe single failed fanout branch (`final_eval_simplification`) does not block approval — the best head (`b8ed0eb`, `final_eval_workflow_quality`) succeeds with all quality dimensions covered.",
-          "graph.default_max_retries": "2",
-          "internal.run_id": "01KRHA5AE73WGNFFD7PGJTJ53X",
-          "internal.node_visit_count": 1,
-          "graph.outputs": "capability_audit, selected_spec, selected_architecture, generated_enhancement_workflow, eval_reports, simplification_plan, final_handoff",
-          "thread.bootstrap.current_node": "parse_requests",
-          "thread.architecture_eval_consensus.current_node": "workflow_fanout",
-          "internal.work_dir": "/home/daytona/workspace",
-          "graph.retry_target": "spec_fanout",
-          "graph.inputs": "app_dir, feedback_path, target_adapter, generated_workflow, generated_run_config, real_mode, allow_fixture_fallback, execute_generated_workflow, minimum_spec_candidates, minimum_architecture_candidates, minimum_workflow_candidates, minimum_eval_score, max_eval_regression, minimum_active_reviews, require_simplification",
-          "response.spec_eval_model": "**Spec consensus complete.** The deterministic contract evaluation passed all gates:\n\n- **3/3 candidates present** (meets minimum of 3)\n- **All scored 1.0** (6/6 on rubric: acceptance, non-cheating, test-driven, eval-driven, data source, simplification)\n- **Baseline regression check: +0.22 delta** (well within max 0.05 regression tolerance)\n- **Selected**: `fallback-data-truth.md`\n\nArtifact written to `.workflow/enhancement-discovery/selected-spec.md`.\n\nVERDICT: APPROVED",
-          "thread.workflow_fanout.current_node": "workflow_join",
-          "internal.retry_count.validate_enhancement_workflow": 0,
-          "thread.eval.current_node": "final_eval_consensus",
-          "thread.spec_eval_consensus.current_node": "architecture_fanout",
-          "internal.retry_count.ensure_architecture_candidates": 0,
-          "thread.workflow_eval_consensus.current_node": "materialize_enhancement_workflow",
-          "internal.thread_id": "promptfoo_workflow_quality",
-          "internal.retry_count.start": 0,
-          "thread.architecture_fanout.current_node": "architecture_join",
-          "parallel.fan_in.best_outcome": "succeeded",
-          "internal.retry_count.spec_eval_model": 0,
-          "internal.retry_count.spec_join": 0,
-          "graph.model_stylesheet": "\n            *             { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: low; }\n            .spec          { provider: openrouter; model: google/gemini-3.1-pro-preview; reasoning_effort: high; }\n            .architecture  { provider: openrouter; model: qwen/qwen3.6-plus; reasoning_effort: high; }\n            .workflow      { provider: openrouter; model: moonshotai/kimi-k2.6; reasoning_effort: high; }\n            .eval          { provider: openrouter; model: deepseek/deepseek-v4-pro; reasoning_effort: high; }\n            .cheap         { provider: openrouter; model: deepseek/deepseek-v4-flash; reasoning_effort: low; }\n        ",
-          "outcome": "succeeded",
-          "internal.retry_count.spec_eval_contract": 0,
-          "internal.fidelity": "compact",
-          "graph.fallback_retry_target": "workflow_fanout",
-          "graph.rankdir": "LR",
-          "command.output": "blob://sha256/ef6cdce00fa0cf8eda9d9120f83d8200c78c544e41940c2dc236f3b47231efe5",
-          "thread.final_eval_consensus.current_node": "promptfoo_workflow_quality",
-          "internal.retry_count.promptfoo_workflow_quality": 0,
-          "internal.retry_count.architecture_eval_consensus": 0,
-          "graph.goal": "Use eval-driven development to discover the real Consumer Radar enhancement workflow required by product feedback",
-          "last_response": "The final eval consensus document has been written to `.workflow/enhancement-discovery/final-eval-consensus.md`.\n\n**VERDICT: APPROVED**\n\nAll seven rubric dimensions pass:\n\n| Dimension | Assessment |\n|",
-          "last_stage": "final_eval_consensus",
-          "internal.retry_count.workflow_eval_contract": 0,
-          "parallel.fan_in.best_id": "final_eval_workflow_quality",
           "internal.retry_count.run_generated_enhancement_workflow": 0,
-          "internal.retry_count.workflow_fanout": 0,
-          "internal.retry_count.parse_requests": 0,
-          "thread.spec_join.current_node": "ensure_spec_candidates",
-          "current_node": "publish_handoff",
-          "response.architecture_eval_consensus": "Architecture consensus written to `.workflow/enhancement-discovery/selected-architecture.md`.\n\n**Summary of the evaluation:**\n\n- The architecture contract eval (`architecture-contract.json`) registered **VERDICT: APPROVED** with the deterministic-marker-v1 judge.\n- The `fallback-smallest-surface.md` candidate scored 1.00 (6/6 rubrics) and was mechanically selected by the contract evaluator.\n- The substantive architecture is **`extensible-source-pipeline.md`** (Candidate B, sha `2a17cc8`, scored 0.83), which provides a comprehensive design: a Source Adapter interface, pipeline orchestrator, evidence store, ranking gate, and explicit non-cheating failure semantics. It was the only real model-authored candidate, as Candidate A failed.\n- Both candidates beat the 0.78 baseline (+0.22 delta, regression check PASS).\n- All seven rubric dimensions are addressed.\n\nVERDICT: APPROVED",
-          "thread.materialize_enhancement_workflow.current_node": "validate_enhancement_workflow",
           "parallel.results": [
             {
               "id": "final_eval_workflow_quality",
@@ -10033,177 +9968,90 @@
               "head_sha": "817c999da92f76c7a01ab8b046960249a1a03a9b"
             }
           ],
-          "thread.architecture_join.current_node": "ensure_architecture_candidates",
-          "internal.retry_count.spec_eval_consensus": 0,
-          "internal.retry_count.architecture_eval_contract": 0,
-          "internal.retry_count.ensure_workflow_candidates": 0,
-          "thread.validate_enhancement_workflow.current_node": "run_generated_enhancement_workflow",
-          "thread.final_eval_fanout.current_node": "final_eval_join",
-          "graph.persona": "eval-driven-workflow-builder",
-          "internal.retry_count.spec_fanout": 0,
+          "thread.final_eval_consensus.current_node": "promptfoo_workflow_quality",
+          "thread.spec_join.current_node": "ensure_spec_candidates",
+          "internal.retry_count.validate_enhancement_workflow": 0,
+          "thread.ensure_spec_candidates.current_node": "spec_eval_contract",
+          "internal.retry_count.materialize_enhancement_workflow": 0,
+          "internal.retry_count.final_eval_fanout": 0,
+          "internal.retry_count.workflow_join": 0,
+          "response.simplification_plan": "The simplification plan has been written to `.workflow/enhancement-discovery/simplification-plan.md` (151 lines). Here's a summary of the five simplification actions:\n\n| # | Action | Nodes removed | Impact |\n|---|--------|--------------|--------|\n| 1 | Remove `plan_eval` (self-referential contract eval on internal plans) | `plan_eval` | −1 node, −1 retry loop |\n| 2 | Remove `live_source_preflight`, fold APIFY_TOKEN check into `live_data_gate` | `live_source_preflight` | −1 node, unified token+data gate |\n| 3 | Collapse plan fanout (`plan_live_sources` + `plan_product_surface` → single `plan_implementation`) | `implementation_plan_fanout`, `plan_live_sources`, `plan_product_surface`, `plan_join` | −4 nodes, −1 prompt |\n| 4 | Remove `prepare_review_reports` (redundant mkdir, races with review nodes) | `prepare_review_reports` | −1 node |\n| 5 | Simplify `review_deepseek` fallback chain (2-model → single model) | — | −0 nodes, cleaner config |\n\n**Result**: 22 nodes → ~16 nodes, 35 edges → ~25 edges, zero goal gates weakened, all acceptance thresholds preserved. The plan also identifies the missing `assert-live-enrichment.mjs` script as a pre-simplification fix.",
+          "graph.goal": "Use eval-driven development to discover the real Consumer Radar enhancement workflow required by product feedback",
+          "internal.run_id": "01KRHA5AE73WGNFFD7PGJTJ53X",
           "internal.retry_count.final_eval_consensus": 0,
-          "internal.retry_count.architecture_join": 0,
-          "thread.simplification_plan.current_node": "final_eval_fanout",
-          "failure_class": "",
+          "response.architecture_eval_consensus": "Architecture consensus written to `.workflow/enhancement-discovery/selected-architecture.md`.\n\n**Summary of the evaluation:**\n\n- The architecture contract eval (`architecture-contract.json`) registered **VERDICT: APPROVED** with the deterministic-marker-v1 judge.\n- The `fallback-smallest-surface.md` candidate scored 1.00 (6/6 rubrics) and was mechanically selected by the contract evaluator.\n- The substantive architecture is **`extensible-source-pipeline.md`** (Candidate B, sha `2a17cc8`, scored 0.83), which provides a comprehensive design: a Source Adapter interface, pipeline orchestrator, evidence store, ranking gate, and explicit non-cheating failure semantics. It was the only real model-authored candidate, as Candidate A failed.\n- Both candidates beat the 0.78 baseline (+0.22 delta, regression check PASS).\n- All seven rubric dimensions are addressed.\n\nVERDICT: APPROVED",
+          "graph.outputs": "capability_audit, selected_spec, selected_architecture, generated_enhancement_workflow, eval_reports, simplification_plan, final_handoff",
+          "internal.retry_count.workflow_eval_consensus": 0,
           "thread.parse_requests.current_node": "capability_audit",
-          "internal.retry_count.ensure_spec_candidates": 0,
+          "thread.simplification_plan.current_node": "final_eval_fanout",
+          "internal.retry_count.final_eval_join": 0,
+          "thread.ensure_workflow_candidates.current_node": "workflow_eval_contract",
+          "response.spec_eval_model": "**Spec consensus complete.** The deterministic contract evaluation passed all gates:\n\n- **3/3 candidates present** (meets minimum of 3)\n- **All scored 1.0** (6/6 on rubric: acceptance, non-cheating, test-driven, eval-driven, data source, simplification)\n- **Baseline regression check: +0.22 delta** (well within max 0.05 regression tolerance)\n- **Selected**: `fallback-data-truth.md`\n\nArtifact written to `.workflow/enhancement-discovery/selected-spec.md`.\n\nVERDICT: APPROVED",
+          "thread.architecture_fanout.current_node": "architecture_join",
+          "graph.model_stylesheet": "\n            *             { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: low; }\n            .spec          { provider: openrouter; model: google/gemini-3.1-pro-preview; reasoning_effort: high; }\n            .architecture  { provider: openrouter; model: qwen/qwen3.6-plus; reasoning_effort: high; }\n            .workflow      { provider: openrouter; model: moonshotai/kimi-k2.6; reasoning_effort: high; }\n            .eval          { provider: openrouter; model: deepseek/deepseek-v4-pro; reasoning_effort: high; }\n            .cheap         { provider: openrouter; model: deepseek/deepseek-v4-flash; reasoning_effort: low; }\n        ",
+          "thread.capability_audit.current_node": "spec_fanout",
+          "internal.retry_count.architecture_eval_consensus": 0,
+          "internal.fidelity": "compact",
+          "internal.retry_count.parse_requests": 0,
+          "internal.thread_id": "promptfoo_workflow_quality",
+          "parallel.fan_in.best_head_sha": "b8ed0eb1c7183c8f65c3b289d4f57be108459819",
+          "internal.retry_count.architecture_join": 0,
+          "thread.architecture_join.current_node": "ensure_architecture_candidates",
+          "outcome": "succeeded",
+          "internal.retry_count.spec_join": 0,
+          "internal.retry_count.bootstrap": 0,
+          "graph.retry_target": "spec_fanout",
+          "thread.final_eval_fanout.current_node": "final_eval_join",
+          "thread.materialize_enhancement_workflow.current_node": "validate_enhancement_workflow",
+          "internal.retry_count.workflow_fanout": 0,
+          "internal.retry_count.architecture_eval_contract": 0,
+          "internal.retry_count.ensure_architecture_candidates": 0,
+          "internal.retry_count.simplification_plan": 0,
+          "failure_class": "",
+          "graph.fallback_retry_target": "workflow_fanout",
           "thread.start.current_node": "bootstrap",
-          "thread.workflow_join.current_node": "ensure_workflow_candidates",
-          "internal.retry_count.workflow_eval_consensus": 0
+          "thread.workflow_fanout.current_node": "workflow_join",
+          "parallel.fan_in.best_id": "final_eval_workflow_quality",
+          "parallel.fan_in.best_outcome": "succeeded",
+          "command.output": "blob://sha256/ef6cdce00fa0cf8eda9d9120f83d8200c78c544e41940c2dc236f3b47231efe5",
+          "graph.default_max_retries": "2",
+          "internal.retry_count.ensure_spec_candidates": 0,
+          "graph.inputs": "app_dir, feedback_path, target_adapter, generated_workflow, generated_run_config, real_mode, allow_fixture_fallback, execute_generated_workflow, minimum_spec_candidates, minimum_architecture_candidates, minimum_workflow_candidates, minimum_eval_score, max_eval_regression, minimum_active_reviews, require_simplification",
+          "thread.workflow_eval_consensus.current_node": "materialize_enhancement_workflow",
+          "current_node": "publish_handoff",
+          "internal.retry_count.ensure_workflow_candidates": 0,
+          "internal.retry_count.publish_handoff": 0,
+          "response.workflow_eval_consensus": "`.workflow/enhancement-discovery/selected-workflow-design.md` has been written (209 lines). It covers:\n\n- **Fanout & retry**: 2-way (architecture/workflow) and 3-way (spec) fanout with `wait_all` join policy, retry targets with self-loops, max 2 retries, fallback generator for branch failures.\n- **Promptfoo quality gate**: `promptfoo-workflow-quality.mjs` attempts Promptfoo eval, falls back to deterministic checks (contract evals present, dataset lineage, baseline delta, validation passed).\n- **Compat child validation**: `validate-enhancement-discovery.mjs` checks 17 parent markers + 8 child markers; `fabro-validate-compat.mjs` validates DOT syntax.\n- **Child workflow execution plan**: 8-phase plan (preflight → plan → implement → verify → simplify → quality → review → handoff), with explicit stage types, retry targets, and non-cheating failure semantics.\n- **Simplification**: ≤10 new files, ≤200 line orchestrator, ≤30 line interface, ≤100 line evidence store, gate-preservation rule enforced by `review_deepseek`.\n\nVERDICT: APPROVED",
+          "internal.retry_count.promptfoo_workflow_quality": 0,
+          "internal.retry_count.workflow_eval_contract": 0,
+          "graph.rankdir": "LR",
+          "thread.promptfoo_workflow_quality.current_node": "publish_handoff",
+          "thread.validate_enhancement_workflow.current_node": "run_generated_enhancement_workflow",
+          "internal.node_visit_count": 1,
+          "thread.eval.current_node": "final_eval_consensus",
+          "internal.retry_count.capability_audit": 0,
+          "response.final_eval_consensus": "The final eval consensus document has been written to `.workflow/enhancement-discovery/final-eval-consensus.md`.\n\n**VERDICT: APPROVED**\n\nAll seven rubric dimensions pass:\n\n| Dimension | Assessment |\n|-----------|------------|\n| **Intent fidelity** | All 5 acceptance requirements mapped to spec, architecture, and workflow features |\n| **Non-cheating** | Real-mode fail-fast, fixture disclosure, source provenance, liveScraped gating all enforced |\n| **Test-driven** | 9 deterministic gates: contract tests, native checks, live data minimums, qlty + promptfoo |\n| **Eval-driven** | Contract evals (all 1.00 vs 0.78 baseline, +0.22 delta), LLM consensus, promptfoo, multi-model review |\n| **Architecture quality** | Clear boundaries: adapter interface + registry + pipeline + evidence store, ≤10 new files |\n| **Workflow quality** | 22 nodes, 35 edges, fanout-join, retry paths, 9 goal gates, handoff artifact |\n| **Simplification** | Identified 5 concrete actions, all gates preserved, node count 22→16 with no coverage loss |\n\nThe single failed fanout branch (`final_eval_simplification`) does not block approval — the best head (`b8ed0eb`, `final_eval_workflow_quality`) succeeds with all quality dimensions covered.",
+          "thread.ensure_architecture_candidates.current_node": "architecture_eval_contract",
+          "internal.retry_count.spec_eval_contract": 0,
+          "graph.persona": "eval-driven-workflow-builder",
+          "failure_signature": "",
+          "thread.spec_fanout.current_node": "spec_join",
+          "internal.retry_count.spec_eval_model": 0,
+          "internal.retry_count.architecture_fanout": 0,
+          "internal.retry_count.spec_fanout": 0,
+          "thread.architecture_eval_consensus.current_node": "workflow_fanout",
+          "thread.spec_eval_consensus.current_node": "architecture_fanout",
+          "parallel.branch_count": 2,
+          "internal.retry_count.spec_eval_consensus": 0,
+          "last_stage": "final_eval_consensus",
+          "last_response": "The final eval consensus document has been written to `.workflow/enhancement-discovery/final-eval-consensus.md`.\n\n**VERDICT: APPROVED**\n\nAll seven rubric dimensions pass:\n\n| Dimension | Assessment |\n|",
+          "thread.bootstrap.current_node": "parse_requests",
+          "internal.retry_count.start": 0,
+          "internal.work_dir": "/home/daytona/workspace",
+          "response.spec_eval_consensus": "The spec consensus is written and complete. Here's a summary:\n\n**Selected spec**: `fallback-data-truth.md` — scored 1.00 (6/6) against the enhancement-discovery rubric, +0.22 above the 0.78 baseline. All three fallback candidates scored perfectly; `data-truth` was selected as the evaluator's choice.\n\n**Five acceptance gates** are locked in:\n1. **growth-evidence-provenance** — live vs. fixture disclosure with confidence impact\n2. **visible-review-samples** — App Store reviews surfaced per opportunity\n3. **emerging-not-biggest-ranking** — velocity-based ranking excluding category leaders\n4. **visible-example-content** — social content examples with source provenance\n5. **add-app-research-seed** — add/research more apps via live sources\n\n**Non-cheating requirements** are explicit: real mode must fail without `APIFY_TOKEN` when fallback is disallowed, fixture-backed rows need visual disclosure, and all evidence must carry source provenance.\n\n**VERDICT: APPROVED** — all gates pass. Ready for the architecture stage.",
+          "thread.workflow_join.current_node": "ensure_workflow_candidates"
         },
         "node_outcomes": {
-          "ensure_spec_candidates": {
-            "status": "succeeded",
-            "context_updates": {
-              "command.output": "blob://sha256/0495f05dcdeca796c9f80a4ceb603298c4d20efcd6687e039d410fa1c7cd4542"
-            },
-            "notes": "Script completed: node scripts/app-feedback/ensure-enhancement-candidates.mjs --stage spec --dir .workflow/enhancement-discovery/spec-candidates --minimum '3' --out .workflow/enhancement-discovery/evals/spec-candidate-ensure.json",
-            "usage": null
-          },
-          "ensure_architecture_candidates": {
-            "status": "succeeded",
-            "context_updates": {
-              "command.output": "blob://sha256/20ff116bc7f2aaf9d89ef146933059f15d4a21b15fdeb873f2023018e3fc9297"
-            },
-            "notes": "Script completed: node scripts/app-feedback/ensure-enhancement-candidates.mjs --stage architecture --dir .workflow/enhancement-discovery/architecture-candidates --minimum '2' --out .workflow/enhancement-discovery/evals/architecture-candidate-ensure.json",
-            "usage": null
-          },
-          "architecture_fanout": {
-            "status": "partially_succeeded",
-            "jump_to_node": "architecture_join",
-            "notes": "Parallel node dispatched 2 branches (1 succeeded, 1 failed)",
-            "usage": null
-          },
-          "workflow_join": {
-            "status": "failed",
-            "failure": {
-              "message": "all candidates failed",
-              "failure_class": "deterministic"
-            },
-            "usage": null
-          },
-          "publish_handoff": {
-            "status": "succeeded",
-            "context_updates": {
-              "command.output": "blob://sha256/ef6cdce00fa0cf8eda9d9120f83d8200c78c544e41940c2dc236f3b47231efe5"
-            },
-            "notes": "Script completed: node scripts/app-feedback/publish-enhancement-discovery-handoff.mjs --app-dir 'apps/generated-consumer-app-radar' --generated-workflow 'workflows/consumer-radar/live-enrichment.fabro' --out .workflow/enhancement-discovery/handoff.json",
-            "usage": null
-          },
-          "parse_requests": {
-            "status": "succeeded",
-            "context_updates": {
-              "command.output": "blob://sha256/b8ad9745eb032e1529021db56fb0316d1bbac9211156d215e74bdc779585d3f0"
-            },
-            "notes": "Script completed: node scripts/app-feedback/parse-feedback.mjs --feedback 'feedback/consumer-radar-product-feedback.md' --out .workflow/enhancement-discovery/request-analysis.json",
-            "usage": null
-          },
-          "spec_eval_contract": {
-            "status": "succeeded",
-            "context_updates": {
-              "command.output": "blob://sha256/a4d01002a3cb5e648546e96bc0b9276132c0aabbcbfee0281d9b8e0879ee1f22"
-            },
-            "notes": "Script completed: node scripts/app-feedback/evaluate-enhancement-artifact.mjs --stage spec --candidates .workflow/enhancement-discovery/spec-candidates --out .workflow/enhancement-discovery/evals/spec-contract.json --minimum-candidates '3' --minimum-eval-score '0.78' --dataset evals/workflow-quality/datasets/enhancement-discovery-golden.jsonl --dataset-version workflow-quality-v1 --prompt-version app-feedback-spec-candidates-v1 --rubric-version enhancement-discovery-spec-rubric-v1 --judge-model deterministic-marker-v1 --baseline evals/workflow-quality/baselines/enhancement-discovery-spec.json --max-regression '0.05'",
-            "usage": null
-          },
-          "simplification_plan": {
-            "status": "succeeded",
-            "context_updates": {
-              "last_stage": "simplification_plan",
-              "last_response": "The simplification plan has been written to `.workflow/enhancement-discovery/simplification-plan.md` (151 lines). Here's a summary of the five simplification actions:\n\n| # | Action | Nodes removed | I",
-              "response.simplification_plan": "The simplification plan has been written to `.workflow/enhancement-discovery/simplification-plan.md` (151 lines). Here's a summary of the five simplification actions:\n\n| # | Action | Nodes removed | Impact |\n|---|--------|--------------|--------|\n| 1 | Remove `plan_eval` (self-referential contract eval on internal plans) | `plan_eval` | −1 node, −1 retry loop |\n| 2 | Remove `live_source_preflight`, fold APIFY_TOKEN check into `live_data_gate` | `live_source_preflight` | −1 node, unified token+data gate |\n| 3 | Collapse plan fanout (`plan_live_sources` + `plan_product_surface` → single `plan_implementation`) | `implementation_plan_fanout`, `plan_live_sources`, `plan_product_surface`, `plan_join` | −4 nodes, −1 prompt |\n| 4 | Remove `prepare_review_reports` (redundant mkdir, races with review nodes) | `prepare_review_reports` | −1 node |\n| 5 | Simplify `review_deepseek` fallback chain (2-model → single model) | — | −0 nodes, cleaner config |\n\n**Result**: 22 nodes → ~16 nodes, 35 edges → ~25 edges, zero goal gates weakened, all acceptance thresholds preserved. The plan also identifies the missing `assert-live-enrichment.mjs` script as a pre-simplification fix."
-            },
-            "notes": "Stage completed: simplification_plan",
-            "usage": {
-              "input": {
-                "usage": {
-                  "model": {
-                    "provider": "openrouter",
-                    "model_id": "deepseek/deepseek-v4-pro"
-                  },
-                  "tokens": {
-                    "input_tokens": 282289,
-                    "output_tokens": 7689,
-                    "reasoning_tokens": 0,
-                    "cache_read_tokens": 0,
-                    "cache_write_tokens": 0
-                  }
-                },
-                "facts": {
-                  "provider": "open_router"
-                }
-              },
-              "total_usd_micros": 129484
-            },
-            "files_touched": [
-              "/home/daytona/workspace/.workflow/enhancement-discovery/simplification-plan.md"
-            ]
-          },
-          "promptfoo_workflow_quality": {
-            "status": "succeeded",
-            "context_updates": {
-              "command.output": "blob://sha256/34ee70b6b8a547596788963d60029719096d4230264f756510efc6021b3d6b1c"
-            },
-            "notes": "Script completed: node scripts/app-feedback/promptfoo-workflow-quality.mjs --config evals/workflow-quality/enhancement-discovery.yaml --out .workflow/enhancement-discovery/evals/promptfoo-workflow-quality.json --allow-fallback true",
-            "usage": null
-          },
-          "capability_audit": {
-            "status": "succeeded",
-            "context_updates": {
-              "command.output": "blob://sha256/2e78300898c34f783a2884184c50c33fefa4187fbe6f72d65e360ac55f308272"
-            },
-            "notes": "Script completed: node scripts/app-feedback/analyze-enhancement-capabilities.mjs --app-dir 'apps/generated-consumer-app-radar' --analysis .workflow/enhancement-discovery/request-analysis.json --target 'consumer-radar' --out .workflow/enhancement-discovery/capability-audit.json",
-            "usage": null
-          },
-          "final_eval_consensus": {
-            "status": "succeeded",
-            "context_updates": {
-              "last_response": "The final eval consensus document has been written to `.workflow/enhancement-discovery/final-eval-consensus.md`.\n\n**VERDICT: APPROVED**\n\nAll seven rubric dimensions pass:\n\n| Dimension | Assessment |\n|",
-              "last_stage": "final_eval_consensus",
-              "response.final_eval_consensus": "The final eval consensus document has been written to `.workflow/enhancement-discovery/final-eval-consensus.md`.\n\n**VERDICT: APPROVED**\n\nAll seven rubric dimensions pass:\n\n| Dimension | Assessment |\n|-----------|------------|\n| **Intent fidelity** | All 5 acceptance requirements mapped to spec, architecture, and workflow features |\n| **Non-cheating** | Real-mode fail-fast, fixture disclosure, source provenance, liveScraped gating all enforced |\n| **Test-driven** | 9 deterministic gates: contract tests, native checks, live data minimums, qlty + promptfoo |\n| **Eval-driven** | Contract evals (all 1.00 vs 0.78 baseline, +0.22 delta), LLM consensus, promptfoo, multi-model review |\n| **Architecture quality** | Clear boundaries: adapter interface + registry + pipeline + evidence store, ≤10 new files |\n| **Workflow quality** | 22 nodes, 35 edges, fanout-join, retry paths, 9 goal gates, handoff artifact |\n| **Simplification** | Identified 5 concrete actions, all gates preserved, node count 22→16 with no coverage loss |\n\nThe single failed fanout branch (`final_eval_simplification`) does not block approval — the best head (`b8ed0eb`, `final_eval_workflow_quality`) succeeds with all quality dimensions covered."
-            },
-            "notes": "Stage completed: final_eval_consensus",
-            "usage": {
-              "input": {
-                "usage": {
-                  "model": {
-                    "provider": "openrouter",
-                    "model_id": "deepseek/deepseek-v4-pro"
-                  },
-                  "tokens": {
-                    "input_tokens": 167233,
-                    "output_tokens": 5610,
-                    "reasoning_tokens": 0,
-                    "cache_read_tokens": 0,
-                    "cache_write_tokens": 0
-                  }
-                },
-                "facts": {
-                  "provider": "open_router"
-                }
-              },
-              "total_usd_micros": 77626
-            },
-            "files_touched": [
-              ".workflow/enhancement-discovery/final-eval-consensus.md"
-            ]
-          },
-          "materialize_enhancement_workflow": {
-            "status": "succeeded",
-            "context_updates": {
-              "command.output": "blob://sha256/d2cca07c3c5c4af765e5d4a8213c15c4ab9d71ffbe3a5abdbecf1b9ec6a443e4"
-            },
-            "notes": "Script completed: node scripts/app-feedback/materialize-enhancement-workflow.mjs --target 'consumer-radar' --app-dir 'apps/generated-consumer-app-radar' --workflow 'workflows/consumer-radar/live-enrichment.fabro' --run-config 'workflows/consumer-radar/live-enrichment.toml' --real-mode 'true' --allow-fixture-fallback 'false'",
-            "usage": null
-          },
-          "validate_enhancement_workflow": {
-            "status": "succeeded",
-            "context_updates": {
-              "command.output": "blob://sha256/858ed66eac3ce030a8d852cc5f2e950ead29eea30c9315821f114a07a719ea83"
-            },
-            "notes": "Script completed: node scripts/app-feedback/validate-enhancement-discovery.mjs --workflow workflows/app-feedback/discover-enhancement.fabro --generated-workflow 'workflows/consumer-radar/live-enrichment.fabro' --out .workflow/enhancement-discovery/generated-workflow-validation.json",
-            "usage": null
-          },
           "spec_eval_model": {
             "status": "succeeded",
             "context_updates": {
@@ -10237,80 +10085,12 @@
               "/home/daytona/workspace/.workflow/enhancement-discovery/selected-spec.md"
             ]
           },
-          "final_eval_fanout": {
-            "status": "partially_succeeded",
-            "jump_to_node": "final_eval_join",
-            "notes": "Parallel node dispatched 2 branches (1 succeeded, 1 failed)",
-            "usage": null
-          },
-          "bootstrap": {
+          "ensure_architecture_candidates": {
             "status": "succeeded",
             "context_updates": {
-              "command.output": "blob://sha256/17c1b04b31687cffbb38c881b0ef8a6627d35f81c1821b18657bfc69bf73029b"
+              "command.output": "blob://sha256/20ff116bc7f2aaf9d89ef146933059f15d4a21b15fdeb873f2023018e3fc9297"
             },
-            "notes": "Script completed: mkdir -p .workflow/enhancement-discovery/spec-candidates .workflow/enhancement-discovery/architecture-candidates .workflow/enhancement-discovery/workflow-candidates .workflow/enhancement-discovery/evals; test -f 'feedback/consumer-radar-product-feedback.md'; test -d 'apps/generated-consumer-app-radar'; echo eval_driven_development test_driven_development",
-            "usage": null
-          },
-          "workflow_eval_contract": {
-            "status": "succeeded",
-            "context_updates": {
-              "command.output": "blob://sha256/8492c414ae10b4efcf7336b77d3e72634ec6ddbebffe95683c695aa868006f13"
-            },
-            "notes": "Script completed: node scripts/app-feedback/evaluate-enhancement-artifact.mjs --stage workflow --candidates .workflow/enhancement-discovery/workflow-candidates --out .workflow/enhancement-discovery/evals/workflow-contract.json --minimum-candidates '2' --minimum-eval-score '0.78' --dataset evals/workflow-quality/datasets/enhancement-discovery-golden.jsonl --dataset-version workflow-quality-v1 --prompt-version app-feedback-workflow-candidates-v1 --rubric-version enhancement-discovery-workflow-rubric-v1 --judge-model deterministic-marker-v1 --baseline evals/workflow-quality/baselines/enhancement-discovery-workflow.json --max-regression '0.05'",
-            "usage": null
-          },
-          "start": {
-            "status": "succeeded",
-            "usage": null
-          },
-          "architecture_eval_contract": {
-            "status": "succeeded",
-            "context_updates": {
-              "command.output": "blob://sha256/2f886d79839eb4521bed01b625c5cee5d7aa528acd76c2ecdd0bf9baa527178c"
-            },
-            "notes": "Script completed: node scripts/app-feedback/evaluate-enhancement-artifact.mjs --stage architecture --candidates .workflow/enhancement-discovery/architecture-candidates --out .workflow/enhancement-discovery/evals/architecture-contract.json --minimum-candidates '2' --minimum-eval-score '0.78' --dataset evals/workflow-quality/datasets/enhancement-discovery-golden.jsonl --dataset-version workflow-quality-v1 --prompt-version app-feedback-architecture-candidates-v1 --rubric-version enhancement-discovery-architecture-rubric-v1 --judge-model deterministic-marker-v1 --baseline evals/workflow-quality/baselines/enhancement-discovery-architecture.json --max-regression '0.05'",
-            "usage": null
-          },
-          "ensure_workflow_candidates": {
-            "status": "succeeded",
-            "context_updates": {
-              "command.output": "blob://sha256/a64fff5e64339025044dbf8015b9189f281ad1dfc49763873b66a2da07218b43"
-            },
-            "notes": "Script completed: node scripts/app-feedback/ensure-enhancement-candidates.mjs --stage workflow --dir .workflow/enhancement-discovery/workflow-candidates --minimum '2' --out .workflow/enhancement-discovery/evals/workflow-candidate-ensure.json",
-            "usage": null
-          },
-          "architecture_join": {
-            "status": "succeeded",
-            "context_updates": {
-              "parallel.fan_in.best_head_sha": "2a17cc8dca7e71e6ccc93ee2a1de8336d22e10ee",
-              "parallel.fan_in.best_id": "architecture_candidate_b",
-              "parallel.fan_in.best_outcome": "succeeded"
-            },
-            "notes": "Selected best candidate: architecture_candidate_b",
-            "usage": null
-          },
-          "spec_fanout": {
-            "status": "partially_succeeded",
-            "jump_to_node": "spec_join",
-            "notes": "Parallel node dispatched 3 branches (1 succeeded, 2 failed)",
-            "usage": null
-          },
-          "run_generated_enhancement_workflow": {
-            "status": "succeeded",
-            "context_updates": {
-              "command.output": "blob://sha256/3353314f736fef101ba26178807e33b5c178af5324f3448bea0d2dcf37ff11fa"
-            },
-            "notes": "Script completed: if [ 'false' = 'true' ]; then fabro run 'workflows/consumer-radar/live-enrichment.toml' --no-upgrade-check; else node scripts/app-feedback/fabro-validate-compat.mjs 'workflows/consumer-radar/live-enrichment.fabro' --out .workflow/enhancement-discovery/generated-fabro-validate.json; fi",
-            "usage": null
-          },
-          "final_eval_join": {
-            "status": "succeeded",
-            "context_updates": {
-              "parallel.fan_in.best_outcome": "succeeded",
-              "parallel.fan_in.best_head_sha": "b8ed0eb1c7183c8f65c3b289d4f57be108459819",
-              "parallel.fan_in.best_id": "final_eval_workflow_quality"
-            },
-            "notes": "Selected best candidate: final_eval_workflow_quality",
+            "notes": "Script completed: node scripts/app-feedback/ensure-enhancement-candidates.mjs --stage architecture --dir .workflow/enhancement-discovery/architecture-candidates --minimum '2' --out .workflow/enhancement-discovery/evals/architecture-candidate-ensure.json",
             "usage": null
           },
           "spec_eval_consensus": {
@@ -10346,53 +10126,36 @@
               "/home/daytona/workspace/.workflow/enhancement-discovery/selected-spec.md"
             ]
           },
-          "architecture_eval_consensus": {
+          "workflow_eval_contract": {
             "status": "succeeded",
             "context_updates": {
-              "response.architecture_eval_consensus": "Architecture consensus written to `.workflow/enhancement-discovery/selected-architecture.md`.\n\n**Summary of the evaluation:**\n\n- The architecture contract eval (`architecture-contract.json`) registered **VERDICT: APPROVED** with the deterministic-marker-v1 judge.\n- The `fallback-smallest-surface.md` candidate scored 1.00 (6/6 rubrics) and was mechanically selected by the contract evaluator.\n- The substantive architecture is **`extensible-source-pipeline.md`** (Candidate B, sha `2a17cc8`, scored 0.83), which provides a comprehensive design: a Source Adapter interface, pipeline orchestrator, evidence store, ranking gate, and explicit non-cheating failure semantics. It was the only real model-authored candidate, as Candidate A failed.\n- Both candidates beat the 0.78 baseline (+0.22 delta, regression check PASS).\n- All seven rubric dimensions are addressed.\n\nVERDICT: APPROVED",
-              "last_response": "Architecture consensus written to `.workflow/enhancement-discovery/selected-architecture.md`.\n\n**Summary of the evaluation:**\n\n- The architecture contract eval (`architecture-contract.json`) registere",
-              "last_stage": "architecture_eval_consensus"
+              "command.output": "blob://sha256/8492c414ae10b4efcf7336b77d3e72634ec6ddbebffe95683c695aa868006f13"
             },
-            "notes": "Stage completed: architecture_eval_consensus",
-            "usage": {
-              "input": {
-                "usage": {
-                  "model": {
-                    "provider": "openrouter",
-                    "model_id": "deepseek/deepseek-v4-pro"
-                  },
-                  "tokens": {
-                    "input_tokens": 57359,
-                    "output_tokens": 5584,
-                    "reasoning_tokens": 0,
-                    "cache_read_tokens": 0,
-                    "cache_write_tokens": 0
-                  }
-                },
-                "facts": {
-                  "provider": "open_router"
-                }
-              },
-              "total_usd_micros": 29809
-            },
-            "files_touched": [
-              ".workflow/enhancement-discovery/selected-architecture.md"
-            ]
-          },
-          "workflow_fanout": {
-            "status": "partially_succeeded",
-            "jump_to_node": "workflow_join",
-            "notes": "Parallel node dispatched 2 branches (0 succeeded, 2 failed)",
+            "notes": "Script completed: node scripts/app-feedback/evaluate-enhancement-artifact.mjs --stage workflow --candidates .workflow/enhancement-discovery/workflow-candidates --out .workflow/enhancement-discovery/evals/workflow-contract.json --minimum-candidates '2' --minimum-eval-score '0.78' --dataset evals/workflow-quality/datasets/enhancement-discovery-golden.jsonl --dataset-version workflow-quality-v1 --prompt-version app-feedback-workflow-candidates-v1 --rubric-version enhancement-discovery-workflow-rubric-v1 --judge-model deterministic-marker-v1 --baseline evals/workflow-quality/baselines/enhancement-discovery-workflow.json --max-regression '0.05'",
             "usage": null
           },
-          "spec_join": {
+          "spec_eval_contract": {
             "status": "succeeded",
             "context_updates": {
-              "parallel.fan_in.best_id": "spec_candidate_b",
-              "parallel.fan_in.best_outcome": "succeeded",
-              "parallel.fan_in.best_head_sha": "596bfb18e5f4c6aabfaab75c86ce03d88d335ce6"
+              "command.output": "blob://sha256/a4d01002a3cb5e648546e96bc0b9276132c0aabbcbfee0281d9b8e0879ee1f22"
             },
-            "notes": "Selected best candidate: spec_candidate_b",
+            "notes": "Script completed: node scripts/app-feedback/evaluate-enhancement-artifact.mjs --stage spec --candidates .workflow/enhancement-discovery/spec-candidates --out .workflow/enhancement-discovery/evals/spec-contract.json --minimum-candidates '3' --minimum-eval-score '0.78' --dataset evals/workflow-quality/datasets/enhancement-discovery-golden.jsonl --dataset-version workflow-quality-v1 --prompt-version app-feedback-spec-candidates-v1 --rubric-version enhancement-discovery-spec-rubric-v1 --judge-model deterministic-marker-v1 --baseline evals/workflow-quality/baselines/enhancement-discovery-spec.json --max-regression '0.05'",
+            "usage": null
+          },
+          "ensure_spec_candidates": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/0495f05dcdeca796c9f80a4ceb603298c4d20efcd6687e039d410fa1c7cd4542"
+            },
+            "notes": "Script completed: node scripts/app-feedback/ensure-enhancement-candidates.mjs --stage spec --dir .workflow/enhancement-discovery/spec-candidates --minimum '3' --out .workflow/enhancement-discovery/evals/spec-candidate-ensure.json",
+            "usage": null
+          },
+          "bootstrap": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/17c1b04b31687cffbb38c881b0ef8a6627d35f81c1821b18657bfc69bf73029b"
+            },
+            "notes": "Script completed: mkdir -p .workflow/enhancement-discovery/spec-candidates .workflow/enhancement-discovery/architecture-candidates .workflow/enhancement-discovery/workflow-candidates .workflow/enhancement-discovery/evals; test -f 'feedback/consumer-radar-product-feedback.md'; test -d 'apps/generated-consumer-app-radar'; echo eval_driven_development test_driven_development",
             "usage": null
           },
           "workflow_eval_consensus": {
@@ -10427,45 +10190,493 @@
             "files_touched": [
               "/home/daytona/workspace/.workflow/enhancement-discovery/selected-workflow-design.md"
             ]
+          },
+          "workflow_join": {
+            "status": "failed",
+            "failure": {
+              "message": "all candidates failed",
+              "failure_class": "deterministic"
+            },
+            "usage": null
+          },
+          "architecture_eval_contract": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/2f886d79839eb4521bed01b625c5cee5d7aa528acd76c2ecdd0bf9baa527178c"
+            },
+            "notes": "Script completed: node scripts/app-feedback/evaluate-enhancement-artifact.mjs --stage architecture --candidates .workflow/enhancement-discovery/architecture-candidates --out .workflow/enhancement-discovery/evals/architecture-contract.json --minimum-candidates '2' --minimum-eval-score '0.78' --dataset evals/workflow-quality/datasets/enhancement-discovery-golden.jsonl --dataset-version workflow-quality-v1 --prompt-version app-feedback-architecture-candidates-v1 --rubric-version enhancement-discovery-architecture-rubric-v1 --judge-model deterministic-marker-v1 --baseline evals/workflow-quality/baselines/enhancement-discovery-architecture.json --max-regression '0.05'",
+            "usage": null
+          },
+          "final_eval_fanout": {
+            "status": "partially_succeeded",
+            "jump_to_node": "final_eval_join",
+            "notes": "Parallel node dispatched 2 branches (1 succeeded, 1 failed)",
+            "usage": null
+          },
+          "publish_handoff": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/ef6cdce00fa0cf8eda9d9120f83d8200c78c544e41940c2dc236f3b47231efe5"
+            },
+            "notes": "Script completed: node scripts/app-feedback/publish-enhancement-discovery-handoff.mjs --app-dir 'apps/generated-consumer-app-radar' --generated-workflow 'workflows/consumer-radar/live-enrichment.fabro' --out .workflow/enhancement-discovery/handoff.json",
+            "usage": null
+          },
+          "start": {
+            "status": "succeeded",
+            "usage": null
+          },
+          "materialize_enhancement_workflow": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/d2cca07c3c5c4af765e5d4a8213c15c4ab9d71ffbe3a5abdbecf1b9ec6a443e4"
+            },
+            "notes": "Script completed: node scripts/app-feedback/materialize-enhancement-workflow.mjs --target 'consumer-radar' --app-dir 'apps/generated-consumer-app-radar' --workflow 'workflows/consumer-radar/live-enrichment.fabro' --run-config 'workflows/consumer-radar/live-enrichment.toml' --real-mode 'true' --allow-fixture-fallback 'false'",
+            "usage": null
+          },
+          "final_eval_join": {
+            "status": "succeeded",
+            "context_updates": {
+              "parallel.fan_in.best_outcome": "succeeded",
+              "parallel.fan_in.best_head_sha": "b8ed0eb1c7183c8f65c3b289d4f57be108459819",
+              "parallel.fan_in.best_id": "final_eval_workflow_quality"
+            },
+            "notes": "Selected best candidate: final_eval_workflow_quality",
+            "usage": null
+          },
+          "promptfoo_workflow_quality": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/34ee70b6b8a547596788963d60029719096d4230264f756510efc6021b3d6b1c"
+            },
+            "notes": "Script completed: node scripts/app-feedback/promptfoo-workflow-quality.mjs --config evals/workflow-quality/enhancement-discovery.yaml --out .workflow/enhancement-discovery/evals/promptfoo-workflow-quality.json --allow-fallback true",
+            "usage": null
+          },
+          "architecture_join": {
+            "status": "succeeded",
+            "context_updates": {
+              "parallel.fan_in.best_head_sha": "2a17cc8dca7e71e6ccc93ee2a1de8336d22e10ee",
+              "parallel.fan_in.best_id": "architecture_candidate_b",
+              "parallel.fan_in.best_outcome": "succeeded"
+            },
+            "notes": "Selected best candidate: architecture_candidate_b",
+            "usage": null
+          },
+          "workflow_fanout": {
+            "status": "partially_succeeded",
+            "jump_to_node": "workflow_join",
+            "notes": "Parallel node dispatched 2 branches (0 succeeded, 2 failed)",
+            "usage": null
+          },
+          "parse_requests": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/b8ad9745eb032e1529021db56fb0316d1bbac9211156d215e74bdc779585d3f0"
+            },
+            "notes": "Script completed: node scripts/app-feedback/parse-feedback.mjs --feedback 'feedback/consumer-radar-product-feedback.md' --out .workflow/enhancement-discovery/request-analysis.json",
+            "usage": null
+          },
+          "final_eval_consensus": {
+            "status": "succeeded",
+            "context_updates": {
+              "last_response": "The final eval consensus document has been written to `.workflow/enhancement-discovery/final-eval-consensus.md`.\n\n**VERDICT: APPROVED**\n\nAll seven rubric dimensions pass:\n\n| Dimension | Assessment |\n|",
+              "last_stage": "final_eval_consensus",
+              "response.final_eval_consensus": "The final eval consensus document has been written to `.workflow/enhancement-discovery/final-eval-consensus.md`.\n\n**VERDICT: APPROVED**\n\nAll seven rubric dimensions pass:\n\n| Dimension | Assessment |\n|-----------|------------|\n| **Intent fidelity** | All 5 acceptance requirements mapped to spec, architecture, and workflow features |\n| **Non-cheating** | Real-mode fail-fast, fixture disclosure, source provenance, liveScraped gating all enforced |\n| **Test-driven** | 9 deterministic gates: contract tests, native checks, live data minimums, qlty + promptfoo |\n| **Eval-driven** | Contract evals (all 1.00 vs 0.78 baseline, +0.22 delta), LLM consensus, promptfoo, multi-model review |\n| **Architecture quality** | Clear boundaries: adapter interface + registry + pipeline + evidence store, ≤10 new files |\n| **Workflow quality** | 22 nodes, 35 edges, fanout-join, retry paths, 9 goal gates, handoff artifact |\n| **Simplification** | Identified 5 concrete actions, all gates preserved, node count 22→16 with no coverage loss |\n\nThe single failed fanout branch (`final_eval_simplification`) does not block approval — the best head (`b8ed0eb`, `final_eval_workflow_quality`) succeeds with all quality dimensions covered."
+            },
+            "notes": "Stage completed: final_eval_consensus",
+            "usage": {
+              "input": {
+                "usage": {
+                  "model": {
+                    "provider": "openrouter",
+                    "model_id": "deepseek/deepseek-v4-pro"
+                  },
+                  "tokens": {
+                    "input_tokens": 167233,
+                    "output_tokens": 5610,
+                    "reasoning_tokens": 0,
+                    "cache_read_tokens": 0,
+                    "cache_write_tokens": 0
+                  }
+                },
+                "facts": {
+                  "provider": "open_router"
+                }
+              },
+              "total_usd_micros": 77626
+            },
+            "files_touched": [
+              ".workflow/enhancement-discovery/final-eval-consensus.md"
+            ]
+          },
+          "simplification_plan": {
+            "status": "succeeded",
+            "context_updates": {
+              "last_stage": "simplification_plan",
+              "last_response": "The simplification plan has been written to `.workflow/enhancement-discovery/simplification-plan.md` (151 lines). Here's a summary of the five simplification actions:\n\n| # | Action | Nodes removed | I",
+              "response.simplification_plan": "The simplification plan has been written to `.workflow/enhancement-discovery/simplification-plan.md` (151 lines). Here's a summary of the five simplification actions:\n\n| # | Action | Nodes removed | Impact |\n|---|--------|--------------|--------|\n| 1 | Remove `plan_eval` (self-referential contract eval on internal plans) | `plan_eval` | −1 node, −1 retry loop |\n| 2 | Remove `live_source_preflight`, fold APIFY_TOKEN check into `live_data_gate` | `live_source_preflight` | −1 node, unified token+data gate |\n| 3 | Collapse plan fanout (`plan_live_sources` + `plan_product_surface` → single `plan_implementation`) | `implementation_plan_fanout`, `plan_live_sources`, `plan_product_surface`, `plan_join` | −4 nodes, −1 prompt |\n| 4 | Remove `prepare_review_reports` (redundant mkdir, races with review nodes) | `prepare_review_reports` | −1 node |\n| 5 | Simplify `review_deepseek` fallback chain (2-model → single model) | — | −0 nodes, cleaner config |\n\n**Result**: 22 nodes → ~16 nodes, 35 edges → ~25 edges, zero goal gates weakened, all acceptance thresholds preserved. The plan also identifies the missing `assert-live-enrichment.mjs` script as a pre-simplification fix."
+            },
+            "notes": "Stage completed: simplification_plan",
+            "usage": {
+              "input": {
+                "usage": {
+                  "model": {
+                    "provider": "openrouter",
+                    "model_id": "deepseek/deepseek-v4-pro"
+                  },
+                  "tokens": {
+                    "input_tokens": 282289,
+                    "output_tokens": 7689,
+                    "reasoning_tokens": 0,
+                    "cache_read_tokens": 0,
+                    "cache_write_tokens": 0
+                  }
+                },
+                "facts": {
+                  "provider": "open_router"
+                }
+              },
+              "total_usd_micros": 129484
+            },
+            "files_touched": [
+              "/home/daytona/workspace/.workflow/enhancement-discovery/simplification-plan.md"
+            ]
+          },
+          "spec_fanout": {
+            "status": "partially_succeeded",
+            "jump_to_node": "spec_join",
+            "notes": "Parallel node dispatched 3 branches (1 succeeded, 2 failed)",
+            "usage": null
+          },
+          "capability_audit": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/2e78300898c34f783a2884184c50c33fefa4187fbe6f72d65e360ac55f308272"
+            },
+            "notes": "Script completed: node scripts/app-feedback/analyze-enhancement-capabilities.mjs --app-dir 'apps/generated-consumer-app-radar' --analysis .workflow/enhancement-discovery/request-analysis.json --target 'consumer-radar' --out .workflow/enhancement-discovery/capability-audit.json",
+            "usage": null
+          },
+          "spec_join": {
+            "status": "succeeded",
+            "context_updates": {
+              "parallel.fan_in.best_id": "spec_candidate_b",
+              "parallel.fan_in.best_outcome": "succeeded",
+              "parallel.fan_in.best_head_sha": "596bfb18e5f4c6aabfaab75c86ce03d88d335ce6"
+            },
+            "notes": "Selected best candidate: spec_candidate_b",
+            "usage": null
+          },
+          "architecture_fanout": {
+            "status": "partially_succeeded",
+            "jump_to_node": "architecture_join",
+            "notes": "Parallel node dispatched 2 branches (1 succeeded, 1 failed)",
+            "usage": null
+          },
+          "run_generated_enhancement_workflow": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/3353314f736fef101ba26178807e33b5c178af5324f3448bea0d2dcf37ff11fa"
+            },
+            "notes": "Script completed: if [ 'false' = 'true' ]; then fabro run 'workflows/consumer-radar/live-enrichment.toml' --no-upgrade-check; else node scripts/app-feedback/fabro-validate-compat.mjs 'workflows/consumer-radar/live-enrichment.fabro' --out .workflow/enhancement-discovery/generated-fabro-validate.json; fi",
+            "usage": null
+          },
+          "validate_enhancement_workflow": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/858ed66eac3ce030a8d852cc5f2e950ead29eea30c9315821f114a07a719ea83"
+            },
+            "notes": "Script completed: node scripts/app-feedback/validate-enhancement-discovery.mjs --workflow workflows/app-feedback/discover-enhancement.fabro --generated-workflow 'workflows/consumer-radar/live-enrichment.fabro' --out .workflow/enhancement-discovery/generated-workflow-validation.json",
+            "usage": null
+          },
+          "ensure_workflow_candidates": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/a64fff5e64339025044dbf8015b9189f281ad1dfc49763873b66a2da07218b43"
+            },
+            "notes": "Script completed: node scripts/app-feedback/ensure-enhancement-candidates.mjs --stage workflow --dir .workflow/enhancement-discovery/workflow-candidates --minimum '2' --out .workflow/enhancement-discovery/evals/workflow-candidate-ensure.json",
+            "usage": null
+          },
+          "architecture_eval_consensus": {
+            "status": "succeeded",
+            "context_updates": {
+              "response.architecture_eval_consensus": "Architecture consensus written to `.workflow/enhancement-discovery/selected-architecture.md`.\n\n**Summary of the evaluation:**\n\n- The architecture contract eval (`architecture-contract.json`) registered **VERDICT: APPROVED** with the deterministic-marker-v1 judge.\n- The `fallback-smallest-surface.md` candidate scored 1.00 (6/6 rubrics) and was mechanically selected by the contract evaluator.\n- The substantive architecture is **`extensible-source-pipeline.md`** (Candidate B, sha `2a17cc8`, scored 0.83), which provides a comprehensive design: a Source Adapter interface, pipeline orchestrator, evidence store, ranking gate, and explicit non-cheating failure semantics. It was the only real model-authored candidate, as Candidate A failed.\n- Both candidates beat the 0.78 baseline (+0.22 delta, regression check PASS).\n- All seven rubric dimensions are addressed.\n\nVERDICT: APPROVED",
+              "last_response": "Architecture consensus written to `.workflow/enhancement-discovery/selected-architecture.md`.\n\n**Summary of the evaluation:**\n\n- The architecture contract eval (`architecture-contract.json`) registere",
+              "last_stage": "architecture_eval_consensus"
+            },
+            "notes": "Stage completed: architecture_eval_consensus",
+            "usage": {
+              "input": {
+                "usage": {
+                  "model": {
+                    "provider": "openrouter",
+                    "model_id": "deepseek/deepseek-v4-pro"
+                  },
+                  "tokens": {
+                    "input_tokens": 57359,
+                    "output_tokens": 5584,
+                    "reasoning_tokens": 0,
+                    "cache_read_tokens": 0,
+                    "cache_write_tokens": 0
+                  }
+                },
+                "facts": {
+                  "provider": "open_router"
+                }
+              },
+              "total_usd_micros": 29809
+            },
+            "files_touched": [
+              ".workflow/enhancement-discovery/selected-architecture.md"
+            ]
           }
         },
         "next_node_id": "exit",
+        "git_commit_sha": "f41a43f133bc70bee0f378aea90970e666cc8559",
+        "loop_failure_signatures": {
+          "workflow_join|deterministic|all candidates failed": 1
+        },
         "node_visits": {
-          "ensure_architecture_candidates": 1,
-          "validate_enhancement_workflow": 1,
-          "materialize_enhancement_workflow": 1,
-          "architecture_eval_contract": 1,
-          "run_generated_enhancement_workflow": 1,
-          "workflow_fanout": 1,
-          "final_eval_consensus": 1,
-          "workflow_eval_consensus": 1,
-          "start": 1,
-          "promptfoo_workflow_quality": 1,
-          "spec_eval_contract": 1,
-          "spec_eval_model": 1,
-          "ensure_spec_candidates": 1,
           "spec_join": 1,
           "capability_audit": 1,
+          "spec_eval_contract": 1,
           "workflow_join": 1,
-          "workflow_eval_contract": 1,
-          "architecture_fanout": 1,
-          "final_eval_fanout": 1,
-          "ensure_workflow_candidates": 1,
-          "final_eval_join": 1,
-          "bootstrap": 1,
+          "simplification_plan": 1,
           "parse_requests": 1,
-          "spec_eval_consensus": 1,
+          "ensure_spec_candidates": 1,
+          "final_eval_join": 1,
           "architecture_join": 1,
-          "spec_fanout": 1,
           "publish_handoff": 1,
+          "workflow_eval_consensus": 1,
           "architecture_eval_consensus": 1,
-          "simplification_plan": 1
+          "final_eval_fanout": 1,
+          "validate_enhancement_workflow": 1,
+          "architecture_fanout": 1,
+          "spec_fanout": 1,
+          "ensure_architecture_candidates": 1,
+          "spec_eval_consensus": 1,
+          "workflow_fanout": 1,
+          "workflow_eval_contract": 1,
+          "run_generated_enhancement_workflow": 1,
+          "start": 1,
+          "spec_eval_model": 1,
+          "architecture_eval_contract": 1,
+          "promptfoo_workflow_quality": 1,
+          "ensure_workflow_candidates": 1,
+          "bootstrap": 1,
+          "final_eval_consensus": 1,
+          "materialize_enhancement_workflow": 1
         }
       },
-      "diff": {}
+      "diff": {
+        "summary": {
+          "files_changed": 0,
+          "additions": 0,
+          "deletions": 0
+        }
+      }
     }
   ],
-  "conclusion": null,
+  "conclusion": {
+    "timestamp": "2026-05-13T19:05:29.409729221Z",
+    "status": "succeeded",
+    "duration_ms": 1579695,
+    "final_git_commit_sha": "f41a43f133bc70bee0f378aea90970e666cc8559",
+    "stages": [
+      {
+        "stage_id": "start",
+        "stage_label": "start",
+        "duration_ms": 0,
+        "retries": 0
+      },
+      {
+        "stage_id": "bootstrap",
+        "stage_label": "bootstrap",
+        "duration_ms": 1787,
+        "retries": 0
+      },
+      {
+        "stage_id": "parse_requests",
+        "stage_label": "parse_requests",
+        "duration_ms": 1794,
+        "retries": 0
+      },
+      {
+        "stage_id": "capability_audit",
+        "stage_label": "capability_audit",
+        "duration_ms": 1939,
+        "retries": 0
+      },
+      {
+        "stage_id": "spec_fanout",
+        "stage_label": "spec_fanout",
+        "duration_ms": 218269,
+        "billing_usd_micros": 160240,
+        "retries": 0
+      },
+      {
+        "stage_id": "spec_join",
+        "stage_label": "spec_join",
+        "duration_ms": 81,
+        "retries": 0
+      },
+      {
+        "stage_id": "ensure_spec_candidates",
+        "stage_label": "ensure_spec_candidates",
+        "duration_ms": 1653,
+        "retries": 0
+      },
+      {
+        "stage_id": "spec_eval_contract",
+        "stage_label": "spec_eval_contract",
+        "duration_ms": 1657,
+        "retries": 0
+      },
+      {
+        "stage_id": "spec_eval_model",
+        "stage_label": "spec_eval_model",
+        "duration_ms": 71076,
+        "billing_usd_micros": 17499,
+        "retries": 0
+      },
+      {
+        "stage_id": "spec_eval_consensus",
+        "stage_label": "spec_eval_consensus",
+        "duration_ms": 79304,
+        "billing_usd_micros": 26790,
+        "retries": 0
+      },
+      {
+        "stage_id": "architecture_fanout",
+        "stage_label": "architecture_fanout",
+        "duration_ms": 157545,
+        "billing_usd_micros": 45629,
+        "retries": 0
+      },
+      {
+        "stage_id": "architecture_join",
+        "stage_label": "architecture_join",
+        "duration_ms": 84,
+        "retries": 0
+      },
+      {
+        "stage_id": "ensure_architecture_candidates",
+        "stage_label": "ensure_architecture_candidates",
+        "duration_ms": 1807,
+        "retries": 0
+      },
+      {
+        "stage_id": "architecture_eval_contract",
+        "stage_label": "architecture_eval_contract",
+        "duration_ms": 1801,
+        "retries": 0
+      },
+      {
+        "stage_id": "architecture_eval_consensus",
+        "stage_label": "architecture_eval_consensus",
+        "duration_ms": 157945,
+        "billing_usd_micros": 29809,
+        "retries": 0
+      },
+      {
+        "stage_id": "workflow_fanout",
+        "stage_label": "workflow_fanout",
+        "duration_ms": 5450,
+        "retries": 0
+      },
+      {
+        "stage_id": "workflow_join",
+        "stage_label": "workflow_join",
+        "duration_ms": 1,
+        "retries": 0
+      },
+      {
+        "stage_id": "ensure_workflow_candidates",
+        "stage_label": "ensure_workflow_candidates",
+        "duration_ms": 1666,
+        "retries": 0
+      },
+      {
+        "stage_id": "workflow_eval_contract",
+        "stage_label": "workflow_eval_contract",
+        "duration_ms": 1799,
+        "retries": 0
+      },
+      {
+        "stage_id": "workflow_eval_consensus",
+        "stage_label": "workflow_eval_consensus",
+        "duration_ms": 247928,
+        "billing_usd_micros": 125054,
+        "retries": 0
+      },
+      {
+        "stage_id": "materialize_enhancement_workflow",
+        "stage_label": "materialize_enhancement_workflow",
+        "duration_ms": 1838,
+        "retries": 0
+      },
+      {
+        "stage_id": "validate_enhancement_workflow",
+        "stage_label": "validate_enhancement_workflow",
+        "duration_ms": 1658,
+        "retries": 0
+      },
+      {
+        "stage_id": "run_generated_enhancement_workflow",
+        "stage_label": "run_generated_enhancement_workflow",
+        "duration_ms": 2221,
+        "retries": 0
+      },
+      {
+        "stage_id": "simplification_plan",
+        "stage_label": "simplification_plan",
+        "duration_ms": 181452,
+        "billing_usd_micros": 129484,
+        "retries": 0
+      },
+      {
+        "stage_id": "final_eval_fanout",
+        "stage_label": "final_eval_fanout",
+        "duration_ms": 117722,
+        "billing_usd_micros": 38567,
+        "retries": 0
+      },
+      {
+        "stage_id": "final_eval_join",
+        "stage_label": "final_eval_join",
+        "duration_ms": 82,
+        "retries": 0
+      },
+      {
+        "stage_id": "final_eval_consensus",
+        "stage_label": "final_eval_consensus",
+        "duration_ms": 126648,
+        "billing_usd_micros": 77626,
+        "retries": 0
+      },
+      {
+        "stage_id": "promptfoo_workflow_quality",
+        "stage_label": "promptfoo_workflow_quality",
+        "duration_ms": 95464,
+        "retries": 0
+      },
+      {
+        "stage_id": "publish_handoff",
+        "stage_label": "publish_handoff",
+        "duration_ms": 1960,
+        "retries": 0
+      }
+    ],
+    "billing": {
+      "input_tokens": 1350316,
+      "output_tokens": 59736,
+      "total_tokens": 1410052,
+      "reasoning_tokens": 0,
+      "cache_read_tokens": 0,
+      "cache_write_tokens": 0,
+      "total_usd_micros": 650698
+    },
+    "total_retries": 0,
+    "diff": {}
+  },
   "sandbox": {
     "provider": "daytona",
     "image": "buildpack-deps:noble",
@@ -10957,7 +11168,12 @@
       "first_event_seq": 896,
       "prompt": null,
       "response": null,
-      "completion": null,
+      "completion": {
+        "outcome": "succeeded",
+        "notes": "Script completed: node scripts/app-feedback/publish-enhancement-discovery-handoff.mjs --app-dir 'apps/generated-consumer-app-radar' --generated-workflow 'workflows/consumer-radar/live-enrichment.fabro' --out .workflow/enhancement-discovery/handoff.json",
+        "failure_reason": null,
+        "timestamp": "2026-05-13T19:05:26.076463166Z"
+      },
       "provider_used": null,
       "diff": null,
       "script_invocation": {
@@ -10980,6 +11196,7 @@
       "termination": "exited",
       "started_at": "2026-05-13T19:05:23.950374870Z",
       "handler": "command",
+      "duration_ms": 1960,
       "usage": {
         "input_tokens": 0,
         "output_tokens": 0,
@@ -10988,7 +11205,7 @@
         "cache_read_tokens": 0,
         "cache_write_tokens": 0
       },
-      "state": "running"
+      "state": "succeeded"
     },
     "spec_eval_contract@1": {
       "first_event_seq": 152,
@@ -11525,6 +11742,35 @@
       "model": {
         "provider": "openrouter",
         "model_id": "deepseek/deepseek-v4-pro"
+      },
+      "state": "succeeded"
+    },
+    "exit@1": {
+      "first_event_seq": 907,
+      "prompt": null,
+      "response": null,
+      "completion": {
+        "outcome": "succeeded",
+        "notes": null,
+        "failure_reason": null,
+        "timestamp": "2026-05-13T19:05:29.177129860Z"
+      },
+      "provider_used": null,
+      "diff": null,
+      "script_invocation": null,
+      "script_timing": null,
+      "parallel_results": null,
+      "output": null,
+      "started_at": "2026-05-13T19:05:29.177076329Z",
+      "handler": "exit",
+      "duration_ms": 0,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "total_tokens": 0,
+        "reasoning_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
       },
       "state": "succeeded"
     },
