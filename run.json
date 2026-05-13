@@ -360,15 +360,78 @@
     }
   },
   "web_url": "http://127.0.0.1:32276/runs/01KRGSM36TFHGY69MPDBGFTZPF",
-  "start": null,
-  "status": {
-    "kind": "starting"
+  "start": {
+    "start_time": "2026-05-13T13:50:10.781535Z",
+    "run_branch": "fabro/run/01KRGSM36TFHGY69MPDBGFTZPF",
+    "base_sha": "28ddad1cc5f57545823b33751b68d63099dd4f94"
   },
-  "status_updated_at": "2026-05-13T13:50:04.538424Z",
-  "last_event_at": "2026-05-13T13:50:10.511296Z",
+  "status": {
+    "kind": "running"
+  },
+  "status_updated_at": "2026-05-13T13:50:10.781581Z",
+  "last_event_at": "2026-05-13T13:50:14.594839Z",
   "pending_control": null,
-  "checkpoints": [],
-  "conclusion": null,
+  "checkpoints": [
+    {
+      "seq": 18,
+      "checkpoint": {
+        "timestamp": "2026-05-13T13:50:12.216858Z",
+        "current_node": "start",
+        "completed_nodes": [
+          "start"
+        ],
+        "node_retries": {},
+        "context_values": {
+          "graph.rankdir": "LR",
+          "graph.inputs": "",
+          "internal.work_dir": "/home/daytona/workspace",
+          "internal.node_visit_count": 1,
+          "internal.run_id": "01KRGSM36TFHGY69MPDBGFTZPF",
+          "internal.fidelity": "compact",
+          "internal.thread_id": null,
+          "current_node": "start",
+          "graph.fallback_retry_target": "register_workflows",
+          "failure_class": "",
+          "graph.model_stylesheet": "\n            *       { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: low; }\n            .coding { provider: openrouter; model: qwen/qwen3.6-plus; reasoning_effort: high; }\n            .review { provider: openrouter; model: google/gemini-3.1-pro-preview; reasoning_effort: high; }\n        ",
+          "graph.default_max_retries": "1",
+          "failure_signature": "",
+          "graph.outputs": "spike_workflow_registry_report",
+          "internal.retry_count.start": 0,
+          "graph.retry_target": "register_workflows",
+          "graph.goal": "Validate, quality-check, and register all spike Fabro workflows in Daytona",
+          "graph.persona": "workflow-registry",
+          "outcome": "succeeded"
+        },
+        "node_outcomes": {
+          "start": {
+            "status": "succeeded",
+            "usage": null
+          }
+        },
+        "next_node_id": "register_workflows",
+        "node_visits": {
+          "start": 1
+        }
+      },
+      "diff": {}
+    }
+  ],
+  "conclusion": {
+    "timestamp": "2026-05-13T13:50:14.606990Z",
+    "status": "failed",
+    "duration_ms": 3814,
+    "failure_reason": "Engine error: loop_restart blocked: failure_class=deterministic (requires transient_infra), failure_reason=Script failed with exit code: 1\n\n## output\nFAILED workflows/gtm/outreach-draft.fabro\nvalidation: × Failed to parse settings file at /home/daytona/workspace/.fabro/project.toml: settings file is not valid TOML: unknown field `volumes`, expected one of `auto_stop_interval`, `labels`, `snapshot`, `network`, `skip_clone`\n  │ in `run.sandbox.daytona`\n\n  ╰─▶ settings file is not valid TOML: unknown field `volumes`, expected one of `auto_stop_interval`, `labels`, `snapshot`, `network`, `skip_clone`\n      in `run.sandbox.daytona`\nquality: skipped after validation failure\nregistration: skipped after quality failure\nFAILED workflows/phase1/subflow-child.fabro\nvalidation: × Failed to parse settings file at /home/daytona/workspace/.fabro/project.toml: settings file is not valid TOML: unknown field `volumes`, expected one of `auto_stop_interval`, `labels`, `snapshot`, `network`, `skip_clone`\n  │ in `run.sandbox.daytona`\n\n  ╰─▶ settings file is not valid TOML: unknown field `volumes`, expected one of `auto_stop_interval`, `labels`, `snapshot`, `network`, `skip_clone`\n      in `run.sandbox.daytona`\nquality: skipped after validation failure\nregistration: skipped after quality failure\nFAILED workflows/phase1/subflow-wrapper.fabro\nvalidation: × Failed to parse settings file at /home/daytona/workspace/.fabro/project.toml: settings file is not valid TOML: unknown field `volumes`, expected one of `auto_stop_interval`, `labels`, `snapshot`, `network`, `skip_clone`\n  │ in `run.sandbox.daytona`\n\n  ╰─▶ settings file is not valid TOML: unknown field `volumes`, expected one of `auto_stop_interval`, `labels`, `snapshot`, `network`, `skip_clone`\n      in `run.sandbox.daytona`\nquality: skipped after validation failure\nregistration: skipped after quality failure\nFAILED workflows/phase1/test-run.fabro\nvalidation: × Failed to parse settings file at /home/daytona/workspace/.fabro/project.toml: settings file is not valid TOML: unknown field `volumes`, expected one of `auto_stop_interval`, `labels`, `snapshot`, `network`, `skip_clone`\n  │ in `run.sandbox.daytona`\n\n  ╰─▶ settings file is not valid TOML: unknown field `volumes`, expected one of `auto_stop_interval`, `labels`, `snapshot`, `network`, `skip_clone`\n      in `run.sandbox.daytona`\nquality: skipped after validation failure\nregistration: skipped after quality failure\nFAILED workflows/scaffold/generated-toy-slack-hello.fabro\nvalidation: × Failed to parse settings file at /home/daytona/workspace/.fabro/project.toml: settings file is not valid TOML: unknown field `volumes`, expected one of `auto_stop_interval`, `labels`, `snapshot`, `network`, `skip_clone`\n  │ in `run.sandbox.daytona`\n\n  ╰─▶ settings file is not valid TOML: unknown field `volumes`, expected one of `auto_stop_interval`, `labels`, `snapshot`, `network`, `skip_clone`\n      in `run.sandbox.daytona`\nquality: skipped after validation failure\nregistration: skipped after quality failure\nFAILED workflows/scaffold/scaffold-workflow.fabro\nvalidation: × Failed to parse settings file at /home/daytona/workspace/.fabro/project.toml: settings file is not valid TOML: unknown field `volumes`, expected one of `auto_stop_interval`, `labels`, `snapshot`, `network`, `skip_clone`\n  │ in `run.sandbox.daytona`\n\n  ╰─▶ settings file is not valid TOML: unknown field `volumes`, expected one of `auto_stop_interval`, `labels`, `snapshot`, `network`, `skip_clone`\n      in `run.sandbox.daytona`\nquality: skipped after validation failure\nregistration: skipped after quality failure\nFAILED workflows/scaffold/spec-lift-workflow.fabro\nvalidation: × Failed to parse settings file at /home/daytona/workspace/.fabro/project.toml: settings file is not valid TOML: unknown field `volumes`, expected one of `auto_stop_interval`, `labels`, `snapshot`, `network`, `skip_clone`\n  │ in `run.sandbox.daytona`\n\n  ╰─▶ settings file is not valid TOML: unknown field `volumes`, expected one of `auto_stop_interval`, `labels`, `snapshot`, `network`, `skip_clone`\n      in `run.sandbox.daytona`\nquality: skipped after validation failure\nregistration: skipped after quality failure\n",
+    "stages": [
+      {
+        "stage_id": "start",
+        "stage_label": "start",
+        "duration_ms": 0,
+        "retries": 0
+      }
+    ],
+    "total_retries": 0,
+    "diff": {}
+  },
   "sandbox": {
     "provider": "daytona",
     "image": "buildpack-deps:noble",
@@ -384,5 +447,78 @@
   "pull_request": null,
   "superseded_by": null,
   "pending_interviews": {},
-  "stages": {}
+  "stages": {
+    "register_workflows@1": {
+      "first_event_seq": 19,
+      "prompt": null,
+      "response": null,
+      "completion": {
+        "outcome": "failed",
+        "notes": null,
+        "failure_reason": "Script failed with exit code: 1\n\n## output\nFAILED workflows/gtm/outreach-draft.fabro\nvalidation: × Failed to parse settings file at /home/daytona/workspace/.fabro/project.toml: settings file is not valid TOML: unknown field `volumes`, expected one of `auto_stop_interval`, `labels`, `snapshot`, `network`, `skip_clone`\n  │ in `run.sandbox.daytona`\n\n  ╰─▶ settings file is not valid TOML: unknown field `volumes`, expected one of `auto_stop_interval`, `labels`, `snapshot`, `network`, `skip_clone`\n      in `run.sandbox.daytona`\nquality: skipped after validation failure\nregistration: skipped after quality failure\nFAILED workflows/phase1/subflow-child.fabro\nvalidation: × Failed to parse settings file at /home/daytona/workspace/.fabro/project.toml: settings file is not valid TOML: unknown field `volumes`, expected one of `auto_stop_interval`, `labels`, `snapshot`, `network`, `skip_clone`\n  │ in `run.sandbox.daytona`\n\n  ╰─▶ settings file is not valid TOML: unknown field `volumes`, expected one of `auto_stop_interval`, `labels`, `snapshot`, `network`, `skip_clone`\n      in `run.sandbox.daytona`\nquality: skipped after validation failure\nregistration: skipped after quality failure\nFAILED workflows/phase1/subflow-wrapper.fabro\nvalidation: × Failed to parse settings file at /home/daytona/workspace/.fabro/project.toml: settings file is not valid TOML: unknown field `volumes`, expected one of `auto_stop_interval`, `labels`, `snapshot`, `network`, `skip_clone`\n  │ in `run.sandbox.daytona`\n\n  ╰─▶ settings file is not valid TOML: unknown field `volumes`, expected one of `auto_stop_interval`, `labels`, `snapshot`, `network`, `skip_clone`\n      in `run.sandbox.daytona`\nquality: skipped after validation failure\nregistration: skipped after quality failure\nFAILED workflows/phase1/test-run.fabro\nvalidation: × Failed to parse settings file at /home/daytona/workspace/.fabro/project.toml: settings file is not valid TOML: unknown field `volumes`, expected one of `auto_stop_interval`, `labels`, `snapshot`, `network`, `skip_clone`\n  │ in `run.sandbox.daytona`\n\n  ╰─▶ settings file is not valid TOML: unknown field `volumes`, expected one of `auto_stop_interval`, `labels`, `snapshot`, `network`, `skip_clone`\n      in `run.sandbox.daytona`\nquality: skipped after validation failure\nregistration: skipped after quality failure\nFAILED workflows/scaffold/generated-toy-slack-hello.fabro\nvalidation: × Failed to parse settings file at /home/daytona/workspace/.fabro/project.toml: settings file is not valid TOML: unknown field `volumes`, expected one of `auto_stop_interval`, `labels`, `snapshot`, `network`, `skip_clone`\n  │ in `run.sandbox.daytona`\n\n  ╰─▶ settings file is not valid TOML: unknown field `volumes`, expected one of `auto_stop_interval`, `labels`, `snapshot`, `network`, `skip_clone`\n      in `run.sandbox.daytona`\nquality: skipped after validation failure\nregistration: skipped after quality failure\nFAILED workflows/scaffold/scaffold-workflow.fabro\nvalidation: × Failed to parse settings file at /home/daytona/workspace/.fabro/project.toml: settings file is not valid TOML: unknown field `volumes`, expected one of `auto_stop_interval`, `labels`, `snapshot`, `network`, `skip_clone`\n  │ in `run.sandbox.daytona`\n\n  ╰─▶ settings file is not valid TOML: unknown field `volumes`, expected one of `auto_stop_interval`, `labels`, `snapshot`, `network`, `skip_clone`\n      in `run.sandbox.daytona`\nquality: skipped after validation failure\nregistration: skipped after quality failure\nFAILED workflows/scaffold/spec-lift-workflow.fabro\nvalidation: × Failed to parse settings file at /home/daytona/workspace/.fabro/project.toml: settings file is not valid TOML: unknown field `volumes`, expected one of `auto_stop_interval`, `labels`, `snapshot`, `network`, `skip_clone`\n  │ in `run.sandbox.daytona`\n\n  ╰─▶ settings file is not valid TOML: unknown field `volumes`, expected one of `auto_stop_interval`, `labels`, `snapshot`, `network`, `skip_clone`\n      in `run.sandbox.daytona`\nquality: skipped after validation failure\nregistration: skipped after quality failure\n",
+        "timestamp": "2026-05-13T13:50:14.593495Z"
+      },
+      "provider_used": null,
+      "diff": null,
+      "script_invocation": {
+        "script": "node scripts/register-spike-workflows.mjs .workflow/spike-workflow-registry.json",
+        "command": "exec 2>&1\nnode scripts/register-spike-workflows.mjs .workflow/spike-workflow-registry.json",
+        "language": "shell"
+      },
+      "script_timing": {
+        "output": "blob://sha256/f2c7b2f0bf86d14aca4a4186e46994e25d66dbb375c490611d6932ce35038432",
+        "exit_code": 1,
+        "duration_ms": 2161,
+        "termination": "exited",
+        "output_bytes": 20816,
+        "live_streaming": true
+      },
+      "parallel_results": null,
+      "output": null,
+      "output_bytes": 20816,
+      "live_streaming": true,
+      "termination": "exited",
+      "started_at": "2026-05-13T13:50:12.216991Z",
+      "handler": "command",
+      "duration_ms": 2167,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "total_tokens": 0,
+        "reasoning_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "state": "failed"
+    },
+    "start@1": {
+      "first_event_seq": 15,
+      "prompt": null,
+      "response": null,
+      "completion": {
+        "outcome": "succeeded",
+        "notes": null,
+        "failure_reason": null,
+        "timestamp": "2026-05-13T13:50:12.216679Z"
+      },
+      "provider_used": null,
+      "diff": null,
+      "script_invocation": null,
+      "script_timing": null,
+      "parallel_results": null,
+      "output": null,
+      "started_at": "2026-05-13T13:50:12.155041Z",
+      "handler": "start",
+      "duration_ms": 0,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "total_tokens": 0,
+        "reasoning_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "state": "succeeded"
+    }
+  }
 }
