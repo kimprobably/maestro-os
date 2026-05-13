@@ -1,0 +1,1083 @@
+{
+  "title": "Enhance Consumer App Radar from product feedback using the generic app feedback workflow",
+  "spec": {
+    "run_id": "01KRH41V4MPCQXV5V7Z0795E2T",
+    "settings": {
+      "project": {
+        "name": "maestro-os",
+        "description": null,
+        "metadata": {}
+      },
+      "workflow": {
+        "name": null,
+        "description": null,
+        "graph": "workflow.fabro",
+        "metadata": {}
+      },
+      "run": {
+        "goal": {
+          "type": "inline",
+          "value": "Enhance Consumer App Radar from product feedback using the generic app feedback workflow"
+        },
+        "working_dir": null,
+        "metadata": {},
+        "inputs": {
+          "real_mode": true,
+          "minimum_active_reviews": 2,
+          "target_adapter": "consumer-radar",
+          "app_dir": "apps/generated-consumer-app-radar",
+          "feedback_path": "feedback/consumer-radar-product-feedback.md",
+          "allow_quality_fallback": true
+        },
+        "model": {
+          "provider": "anthropic",
+          "name": "claude-sonnet-4-6",
+          "fallbacks": []
+        },
+        "git": {
+          "author": null
+        },
+        "prepare": {
+          "commands": [],
+          "timeout_ms": 300000
+        },
+        "execution": {
+          "mode": "normal",
+          "approval": "prompt"
+        },
+        "checkpoint": {
+          "exclude_globs": []
+        },
+        "sandbox": {
+          "provider": "daytona",
+          "preserve": true,
+          "stop_on_terminal": true,
+          "devcontainer": false,
+          "env": {
+            "APIFY_APPSTORE_ACTOR": "crawlerbros/appstore-scraper",
+            "FABRO_SLACK_CHANNEL_ID": "${{ secrets.FABRO_SLACK_CHANNEL_ID }}",
+            "FABRO_DEV_TOKEN": "${{ secrets.FABRO_DEV_TOKEN }}",
+            "FABRO_SLACK_BOT_TOKEN": "${{ secrets.FABRO_SLACK_BOT_TOKEN }}",
+            "FABRO_SERVER": "${{ secrets.FABRO_SERVER }}",
+            "MAESTRO_AGENT_STATE_DIR": "/home/daytona/agent-state",
+            "APIFY_TIKTOK_ACTOR": "clockworks/tiktok-scraper",
+            "OPENROUTER_API_KEY": "${{ secrets.OPENROUTER_API_KEY }}",
+            "LINEAR_API_URL": "${{ secrets.LINEAR_API_URL }}",
+            "DAYTONA_API_KEY": "${{ secrets.DAYTONA_API_KEY }}",
+            "APIFY_TOKEN": "${{ secrets.APIFY_TOKEN }}",
+            "DAYTONA_API_URL": "${{ secrets.DAYTONA_API_URL }}",
+            "LINEAR_API_KEY": "${{ secrets.LINEAR_API_KEY }}",
+            "PROMPTFOO_DISABLE_TELEMETRY": "1",
+            "APIFY_INSTAGRAM_ACTOR": "apify/instagram-scraper"
+          },
+          "docker": {
+            "image": "buildpack-deps:noble",
+            "network_mode": null,
+            "memory_limit": 4000000000,
+            "cpu_quota": 200000,
+            "env_vars": {},
+            "skip_clone": false
+          },
+          "daytona": {
+            "auto_stop_interval": 60,
+            "labels": {
+              "project": "maestro-os",
+              "purpose": "code-factory"
+            },
+            "volumes": [
+              {
+                "volume_id": "beefe1da-59a0-48f6-9e19-a513d1790ce3",
+                "mount_path": "/home/daytona/agent-state",
+                "subpath": "agent-auth"
+              }
+            ],
+            "snapshot": {
+              "name": "maestro-code-factory-v5",
+              "cpu": 2,
+              "memory_gb": 4,
+              "disk_gb": 10,
+              "dockerfile": {
+                "type": "inline",
+                "value": "FROM ubuntu:24.04\n\nENV DEBIAN_FRONTEND=noninteractive\nENV BUN_INSTALL=/root/.bun\nENV PATH=\"/root/.fabro/bin:/root/.bun/bin:/root/.local/bin:/root/.qlty/bin:${PATH}\"\nWORKDIR /home/daytona\n\nRUN apt-get update && apt-get install -y --no-install-recommends bash ca-certificates curl git jq openssh-client python3 python3-pip pipx ripgrep shellcheck unzip xz-utils && rm -rf /var/lib/apt/lists/*\n\nRUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash - && apt-get update && apt-get install -y --no-install-recommends nodejs && npm install -g @anthropic-ai/claude-code @openai/codex promptfoo && npm cache clean --force && rm -rf /var/lib/apt/lists/*\n\nRUN curl -fsSL https://bun.sh/install | bash -s \"bun-v1.2.22\" && ln -sf /root/.bun/bin/bun /usr/local/bin/bun\n\nRUN pipx install spec-kitty-cli==3.1.8 && curl -fsSL https://qlty.sh | sh && ln -sf /root/.qlty/bin/qlty /usr/local/bin/qlty\n\nRUN set -eux; target=\"x86_64-unknown-linux-gnu\"; asset=\"fabro-${target}.tar.gz\"; url=\"$(curl -fsSL https://api.github.com/repos/fabro-sh/fabro/releases/latest | jq -r --arg asset \"$asset\" '.assets[] | select(.name == $asset) | .browser_download_url')\"; test -n \"$url\"; curl -fsSL \"$url\" -o /tmp/fabro.tar.gz; tar -xzf /tmp/fabro.tar.gz -C /tmp; install -m 0755 \"/tmp/fabro-${target}/fabro\" /usr/local/bin/fabro; rm -rf /tmp/fabro.tar.gz \"/tmp/fabro-${target}\"; fabro --version\n\nCMD [\"/bin/bash\"]\n"
+              }
+            },
+            "network": "allow_all",
+            "skip_clone": false
+          }
+        },
+        "notifications": {},
+        "interviews": {
+          "provider": null,
+          "slack": null
+        },
+        "agent": {
+          "permissions": "full",
+          "mcps": {}
+        },
+        "hooks": [],
+        "scm": {
+          "provider": null,
+          "owner": null,
+          "repository": null,
+          "github": null
+        },
+        "pull_request": null,
+        "artifacts": {
+          "include": [
+            ".workflow/**",
+            "reports/**",
+            "evals/output/**",
+            "apps/generated-*/README.md",
+            "apps/generated-*/.workflow-build.json",
+            "apps/generated-*/fixtures/**",
+            "apps/generated-*/public/**",
+            "apps/generated-*/src/**",
+            "apps/generated-*/tests/**"
+          ]
+        },
+        "integrations": {
+          "github": {
+            "permissions": {
+              "metadata": "read",
+              "issues": "write",
+              "pull_requests": "write",
+              "actions": "read",
+              "contents": "write"
+            }
+          }
+        }
+      }
+    },
+    "graph": {
+      "name": "AppFeedbackEnhancement",
+      "nodes": {
+        "review_join": {
+          "id": "review_join",
+          "attrs": {
+            "model": {
+              "String": "anthropic/claude-haiku-4-5"
+            },
+            "provider": {
+              "String": "openrouter"
+            },
+            "shape": {
+              "String": "tripleoctagon"
+            },
+            "join_policy": {
+              "String": "wait_all"
+            },
+            "label": {
+              "String": "Review Join"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            }
+          }
+        },
+        "promptfoo_gate": {
+          "id": "promptfoo_gate",
+          "attrs": {
+            "retry_target": {
+              "String": "apply_enhancement"
+            },
+            "model": {
+              "String": "anthropic/claude-haiku-4-5"
+            },
+            "provider": {
+              "String": "openrouter"
+            },
+            "script": {
+              "String": "node scripts/consumer-radar/promptfoo-or-fallback.mjs 'apps/generated-consumer-app-radar' --real-mode 'true' --allow-fallback 'true'"
+            },
+            "goal_gate": {
+              "Boolean": true
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "shape": {
+              "String": "parallelogram"
+            },
+            "label": {
+              "String": "Promptfoo Gate"
+            }
+          }
+        },
+        "review_consensus": {
+          "id": "review_consensus",
+          "attrs": {
+            "retry_target": {
+              "String": "apply_enhancement"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "label": {
+              "String": "Review Consensus"
+            },
+            "goal_gate": {
+              "Boolean": true
+            },
+            "provider": {
+              "String": "openrouter"
+            },
+            "script": {
+              "String": "node scripts/consumer-radar/review-consensus.mjs --reviews reports/consumer-radar/reviews --output reports/consumer-radar/review-consensus.json --minimum-active-reviews '2'"
+            },
+            "shape": {
+              "String": "parallelogram"
+            },
+            "model": {
+              "String": "anthropic/claude-haiku-4-5"
+            }
+          }
+        },
+        "review_deepseek": {
+          "id": "review_deepseek",
+          "attrs": {
+            "shape": {
+              "String": "parallelogram"
+            },
+            "script": {
+              "String": "node scripts/consumer-radar/openrouter-review.mjs --model deepseek/deepseek-v4-pro,deepseek/deepseek-v4-flash --role feedback_simplification_and_ci --app-dir 'apps/generated-consumer-app-radar' --output reports/consumer-radar/reviews/deepseek-feedback.json --real-mode 'true'"
+            },
+            "class": {
+              "String": "cheap"
+            },
+            "model": {
+              "String": "deepseek/deepseek-v4-flash"
+            },
+            "provider": {
+              "String": "openrouter"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "label": {
+              "String": "DeepSeek Simplification Review"
+            }
+          },
+          "classes": [
+            "cheap"
+          ]
+        },
+        "qlty_gate": {
+          "id": "qlty_gate",
+          "attrs": {
+            "shape": {
+              "String": "parallelogram"
+            },
+            "script": {
+              "String": "node scripts/consumer-radar/qlty-gate.mjs 'apps/generated-consumer-app-radar' --real-mode 'true' --allow-fallback 'true'"
+            },
+            "retry_target": {
+              "String": "apply_enhancement"
+            },
+            "label": {
+              "String": "Qlty Gate"
+            },
+            "provider": {
+              "String": "openrouter"
+            },
+            "goal_gate": {
+              "Boolean": true
+            },
+            "model": {
+              "String": "anthropic/claude-haiku-4-5"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            }
+          }
+        },
+        "wait_for_support_files": {
+          "id": "wait_for_support_files",
+          "attrs": {
+            "goal_gate": {
+              "Boolean": true
+            },
+            "script": {
+              "String": "for i in $(seq 1 90); do if [ -f scripts/app-feedback/parse-feedback.mjs ] && [ -f scripts/app-feedback/apply-feedback-enhancement.mjs ] && [ -f 'feedback/consumer-radar-product-feedback.md' ]; then echo feedback-support-ready; exit 0; fi; sleep 2; done; echo 'missing feedback enhancement support files' >&2; exit 1"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "retry_target": {
+              "String": "wait_for_support_files"
+            },
+            "shape": {
+              "String": "parallelogram"
+            },
+            "label": {
+              "String": "Wait For Feedback Support Files"
+            },
+            "model": {
+              "String": "anthropic/claude-haiku-4-5"
+            },
+            "provider": {
+              "String": "openrouter"
+            }
+          }
+        },
+        "product_surface_gate": {
+          "id": "product_surface_gate",
+          "attrs": {
+            "goal_gate": {
+              "Boolean": true
+            },
+            "model": {
+              "String": "anthropic/claude-haiku-4-5"
+            },
+            "retry_target": {
+              "String": "apply_enhancement"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "label": {
+              "String": "Product Surface Gate"
+            },
+            "provider": {
+              "String": "openrouter"
+            },
+            "script": {
+              "String": "node scripts/consumer-radar/assert-product-surface.mjs 'apps/generated-consumer-app-radar'"
+            },
+            "shape": {
+              "String": "parallelogram"
+            }
+          }
+        },
+        "start": {
+          "id": "start",
+          "attrs": {
+            "label": {
+              "String": "Start"
+            },
+            "provider": {
+              "String": "openrouter"
+            },
+            "shape": {
+              "String": "Mdiamond"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "model": {
+              "String": "anthropic/claude-haiku-4-5"
+            }
+          }
+        },
+        "native_checks": {
+          "id": "native_checks",
+          "attrs": {
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "provider": {
+              "String": "openrouter"
+            },
+            "script": {
+              "String": "node scripts/consumer-radar/run-native-checks.mjs 'apps/generated-consumer-app-radar'"
+            },
+            "label": {
+              "String": "Native Checks"
+            },
+            "shape": {
+              "String": "parallelogram"
+            },
+            "goal_gate": {
+              "Boolean": true
+            },
+            "model": {
+              "String": "anthropic/claude-haiku-4-5"
+            },
+            "retry_target": {
+              "String": "apply_enhancement"
+            }
+          }
+        },
+        "publish_handoff": {
+          "id": "publish_handoff",
+          "attrs": {
+            "goal_gate": {
+              "Boolean": true
+            },
+            "provider": {
+              "String": "openrouter"
+            },
+            "shape": {
+              "String": "parallelogram"
+            },
+            "script": {
+              "String": "node scripts/app-feedback/publish-feedback-handoff.mjs --app-dir 'apps/generated-consumer-app-radar' --out .workflow/app-feedback/handoff.json"
+            },
+            "label": {
+              "String": "Publish Handoff"
+            },
+            "model": {
+              "String": "anthropic/claude-haiku-4-5"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "retry_target": {
+              "String": "review_consensus"
+            }
+          }
+        },
+        "review_kimi": {
+          "id": "review_kimi",
+          "attrs": {
+            "label": {
+              "String": "Kimi Product Review"
+            },
+            "class": {
+              "String": "cheap"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "model": {
+              "String": "deepseek/deepseek-v4-flash"
+            },
+            "shape": {
+              "String": "parallelogram"
+            },
+            "script": {
+              "String": "node scripts/consumer-radar/openrouter-review.mjs --model moonshotai/kimi-k2.6 --role feedback_product_strategy --app-dir 'apps/generated-consumer-app-radar' --output reports/consumer-radar/reviews/kimi-feedback.json --real-mode 'true'"
+            },
+            "provider": {
+              "String": "openrouter"
+            }
+          },
+          "classes": [
+            "cheap"
+          ]
+        },
+        "feedback_acceptance_gate": {
+          "id": "feedback_acceptance_gate",
+          "attrs": {
+            "model": {
+              "String": "anthropic/claude-haiku-4-5"
+            },
+            "script": {
+              "String": "node scripts/app-feedback/assert-feedback-enhancement.mjs 'apps/generated-consumer-app-radar' --target 'consumer-radar'"
+            },
+            "goal_gate": {
+              "Boolean": true
+            },
+            "label": {
+              "String": "Feedback Acceptance Gate"
+            },
+            "retry_target": {
+              "String": "apply_enhancement"
+            },
+            "provider": {
+              "String": "openrouter"
+            },
+            "shape": {
+              "String": "parallelogram"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            }
+          }
+        },
+        "review_qwen": {
+          "id": "review_qwen",
+          "attrs": {
+            "class": {
+              "String": "cheap"
+            },
+            "provider": {
+              "String": "openrouter"
+            },
+            "model": {
+              "String": "deepseek/deepseek-v4-flash"
+            },
+            "label": {
+              "String": "Qwen Implementation Review"
+            },
+            "shape": {
+              "String": "parallelogram"
+            },
+            "script": {
+              "String": "node scripts/consumer-radar/openrouter-review.mjs --model qwen/qwen3.6-plus --role feedback_implementation_quality --app-dir 'apps/generated-consumer-app-radar' --output reports/consumer-radar/reviews/qwen-feedback.json --real-mode 'true'"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            }
+          },
+          "classes": [
+            "cheap"
+          ]
+        },
+        "spec_kitty_feedback_gate": {
+          "id": "spec_kitty_feedback_gate",
+          "attrs": {
+            "retry_target": {
+              "String": "parse_feedback"
+            },
+            "provider": {
+              "String": "openrouter"
+            },
+            "model": {
+              "String": "anthropic/claude-haiku-4-5"
+            },
+            "shape": {
+              "String": "parallelogram"
+            },
+            "script": {
+              "String": "node scripts/app-feedback/spec-kitty-feedback-gate.mjs --analysis .workflow/app-feedback/feedback-analysis.json --out .workflow/app-feedback/spec-kitty-feedback-gate.json --target 'consumer-radar'"
+            },
+            "label": {
+              "String": "Spec Kitty Feedback Gate"
+            },
+            "goal_gate": {
+              "Boolean": true
+            },
+            "reasoning_effort": {
+              "String": "low"
+            }
+          }
+        },
+        "exit": {
+          "id": "exit",
+          "attrs": {
+            "shape": {
+              "String": "Msquare"
+            },
+            "label": {
+              "String": "Exit"
+            },
+            "model": {
+              "String": "anthropic/claude-haiku-4-5"
+            },
+            "provider": {
+              "String": "openrouter"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            }
+          }
+        },
+        "review_fanout": {
+          "id": "review_fanout",
+          "attrs": {
+            "model": {
+              "String": "anthropic/claude-haiku-4-5"
+            },
+            "label": {
+              "String": "Parallel Feedback Review Fanout"
+            },
+            "provider": {
+              "String": "openrouter"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "shape": {
+              "String": "component"
+            }
+          }
+        },
+        "artifact_gate": {
+          "id": "artifact_gate",
+          "attrs": {
+            "script": {
+              "String": "node scripts/consumer-radar/validate-build-artifacts.mjs 'apps/generated-consumer-app-radar' --minimum-apps 6 --minimum-reports 4 && test -f .workflow/app-feedback/feedback-acceptance.json"
+            },
+            "goal_gate": {
+              "Boolean": true
+            },
+            "provider": {
+              "String": "openrouter"
+            },
+            "shape": {
+              "String": "parallelogram"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "label": {
+              "String": "Artifact Gate"
+            },
+            "model": {
+              "String": "anthropic/claude-haiku-4-5"
+            },
+            "retry_target": {
+              "String": "apply_enhancement"
+            }
+          }
+        },
+        "apply_enhancement": {
+          "id": "apply_enhancement",
+          "attrs": {
+            "model": {
+              "String": "deepseek/deepseek-v4-flash"
+            },
+            "class": {
+              "String": "cheap"
+            },
+            "goal_gate": {
+              "Boolean": true
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "label": {
+              "String": "Apply Feedback Enhancement"
+            },
+            "shape": {
+              "String": "parallelogram"
+            },
+            "provider": {
+              "String": "openrouter"
+            },
+            "script": {
+              "String": "node scripts/app-feedback/apply-feedback-enhancement.mjs --target 'consumer-radar' --app-dir 'apps/generated-consumer-app-radar' --feedback 'feedback/consumer-radar-product-feedback.md'"
+            },
+            "retry_target": {
+              "String": "apply_enhancement"
+            }
+          },
+          "classes": [
+            "cheap"
+          ]
+        },
+        "prepare_review_reports": {
+          "id": "prepare_review_reports",
+          "attrs": {
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "goal_gate": {
+              "Boolean": true
+            },
+            "shape": {
+              "String": "parallelogram"
+            },
+            "provider": {
+              "String": "openrouter"
+            },
+            "label": {
+              "String": "Prepare Review Reports"
+            },
+            "script": {
+              "String": "rm -rf reports/consumer-radar/reviews reports/consumer-radar/review-consensus.json && mkdir -p reports/consumer-radar/reviews"
+            },
+            "model": {
+              "String": "anthropic/claude-haiku-4-5"
+            },
+            "retry_target": {
+              "String": "promptfoo_gate"
+            }
+          }
+        },
+        "parse_feedback": {
+          "id": "parse_feedback",
+          "attrs": {
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "goal_gate": {
+              "Boolean": true
+            },
+            "retry_target": {
+              "String": "parse_feedback"
+            },
+            "model": {
+              "String": "anthropic/claude-haiku-4-5"
+            },
+            "provider": {
+              "String": "openrouter"
+            },
+            "shape": {
+              "String": "parallelogram"
+            },
+            "label": {
+              "String": "Parse Product Feedback"
+            },
+            "script": {
+              "String": "node scripts/app-feedback/parse-feedback.mjs --feedback 'feedback/consumer-radar-product-feedback.md' --out .workflow/app-feedback/feedback-analysis.json"
+            }
+          }
+        }
+      },
+      "edges": [
+        {
+          "from": "start",
+          "to": "wait_for_support_files",
+          "attrs": {}
+        },
+        {
+          "from": "wait_for_support_files",
+          "to": "parse_feedback",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "wait_for_support_files",
+          "to": "wait_for_support_files",
+          "attrs": {
+            "label": {
+              "String": "Retry"
+            },
+            "loop_restart": {
+              "Boolean": true
+            }
+          }
+        },
+        {
+          "from": "parse_feedback",
+          "to": "spec_kitty_feedback_gate",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "parse_feedback",
+          "to": "parse_feedback",
+          "attrs": {
+            "loop_restart": {
+              "Boolean": true
+            },
+            "label": {
+              "String": "Retry"
+            }
+          }
+        },
+        {
+          "from": "spec_kitty_feedback_gate",
+          "to": "apply_enhancement",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "spec_kitty_feedback_gate",
+          "to": "parse_feedback",
+          "attrs": {
+            "label": {
+              "String": "Fix"
+            }
+          }
+        },
+        {
+          "from": "apply_enhancement",
+          "to": "native_checks",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "apply_enhancement",
+          "to": "apply_enhancement",
+          "attrs": {
+            "label": {
+              "String": "Retry"
+            },
+            "loop_restart": {
+              "Boolean": true
+            }
+          }
+        },
+        {
+          "from": "native_checks",
+          "to": "product_surface_gate",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "native_checks",
+          "to": "apply_enhancement",
+          "attrs": {
+            "label": {
+              "String": "Fix"
+            }
+          }
+        },
+        {
+          "from": "product_surface_gate",
+          "to": "feedback_acceptance_gate",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "product_surface_gate",
+          "to": "apply_enhancement",
+          "attrs": {
+            "label": {
+              "String": "Fix"
+            }
+          }
+        },
+        {
+          "from": "feedback_acceptance_gate",
+          "to": "qlty_gate",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "feedback_acceptance_gate",
+          "to": "apply_enhancement",
+          "attrs": {
+            "label": {
+              "String": "Fix"
+            }
+          }
+        },
+        {
+          "from": "qlty_gate",
+          "to": "promptfoo_gate",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "qlty_gate",
+          "to": "apply_enhancement",
+          "attrs": {
+            "label": {
+              "String": "Fix"
+            }
+          }
+        },
+        {
+          "from": "promptfoo_gate",
+          "to": "prepare_review_reports",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "promptfoo_gate",
+          "to": "apply_enhancement",
+          "attrs": {
+            "label": {
+              "String": "Fix"
+            }
+          }
+        },
+        {
+          "from": "prepare_review_reports",
+          "to": "review_fanout",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "prepare_review_reports",
+          "to": "promptfoo_gate",
+          "attrs": {
+            "label": {
+              "String": "Fix"
+            }
+          }
+        },
+        {
+          "from": "review_fanout",
+          "to": "review_kimi",
+          "attrs": {}
+        },
+        {
+          "from": "review_fanout",
+          "to": "review_qwen",
+          "attrs": {}
+        },
+        {
+          "from": "review_fanout",
+          "to": "review_deepseek",
+          "attrs": {}
+        },
+        {
+          "from": "review_kimi",
+          "to": "review_join",
+          "attrs": {}
+        },
+        {
+          "from": "review_qwen",
+          "to": "review_join",
+          "attrs": {}
+        },
+        {
+          "from": "review_deepseek",
+          "to": "review_join",
+          "attrs": {}
+        },
+        {
+          "from": "review_join",
+          "to": "review_consensus",
+          "attrs": {}
+        },
+        {
+          "from": "review_consensus",
+          "to": "artifact_gate",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "review_consensus",
+          "to": "apply_enhancement",
+          "attrs": {
+            "label": {
+              "String": "Fix"
+            }
+          }
+        },
+        {
+          "from": "artifact_gate",
+          "to": "publish_handoff",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "artifact_gate",
+          "to": "apply_enhancement",
+          "attrs": {
+            "label": {
+              "String": "Fix"
+            }
+          }
+        },
+        {
+          "from": "publish_handoff",
+          "to": "exit",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "publish_handoff",
+          "to": "review_consensus",
+          "attrs": {
+            "label": {
+              "String": "Fix"
+            }
+          }
+        }
+      ],
+      "attrs": {
+        "outputs": {
+          "String": "feedback_analysis, enhanced_app, quality_reports, review_consensus, handoff"
+        },
+        "inputs": {
+          "String": "app_dir, feedback_path, target_adapter, real_mode, allow_quality_fallback, minimum_active_reviews"
+        },
+        "rankdir": {
+          "String": "LR"
+        },
+        "retry_target": {
+          "String": "apply_enhancement"
+        },
+        "persona": {
+          "String": "app-feedback-workflow-builder"
+        },
+        "default_max_retries": {
+          "Integer": 2
+        },
+        "goal": {
+          "String": "Enhance Consumer App Radar from product feedback using the generic app feedback workflow"
+        },
+        "fallback_retry_target": {
+          "String": "apply_enhancement"
+        },
+        "model_stylesheet": {
+          "String": "\n            *       { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: low; }\n            .review { provider: openrouter; model: google/gemini-3.1-pro-preview; reasoning_effort: high; }\n            .cheap  { provider: openrouter; model: deepseek/deepseek-v4-flash; reasoning_effort: low; }\n        "
+        }
+      }
+    },
+    "graph_source": "digraph AppFeedbackEnhancement {\n    graph [\n        goal=\"Enhance an app from product feedback with a reusable spec, implementation, validation, and review workflow\",\n        persona=\"app-feedback-workflow-builder\",\n        inputs=\"app_dir, feedback_path, target_adapter, real_mode, allow_quality_fallback, minimum_active_reviews\",\n        outputs=\"feedback_analysis, enhanced_app, quality_reports, review_consensus, handoff\",\n        default_max_retries=2,\n        retry_target=\"apply_enhancement\",\n        fallback_retry_target=\"apply_enhancement\",\n        model_stylesheet=\"\n            *       { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: low; }\n            .review { provider: openrouter; model: google/gemini-3.1-pro-preview; reasoning_effort: high; }\n            .cheap  { provider: openrouter; model: deepseek/deepseek-v4-flash; reasoning_effort: low; }\n        \"\n    ]\n    rankdir=LR\n\n    start [shape=Mdiamond, label=\"Start\"]\n    exit  [shape=Msquare, label=\"Exit\"]\n\n    wait_for_support_files [\n        label=\"Wait For Feedback Support Files\",\n        shape=parallelogram,\n        goal_gate=true,\n        retry_target=\"wait_for_support_files\",\n        script=\"for i in $(seq 1 90); do if [ -f scripts/app-feedback/parse-feedback.mjs ] && [ -f scripts/app-feedback/apply-feedback-enhancement.mjs ] && [ -f '{{ inputs.feedback_path|default('feedback/consumer-radar-product-feedback.md') }}' ]; then echo feedback-support-ready; exit 0; fi; sleep 2; done; echo 'missing feedback enhancement support files' >&2; exit 1\"\n    ]\n\n    parse_feedback [\n        label=\"Parse Product Feedback\",\n        shape=parallelogram,\n        goal_gate=true,\n        retry_target=\"parse_feedback\",\n        script=\"node scripts/app-feedback/parse-feedback.mjs --feedback '{{ inputs.feedback_path|default('feedback/consumer-radar-product-feedback.md') }}' --out .workflow/app-feedback/feedback-analysis.json\"\n    ]\n\n    spec_kitty_feedback_gate [\n        label=\"Spec Kitty Feedback Gate\",\n        shape=parallelogram,\n        goal_gate=true,\n        retry_target=\"parse_feedback\",\n        script=\"node scripts/app-feedback/spec-kitty-feedback-gate.mjs --analysis .workflow/app-feedback/feedback-analysis.json --out .workflow/app-feedback/spec-kitty-feedback-gate.json --target '{{ inputs.target_adapter|default('consumer-radar') }}'\"\n    ]\n\n    apply_enhancement [\n        label=\"Apply Feedback Enhancement\",\n        shape=parallelogram,\n        class=\"cheap\",\n        goal_gate=true,\n        retry_target=\"apply_enhancement\",\n        script=\"node scripts/app-feedback/apply-feedback-enhancement.mjs --target '{{ inputs.target_adapter|default('consumer-radar') }}' --app-dir '{{ inputs.app_dir|default('apps/generated-consumer-app-radar') }}' --feedback '{{ inputs.feedback_path|default('feedback/consumer-radar-product-feedback.md') }}'\"\n    ]\n\n    native_checks [\n        label=\"Native Checks\",\n        shape=parallelogram,\n        goal_gate=true,\n        retry_target=\"apply_enhancement\",\n        script=\"node scripts/consumer-radar/run-native-checks.mjs '{{ inputs.app_dir|default('apps/generated-consumer-app-radar') }}'\"\n    ]\n\n    product_surface_gate [\n        label=\"Product Surface Gate\",\n        shape=parallelogram,\n        goal_gate=true,\n        retry_target=\"apply_enhancement\",\n        script=\"node scripts/consumer-radar/assert-product-surface.mjs '{{ inputs.app_dir|default('apps/generated-consumer-app-radar') }}'\"\n    ]\n\n    feedback_acceptance_gate [\n        label=\"Feedback Acceptance Gate\",\n        shape=parallelogram,\n        goal_gate=true,\n        retry_target=\"apply_enhancement\",\n        script=\"node scripts/app-feedback/assert-feedback-enhancement.mjs '{{ inputs.app_dir|default('apps/generated-consumer-app-radar') }}' --target '{{ inputs.target_adapter|default('consumer-radar') }}'\"\n    ]\n\n    qlty_gate [\n        label=\"Qlty Gate\",\n        shape=parallelogram,\n        goal_gate=true,\n        retry_target=\"apply_enhancement\",\n        script=\"node scripts/consumer-radar/qlty-gate.mjs '{{ inputs.app_dir|default('apps/generated-consumer-app-radar') }}' --real-mode '{{ inputs.real_mode|default('true') }}' --allow-fallback '{{ inputs.allow_quality_fallback|default('false') }}'\"\n    ]\n\n    promptfoo_gate [\n        label=\"Promptfoo Gate\",\n        shape=parallelogram,\n        goal_gate=true,\n        retry_target=\"apply_enhancement\",\n        script=\"node scripts/consumer-radar/promptfoo-or-fallback.mjs '{{ inputs.app_dir|default('apps/generated-consumer-app-radar') }}' --real-mode '{{ inputs.real_mode|default('true') }}' --allow-fallback '{{ inputs.allow_quality_fallback|default('false') }}'\"\n    ]\n\n    prepare_review_reports [\n        label=\"Prepare Review Reports\",\n        shape=parallelogram,\n        goal_gate=true,\n        retry_target=\"promptfoo_gate\",\n        script=\"rm -rf reports/consumer-radar/reviews reports/consumer-radar/review-consensus.json && mkdir -p reports/consumer-radar/reviews\"\n    ]\n\n    review_fanout [shape=component, label=\"Parallel Feedback Review Fanout\"]\n    review_kimi [\n        label=\"Kimi Product Review\",\n        class=\"cheap\",\n        shape=parallelogram,\n        script=\"node scripts/consumer-radar/openrouter-review.mjs --model moonshotai/kimi-k2.6 --role feedback_product_strategy --app-dir '{{ inputs.app_dir|default('apps/generated-consumer-app-radar') }}' --output reports/consumer-radar/reviews/kimi-feedback.json --real-mode '{{ inputs.real_mode|default('true') }}'\"\n    ]\n    review_qwen [\n        label=\"Qwen Implementation Review\",\n        class=\"cheap\",\n        shape=parallelogram,\n        script=\"node scripts/consumer-radar/openrouter-review.mjs --model qwen/qwen3.6-plus --role feedback_implementation_quality --app-dir '{{ inputs.app_dir|default('apps/generated-consumer-app-radar') }}' --output reports/consumer-radar/reviews/qwen-feedback.json --real-mode '{{ inputs.real_mode|default('true') }}'\"\n    ]\n    review_deepseek [\n        label=\"DeepSeek Simplification Review\",\n        class=\"cheap\",\n        shape=parallelogram,\n        script=\"node scripts/consumer-radar/openrouter-review.mjs --model deepseek/deepseek-v4-pro,deepseek/deepseek-v4-flash --role feedback_simplification_and_ci --app-dir '{{ inputs.app_dir|default('apps/generated-consumer-app-radar') }}' --output reports/consumer-radar/reviews/deepseek-feedback.json --real-mode '{{ inputs.real_mode|default('true') }}'\"\n    ]\n    review_join [shape=tripleoctagon, label=\"Review Join\", join_policy=\"wait_all\"]\n\n    review_consensus [\n        label=\"Review Consensus\",\n        shape=parallelogram,\n        goal_gate=true,\n        retry_target=\"apply_enhancement\",\n        script=\"node scripts/consumer-radar/review-consensus.mjs --reviews reports/consumer-radar/reviews --output reports/consumer-radar/review-consensus.json --minimum-active-reviews '{{ inputs.minimum_active_reviews|default('2') }}'\"\n    ]\n\n    artifact_gate [\n        label=\"Artifact Gate\",\n        shape=parallelogram,\n        goal_gate=true,\n        retry_target=\"apply_enhancement\",\n        script=\"node scripts/consumer-radar/validate-build-artifacts.mjs '{{ inputs.app_dir|default('apps/generated-consumer-app-radar') }}' --minimum-apps 6 --minimum-reports 4 && test -f .workflow/app-feedback/feedback-acceptance.json\"\n    ]\n\n    publish_handoff [\n        label=\"Publish Handoff\",\n        shape=parallelogram,\n        goal_gate=true,\n        retry_target=\"review_consensus\",\n        script=\"node scripts/app-feedback/publish-feedback-handoff.mjs --app-dir '{{ inputs.app_dir|default('apps/generated-consumer-app-radar') }}' --out .workflow/app-feedback/handoff.json\"\n    ]\n\n    start -> wait_for_support_files\n    wait_for_support_files -> parse_feedback [condition=\"outcome=succeeded\"]\n    wait_for_support_files -> wait_for_support_files [label=\"Retry\", loop_restart=true]\n    parse_feedback -> spec_kitty_feedback_gate [condition=\"outcome=succeeded\"]\n    parse_feedback -> parse_feedback [label=\"Retry\", loop_restart=true]\n    spec_kitty_feedback_gate -> apply_enhancement [condition=\"outcome=succeeded\"]\n    spec_kitty_feedback_gate -> parse_feedback [label=\"Fix\"]\n    apply_enhancement -> native_checks [condition=\"outcome=succeeded\"]\n    apply_enhancement -> apply_enhancement [label=\"Retry\", loop_restart=true]\n    native_checks -> product_surface_gate [condition=\"outcome=succeeded\"]\n    native_checks -> apply_enhancement [label=\"Fix\"]\n    product_surface_gate -> feedback_acceptance_gate [condition=\"outcome=succeeded\"]\n    product_surface_gate -> apply_enhancement [label=\"Fix\"]\n    feedback_acceptance_gate -> qlty_gate [condition=\"outcome=succeeded\"]\n    feedback_acceptance_gate -> apply_enhancement [label=\"Fix\"]\n    qlty_gate -> promptfoo_gate [condition=\"outcome=succeeded\"]\n    qlty_gate -> apply_enhancement [label=\"Fix\"]\n    promptfoo_gate -> prepare_review_reports [condition=\"outcome=succeeded\"]\n    promptfoo_gate -> apply_enhancement [label=\"Fix\"]\n    prepare_review_reports -> review_fanout [condition=\"outcome=succeeded\"]\n    prepare_review_reports -> promptfoo_gate [label=\"Fix\"]\n    review_fanout -> review_kimi\n    review_fanout -> review_qwen\n    review_fanout -> review_deepseek\n    review_kimi -> review_join\n    review_qwen -> review_join\n    review_deepseek -> review_join\n    review_join -> review_consensus\n    review_consensus -> artifact_gate [condition=\"outcome=succeeded\"]\n    review_consensus -> apply_enhancement [label=\"Fix\"]\n    artifact_gate -> publish_handoff [condition=\"outcome=succeeded\"]\n    artifact_gate -> apply_enhancement [label=\"Fix\"]\n    publish_handoff -> exit [condition=\"outcome=succeeded\"]\n    publish_handoff -> review_consensus [label=\"Fix\"]\n}\n",
+    "workflow_slug": "enhance-app-from-feedback",
+    "source_directory": "/Users/timlife/Documents/claude code/maestro-os",
+    "provenance": {
+      "server": {
+        "version": "0.231.0-nightly.1"
+      },
+      "client": {
+        "user_agent": "fabro-cli/0.231.0-nightly.1",
+        "name": "fabro-cli",
+        "version": "0.231.0-nightly.1"
+      },
+      "subject": {
+        "kind": "user",
+        "identity": {
+          "issuer": "fabro:dev",
+          "subject": "dev"
+        },
+        "login": "dev",
+        "auth_method": "dev_token"
+      }
+    },
+    "manifest_blob": "bd5625725a26b94340c7b0e8481838315f2d7e55033090ef65e9be1a95690acc",
+    "definition_blob": "1d414eaad479a4fe92416b4e229f93c435fcef67251ef5e912b61d277302bd80",
+    "git": {
+      "origin_url": "https://github.com/kimprobably/maestro-os",
+      "branch": "spike/fabro-code-factory-v5",
+      "sha": "a9607493fd92796fe0d5edf2a506595be541e939",
+      "dirty": "clean",
+      "push_outcome": {
+        "type": "not_attempted"
+      }
+    }
+  },
+  "web_url": "https://fabro-maestro-production.up.railway.app/runs/01KRH41V4MPCQXV5V7Z0795E2T",
+  "start": null,
+  "status": {
+    "kind": "starting"
+  },
+  "status_updated_at": "2026-05-13T16:52:20.905199592Z",
+  "last_event_at": "2026-05-13T16:52:28.279920562Z",
+  "pending_control": null,
+  "checkpoints": [],
+  "conclusion": null,
+  "sandbox": {
+    "provider": "daytona",
+    "image": "buildpack-deps:noble",
+    "snapshot": "maestro-code-factory-v5",
+    "runtime": {
+      "id": "fabro-01KRH41V4MPCQXV5V7Z0795E2T",
+      "working_directory": "/home/daytona/workspace",
+      "repo_cloned": true,
+      "clone_origin_url": "https://github.com/kimprobably/maestro-os",
+      "clone_branch": "spike/fabro-code-factory-v5"
+    }
+  },
+  "pull_request": null,
+  "superseded_by": null,
+  "pending_interviews": {},
+  "stages": {}
+}
