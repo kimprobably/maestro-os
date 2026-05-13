@@ -1091,7 +1091,7 @@
     "kind": "running"
   },
   "status_updated_at": "2026-05-13T21:35:09.354425356Z",
-  "last_event_at": "2026-05-13T21:55:08.800230734Z",
+  "last_event_at": "2026-05-13T21:59:52.914599468Z",
   "pending_control": null,
   "checkpoints": [
     {
@@ -2228,9 +2228,9 @@
       }
     },
     {
-      "seq": 0,
+      "seq": 483,
       "checkpoint": {
-        "timestamp": "2026-05-13T21:55:08.839708303Z",
+        "timestamp": "2026-05-13T21:55:10.594343489Z",
         "current_node": "live_data_gate",
         "completed_nodes": [
           "start",
@@ -2247,23 +2247,12 @@
         ],
         "node_retries": {},
         "context_values": {
-          "internal.retry_count.native_checks": 0,
-          "graph.retry_target": "implement_live_enrichment",
-          "internal.retry_count.start": 0,
-          "graph.outputs": "live_enriched_app, live_data_report, review_consensus, handoff",
-          "graph.inputs": "app_dir, real_mode, allow_fixture_fallback, minimum_live_apps, minimum_review_samples, minimum_social_examples, minimum_active_reviews",
-          "thread.implementation_plan_fanout.current_node": "plan_join",
-          "parallel.fan_in.best_outcome": "succeeded",
-          "internal.retry_count.live_source_preflight": 0,
-          "thread.plan_eval.current_node": "implementation_plan_fanout",
-          "graph.default_max_retries": "2",
-          "graph.fallback_retry_target": "implementation_plan_fanout",
-          "internal.retry_count.implement_live_enrichment": 0,
-          "thread.implement_live_enrichment.current_node": "native_checks",
+          "graph.rankdir": "LR",
+          "parallel.branch_count": 2,
+          "internal.retry_count.plan_eval": 0,
           "thread.native_checks.current_node": "live_data_gate",
-          "graph.goal": "Implement Consumer Radar live discovery and enrichment with strict real-data gates",
-          "internal.run_id": "01KRHM7G28MDA9X8JFGP04ERQC",
-          "failure_class": "deterministic",
+          "internal.retry_count.implement_live_enrichment": 0,
+          "parallel.fan_in.best_outcome": "succeeded",
           "parallel.results": [
             {
               "id": "plan_live_sources",
@@ -2276,35 +2265,66 @@
               "head_sha": "3e9a707943ac9f64e9b0fa8b59d192959ab3fcc3"
             }
           ],
-          "parallel.branch_count": 2,
-          "last_stage": "implement_live_enrichment",
-          "parallel.fan_in.best_id": "plan_product_surface",
-          "command.output": "blob://sha256/3a00f61aad56a8f52b869018f7ed7e50c161c4e40bec16022126f08246d2c5cb",
-          "internal.retry_count.implementation_plan_fanout": 0,
-          "outcome": "failed",
-          "parallel.fan_in.best_head_sha": "3e9a707943ac9f64e9b0fa8b59d192959ab3fcc3",
-          "thread.coding.current_node": "implement_live_enrichment",
-          "internal.fidelity": "compact",
-          "last_response": "Implementation report written to `.workflow/consumer-radar-live-enrichment/implementation-report.md`. Stage complete.\n\n**Files changed:** `src/ingest.js`, `src/server.js`, `public/app.js`, `public/ind",
-          "internal.work_dir": "/home/daytona/workspace",
-          "graph.rankdir": "LR",
-          "failure_signature": "live_data_gate|deterministic|script failed with exit code: <n> ## output node:internal/modules/cjs/loader:<n> throw err; ^ error: cannot find module '/home/daytona/workspace/scripts/consumer-radar/assert-live-enrichment.mjs' at function._resolvefilename (node:internal/",
-          "graph.persona": "consumer-radar-live-enrichment-builder",
-          "internal.node_visit_count": 1,
-          "thread.start.current_node": "live_source_preflight",
-          "response.implement_live_enrichment": "Implementation report written to `.workflow/consumer-radar-live-enrichment/implementation-report.md`. Stage complete.\n\n**Files changed:** `src/ingest.js`, `src/server.js`, `public/app.js`, `public/index.html`, `public/styles.css`, `tests/live-enrichment.test.js`\n\n**Gates passed:** Syntax checks green (11/11 files), existing tests 7/7 pass with zero regressions, Apify actor wired into discovery, Apple review ingestion active, live-mode gate enforced when `APIFY_TOKEN` is missing and `allow_fixture_fallback=false`, provenance metadata persisted on every enriched record.\n\n**Known issue:** Network-dependent tests can timeout in sandbox environments when calling Apple iTunes API — the deterministic subset (gate rejection, provenance shape, frontend markers) passes. Live Data Gate will resolve the remaining connectivity.",
-          "internal.retry_count.live_data_gate": 0,
-          "thread.live_source_preflight.current_node": "implementation_plan_fanout",
-          "internal.thread_id": "native_checks",
-          "internal.retry_count.plan_join": 0,
-          "current_node": "live_data_gate",
-          "graph.model_stylesheet": "\n            *          { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: low; }\n            .coding    { provider: openrouter; model: qwen/qwen3.6-plus; reasoning_effort: high; }\n            .review    { provider: openrouter; model: google/gemini-3.1-pro-preview; reasoning_effort: high; }\n            .cheap     { provider: openrouter; model: deepseek/deepseek-v4-flash; reasoning_effort: low; }\n        ",
+          "internal.retry_count.live_source_preflight": 0,
+          "thread.implementation_plan_fanout.current_node": "plan_join",
           "thread.plan_join.current_node": "plan_eval",
-          "internal.retry_count.plan_eval": 0
+          "graph.goal": "Implement Consumer Radar live discovery and enrichment with strict real-data gates",
+          "thread.implement_live_enrichment.current_node": "native_checks",
+          "thread.start.current_node": "live_source_preflight",
+          "graph.outputs": "live_enriched_app, live_data_report, review_consensus, handoff",
+          "response.implement_live_enrichment": "Implementation report written to `.workflow/consumer-radar-live-enrichment/implementation-report.md`. Stage complete.\n\n**Files changed:** `src/ingest.js`, `src/server.js`, `public/app.js`, `public/index.html`, `public/styles.css`, `tests/live-enrichment.test.js`\n\n**Gates passed:** Syntax checks green (11/11 files), existing tests 7/7 pass with zero regressions, Apify actor wired into discovery, Apple review ingestion active, live-mode gate enforced when `APIFY_TOKEN` is missing and `allow_fixture_fallback=false`, provenance metadata persisted on every enriched record.\n\n**Known issue:** Network-dependent tests can timeout in sandbox environments when calling Apple iTunes API — the deterministic subset (gate rejection, provenance shape, frontend markers) passes. Live Data Gate will resolve the remaining connectivity.",
+          "internal.retry_count.plan_join": 0,
+          "parallel.fan_in.best_id": "plan_product_surface",
+          "internal.node_visit_count": 1,
+          "internal.retry_count.implementation_plan_fanout": 0,
+          "internal.retry_count.live_data_gate": 0,
+          "failure_signature": "live_data_gate|deterministic|script failed with exit code: <n> ## output node:internal/modules/cjs/loader:<n> throw err; ^ error: cannot find module '/home/daytona/workspace/scripts/consumer-radar/assert-live-enrichment.mjs' at function._resolvefilename (node:internal/",
+          "internal.thread_id": "native_checks",
+          "outcome": "failed",
+          "graph.inputs": "app_dir, real_mode, allow_fixture_fallback, minimum_live_apps, minimum_review_samples, minimum_social_examples, minimum_active_reviews",
+          "last_stage": "implement_live_enrichment",
+          "graph.model_stylesheet": "\n            *          { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: low; }\n            .coding    { provider: openrouter; model: qwen/qwen3.6-plus; reasoning_effort: high; }\n            .review    { provider: openrouter; model: google/gemini-3.1-pro-preview; reasoning_effort: high; }\n            .cheap     { provider: openrouter; model: deepseek/deepseek-v4-flash; reasoning_effort: low; }\n        ",
+          "command.output": "blob://sha256/3a00f61aad56a8f52b869018f7ed7e50c161c4e40bec16022126f08246d2c5cb",
+          "graph.persona": "consumer-radar-live-enrichment-builder",
+          "current_node": "live_data_gate",
+          "graph.fallback_retry_target": "implementation_plan_fanout",
+          "last_response": "Implementation report written to `.workflow/consumer-radar-live-enrichment/implementation-report.md`. Stage complete.\n\n**Files changed:** `src/ingest.js`, `src/server.js`, `public/app.js`, `public/ind",
+          "thread.plan_eval.current_node": "implementation_plan_fanout",
+          "thread.coding.current_node": "implement_live_enrichment",
+          "graph.default_max_retries": "2",
+          "internal.fidelity": "compact",
+          "internal.run_id": "01KRHM7G28MDA9X8JFGP04ERQC",
+          "internal.work_dir": "/home/daytona/workspace",
+          "internal.retry_count.native_checks": 0,
+          "graph.retry_target": "implement_live_enrichment",
+          "parallel.fan_in.best_head_sha": "3e9a707943ac9f64e9b0fa8b59d192959ab3fcc3",
+          "thread.live_source_preflight.current_node": "implementation_plan_fanout",
+          "internal.retry_count.start": 0,
+          "failure_class": "deterministic"
         },
         "node_outcomes": {
-          "start": {
+          "live_source_preflight": {
             "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/5e35254a5e6757cfd34a36d5bcb6dd4e7878884b76ab0a6ce38c03c9c4364ef4"
+            },
+            "notes": "Script completed: echo APIFY_TOKEN live source preflight; node scripts/app-feedback/live-source-preflight.mjs --app-dir 'apps/generated-consumer-app-radar' --real-mode 'true' --allow-fixture-fallback 'false' --out .workflow/consumer-radar-live-enrichment/source-preflight.json",
+            "usage": null
+          },
+          "native_checks": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/3cb84a9bb9e20844631d561961b12684816930e946cc09fc74b597b239f65682"
+            },
+            "notes": "Script completed: node scripts/consumer-radar/run-native-checks.mjs 'apps/generated-consumer-app-radar'",
+            "usage": null
+          },
+          "plan_eval": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/1c1991efbc028f40b3802bd0b01f8034120004faae2bc0dcea814df8a502955e"
+            },
+            "notes": "Script completed: node scripts/app-feedback/evaluate-enhancement-artifact.mjs --stage workflow --candidates .workflow/consumer-radar-live-enrichment/plans --out .workflow/consumer-radar-live-enrichment/plan-eval.json --minimum-candidates 2 --minimum-eval-score 0.72",
             "usage": null
           },
           "plan_join": {
@@ -2315,14 +2335,6 @@
               "parallel.fan_in.best_id": "plan_product_surface"
             },
             "notes": "Selected best candidate: plan_product_surface",
-            "usage": null
-          },
-          "native_checks": {
-            "status": "succeeded",
-            "context_updates": {
-              "command.output": "blob://sha256/3cb84a9bb9e20844631d561961b12684816930e946cc09fc74b597b239f65682"
-            },
-            "notes": "Script completed: node scripts/consumer-radar/run-native-checks.mjs 'apps/generated-consumer-app-radar'",
             "usage": null
           },
           "live_data_gate": {
@@ -2336,26 +2348,8 @@
             },
             "usage": null
           },
-          "implementation_plan_fanout": {
-            "status": "partially_succeeded",
-            "jump_to_node": "plan_join",
-            "notes": "Parallel node dispatched 2 branches (1 succeeded, 1 failed)",
-            "usage": null
-          },
-          "plan_eval": {
+          "start": {
             "status": "succeeded",
-            "context_updates": {
-              "command.output": "blob://sha256/1c1991efbc028f40b3802bd0b01f8034120004faae2bc0dcea814df8a502955e"
-            },
-            "notes": "Script completed: node scripts/app-feedback/evaluate-enhancement-artifact.mjs --stage workflow --candidates .workflow/consumer-radar-live-enrichment/plans --out .workflow/consumer-radar-live-enrichment/plan-eval.json --minimum-candidates 2 --minimum-eval-score 0.72",
-            "usage": null
-          },
-          "live_source_preflight": {
-            "status": "succeeded",
-            "context_updates": {
-              "command.output": "blob://sha256/5e35254a5e6757cfd34a36d5bcb6dd4e7878884b76ab0a6ce38c03c9c4364ef4"
-            },
-            "notes": "Script completed: echo APIFY_TOKEN live source preflight; node scripts/app-feedback/live-source-preflight.mjs --app-dir 'apps/generated-consumer-app-radar' --real-mode 'true' --allow-fixture-fallback 'false' --out .workflow/consumer-radar-live-enrichment/source-preflight.json",
             "usage": null
           },
           "implement_live_enrichment": {
@@ -2395,24 +2389,110 @@
               "/home/daytona/workspace/apps/generated-consumer-app-radar/src/server.js",
               "/home/daytona/workspace/apps/generated-consumer-app-radar/tests/live-enrichment.test.js"
             ]
+          },
+          "implementation_plan_fanout": {
+            "status": "partially_succeeded",
+            "jump_to_node": "plan_join",
+            "notes": "Parallel node dispatched 2 branches (1 succeeded, 1 failed)",
+            "usage": null
           }
         },
         "next_node_id": "implement_live_enrichment",
+        "git_commit_sha": "b234af25b916fbbd8b7ee40e28dc98c602923421",
+        "loop_failure_signatures": {
+          "live_data_gate|deterministic|script failed with exit code: <n> ## output node:internal/modules/cjs/loader:<n> throw err; ^ error: cannot find module '/home/daytona/workspace/scripts/consumer-radar/assert-live-enrichment.mjs' at function._resolvefilename (node:internal/": 1,
+          "plan_eval|deterministic|script failed with exit code: <n> ## output { \"ok\": false,\"verdict\": \"rejected\",\"stage\": \"workflow\",\"lineage\": { \"dataset_path\": null,\"dataset_version\": \"workflow-dataset-v0\",\"dataset_sha256\": null,\"prompt_version\": \"workflow-prompt-v0\",\"ru": 1
+        },
         "node_visits": {
-          "live_data_gate": 1,
-          "implementation_plan_fanout": 2,
           "implement_live_enrichment": 1,
-          "plan_eval": 2,
-          "live_source_preflight": 1,
           "native_checks": 1,
+          "live_data_gate": 1,
+          "plan_join": 2,
+          "live_source_preflight": 1,
+          "implementation_plan_fanout": 2,
           "start": 1,
-          "plan_join": 2
+          "plan_eval": 2
         }
       },
-      "diff": {}
+      "diff": {
+        "summary": {
+          "files_changed": 8,
+          "additions": 846,
+          "deletions": 33
+        }
+      }
     }
   ],
-  "conclusion": null,
+  "conclusion": {
+    "timestamp": "2026-05-13T21:59:52.983082837Z",
+    "status": "failed",
+    "duration_ms": 1483561,
+    "failure_reason": "Cancelled",
+    "final_git_commit_sha": "b234af25b916fbbd8b7ee40e28dc98c602923421",
+    "stages": [
+      {
+        "stage_id": "start",
+        "stage_label": "start",
+        "duration_ms": 0,
+        "retries": 0
+      },
+      {
+        "stage_id": "live_source_preflight",
+        "stage_label": "live_source_preflight",
+        "duration_ms": 1226,
+        "retries": 0
+      },
+      {
+        "stage_id": "implementation_plan_fanout",
+        "stage_label": "implementation_plan_fanout",
+        "duration_ms": 297806,
+        "billing_usd_micros": 139133,
+        "retries": 0
+      },
+      {
+        "stage_id": "plan_join",
+        "stage_label": "plan_join",
+        "duration_ms": 83,
+        "retries": 0
+      },
+      {
+        "stage_id": "plan_eval",
+        "stage_label": "plan_eval",
+        "duration_ms": 2640,
+        "retries": 0
+      },
+      {
+        "stage_id": "implement_live_enrichment",
+        "stage_label": "implement_live_enrichment",
+        "duration_ms": 858385,
+        "billing_usd_micros": 1025482,
+        "retries": 0
+      },
+      {
+        "stage_id": "native_checks",
+        "stage_label": "native_checks",
+        "duration_ms": 17537,
+        "retries": 0
+      },
+      {
+        "stage_id": "live_data_gate",
+        "stage_label": "live_data_gate",
+        "duration_ms": 1221,
+        "retries": 0
+      }
+    ],
+    "billing": {
+      "input_tokens": 4171381,
+      "output_tokens": 67966,
+      "total_tokens": 4239347,
+      "reasoning_tokens": 0,
+      "cache_read_tokens": 0,
+      "cache_write_tokens": 0,
+      "total_usd_micros": 1164615
+    },
+    "total_retries": 0,
+    "diff": {}
+  },
   "sandbox": {
     "provider": "daytona",
     "image": "buildpack-deps:noble",
@@ -2707,7 +2787,12 @@
       "first_event_seq": 476,
       "prompt": null,
       "response": null,
-      "completion": null,
+      "completion": {
+        "outcome": "failed",
+        "notes": null,
+        "failure_reason": "Script failed with exit code: 1\n\n## output\nnode:internal/modules/cjs/loader:1386\n  throw err;\n  ^\n\nError: Cannot find module '/home/daytona/workspace/scripts/consumer-radar/assert-live-enrichment.mjs'\n    at Function._resolveFilename (node:internal/modules/cjs/loader:1383:15)\n    at defaultResolveImpl (node:internal/modules/cjs/loader:1025:19)\n    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1030:22)\n    at Function._load (node:internal/modules/cjs/loader:1192:37)\n    at TracingChannel.traceSync (node:diagnostics_channel:328:14)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)\n    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)\n    at node:internal/main/run_main_module:36:49 {\n  code: 'MODULE_NOT_FOUND',\n  requireStack: []\n}\n\nNode.js v22.22.2\n",
+        "timestamp": "2026-05-13T21:55:08.838307223Z"
+      },
       "provider_used": null,
       "diff": null,
       "script_invocation": {
@@ -2730,6 +2815,7 @@
       "termination": "exited",
       "started_at": "2026-05-13T21:55:07.579420961Z",
       "handler": "command",
+      "duration_ms": 1221,
       "usage": {
         "input_tokens": 0,
         "output_tokens": 0,
@@ -2737,6 +2823,37 @@
         "reasoning_tokens": 0,
         "cache_read_tokens": 0,
         "cache_write_tokens": 0
+      },
+      "state": "failed"
+    },
+    "implement_live_enrichment@2": {
+      "first_event_seq": 486,
+      "prompt": null,
+      "response": null,
+      "completion": null,
+      "provider_used": {
+        "mode": "agent",
+        "provider": "openrouter",
+        "model": "qwen/qwen3.6-plus"
+      },
+      "diff": null,
+      "script_invocation": null,
+      "script_timing": null,
+      "parallel_results": null,
+      "output": null,
+      "started_at": "2026-05-13T21:55:10.599614564Z",
+      "handler": "agent",
+      "usage": {
+        "input_tokens": 493603,
+        "output_tokens": 12338,
+        "total_tokens": 505941,
+        "reasoning_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "model": {
+        "provider": "openrouter",
+        "model_id": "qwen/qwen3.6-plus-04-02"
       },
       "state": "running"
     },
