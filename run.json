@@ -1125,7 +1125,7 @@
     "kind": "running"
   },
   "status_updated_at": "2026-05-13T22:05:24.558680697Z",
-  "last_event_at": "2026-05-13T22:08:18.393627991Z",
+  "last_event_at": "2026-05-13T22:09:05.397498128Z",
   "pending_control": null,
   "checkpoints": [
     {
@@ -1539,9 +1539,9 @@
       }
     },
     {
-      "seq": 0,
+      "seq": 169,
       "checkpoint": {
-        "timestamp": "2026-05-13T22:08:18.551466686Z",
+        "timestamp": "2026-05-13T22:08:21.477104370Z",
         "current_node": "plan_eval",
         "completed_nodes": [
           "start",
@@ -1553,16 +1553,147 @@
         ],
         "node_retries": {},
         "context_values": {
+          "thread.live_source_preflight.current_node": "implementation_plan_fanout",
+          "graph.goal": "Implement Consumer Radar live discovery and enrichment with strict real-data gates",
+          "internal.retry_count.start": 0,
+          "failure_signature": "",
+          "graph.retry_target": "implement_live_enrichment",
+          "internal.run_id": "01KRHNYVA8TJ5XEY0N3E60V8D0",
+          "parallel.fan_in.best_outcome": "succeeded",
+          "graph.model_stylesheet": "\n            *          { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: low; }\n            .coding    { provider: openrouter; model: qwen/qwen3.6-plus; reasoning_effort: high; }\n            .review    { provider: openrouter; model: google/gemini-3.1-pro-preview; reasoning_effort: high; }\n            .cheap     { provider: openrouter; model: deepseek/deepseek-v4-flash; reasoning_effort: low; }\n        ",
+          "parallel.results": [
+            {
+              "id": "plan_live_sources",
+              "status": "failed",
+              "head_sha": "6bf9aafb4bc57a0415b47fec793db0ffe76cba49"
+            },
+            {
+              "id": "plan_product_surface",
+              "status": "succeeded",
+              "head_sha": "8a776804d5472254a0c3beb68c607340480c20ed"
+            }
+          ],
+          "internal.retry_count.implementation_plan_fanout": 0,
+          "thread.plan_join.current_node": "ensure_plan_candidates",
+          "thread.implementation_plan_fanout.current_node": "plan_join",
+          "internal.node_visit_count": 1,
+          "internal.retry_count.ensure_plan_candidates": 0,
+          "graph.default_max_retries": "2",
+          "current_node": "plan_eval",
+          "internal.retry_count.plan_join": 0,
+          "graph.outputs": "live_enriched_app, live_data_report, review_consensus, handoff",
+          "command.output": "blob://sha256/75a6ec5fd165d6d1df62c216d0e90a13e727ca431c93a45f3555964ae79011d8",
+          "parallel.branch_count": 2,
+          "thread.ensure_plan_candidates.current_node": "plan_eval",
+          "thread.start.current_node": "live_source_preflight",
+          "graph.rankdir": "LR",
+          "graph.fallback_retry_target": "implementation_plan_fanout",
+          "graph.persona": "consumer-radar-live-enrichment-builder",
+          "internal.retry_count.plan_eval": 0,
+          "parallel.fan_in.best_head_sha": "8a776804d5472254a0c3beb68c607340480c20ed",
+          "internal.fidelity": "compact",
+          "failure_class": "",
+          "graph.inputs": "app_dir, real_mode, allow_fixture_fallback, minimum_live_apps, minimum_review_samples, minimum_social_examples, minimum_active_reviews",
+          "internal.thread_id": "ensure_plan_candidates",
+          "parallel.fan_in.best_id": "plan_product_surface",
+          "outcome": "succeeded",
+          "internal.work_dir": "/home/daytona/workspace",
+          "internal.retry_count.live_source_preflight": 0
+        },
+        "node_outcomes": {
+          "plan_eval": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/75a6ec5fd165d6d1df62c216d0e90a13e727ca431c93a45f3555964ae79011d8"
+            },
+            "notes": "Script completed: node scripts/app-feedback/evaluate-enhancement-artifact.mjs --stage workflow --candidates .workflow/consumer-radar-live-enrichment/plans --out .workflow/consumer-radar-live-enrichment/plan-eval.json --minimum-candidates 2 --minimum-eval-score 0.72",
+            "usage": null
+          },
+          "plan_join": {
+            "status": "succeeded",
+            "context_updates": {
+              "parallel.fan_in.best_head_sha": "8a776804d5472254a0c3beb68c607340480c20ed",
+              "parallel.fan_in.best_id": "plan_product_surface",
+              "parallel.fan_in.best_outcome": "succeeded"
+            },
+            "notes": "Selected best candidate: plan_product_surface",
+            "usage": null
+          },
+          "start": {
+            "status": "succeeded",
+            "usage": null
+          },
+          "live_source_preflight": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/5e35254a5e6757cfd34a36d5bcb6dd4e7878884b76ab0a6ce38c03c9c4364ef4"
+            },
+            "notes": "Script completed: echo APIFY_TOKEN live source preflight; node scripts/app-feedback/live-source-preflight.mjs --app-dir 'apps/generated-consumer-app-radar' --real-mode 'true' --allow-fixture-fallback 'false' --out .workflow/consumer-radar-live-enrichment/source-preflight.json",
+            "usage": null
+          },
+          "ensure_plan_candidates": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/6ecc61b9d08792a9d6530ef6040a1b074c5d4dfeee7f4c40deeeb4f61fcb4ddd"
+            },
+            "notes": "Script completed: node scripts/app-feedback/ensure-live-enrichment-plans.mjs --plans .workflow/consumer-radar-live-enrichment/plans --minimum-candidates 2",
+            "usage": null
+          },
+          "implementation_plan_fanout": {
+            "status": "partially_succeeded",
+            "jump_to_node": "plan_join",
+            "notes": "Parallel node dispatched 2 branches (1 succeeded, 1 failed)",
+            "usage": null
+          }
+        },
+        "next_node_id": "implement_live_enrichment",
+        "git_commit_sha": "d9ce3149ab9e1c65164c037e2f422f30f1ff9038",
+        "node_visits": {
+          "implementation_plan_fanout": 1,
+          "live_source_preflight": 1,
+          "plan_join": 1,
+          "start": 1,
+          "ensure_plan_candidates": 1,
+          "plan_eval": 1
+        }
+      },
+      "diff": {
+        "summary": {
+          "files_changed": 0,
+          "additions": 0,
+          "deletions": 0
+        }
+      }
+    },
+    {
+      "seq": 0,
+      "checkpoint": {
+        "timestamp": "2026-05-13T22:09:05.564554391Z",
+        "current_node": "implement_live_enrichment",
+        "completed_nodes": [
+          "start",
+          "live_source_preflight",
+          "implementation_plan_fanout",
+          "plan_join",
+          "ensure_plan_candidates",
+          "plan_eval",
+          "implement_live_enrichment"
+        ],
+        "node_retries": {},
+        "context_values": {
           "graph.retry_target": "implement_live_enrichment",
           "internal.retry_count.implementation_plan_fanout": 0,
           "graph.inputs": "app_dir, real_mode, allow_fixture_fallback, minimum_live_apps, minimum_review_samples, minimum_social_examples, minimum_active_reviews",
           "parallel.fan_in.best_head_sha": "8a776804d5472254a0c3beb68c607340480c20ed",
+          "internal.retry_count.implement_live_enrichment": 0,
           "thread.plan_join.current_node": "ensure_plan_candidates",
           "failure_signature": "",
-          "internal.thread_id": "ensure_plan_candidates",
-          "current_node": "plan_eval",
+          "internal.thread_id": "coding",
+          "last_response": "Now I have a thorough understanding of the codebase. Let me implement the live enrichment step by step, following the winning plan (source-first-fallback). I'll start with tests, then implement the co",
+          "current_node": "implement_live_enrichment",
           "graph.rankdir": "LR",
           "internal.run_id": "01KRHNYVA8TJ5XEY0N3E60V8D0",
+          "thread.coding.current_node": "implement_live_enrichment",
           "internal.retry_count.ensure_plan_candidates": 0,
           "graph.model_stylesheet": "\n            *          { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: low; }\n            .coding    { provider: openrouter; model: qwen/qwen3.6-plus; reasoning_effort: high; }\n            .review    { provider: openrouter; model: google/gemini-3.1-pro-preview; reasoning_effort: high; }\n            .cheap     { provider: openrouter; model: deepseek/deepseek-v4-flash; reasoning_effort: low; }\n        ",
           "internal.fidelity": "compact",
@@ -1574,6 +1705,7 @@
           "parallel.fan_in.best_outcome": "succeeded",
           "parallel.fan_in.best_id": "plan_product_surface",
           "internal.work_dir": "/home/daytona/workspace",
+          "response.implement_live_enrichment": "Now I have a thorough understanding of the codebase. Let me implement the live enrichment step by step, following the winning plan (source-first-fallback). I'll start with tests, then implement the core changes, UI, gate scripts, and report.\n\n",
           "graph.goal": "Implement Consumer Radar live discovery and enrichment with strict real-data gates",
           "graph.persona": "consumer-radar-live-enrichment-builder",
           "graph.default_max_retries": "2",
@@ -1594,6 +1726,7 @@
           "internal.node_visit_count": 1,
           "outcome": "succeeded",
           "internal.retry_count.live_source_preflight": 0,
+          "last_stage": "implement_live_enrichment",
           "internal.retry_count.plan_eval": 0,
           "thread.start.current_node": "live_source_preflight",
           "thread.live_source_preflight.current_node": "implementation_plan_fanout",
@@ -1601,6 +1734,24 @@
           "command.output": "blob://sha256/75a6ec5fd165d6d1df62c216d0e90a13e727ca431c93a45f3555964ae79011d8"
         },
         "node_outcomes": {
+          "implementation_plan_fanout": {
+            "status": "partially_succeeded",
+            "jump_to_node": "plan_join",
+            "notes": "Parallel node dispatched 2 branches (1 succeeded, 1 failed)",
+            "usage": null
+          },
+          "start": {
+            "status": "succeeded",
+            "usage": null
+          },
+          "live_source_preflight": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/5e35254a5e6757cfd34a36d5bcb6dd4e7878884b76ab0a6ce38c03c9c4364ef4"
+            },
+            "notes": "Script completed: echo APIFY_TOKEN live source preflight; node scripts/app-feedback/live-source-preflight.mjs --app-dir 'apps/generated-consumer-app-radar' --real-mode 'true' --allow-fixture-fallback 'false' --out .workflow/consumer-radar-live-enrichment/source-preflight.json",
+            "usage": null
+          },
           "plan_join": {
             "status": "succeeded",
             "context_updates": {
@@ -1611,22 +1762,12 @@
             "notes": "Selected best candidate: plan_product_surface",
             "usage": null
           },
-          "implementation_plan_fanout": {
-            "status": "partially_succeeded",
-            "jump_to_node": "plan_join",
-            "notes": "Parallel node dispatched 2 branches (1 succeeded, 1 failed)",
-            "usage": null
-          },
           "ensure_plan_candidates": {
             "status": "succeeded",
             "context_updates": {
               "command.output": "blob://sha256/6ecc61b9d08792a9d6530ef6040a1b074c5d4dfeee7f4c40deeeb4f61fcb4ddd"
             },
             "notes": "Script completed: node scripts/app-feedback/ensure-live-enrichment-plans.mjs --plans .workflow/consumer-radar-live-enrichment/plans --minimum-candidates 2",
-            "usage": null
-          },
-          "start": {
-            "status": "succeeded",
             "usage": null
           },
           "plan_eval": {
@@ -1637,23 +1778,46 @@
             "notes": "Script completed: node scripts/app-feedback/evaluate-enhancement-artifact.mjs --stage workflow --candidates .workflow/consumer-radar-live-enrichment/plans --out .workflow/consumer-radar-live-enrichment/plan-eval.json --minimum-candidates 2 --minimum-eval-score 0.72",
             "usage": null
           },
-          "live_source_preflight": {
+          "implement_live_enrichment": {
             "status": "succeeded",
             "context_updates": {
-              "command.output": "blob://sha256/5e35254a5e6757cfd34a36d5bcb6dd4e7878884b76ab0a6ce38c03c9c4364ef4"
+              "last_response": "Now I have a thorough understanding of the codebase. Let me implement the live enrichment step by step, following the winning plan (source-first-fallback). I'll start with tests, then implement the co",
+              "response.implement_live_enrichment": "Now I have a thorough understanding of the codebase. Let me implement the live enrichment step by step, following the winning plan (source-first-fallback). I'll start with tests, then implement the core changes, UI, gate scripts, and report.\n\n",
+              "last_stage": "implement_live_enrichment"
             },
-            "notes": "Script completed: echo APIFY_TOKEN live source preflight; node scripts/app-feedback/live-source-preflight.mjs --app-dir 'apps/generated-consumer-app-radar' --real-mode 'true' --allow-fixture-fallback 'false' --out .workflow/consumer-radar-live-enrichment/source-preflight.json",
-            "usage": null
+            "notes": "Stage completed: implement_live_enrichment",
+            "usage": {
+              "input": {
+                "usage": {
+                  "model": {
+                    "provider": "openrouter",
+                    "model_id": "qwen/qwen3.6-plus"
+                  },
+                  "tokens": {
+                    "input_tokens": 198630,
+                    "output_tokens": 1441,
+                    "reasoning_tokens": 0,
+                    "cache_read_tokens": 0,
+                    "cache_write_tokens": 0
+                  }
+                },
+                "facts": {
+                  "provider": "open_router"
+                }
+              },
+              "total_usd_micros": 67363
+            }
           }
         },
-        "next_node_id": "implement_live_enrichment",
+        "next_node_id": "native_checks",
         "node_visits": {
           "start": 1,
           "plan_eval": 1,
           "implementation_plan_fanout": 1,
           "plan_join": 1,
           "ensure_plan_candidates": 1,
-          "live_source_preflight": 1
+          "live_source_preflight": 1,
+          "implement_live_enrichment": 1
         }
       },
       "diff": {}
@@ -1676,55 +1840,6 @@
   "superseded_by": null,
   "pending_interviews": {},
   "stages": {
-    "implementation_plan_fanout@1": {
-      "first_event_seq": 31,
-      "prompt": null,
-      "response": null,
-      "completion": {
-        "outcome": "partially_succeeded",
-        "notes": "Parallel node dispatched 2 branches (1 succeeded, 1 failed)",
-        "failure_reason": null,
-        "timestamp": "2026-05-13T22:08:05.163924161Z"
-      },
-      "provider_used": {
-        "mode": "agent",
-        "provider": "openrouter",
-        "model": "qwen/qwen3.6-plus"
-      },
-      "diff": null,
-      "script_invocation": null,
-      "script_timing": null,
-      "parallel_results": [
-        {
-          "id": "plan_live_sources",
-          "status": "failed",
-          "head_sha": "6bf9aafb4bc57a0415b47fec793db0ffe76cba49"
-        },
-        {
-          "id": "plan_product_surface",
-          "status": "succeeded",
-          "head_sha": "8a776804d5472254a0c3beb68c607340480c20ed"
-        }
-      ],
-      "output": null,
-      "started_at": "2026-05-13T22:05:31.149942304Z",
-      "handler": "parallel",
-      "duration_ms": 153795,
-      "usage": {
-        "input_tokens": 317402,
-        "output_tokens": 6798,
-        "total_tokens": 324200,
-        "reasoning_tokens": 0,
-        "cache_read_tokens": 0,
-        "cache_write_tokens": 0,
-        "total_usd_micros": 116411
-      },
-      "model": {
-        "provider": "openrouter",
-        "model_id": "qwen/qwen3.6-plus"
-      },
-      "state": "partially_succeeded"
-    },
     "start@1": {
       "first_event_seq": 16,
       "prompt": null,
@@ -1851,6 +1966,130 @@
       },
       "state": "running"
     },
+    "plan_eval@1": {
+      "first_event_seq": 161,
+      "prompt": null,
+      "response": null,
+      "completion": {
+        "outcome": "succeeded",
+        "notes": "Script completed: node scripts/app-feedback/evaluate-enhancement-artifact.mjs --stage workflow --candidates .workflow/consumer-radar-live-enrichment/plans --out .workflow/consumer-radar-live-enrichment/plan-eval.json --minimum-candidates 2 --minimum-eval-score 0.72",
+        "failure_reason": null,
+        "timestamp": "2026-05-13T22:08:18.549041480Z"
+      },
+      "provider_used": null,
+      "diff": null,
+      "script_invocation": {
+        "script": "node scripts/app-feedback/evaluate-enhancement-artifact.mjs --stage workflow --candidates .workflow/consumer-radar-live-enrichment/plans --out .workflow/consumer-radar-live-enrichment/plan-eval.json --minimum-candidates 2 --minimum-eval-score 0.72",
+        "command": "exec 2>&1\nnode scripts/app-feedback/evaluate-enhancement-artifact.mjs --stage workflow --candidates .workflow/consumer-radar-live-enrichment/plans --out .workflow/consumer-radar-live-enrichment/plan-eval.json --minimum-candidates 2 --minimum-eval-score 0.72",
+        "language": "shell"
+      },
+      "script_timing": {
+        "output": "blob://sha256/75a6ec5fd165d6d1df62c216d0e90a13e727ca431c93a45f3555964ae79011d8",
+        "exit_code": 0,
+        "duration_ms": 1770,
+        "termination": "exited",
+        "output_bytes": 1424,
+        "live_streaming": true
+      },
+      "parallel_results": null,
+      "output": null,
+      "output_bytes": 1424,
+      "live_streaming": true,
+      "termination": "exited",
+      "started_at": "2026-05-13T22:08:16.618746900Z",
+      "handler": "command",
+      "duration_ms": 1775,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "total_tokens": 0,
+        "reasoning_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "state": "succeeded"
+    },
+    "implement_live_enrichment@1": {
+      "first_event_seq": 172,
+      "prompt": null,
+      "response": null,
+      "completion": null,
+      "provider_used": {
+        "mode": "agent",
+        "provider": "openrouter",
+        "model": "qwen/qwen3.6-plus"
+      },
+      "diff": null,
+      "script_invocation": null,
+      "script_timing": null,
+      "parallel_results": null,
+      "output": null,
+      "started_at": "2026-05-13T22:08:21.481708939Z",
+      "handler": "agent",
+      "usage": {
+        "input_tokens": 198630,
+        "output_tokens": 1441,
+        "total_tokens": 200071,
+        "reasoning_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "total_usd_micros": 67363
+      },
+      "model": {
+        "provider": "openrouter",
+        "model_id": "qwen/qwen3.6-plus"
+      },
+      "state": "running"
+    },
+    "implementation_plan_fanout@1": {
+      "first_event_seq": 31,
+      "prompt": null,
+      "response": null,
+      "completion": {
+        "outcome": "partially_succeeded",
+        "notes": "Parallel node dispatched 2 branches (1 succeeded, 1 failed)",
+        "failure_reason": null,
+        "timestamp": "2026-05-13T22:08:05.163924161Z"
+      },
+      "provider_used": {
+        "mode": "agent",
+        "provider": "openrouter",
+        "model": "qwen/qwen3.6-plus"
+      },
+      "diff": null,
+      "script_invocation": null,
+      "script_timing": null,
+      "parallel_results": [
+        {
+          "id": "plan_live_sources",
+          "status": "failed",
+          "head_sha": "6bf9aafb4bc57a0415b47fec793db0ffe76cba49"
+        },
+        {
+          "id": "plan_product_surface",
+          "status": "succeeded",
+          "head_sha": "8a776804d5472254a0c3beb68c607340480c20ed"
+        }
+      ],
+      "output": null,
+      "started_at": "2026-05-13T22:05:31.149942304Z",
+      "handler": "parallel",
+      "duration_ms": 153795,
+      "usage": {
+        "input_tokens": 317402,
+        "output_tokens": 6798,
+        "total_tokens": 324200,
+        "reasoning_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "total_usd_micros": 116411
+      },
+      "model": {
+        "provider": "openrouter",
+        "model_id": "qwen/qwen3.6-plus"
+      },
+      "state": "partially_succeeded"
+    },
     "ensure_plan_candidates@1": {
       "first_event_seq": 149,
       "prompt": null,
@@ -1893,43 +2132,6 @@
         "cache_write_tokens": 0
       },
       "state": "succeeded"
-    },
-    "plan_eval@1": {
-      "first_event_seq": 161,
-      "prompt": null,
-      "response": null,
-      "completion": null,
-      "provider_used": null,
-      "diff": null,
-      "script_invocation": {
-        "script": "node scripts/app-feedback/evaluate-enhancement-artifact.mjs --stage workflow --candidates .workflow/consumer-radar-live-enrichment/plans --out .workflow/consumer-radar-live-enrichment/plan-eval.json --minimum-candidates 2 --minimum-eval-score 0.72",
-        "command": "exec 2>&1\nnode scripts/app-feedback/evaluate-enhancement-artifact.mjs --stage workflow --candidates .workflow/consumer-radar-live-enrichment/plans --out .workflow/consumer-radar-live-enrichment/plan-eval.json --minimum-candidates 2 --minimum-eval-score 0.72",
-        "language": "shell"
-      },
-      "script_timing": {
-        "output": "blob://sha256/75a6ec5fd165d6d1df62c216d0e90a13e727ca431c93a45f3555964ae79011d8",
-        "exit_code": 0,
-        "duration_ms": 1770,
-        "termination": "exited",
-        "output_bytes": 1424,
-        "live_streaming": true
-      },
-      "parallel_results": null,
-      "output": null,
-      "output_bytes": 1424,
-      "live_streaming": true,
-      "termination": "exited",
-      "started_at": "2026-05-13T22:08:16.618746900Z",
-      "handler": "command",
-      "usage": {
-        "input_tokens": 0,
-        "output_tokens": 0,
-        "total_tokens": 0,
-        "reasoning_tokens": 0,
-        "cache_read_tokens": 0,
-        "cache_write_tokens": 0
-      },
-      "state": "running"
     }
   }
 }
