@@ -979,7 +979,7 @@
     "kind": "running"
   },
   "status_updated_at": "2026-05-13T11:42:19.323997583Z",
-  "last_event_at": "2026-05-13T11:44:24.324858112Z",
+  "last_event_at": "2026-05-13T11:45:48.761271382Z",
   "pending_control": null,
   "checkpoints": [
     {
@@ -1870,9 +1870,9 @@
       }
     },
     {
-      "seq": 0,
+      "seq": 107,
       "checkpoint": {
-        "timestamp": "2026-05-13T11:44:25.653103307Z",
+        "timestamp": "2026-05-13T11:44:27.566174717Z",
         "current_node": "prepare_review_reports",
         "completed_nodes": [
           "start",
@@ -1888,17 +1888,181 @@
         ],
         "node_retries": {},
         "context_values": {
+          "graph.retry_target": "generate_app",
+          "thread.qlty_gate.current_node": "promptfoo_gate",
+          "failure_class": "",
+          "graph.goal": "Build Consumer App Radar from spec with CI, eval, and model review",
+          "graph.fallback_retry_target": "generate_app",
+          "graph.inputs": "app_dir, spec_path, real_mode, allow_fixture_fallback, allow_quality_fallback, minimum_active_reviews",
+          "graph.default_max_retries": "2",
+          "internal.retry_count.generate_app": 0,
+          "internal.retry_count.native_checks": 0,
+          "internal.retry_count.qlty_gate": 0,
+          "internal.run_id": "01KRGJA4CS5R05KGQ10K4KZB4R",
+          "thread.data_source_smoke.current_node": "generate_app",
+          "thread.native_checks.current_node": "qlty_gate",
+          "failure_signature": "",
+          "thread.wait_for_support_files.current_node": "bootstrap_spec",
+          "graph.outputs": "application, ci_report, eval_report, review_consensus, handoff",
+          "internal.retry_count.data_source_smoke": 0,
+          "internal.retry_count.prepare_review_reports": 0,
+          "thread.spec_kitty_gate.current_node": "data_source_smoke",
+          "current_node": "prepare_review_reports",
+          "internal.thread_id": "promptfoo_gate",
+          "internal.retry_count.bootstrap_spec": 0,
+          "internal.retry_count.start": 0,
+          "thread.bootstrap_spec.current_node": "spec_kitty_gate",
+          "graph.model_stylesheet": "\n            *          { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: low; }\n            .review    { provider: openrouter; model: google/gemini-3.1-pro-preview; reasoning_effort: high; }\n            .cheap     { provider: openrouter; model: deepseek/deepseek-v4-flash; reasoning_effort: low; }\n        ",
+          "internal.work_dir": "/home/daytona/workspace",
+          "internal.retry_count.wait_for_support_files": 0,
+          "graph.persona": "code-factory",
+          "thread.generate_app.current_node": "native_checks",
+          "outcome": "succeeded",
+          "thread.start.current_node": "wait_for_support_files",
+          "internal.retry_count.spec_kitty_gate": 0,
+          "internal.fidelity": "compact",
+          "internal.retry_count.promptfoo_gate": 0,
+          "internal.node_visit_count": 1,
+          "graph.rankdir": "LR",
+          "thread.promptfoo_gate.current_node": "prepare_review_reports",
+          "command.output": "blob://sha256/12ae32cb1ec02d01eda3581b127c1fee3b0dc53572ed6baf239721a03d82e126"
+        },
+        "node_outcomes": {
+          "data_source_smoke": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/7c9f3f6d9499d90b933cfb1a377773d39f0ecc002c2d270b50a05a065e7ac10a"
+            },
+            "notes": "Script completed: node scripts/consumer-radar/data-source-smoke.mjs --output .workflow/consumer-radar/data-source-smoke.json --real-mode 'true' --allow-fixture-fallback 'true'",
+            "usage": null
+          },
+          "generate_app": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/67e5edc6bf894fedc2d19b61aed13adcde6de82264da817ed9b1212357748df2"
+            },
+            "notes": "Script completed: node scripts/consumer-radar/generate-app.mjs --app-dir 'apps/generated-consumer-app-radar'",
+            "usage": null
+          },
+          "promptfoo_gate": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/4b9573fc29d74b3e8aab70949bb7d0f833c31f6ac6085d588892edd2c71e536c"
+            },
+            "notes": "Script completed: node scripts/consumer-radar/promptfoo-or-fallback.mjs 'apps/generated-consumer-app-radar' --real-mode 'true' --allow-fallback 'true'",
+            "usage": null
+          },
+          "qlty_gate": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/909f30fcf892fe529fc2dab34e4262f530b6d8b65434dc51d8ca70e4f08e0b0f"
+            },
+            "notes": "Script completed: node scripts/consumer-radar/qlty-gate.mjs 'apps/generated-consumer-app-radar' --real-mode 'true' --allow-fallback 'true'",
+            "usage": null
+          },
+          "wait_for_support_files": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/a993020942c3b2f319b954a99b0a9f056f2f684e6388311672cad5808190f591"
+            },
+            "notes": "Script completed: for i in $(seq 1 90); do if [ -f scripts/consumer-radar/generate-app.mjs ] && [ -f 'specs/consumer-app-radar/spec.md' ]; then echo support-files-ready; exit 0; fi; sleep 2; done; echo 'missing consumer radar support files' >&2; exit 1",
+            "usage": null
+          },
+          "spec_kitty_gate": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/ce7d43084f6e3263b5f0ad9b1369fee52850ebb4e225cab7bcc6902b12627e89"
+            },
+            "notes": "Script completed: node scripts/consumer-radar/bootstrap-spec.mjs --spec 'specs/consumer-app-radar/spec.md' --app-dir 'apps/generated-consumer-app-radar' --spec-kitty",
+            "usage": null
+          },
+          "bootstrap_spec": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/a69c171b59b9dc8ab6760124776639324d2bd3bbfeee14acbf5feff69dfe7ef1"
+            },
+            "notes": "Script completed: node scripts/consumer-radar/bootstrap-spec.mjs --spec 'specs/consumer-app-radar/spec.md' --app-dir 'apps/generated-consumer-app-radar'",
+            "usage": null
+          },
+          "native_checks": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/3cb84a9bb9e20844631d561961b12684816930e946cc09fc74b597b239f65682"
+            },
+            "notes": "Script completed: node scripts/consumer-radar/run-native-checks.mjs 'apps/generated-consumer-app-radar'",
+            "usage": null
+          },
+          "prepare_review_reports": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/12ae32cb1ec02d01eda3581b127c1fee3b0dc53572ed6baf239721a03d82e126"
+            },
+            "notes": "Script completed: rm -rf reports/consumer-radar/reviews reports/consumer-radar/review-consensus.json && mkdir -p reports/consumer-radar/reviews",
+            "usage": null
+          },
+          "start": {
+            "status": "succeeded",
+            "usage": null
+          }
+        },
+        "next_node_id": "review_fanout",
+        "git_commit_sha": "ba0e05a32f1e178e6a05aadb8239cb4236db5e36",
+        "node_visits": {
+          "start": 1,
+          "wait_for_support_files": 1,
+          "native_checks": 1,
+          "prepare_review_reports": 1,
+          "spec_kitty_gate": 1,
+          "promptfoo_gate": 1,
+          "qlty_gate": 1,
+          "generate_app": 1,
+          "data_source_smoke": 1,
+          "bootstrap_spec": 1
+        }
+      },
+      "diff": {
+        "patch": "diff --git a/reports/consumer-radar/review-consensus.json b/reports/consumer-radar/review-consensus.json\ndeleted file mode 100644\nindex 693ffef..0000000\n--- a/reports/consumer-radar/review-consensus.json\n+++ /dev/null\n@@ -1,18 +0,0 @@\n-{\n-  \"ok\": true,\n-  \"verdict\": \"APPROVE\",\n-  \"review_count\": 3,\n-  \"active_review_count\": 1,\n-  \"minimum_active_reviews\": 1,\n-  \"skipped_review_count\": 0,\n-  \"failed_review_count\": 2,\n-  \"review_sources\": [\n-    \"git:fabro/run/parallel/01KRGGPG7T2FN4Q65PHM9KNSD5/review-fanout/pass1/review-deepseek:reports/consumer-radar/reviews/deepseek.json\",\n-    \"git:fabro/run/parallel/01KRGGPG7T2FN4Q65PHM9KNSD5/review-fanout/pass1/review-kimi:reports/consumer-radar/reviews/kimi.json\",\n-    \"git:fabro/run/parallel/01KRGGPG7T2FN4Q65PHM9KNSD5/review-fanout/pass1/review-qwen:reports/consumer-radar/reviews/qwen.json\"\n-  ],\n-  \"average_model_score\": 0.95,\n-  \"blockers\": [],\n-  \"hard_failures\": [],\n-  \"note\": \"Consensus synthesized from available OpenRouter reviews.\"\n-}\ndiff --git a/reports/consumer-radar/reviews/deepseek.json b/reports/consumer-radar/reviews/deepseek.json\ndeleted file mode 100644\nindex 197f1bc..0000000\n--- a/reports/consumer-radar/reviews/deepseek.json\n+++ /dev/null\n@@ -1,37 +0,0 @@\n-{\n-  \"ok\": true,\n-  \"skipped\": false,\n-  \"real_mode\": true,\n-  \"model\": \"deepseek/deepseek-v4-flash\",\n-  \"role\": \"simplification_and_ci\",\n-  \"status\": 200,\n-  \"parsed\": {\n-    \"verdict\": \"APPROVE\",\n-    \"score\": 0.95,\n-    \"findings\": [\n-      {\n-        \"severity\": \"low\",\n-        \"issue\": \"No error handling for missing fixture file in loadFixtureApps.\",\n-        \"fix\": \"Wrap readFileSync in try/catch and return empty array on failure.\"\n-      },\n-      {\n-        \"severity\": \"low\",\n-        \"issue\": \"POST /api/refresh does not validate request body or mode parameter.\",\n-        \"fix\": \"Add validation for mode parameter to accept only 'fixture' or 'live-smoke'.\"\n-      },\n-      {\n-        \"severity\": \"info\",\n-        \"issue\": \"No CORS headers on API responses; may block cross-origin requests.\",\n-        \"fix\": \"Add 'Access-Control-Allow-Origin: *' header to all API responses.\"\n-      }\n-    ],\n-    \"suggested_next_steps\": [\n-      \"Add error handling for fixture file loading\",\n-      \"Add request validation for /api/refresh\",\n-      \"Add CORS headers for broader compatibility\"\n-    ]\n-  },\n-  \"raw_excerpt\": \"{\\n  \\\"verdict\\\": \\\"APPROVE\\\",\\n  \\\"score\\\": 0.95,\\n  \\\"findings\\\": [\\n    {\\n      \\\"severity\\\": \\\"low\\\",\\n      \\\"issue\\\": \\\"No error handling for missing fixture file in loadFixtureApps.\\\",\\n      \\\"fix\\\": \\\"Wrap readFileSync in try/catch and return empty array on failure.\\\"\\n    },\\n    {\\n      \\\"severity\\\": \\\"low\\\",\\n      \\\"issue\\\": \\\"POST /api/refresh does not validate request body or mode parameter.\\\",\\n      \\\"fix\\\": \\\"Add validation for mode parameter to accept only 'fixture' or 'live-smoke'.\\\"\\n    },\\n    {\\n      \\\"severity\\\": \\\"info\\\",\\n      \\\"issue\\\": \\\"No CORS headers on API responses; may block cross-origin requests.\\\",\\n      \\\"fix\\\": \\\"Add 'Access-Control-Allow-Origin: *' header to all API responses.\\\"\\n    }\\n  ],\\n  \\\"suggested_next_steps\\\": [\\n    \\\"Add error handling for fixture file loading\\\",\\n    \\\"Add request validation for /api/refresh\\\",\\n    \\\"Add CORS headers for broader compatibility\\\"\\n  ]\\n}\",\n-  \"error\": null,\n-  \"payload_excerpt\": null\n-}\n",
+        "summary": {
+          "files_changed": 6,
+          "additions": 64,
+          "deletions": 56
+        }
+      }
+    },
+    {
+      "seq": 0,
+      "checkpoint": {
+        "timestamp": "2026-05-13T11:45:48.788775111Z",
+        "current_node": "review_fanout",
+        "completed_nodes": [
+          "start",
+          "wait_for_support_files",
+          "bootstrap_spec",
+          "spec_kitty_gate",
+          "data_source_smoke",
+          "generate_app",
+          "native_checks",
+          "qlty_gate",
+          "promptfoo_gate",
+          "prepare_review_reports",
+          "review_fanout"
+        ],
+        "node_retries": {},
+        "context_values": {
           "internal.retry_count.spec_kitty_gate": 0,
           "graph.outputs": "application, ci_report, eval_report, review_consensus, handoff",
+          "parallel.branch_count": 3,
           "internal.retry_count.generate_app": 0,
           "internal.retry_count.data_source_smoke": 0,
+          "thread.prepare_review_reports.current_node": "review_fanout",
           "internal.fidelity": "compact",
           "internal.retry_count.qlty_gate": 0,
+          "internal.retry_count.review_fanout": 0,
           "thread.generate_app.current_node": "native_checks",
           "internal.node_visit_count": 1,
           "graph.goal": "Build Consumer App Radar from spec with CI, eval, and model review",
           "internal.run_id": "01KRGJA4CS5R05KGQ10K4KZB4R",
-          "current_node": "prepare_review_reports",
+          "current_node": "review_fanout",
           "thread.bootstrap_spec.current_node": "spec_kitty_gate",
           "thread.spec_kitty_gate.current_node": "data_source_smoke",
           "graph.rankdir": "LR",
@@ -1909,7 +2073,7 @@
           "internal.retry_count.prepare_review_reports": 0,
           "internal.work_dir": "/home/daytona/workspace",
           "graph.fallback_retry_target": "generate_app",
-          "outcome": "succeeded",
+          "outcome": "partially_succeeded",
           "thread.promptfoo_gate.current_node": "prepare_review_reports",
           "graph.inputs": "app_dir, spec_path, real_mode, allow_fixture_fallback, allow_quality_fallback, minimum_active_reviews",
           "graph.retry_target": "generate_app",
@@ -1922,10 +2086,27 @@
           "internal.retry_count.native_checks": 0,
           "command.output": "blob://sha256/12ae32cb1ec02d01eda3581b127c1fee3b0dc53572ed6baf239721a03d82e126",
           "graph.persona": "code-factory",
-          "internal.thread_id": "promptfoo_gate",
+          "internal.thread_id": "prepare_review_reports",
           "internal.retry_count.start": 0,
           "thread.native_checks.current_node": "qlty_gate",
-          "internal.retry_count.promptfoo_gate": 0
+          "internal.retry_count.promptfoo_gate": 0,
+          "parallel.results": [
+            {
+              "id": "review_kimi",
+              "status": "failed",
+              "head_sha": "1ac6ded5440df7469c28376e4889745c5dbe0f63"
+            },
+            {
+              "id": "review_qwen",
+              "status": "succeeded",
+              "head_sha": "74628ab3f03275a0cf1879c72f3db20bf058af4d"
+            },
+            {
+              "id": "review_deepseek",
+              "status": "succeeded",
+              "head_sha": "5edb5755c8b9193ff7c13fdd868181e2930ec44d"
+            }
+          ]
         },
         "node_outcomes": {
           "bootstrap_spec": {
@@ -1976,6 +2157,12 @@
             "notes": "Script completed: rm -rf reports/consumer-radar/reviews reports/consumer-radar/review-consensus.json && mkdir -p reports/consumer-radar/reviews",
             "usage": null
           },
+          "review_fanout": {
+            "status": "partially_succeeded",
+            "jump_to_node": "review_join",
+            "notes": "Parallel node dispatched 3 branches (2 succeeded, 1 failed)",
+            "usage": null
+          },
           "native_checks": {
             "status": "succeeded",
             "context_updates": {
@@ -2005,10 +2192,11 @@
             "usage": null
           }
         },
-        "next_node_id": "review_fanout",
+        "next_node_id": "review_join",
         "node_visits": {
           "data_source_smoke": 1,
           "bootstrap_spec": 1,
+          "review_fanout": 1,
           "generate_app": 1,
           "spec_kitty_gate": 1,
           "start": 1,
@@ -2124,6 +2312,43 @@
         "cache_write_tokens": 0
       },
       "state": "succeeded"
+    },
+    "review_fanout@1": {
+      "first_event_seq": 110,
+      "prompt": null,
+      "response": null,
+      "completion": null,
+      "provider_used": null,
+      "diff": null,
+      "script_invocation": {
+        "script": "node scripts/consumer-radar/openrouter-review.mjs --model deepseek/deepseek-v4-pro,deepseek/deepseek-v4-flash --role simplification_and_ci --app-dir 'apps/generated-consumer-app-radar' --output reports/consumer-radar/reviews/deepseek.json --real-mode 'true'",
+        "command": "exec 2>&1\nnode scripts/consumer-radar/openrouter-review.mjs --model deepseek/deepseek-v4-pro,deepseek/deepseek-v4-flash --role simplification_and_ci --app-dir 'apps/generated-consumer-app-radar' --output reports/consumer-radar/reviews/deepseek.json --real-mode 'true'",
+        "language": "shell"
+      },
+      "script_timing": {
+        "output": "blob://sha256/d099b006a95680d379abbe3cacc16e6901428b6020144e57c8aef3a7b805a7ff",
+        "exit_code": 0,
+        "duration_ms": 80418,
+        "termination": "exited",
+        "output_bytes": 4056,
+        "live_streaming": true
+      },
+      "parallel_results": null,
+      "output": null,
+      "output_bytes": 4056,
+      "live_streaming": true,
+      "termination": "exited",
+      "started_at": "2026-05-13T11:44:27.573925408Z",
+      "handler": "parallel",
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "total_tokens": 0,
+        "reasoning_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "state": "running"
     },
     "start@1": {
       "first_event_seq": 16,
@@ -2416,7 +2641,12 @@
       "first_event_seq": 100,
       "prompt": null,
       "response": null,
-      "completion": null,
+      "completion": {
+        "outcome": "succeeded",
+        "notes": "Script completed: rm -rf reports/consumer-radar/reviews reports/consumer-radar/review-consensus.json && mkdir -p reports/consumer-radar/reviews",
+        "failure_reason": null,
+        "timestamp": "2026-05-13T11:44:25.652030179Z"
+      },
       "provider_used": null,
       "diff": null,
       "script_invocation": {
@@ -2424,11 +2654,22 @@
         "command": "exec 2>&1\nrm -rf reports/consumer-radar/reviews reports/consumer-radar/review-consensus.json && mkdir -p reports/consumer-radar/reviews",
         "language": "shell"
       },
-      "script_timing": null,
+      "script_timing": {
+        "output": "blob://sha256/12ae32cb1ec02d01eda3581b127c1fee3b0dc53572ed6baf239721a03d82e126",
+        "exit_code": 0,
+        "duration_ms": 1324,
+        "termination": "exited",
+        "output_bytes": 0,
+        "live_streaming": false
+      },
       "parallel_results": null,
       "output": null,
+      "output_bytes": 0,
+      "live_streaming": false,
+      "termination": "exited",
       "started_at": "2026-05-13T11:44:24.324072862Z",
       "handler": "command",
+      "duration_ms": 1327,
       "usage": {
         "input_tokens": 0,
         "output_tokens": 0,
@@ -2437,7 +2678,7 @@
         "cache_read_tokens": 0,
         "cache_write_tokens": 0
       },
-      "state": "running"
+      "state": "succeeded"
     }
   }
 }
