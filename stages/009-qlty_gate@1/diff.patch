@@ -1,0 +1,1446 @@
+diff --git a/apps/generated-consumer-app-radar/.data/apps.json b/apps/generated-consumer-app-radar/.data/apps.json
+index f7e2aa5..9fd8661 100644
+--- a/apps/generated-consumer-app-radar/.data/apps.json
++++ b/apps/generated-consumer-app-radar/.data/apps.json
+@@ -158,9 +158,7 @@
+       "More low-cost social gifting",
+       "Smarter mood insights"
+     ],
+-    "evidence": [
+-      "Seed target for positivity/wellness benchmarking"
+-    ],
++    "evidence": ["Seed target for positivity/wellness benchmarking"],
+     "weeklySnapshots": [
+       {
+         "week": "4w ago",
+@@ -291,9 +289,7 @@
+       "Beginner ramp plans",
+       "Progress story exports"
+     ],
+-    "evidence": [
+-      "Seed target for fitness category monitoring"
+-    ],
++    "evidence": ["Seed target for fitness category monitoring"],
+     "weeklySnapshots": [
+       {
+         "week": "4w ago",
+@@ -424,9 +420,7 @@
+       "Cheaper student plan",
+       "CSV/report export"
+     ],
+-    "evidence": [
+-      "Fixture seed; social adapters support Apify enrichment"
+-    ],
++    "evidence": ["Fixture seed; social adapters support Apify enrichment"],
+     "weeklySnapshots": [
+       {
+         "week": "4w ago",
+@@ -557,9 +551,7 @@
+       "Onboarding checklist",
+       "Cross-device shared rules"
+     ],
+-    "evidence": [
+-      "Seed target for live chart/review enrichment"
+-    ],
++    "evidence": ["Seed target for live chart/review enrichment"],
+     "weeklySnapshots": [
+       {
+         "week": "4w ago",
+@@ -690,9 +682,7 @@
+       "More robust calendar sync",
+       "Better widgets"
+     ],
+-    "evidence": [
+-      "Seed target for productivity category monitoring"
+-    ],
++    "evidence": ["Seed target for productivity category monitoring"],
+     "weeklySnapshots": [
+       {
+         "week": "4w ago",
+@@ -823,9 +813,7 @@
+       "Better Apple Health context",
+       "Private export"
+     ],
+-    "evidence": [
+-      "Fixture seed for repeatable CI"
+-    ],
++    "evidence": ["Fixture seed for repeatable CI"],
+     "weeklySnapshots": [
+       {
+         "week": "4w ago",
+@@ -956,9 +944,7 @@
+       "Better Apple Health summaries",
+       "Actionable weekly plan"
+     ],
+-    "evidence": [
+-      "Seed target for health/wellness category monitoring"
+-    ],
++    "evidence": ["Seed target for health/wellness category monitoring"],
+     "weeklySnapshots": [
+       {
+         "week": "4w ago",
+@@ -1078,19 +1064,13 @@
+     "reviewDelta4w": 12,
+     "rating": 4.5,
+     "socialDelta4w": 20,
+-    "socialStrategy": [
+-      "Manual seed awaiting live social scrape"
+-    ],
+-    "reviewThemes": [
+-      "Research target added manually"
+-    ],
++    "socialStrategy": ["Manual seed awaiting live social scrape"],
++    "reviewThemes": ["Research target added manually"],
+     "featureRequests": [
+       "Run live review scrape",
+       "Find TikTok and Instagram content examples"
+     ],
+-    "evidence": [
+-      "Manual seed from Add app form"
+-    ],
++    "evidence": ["Manual seed from Add app form"],
+     "weeklySnapshots": [
+       {
+         "week": "4w ago",
+diff --git a/apps/generated-consumer-app-radar/fixtures/apps.json b/apps/generated-consumer-app-radar/fixtures/apps.json
+index 42bca62..fc112e9 100644
+--- a/apps/generated-consumer-app-radar/fixtures/apps.json
++++ b/apps/generated-consumer-app-radar/fixtures/apps.json
+@@ -155,9 +155,7 @@
+       "Cheaper student plan",
+       "CSV/report export"
+     ],
+-    "evidence": [
+-      "Fixture seed; social adapters support Apify enrichment"
+-    ],
++    "evidence": ["Fixture seed; social adapters support Apify enrichment"],
+     "weeklySnapshots": [
+       {
+         "week": "4w ago",
+@@ -285,9 +283,7 @@
+       "Better Apple Health context",
+       "Private export"
+     ],
+-    "evidence": [
+-      "Fixture seed for repeatable CI"
+-    ],
++    "evidence": ["Fixture seed for repeatable CI"],
+     "weeklySnapshots": [
+       {
+         "week": "4w ago",
+@@ -415,9 +411,7 @@
+       "Onboarding checklist",
+       "Cross-device shared rules"
+     ],
+-    "evidence": [
+-      "Seed target for live chart/review enrichment"
+-    ],
++    "evidence": ["Seed target for live chart/review enrichment"],
+     "weeklySnapshots": [
+       {
+         "week": "4w ago",
+@@ -545,9 +539,7 @@
+       "More robust calendar sync",
+       "Better widgets"
+     ],
+-    "evidence": [
+-      "Seed target for productivity category monitoring"
+-    ],
++    "evidence": ["Seed target for productivity category monitoring"],
+     "weeklySnapshots": [
+       {
+         "week": "4w ago",
+@@ -675,9 +667,7 @@
+       "More low-cost social gifting",
+       "Smarter mood insights"
+     ],
+-    "evidence": [
+-      "Seed target for positivity/wellness benchmarking"
+-    ],
++    "evidence": ["Seed target for positivity/wellness benchmarking"],
+     "weeklySnapshots": [
+       {
+         "week": "4w ago",
+@@ -805,9 +795,7 @@
+       "Better Apple Health summaries",
+       "Actionable weekly plan"
+     ],
+-    "evidence": [
+-      "Seed target for health/wellness category monitoring"
+-    ],
++    "evidence": ["Seed target for health/wellness category monitoring"],
+     "weeklySnapshots": [
+       {
+         "week": "4w ago",
+@@ -935,9 +923,7 @@
+       "Beginner ramp plans",
+       "Progress story exports"
+     ],
+-    "evidence": [
+-      "Seed target for fitness category monitoring"
+-    ],
++    "evidence": ["Seed target for fitness category monitoring"],
+     "weeklySnapshots": [
+       {
+         "week": "4w ago",
+diff --git a/apps/generated-consumer-app-radar/public/app.js b/apps/generated-consumer-app-radar/public/app.js
+index 372a596..9fcf827 100644
+--- a/apps/generated-consumer-app-radar/public/app.js
++++ b/apps/generated-consumer-app-radar/public/app.js
+@@ -1,7 +1,12 @@
+ let apps = [];
+ let summary = null;
+ let selectedId = null;
+-const state = { search: "", category: "all", sort: "opportunityScore", hideLeaders: true };
++const state = {
++  search: "",
++  category: "all",
++  sort: "opportunityScore",
++  hideLeaders: true,
++};
+ 
+ const elements = {
+   summary: document.querySelector("#summary"),
+@@ -19,38 +24,91 @@ const elements = {
+ };
+ 
+ function escapeHtml(value) {
+-  return String(value ?? "").replace(/[&<>"']/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;" })[char]);
++  return String(value ?? "").replace(
++    /[&<>"']/g,
++    (char) =>
++      ({
++        "&": "&amp;",
++        "<": "&lt;",
++        ">": "&gt;",
++        '"': "&quot;",
++        "'": "&#039;",
++      })[char],
++  );
+ }
+ 
+ function list(items) {
+-  return "<ul>" + (items || []).map((item) => "<li>" + escapeHtml(item) + "</li>").join("") + "</ul>";
++  return (
++    "<ul>" +
++    (items || []).map((item) => "<li>" + escapeHtml(item) + "</li>").join("") +
++    "</ul>"
++  );
+ }
+ 
+ function metric(value, label) {
+-  return '<div class="metric">+' + escapeHtml(value) + "<span>" + escapeHtml(label) + "</span></div>";
++  return (
++    '<div class="metric">+' +
++    escapeHtml(value) +
++    "<span>" +
++    escapeHtml(label) +
++    "</span></div>"
++  );
+ }
+ 
+ function renderSummary() {
+   if (!summary) return;
+-  const fastest = summary.fastestMover ? summary.fastestMover.name + " +" + summary.fastestMover.rankDelta4w : "n/a";
++  const fastest = summary.fastestMover
++    ? summary.fastestMover.name + " +" + summary.fastestMover.rankDelta4w
++    : "n/a";
+   elements.summary.innerHTML = [
+     ["Tracked apps", summary.trackedApps],
+     ["Emerging apps", summary.emergingApps],
+     ["Live scraped", summary.liveScrapedApps],
+     ["Fastest rank move", fastest],
+     ["Feature requests", summary.totalFeatureRequests],
+-  ].map(([label, value]) => '<article class="kpi"><span>' + escapeHtml(label) + "</span><strong>" + escapeHtml(value) + "</strong></article>").join("");
++  ]
++    .map(
++      ([label, value]) =>
++        '<article class="kpi"><span>' +
++        escapeHtml(label) +
++        "</span><strong>" +
++        escapeHtml(value) +
++        "</strong></article>",
++    )
++    .join("");
+ }
+ 
+ function renderSourceStatus() {
+   const sources = summary?.sourceStatus || [];
+-  elements.sourceStatus.innerHTML = sources.map((source) => '<article class="source-item"><strong>' + escapeHtml(source.name) + "</strong><span>" + escapeHtml(source.detail) + '</span><div class="status">' + escapeHtml(source.status) + "</div></article>").join("");
++  elements.sourceStatus.innerHTML = sources
++    .map(
++      (source) =>
++        '<article class="source-item"><strong>' +
++        escapeHtml(source.name) +
++        "</strong><span>" +
++        escapeHtml(source.detail) +
++        '</span><div class="status">' +
++        escapeHtml(source.status) +
++        "</div></article>",
++    )
++    .join("");
+ }
+ 
+ function renderCategories() {
+   const selected = elements.category.value || state.category;
+   const categories = [...new Set(apps.map((app) => app.category))].sort();
+-  elements.category.innerHTML = '<option value="all">All categories</option>' + categories.map((category) => '<option value="' + escapeHtml(category) + '">' + escapeHtml(category) + "</option>").join("");
++  elements.category.innerHTML =
++    '<option value="all">All categories</option>' +
++    categories
++      .map(
++        (category) =>
++          '<option value="' +
++          escapeHtml(category) +
++          '">' +
++          escapeHtml(category) +
++          "</option>",
++      )
++      .join("");
+   elements.category.value = categories.includes(selected) ? selected : "all";
+   state.category = elements.category.value;
+ }
+@@ -58,32 +116,71 @@ function renderCategories() {
+ function filteredApps() {
+   const query = state.search.trim().toLowerCase();
+   return apps
+-    .filter((app) => state.category === "all" || app.category === state.category)
++    .filter(
++      (app) => state.category === "all" || app.category === state.category,
++    )
+     .filter((app) => !state.hideLeaders || !app.categoryLeader)
+     .filter((app) => {
+       if (!query) return true;
+-      const haystack = [app.name, app.category, app.sizeBand, ...(app.socialStrategy || []), ...(app.reviewThemes || []), ...(app.featureRequests || [])].join(" ").toLowerCase();
++      const haystack = [
++        app.name,
++        app.category,
++        app.sizeBand,
++        ...(app.socialStrategy || []),
++        ...(app.reviewThemes || []),
++        ...(app.featureRequests || []),
++      ]
++        .join(" ")
++        .toLowerCase();
+       return haystack.includes(query);
+     })
+-    .sort((a, b) => state.sort === "currentRank" ? Number(a.currentRank || 999) - Number(b.currentRank || 999) : Number(b[state.sort] || 0) - Number(a[state.sort] || 0));
++    .sort((a, b) =>
++      state.sort === "currentRank"
++        ? Number(a.currentRank || 999) - Number(b.currentRank || 999)
++        : Number(b[state.sort] || 0) - Number(a[state.sort] || 0),
++    );
+ }
+ 
+ function renderApps() {
+   const rows = filteredApps();
+   elements.resultCount.textContent = rows.length + " opportunities";
+   if (!rows.length) {
+-    elements.apps.innerHTML = '<div class="empty">No apps match these filters.</div>';
++    elements.apps.innerHTML =
++      '<div class="empty">No apps match these filters.</div>';
+     renderDetail(null);
+     return;
+   }
+-  if (!selectedId || !rows.some((app) => app.id === selectedId)) selectedId = rows[0].id;
+-  elements.apps.innerHTML = rows.map((app) =>
+-    '<article class="app-row" role="listitem" tabindex="0" data-id="' + escapeHtml(app.id) + '" aria-selected="' + String(app.id === selectedId) + '">' +
+-    '<div class="score">' + escapeHtml(app.opportunityScore) + "</div>" +
+-    '<div><div class="name">' + escapeHtml(app.radarRank + ". " + app.name) + '</div><div class="meta">' + escapeHtml(app.category + " / rank #" + app.currentRank + " / " + app.sizeBand) + "</div></div>" +
+-    '<div class="strategy-preview">' + escapeHtml(app.growthHypothesis?.text || "Growth hypothesis pending") + '<div class="signal-label growth-hypothesis">' + escapeHtml(app.growthHypothesis?.basis || "No source basis") + "</div></div>" +
+-    metric(app.rankDelta4w, "rank 4w") + metric(app.reviewDelta4w, "reviews 4w") + metric(app.socialDelta4w, "social 4w") +
+-    "</article>").join("");
++  if (!selectedId || !rows.some((app) => app.id === selectedId))
++    selectedId = rows[0].id;
++  elements.apps.innerHTML = rows
++    .map(
++      (app) =>
++        '<article class="app-row" role="listitem" tabindex="0" data-id="' +
++        escapeHtml(app.id) +
++        '" aria-selected="' +
++        String(app.id === selectedId) +
++        '">' +
++        '<div class="score">' +
++        escapeHtml(app.opportunityScore) +
++        "</div>" +
++        '<div><div class="name">' +
++        escapeHtml(app.radarRank + ". " + app.name) +
++        '</div><div class="meta">' +
++        escapeHtml(
++          app.category + " / rank #" + app.currentRank + " / " + app.sizeBand,
++        ) +
++        "</div></div>" +
++        '<div class="strategy-preview">' +
++        escapeHtml(app.growthHypothesis?.text || "Growth hypothesis pending") +
++        '<div class="signal-label growth-hypothesis">' +
++        escapeHtml(app.growthHypothesis?.basis || "No source basis") +
++        "</div></div>" +
++        metric(app.rankDelta4w, "rank 4w") +
++        metric(app.reviewDelta4w, "reviews 4w") +
++        metric(app.socialDelta4w, "social 4w") +
++        "</article>",
++    )
++    .join("");
+   for (const row of document.querySelectorAll(".app-row")) {
+     const choose = () => {
+       selectedId = row.dataset.id;
+@@ -103,23 +200,72 @@ function renderApps() {
+ 
+ function renderTimeline(app) {
+   const snapshots = app.weeklySnapshots || [];
+-  const maxMentions = Math.max(...snapshots.map((row) => Number(row.socialMentions || 0)), 1);
+-  return '<div class="timeline">' + snapshots.map((row) => {
+-    const width = Math.max(8, Math.round((Number(row.socialMentions || 0) / maxMentions) * 100));
+-    return '<div class="timeline-row"><span>' + escapeHtml(row.week) + '</span><div class="bar"><span style="width:' + width + '%"></span></div><strong>#' + escapeHtml(row.rank) + "</strong></div>";
+-  }).join("") + "</div>";
++  const maxMentions = Math.max(
++    ...snapshots.map((row) => Number(row.socialMentions || 0)),
++    1,
++  );
++  return (
++    '<div class="timeline">' +
++    snapshots
++      .map((row) => {
++        const width = Math.max(
++          8,
++          Math.round((Number(row.socialMentions || 0) / maxMentions) * 100),
++        );
++        return (
++          '<div class="timeline-row"><span>' +
++          escapeHtml(row.week) +
++          '</span><div class="bar"><span style="width:' +
++          width +
++          '%"></span></div><strong>#' +
++          escapeHtml(row.rank) +
++          "</strong></div>"
++        );
++      })
++      .join("") +
++    "</div>"
++  );
+ }
+ 
+ function renderReviewSamples(app) {
+-  return '<div class="review-list">' + (app.reviewSamples || []).map((review) =>
+-    '<article class="review-card"><div><strong>' + escapeHtml(review.title) + '</strong><span>' + escapeHtml(review.source) + " / " + escapeHtml(review.rating || "n/a") + '</span></div><p>' + escapeHtml(review.body) + "</p></article>"
+-  ).join("") + "</div>";
++  return (
++    '<div class="review-list">' +
++    (app.reviewSamples || [])
++      .map(
++        (review) =>
++          '<article class="review-card"><div><strong>' +
++          escapeHtml(review.title) +
++          "</strong><span>" +
++          escapeHtml(review.source) +
++          " / " +
++          escapeHtml(review.rating || "n/a") +
++          "</span></div><p>" +
++          escapeHtml(review.body) +
++          "</p></article>",
++      )
++      .join("") +
++    "</div>"
++  );
+ }
+ 
+ function renderExampleContent(app) {
+-  return '<div class="content-list">' + (app.exampleContent || []).map((item) =>
+-    '<article class="content-card"><strong>' + escapeHtml(item.platform + " / " + item.format) + '</strong><p>' + escapeHtml(item.hook) + '</p><span>' + escapeHtml(item.source) + (item.verifiedLiveScrape ? " / live scrape" : " / fixture example") + "</span></article>"
+-  ).join("") + "</div>";
++  return (
++    '<div class="content-list">' +
++    (app.exampleContent || [])
++      .map(
++        (item) =>
++          '<article class="content-card"><strong>' +
++          escapeHtml(item.platform + " / " + item.format) +
++          "</strong><p>" +
++          escapeHtml(item.hook) +
++          "</p><span>" +
++          escapeHtml(item.source) +
++          (item.verifiedLiveScrape ? " / live scrape" : " / fixture example") +
++          "</span></article>",
++      )
++      .join("") +
++    "</div>"
++  );
+ }
+ 
+ function renderDetail(app) {
+@@ -128,24 +274,63 @@ function renderDetail(app) {
+     return;
+   }
+   elements.detail.innerHTML =
+-    "<h3>" + escapeHtml(app.name) + "</h3>" +
+-    "<p>" + escapeHtml(app.category + " / rating " + app.rating + " / App Store ID " + app.appStoreId) + "</p>" +
+-    '<div class="chips"><span class="chip">rank #' + escapeHtml(app.currentRank) + '</span><span class="chip">not leader ' + escapeHtml(!app.categoryLeader) + '</span><span class="chip">confidence ' + escapeHtml(Math.round((app.growthHypothesis?.confidence || 0) * 100)) + '%</span><span class="chip">live scraped ' + escapeHtml(Boolean(app.growthHypothesis?.liveScraped)) + "</span></div>" +
+-    '<section class="brief-section evidence-callout"><h4>Growth Hypothesis</h4><p>' + escapeHtml(app.growthHypothesis?.text || "") + '</p><p class="muted">' + escapeHtml(app.growthHypothesis?.basis || "") + "</p></section>" +
++    "<h3>" +
++    escapeHtml(app.name) +
++    "</h3>" +
++    "<p>" +
++    escapeHtml(
++      app.category +
++        " / rating " +
++        app.rating +
++        " / App Store ID " +
++        app.appStoreId,
++    ) +
++    "</p>" +
++    '<div class="chips"><span class="chip">rank #' +
++    escapeHtml(app.currentRank) +
++    '</span><span class="chip">not leader ' +
++    escapeHtml(!app.categoryLeader) +
++    '</span><span class="chip">confidence ' +
++    escapeHtml(Math.round((app.growthHypothesis?.confidence || 0) * 100)) +
++    '%</span><span class="chip">live scraped ' +
++    escapeHtml(Boolean(app.growthHypothesis?.liveScraped)) +
++    "</span></div>" +
++    '<section class="brief-section evidence-callout"><h4>Growth Hypothesis</h4><p>' +
++    escapeHtml(app.growthHypothesis?.text || "") +
++    '</p><p class="muted">' +
++    escapeHtml(app.growthHypothesis?.basis || "") +
++    "</p></section>" +
+     renderTimeline(app) +
+     '<div class="opportunity-grid">' +
+-    '<section class="brief-section"><h4>Example Content</h4>' + renderExampleContent(app) + "</section>" +
+-    '<section class="brief-section"><h4>Visible Reviews</h4>' + renderReviewSamples(app) + "</section>" +
+-    '<section class="brief-section"><h4>Social Strategy</h4>' + list(app.socialStrategy) + "</section>" +
+-    '<section class="brief-section"><h4>Review Pain</h4>' + list(app.reviewThemes) + "</section>" +
+-    '<section class="brief-section"><h4>Feature Requests</h4>' + list(app.featureRequests) + "</section>" +
+-    '<section class="brief-section"><h4>Investigation Angles</h4>' + list(app.investigationAngles) + "</section>" +
+-    '<section class="brief-section"><h4>Evidence</h4>' + list(app.evidence) + "</section>" +
++    '<section class="brief-section"><h4>Example Content</h4>' +
++    renderExampleContent(app) +
++    "</section>" +
++    '<section class="brief-section"><h4>Visible Reviews</h4>' +
++    renderReviewSamples(app) +
++    "</section>" +
++    '<section class="brief-section"><h4>Social Strategy</h4>' +
++    list(app.socialStrategy) +
++    "</section>" +
++    '<section class="brief-section"><h4>Review Pain</h4>' +
++    list(app.reviewThemes) +
++    "</section>" +
++    '<section class="brief-section"><h4>Feature Requests</h4>' +
++    list(app.featureRequests) +
++    "</section>" +
++    '<section class="brief-section"><h4>Investigation Angles</h4>' +
++    list(app.investigationAngles) +
++    "</section>" +
++    '<section class="brief-section"><h4>Evidence</h4>' +
++    list(app.evidence) +
++    "</section>" +
+     "</div>";
+ }
+ 
+ async function loadApps() {
+-  const [appsResponse, summaryResponse] = await Promise.all([fetch("/api/apps"), fetch("/api/summary")]);
++  const [appsResponse, summaryResponse] = await Promise.all([
++    fetch("/api/apps"),
++    fetch("/api/summary"),
++  ]);
+   const appsPayload = await appsResponse.json();
+   summary = await summaryResponse.json();
+   apps = appsPayload.apps || [];
+@@ -174,7 +359,10 @@ elements.hideLeaders.addEventListener("change", () => {
+ elements.refresh.addEventListener("click", async () => {
+   elements.refresh.disabled = true;
+   try {
+-    await fetch("/api/refresh?mode=" + encodeURIComponent(elements.refreshMode.value), { method: "POST" });
++    await fetch(
++      "/api/refresh?mode=" + encodeURIComponent(elements.refreshMode.value),
++      { method: "POST" },
++    );
+     await loadApps();
+   } finally {
+     elements.refresh.disabled = false;
+@@ -182,8 +370,14 @@ elements.refresh.addEventListener("click", async () => {
+ });
+ elements.addAppForm.addEventListener("submit", async (event) => {
+   event.preventDefault();
+-  const payload = Object.fromEntries(new FormData(elements.addAppForm).entries());
+-  const response = await fetch("/api/apps", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
++  const payload = Object.fromEntries(
++    new FormData(elements.addAppForm).entries(),
++  );
++  const response = await fetch("/api/apps", {
++    method: "POST",
++    headers: { "Content-Type": "application/json" },
++    body: JSON.stringify(payload),
++  });
+   const result = await response.json();
+   selectedId = result.app?.id || selectedId;
+   elements.addAppForm.reset();
+diff --git a/apps/generated-consumer-app-radar/public/index.html b/apps/generated-consumer-app-radar/public/index.html
+index 5ac4143..7cdf35a 100644
+--- a/apps/generated-consumer-app-radar/public/index.html
++++ b/apps/generated-consumer-app-radar/public/index.html
+@@ -12,7 +12,10 @@
+         <div>
+           <p class="eyebrow">Consumer app factory intelligence</p>
+           <h1>Consumer App Radar</h1>
+-          <p>Find emerging iPhone apps with accelerating growth, inspect the evidence quality, and collect product gaps worth building.</p>
++          <p>
++            Find emerging iPhone apps with accelerating growth, inspect the
++            evidence quality, and collect product gaps worth building.
++          </p>
+         </div>
+         <div class="refresh-controls">
+           <select id="refresh-mode" aria-label="Refresh mode">
+@@ -23,16 +26,26 @@
+         </div>
+       </header>
+ 
+-      <section id="summary" class="kpi-grid" aria-label="Radar summary"></section>
++      <section
++        id="summary"
++        class="kpi-grid"
++        aria-label="Radar summary"
++      ></section>
+ 
+       <section class="toolbar" aria-label="Radar controls">
+         <label>
+           Search
+-          <input id="search" type="search" placeholder="App, category, request, strategy" />
++          <input
++            id="search"
++            type="search"
++            placeholder="App, category, request, strategy"
++          />
+         </label>
+         <label>
+           Category
+-          <select id="category"><option value="all">All categories</option></select>
++          <select id="category">
++            <option value="all">All categories</option>
++          </select>
+         </label>
+         <label>
+           Sort
+@@ -52,9 +65,16 @@
+ 
+       <section class="add-panel panel" aria-label="Add app research seed">
+         <form id="add-app-form" class="add-app-form">
+-          <label>App name <input name="name" required placeholder="Jomo, Roots, Clearspace" /></label>
+-          <label>Category <input name="category" placeholder="Productivity" /></label>
+-          <label>App Store ID <input name="appStoreId" placeholder="optional" /></label>
++          <label
++            >App name
++            <input name="name" required placeholder="Jomo, Roots, Clearspace"
++          /></label>
++          <label
++            >Category <input name="category" placeholder="Productivity"
++          /></label>
++          <label
++            >App Store ID <input name="appStoreId" placeholder="optional"
++          /></label>
+           <button type="submit">Add app</button>
+         </form>
+       </section>
+diff --git a/apps/generated-consumer-app-radar/public/styles.css b/apps/generated-consumer-app-radar/public/styles.css
+index eae695b..2d1ee49 100644
+--- a/apps/generated-consumer-app-radar/public/styles.css
++++ b/apps/generated-consumer-app-radar/public/styles.css
+@@ -10,20 +10,55 @@
+   --warn: #9a5b12;
+   --blue: #315f8a;
+ }
+-* { box-sizing: border-box; }
++* {
++  box-sizing: border-box;
++}
+ body {
+   margin: 0;
+-  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
++  font-family:
++    Inter,
++    ui-sans-serif,
++    system-ui,
++    -apple-system,
++    BlinkMacSystemFont,
++    "Segoe UI",
++    sans-serif;
+   color: var(--ink);
+   background: var(--bg);
+ }
+-main { max-width: 1420px; margin: 0 auto; padding: 24px; }
+-h1, h2, h3, p { margin: 0; }
+-h1 { font-size: 30px; line-height: 1.1; letter-spacing: 0; }
+-h2 { font-size: 15px; line-height: 1.2; }
+-h3 { font-size: 22px; line-height: 1.15; }
+-p, label { color: var(--muted); }
+-button, input, select { font: inherit; }
++main {
++  max-width: 1420px;
++  margin: 0 auto;
++  padding: 24px;
++}
++h1,
++h2,
++h3,
++p {
++  margin: 0;
++}
++h1 {
++  font-size: 30px;
++  line-height: 1.1;
++  letter-spacing: 0;
++}
++h2 {
++  font-size: 15px;
++  line-height: 1.2;
++}
++h3 {
++  font-size: 22px;
++  line-height: 1.15;
++}
++p,
++label {
++  color: var(--muted);
++}
++button,
++input,
++select {
++  font: inherit;
++}
+ button {
+   border: 1px solid var(--ink);
+   background: var(--ink);
+@@ -40,13 +75,20 @@ button {
+   gap: 18px;
+   margin-bottom: 18px;
+ }
+-.topbar p { max-width: 820px; margin-top: 6px; }
+-.refresh-controls { display: flex; gap: 8px; align-items: center; }
++.topbar p {
++  max-width: 820px;
++  margin-top: 6px;
++}
++.refresh-controls {
++  display: flex;
++  gap: 8px;
++  align-items: center;
++}
+ .eyebrow {
+   color: var(--accent);
+   font-size: 12px;
+   font-weight: 800;
+-  letter-spacing: .08em;
++  letter-spacing: 0.08em;
+   margin-bottom: 6px;
+   text-transform: uppercase;
+ }
+@@ -56,12 +98,16 @@ button {
+   gap: 10px;
+   margin-bottom: 12px;
+ }
+-.kpi, .panel {
++.kpi,
++.panel {
+   background: var(--panel);
+   border: 1px solid var(--line);
+   border-radius: 8px;
+ }
+-.kpi { padding: 14px; min-height: 88px; }
++.kpi {
++  padding: 14px;
++  min-height: 88px;
++}
+ .kpi span {
+   display: block;
+   color: var(--muted);
+@@ -70,7 +116,11 @@ button {
+   margin-bottom: 8px;
+   text-transform: uppercase;
+ }
+-.kpi strong { display: block; font-size: 24px; line-height: 1.05; }
++.kpi strong {
++  display: block;
++  font-size: 24px;
++  line-height: 1.05;
++}
+ .toolbar {
+   display: grid;
+   grid-template-columns: minmax(260px, 1fr) 200px 190px 180px;
+@@ -78,16 +128,24 @@ button {
+   align-items: end;
+   margin-bottom: 14px;
+ }
+-.toolbar label, .add-app-form label {
++.toolbar label,
++.add-app-form label {
+   display: grid;
+   gap: 5px;
+   font-size: 12px;
+   font-weight: 750;
+   text-transform: uppercase;
+ }
+-.checkbox-label { grid-template-columns: 18px 1fr; align-items: center; min-height: 42px; }
+-.checkbox-label input { min-height: auto; }
+-input, select {
++.checkbox-label {
++  grid-template-columns: 18px 1fr;
++  align-items: center;
++  min-height: 42px;
++}
++.checkbox-label input {
++  min-height: auto;
++}
++input,
++select {
+   width: 100%;
+   border: 1px solid var(--line);
+   border-radius: 6px;
+@@ -96,7 +154,10 @@ input, select {
+   min-height: 42px;
+   padding: 9px 10px;
+ }
+-.add-panel { padding: 12px; margin-bottom: 14px; }
++.add-panel {
++  padding: 12px;
++  margin-bottom: 14px;
++}
+ .add-app-form {
+   display: grid;
+   grid-template-columns: minmax(180px, 1fr) 180px 180px auto;
+@@ -109,7 +170,9 @@ input, select {
+   gap: 14px;
+   align-items: start;
+ }
+-.panel { padding: 16px; }
++.panel {
++  padding: 16px;
++}
+ .section-head {
+   display: flex;
+   align-items: center;
+@@ -124,7 +187,10 @@ input, select {
+ }
+ .app-row {
+   display: grid;
+-  grid-template-columns: 72px minmax(170px, 1.1fr) minmax(260px, 1fr) 110px 110px 110px;
++  grid-template-columns: 72px minmax(170px, 1.1fr) minmax(
++      260px,
++      1fr
++    ) 110px 110px 110px;
+   gap: 12px;
+   align-items: center;
+   min-height: 88px;
+@@ -133,7 +199,9 @@ input, select {
+   background: white;
+   cursor: pointer;
+ }
+-.app-row:last-child { border-bottom: 0; }
++.app-row:last-child {
++  border-bottom: 0;
++}
+ .app-row[aria-selected="true"] {
+   background: #f0f7f5;
+   box-shadow: inset 3px 0 0 var(--accent);
+@@ -148,14 +216,25 @@ input, select {
+   color: var(--accent);
+   font-weight: 850;
+ }
+-.name { font-weight: 800; }
+-.meta, .signal-label, .muted {
++.name {
++  font-weight: 800;
++}
++.meta,
++.signal-label,
++.muted {
+   color: var(--muted);
+   font-size: 13px;
+   margin-top: 4px;
+ }
+-.strategy-preview { color: var(--ink); font-size: 13px; line-height: 1.35; }
+-.metric { text-align: right; font-weight: 800; }
++.strategy-preview {
++  color: var(--ink);
++  font-size: 13px;
++  line-height: 1.35;
++}
++.metric {
++  text-align: right;
++  font-weight: 800;
++}
+ .metric span {
+   display: block;
+   color: var(--muted);
+@@ -183,15 +262,25 @@ input, select {
+   color: var(--muted);
+   background: white;
+ }
+-.opportunity-grid { display: grid; gap: 14px; margin-top: 16px; }
++.opportunity-grid {
++  display: grid;
++  gap: 14px;
++  margin-top: 16px;
++}
+ .brief-section h4 {
+   margin: 0 0 8px;
+   font-size: 12px;
+   text-transform: uppercase;
+   color: var(--muted);
+ }
+-.brief-section ul { margin: 0; padding-left: 18px; }
+-.brief-section li { margin: 7px 0; line-height: 1.35; }
++.brief-section ul {
++  margin: 0;
++  padding-left: 18px;
++}
++.brief-section li {
++  margin: 7px 0;
++  line-height: 1.35;
++}
+ .evidence-callout {
+   border: 1px solid var(--line);
+   background: #fbfcfd;
+@@ -199,7 +288,11 @@ input, select {
+   padding: 10px;
+   margin-top: 12px;
+ }
+-.timeline { display: grid; gap: 7px; margin-top: 10px; }
++.timeline {
++  display: grid;
++  gap: 7px;
++  margin-top: 10px;
++}
+ .timeline-row {
+   display: grid;
+   grid-template-columns: 72px 1fr 48px;
+@@ -214,16 +307,43 @@ input, select {
+   background: #e8edf0;
+   overflow: hidden;
+ }
+-.bar span { display: block; height: 100%; background: var(--blue); }
+-.source-list, .review-list, .content-list { display: grid; gap: 9px; }
+-.source-item, .review-card, .content-card {
++.bar span {
++  display: block;
++  height: 100%;
++  background: var(--blue);
++}
++.source-list,
++.review-list,
++.content-list {
++  display: grid;
++  gap: 9px;
++}
++.source-item,
++.review-card,
++.content-card {
+   border: 1px solid var(--line);
+   border-radius: 8px;
+   padding: 10px;
+ }
+-.source-item strong, .review-card strong, .content-card strong { display: block; font-size: 13px; }
+-.source-item span, .review-card span, .content-card span { color: var(--muted); font-size: 12px; }
+-.review-card p, .content-card p { margin-top: 6px; color: var(--ink); font-size: 13px; line-height: 1.4; }
++.source-item strong,
++.review-card strong,
++.content-card strong {
++  display: block;
++  font-size: 13px;
++}
++.source-item span,
++.review-card span,
++.content-card span {
++  color: var(--muted);
++  font-size: 12px;
++}
++.review-card p,
++.content-card p {
++  margin-top: 6px;
++  color: var(--ink);
++  font-size: 13px;
++  line-height: 1.4;
++}
+ .status {
+   display: inline-block;
+   margin-top: 8px;
+@@ -231,11 +351,28 @@ input, select {
+   font-size: 12px;
+   font-weight: 800;
+ }
+-.empty { padding: 22px; color: var(--muted); }
++.empty {
++  padding: 22px;
++  color: var(--muted);
++}
+ @media (max-width: 1120px) {
+-  .kpi-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+-  .toolbar, .add-app-form, .layout { grid-template-columns: 1fr; }
+-  .detail { position: static; }
+-  .app-row { grid-template-columns: 56px 1fr; }
+-  .strategy-preview, .metric { grid-column: 2; text-align: left; }
++  .kpi-grid {
++    grid-template-columns: repeat(2, minmax(0, 1fr));
++  }
++  .toolbar,
++  .add-app-form,
++  .layout {
++    grid-template-columns: 1fr;
++  }
++  .detail {
++    position: static;
++  }
++  .app-row {
++    grid-template-columns: 56px 1fr;
++  }
++  .strategy-preview,
++  .metric {
++    grid-column: 2;
++    text-align: left;
++  }
+ }
+diff --git a/apps/generated-consumer-app-radar/src/ingest.js b/apps/generated-consumer-app-radar/src/ingest.js
+index 7cf8987..2a56918 100644
+--- a/apps/generated-consumer-app-radar/src/ingest.js
++++ b/apps/generated-consumer-app-radar/src/ingest.js
+@@ -5,14 +5,24 @@ import { loadApps, saveApps } from "./repository.js";
+ const allowedModes = new Set(["fixture", "live-smoke"]);
+ 
+ function slug(value) {
+-  return String(value || "app").trim().toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 64);
++  return String(value || "app")
++    .trim()
++    .toLowerCase()
++    .replace(/[^a-z0-9]+/g, "-")
++    .replace(/^-|-$/g, "")
++    .slice(0, 64);
+ }
+ 
+ export function loadFixtureApps() {
+   try {
+-    return JSON.parse(readFileSync(new URL("../fixtures/apps.json", import.meta.url), "utf8"));
++    return JSON.parse(
++      readFileSync(new URL("../fixtures/apps.json", import.meta.url), "utf8"),
++    );
+   } catch (error) {
+-    throw new Error("Fixture apps unavailable: " + (error instanceof Error ? error.message : String(error)));
++    throw new Error(
++      "Fixture apps unavailable: " +
++        (error instanceof Error ? error.message : String(error)),
++    );
+   }
+ }
+ 
+@@ -28,30 +38,38 @@ function withRunMode(app, mode) {
+       basis: liveScraped
+         ? "Live social and review adapters populated this hypothesis."
+         : "Fixture-backed hypothesis. No live Apify social scrape was completed in this run.",
+-      confidence: liveScraped ? 0.82 : Number(app.growthHypothesis?.confidence || 0.58),
++      confidence: liveScraped
++        ? 0.82
++        : Number(app.growthHypothesis?.confidence || 0.58),
+     },
+   };
+ }
+ 
+ function persistRanked(apps, mode) {
+-  const ranked = rankApps(apps.map((app) => withRunMode(app, mode))).map((app, index) => ({
+-    ...app,
+-    radarRank: index + 1,
+-  }));
++  const ranked = rankApps(apps.map((app) => withRunMode(app, mode))).map(
++    (app, index) => ({
++      ...app,
++      radarRank: index + 1,
++    }),
++  );
+   saveApps(ranked);
+   return ranked;
+ }
+ 
+ export async function refreshApps({ mode = "fixture" } = {}) {
+-  if (!allowedModes.has(mode)) throw new Error("Unsupported refresh mode: " + mode);
++  if (!allowedModes.has(mode))
++    throw new Error("Unsupported refresh mode: " + mode);
+   return persistRanked(loadFixtureApps(), mode);
+ }
+ 
+ export async function addCustomApp(input = {}) {
+-  const existing = loadApps().length ? loadApps() : await refreshApps({ mode: "fixture" });
++  const existing = loadApps().length
++    ? loadApps()
++    : await refreshApps({ mode: "fixture" });
+   const name = String(input.name || "").trim();
+   if (!name) throw new Error("App name is required");
+-  const category = String(input.category || "Productivity").trim() || "Productivity";
++  const category =
++    String(input.category || "Productivity").trim() || "Productivity";
+   const id = slug(input.id || name);
+   const seed = {
+     id,
+@@ -69,14 +87,22 @@ export async function addCustomApp(input = {}) {
+     socialDelta4w: Number(input.socialDelta4w || 20),
+     socialStrategy: ["Manual seed awaiting live social scrape"],
+     reviewThemes: ["Research target added manually"],
+-    featureRequests: ["Run live review scrape", "Find TikTok and Instagram content examples"],
++    featureRequests: [
++      "Run live review scrape",
++      "Find TikTok and Instagram content examples",
++    ],
+     evidence: ["Manual seed from Add app form"],
+     weeklySnapshots: [
+       { week: "4w ago", rank: 158, reviewCount: 90, socialMentions: 45 },
+       { week: "3w ago", rank: 153, reviewCount: 95, socialMentions: 50 },
+       { week: "2w ago", rank: 148, reviewCount: 99, socialMentions: 57 },
+       { week: "1w ago", rank: 143, reviewCount: 103, socialMentions: 62 },
+-      { week: "current", rank: Number(input.currentRank || 140), reviewCount: 108, socialMentions: 69 },
++      {
++        week: "current",
++        rank: Number(input.currentRank || 140),
++        reviewCount: 108,
++        socialMentions: 69,
++      },
+     ],
+     investigationAngles: [
+       "Validate App Store rank movement before treating this as a true opportunity.",
+@@ -86,19 +112,42 @@ export async function addCustomApp(input = {}) {
+     growthHypothesis: {
+       text: "Manual research seed; no growth claim yet.",
+       confidence: 0.25,
+-      basis: "Added manually. No live Apify or App Store scrape has run for this seed.",
++      basis:
++        "Added manually. No live Apify or App Store scrape has run for this seed.",
+       liveScraped: false,
+       sourceMode: "manual-seed",
+     },
+     reviewSamples: [
+-      { rating: 0, title: "Manual seed", body: "Run review ingestion to populate real customer feedback.", source: "manual-placeholder" },
++      {
++        rating: 0,
++        title: "Manual seed",
++        body: "Run review ingestion to populate real customer feedback.",
++        source: "manual-placeholder",
++      },
+     ],
+     exampleContent: [
+-      { platform: "TikTok", creator: "pending", format: "pending scrape", hook: "Search needed", caption: "Run Apify to find example content.", engagement: 0, source: "manual-placeholder", verifiedLiveScrape: false },
++      {
++        platform: "TikTok",
++        creator: "pending",
++        format: "pending scrape",
++        hook: "Search needed",
++        caption: "Run Apify to find example content.",
++        engagement: 0,
++        source: "manual-placeholder",
++        verifiedLiveScrape: false,
++      },
+     ],
+     dataSources: [
+-      { name: "Manual seed", status: "active", note: "Added through the dashboard form." },
+-      { name: "Apify TikTok/Instagram", status: "not-run", note: "Use live refresh once actors are tuned." },
++      {
++        name: "Manual seed",
++        status: "active",
++        note: "Added through the dashboard form.",
++      },
++      {
++        name: "Apify TikTok/Instagram",
++        status: "not-run",
++        note: "Use live refresh once actors are tuned.",
++      },
+     ],
+   };
+   const withoutDuplicate = existing.filter((app) => app.id !== id);
+@@ -107,6 +156,8 @@ export async function addCustomApp(input = {}) {
+ }
+ 
+ if (process.argv[1] && process.argv[1].endsWith("ingest.js")) {
+-  const apps = await refreshApps({ mode: process.argv.includes("--live") ? "live-smoke" : "fixture" });
++  const apps = await refreshApps({
++    mode: process.argv.includes("--live") ? "live-smoke" : "fixture",
++  });
+   console.log(JSON.stringify({ ok: true, apps: apps.length }, null, 2));
+ }
+diff --git a/apps/generated-consumer-app-radar/src/scoring.js b/apps/generated-consumer-app-radar/src/scoring.js
+index 883cc02..db949aa 100644
+--- a/apps/generated-consumer-app-radar/src/scoring.js
++++ b/apps/generated-consumer-app-radar/src/scoring.js
+@@ -14,10 +14,25 @@ export function scoreApp(app) {
+   const rank = clamp(app.rankDelta4w, 0, 120) / 120;
+   const reviews = clamp(app.reviewDelta4w, 0, 180) / 180;
+   const social = clamp(app.socialDelta4w, 0, 240) / 240;
+-  const pain = clamp((app.reviewThemes || []).length * 18 + (app.featureRequests || []).length * 12, 0, 100) / 100;
++  const pain =
++    clamp(
++      (app.reviewThemes || []).length * 18 +
++        (app.featureRequests || []).length * 12,
++      0,
++      100,
++    ) / 100;
+   const rating = clamp(((Number(app.rating) || 0) - 3.5) * 35, 0, 55) / 100;
+-  const confidence = clamp(Number(app.growthHypothesis?.confidence ?? 0.5) * 100, 20, 100) / 100;
+-  const score = (rank * 0.34 + reviews * 0.23 + social * 0.22 + pain * 0.12 + rating * 0.04 + confidence * 0.05) * 100 + sizeScore(app);
++  const confidence =
++    clamp(Number(app.growthHypothesis?.confidence ?? 0.5) * 100, 20, 100) / 100;
++  const score =
++    (rank * 0.34 +
++      reviews * 0.23 +
++      social * 0.22 +
++      pain * 0.12 +
++      rating * 0.04 +
++      confidence * 0.05) *
++      100 +
++    sizeScore(app);
+   return Math.round(clamp(score, 0, 100));
+ }
+ 
+diff --git a/apps/generated-consumer-app-radar/src/server.js b/apps/generated-consumer-app-radar/src/server.js
+index 9917b8c..370e5e9 100644
+--- a/apps/generated-consumer-app-radar/src/server.js
++++ b/apps/generated-consumer-app-radar/src/server.js
+@@ -7,8 +7,15 @@ import { buildSummary } from "./summary.js";
+ 
+ const publicDir = resolve("public");
+ const port = Number(process.env.PORT || 4317);
+-const types = { ".html": "text/html", ".js": "text/javascript", ".css": "text/css" };
+-const jsonHeaders = { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" };
++const types = {
++  ".html": "text/html",
++  ".js": "text/javascript",
++  ".css": "text/css",
++};
++const jsonHeaders = {
++  "Content-Type": "application/json",
++  "Access-Control-Allow-Origin": "*",
++};
+ 
+ function sendJson(res, status, body) {
+   res.writeHead(status, jsonHeaders);
+@@ -24,9 +31,14 @@ async function readJson(req) {
+ 
+ function serveStatic(req, res) {
+   const pathname = new URL(req.url, "http://localhost").pathname;
+-  const file = pathname === "/" ? join(publicDir, "index.html") : join(publicDir, pathname);
++  const file =
++    pathname === "/"
++      ? join(publicDir, "index.html")
++      : join(publicDir, pathname);
+   if (!file.startsWith(publicDir) || !existsSync(file)) return false;
+-  res.writeHead(200, { "Content-Type": types[extname(file)] || "application/octet-stream" });
++  res.writeHead(200, {
++    "Content-Type": types[extname(file)] || "application/octet-stream",
++  });
+   createReadStream(file).pipe(res);
+   return true;
+ }
+@@ -36,24 +48,38 @@ const server = createServer(async (req, res) => {
+   try {
+     if (req.method === "OPTIONS") return sendJson(res, 204, {});
+     if (url.pathname === "/health") return sendJson(res, 200, { ok: true });
+-    if (url.pathname === "/api/summary" && req.method === "GET") return sendJson(res, 200, buildSummary(loadApps()));
+-    if (url.pathname === "/api/apps" && req.method === "GET") return sendJson(res, 200, { apps: loadApps() });
+-    if (url.pathname === "/api/apps" && req.method === "POST") return sendJson(res, 201, { ok: true, app: await addCustomApp(await readJson(req)) });
++    if (url.pathname === "/api/summary" && req.method === "GET")
++      return sendJson(res, 200, buildSummary(loadApps()));
++    if (url.pathname === "/api/apps" && req.method === "GET")
++      return sendJson(res, 200, { apps: loadApps() });
++    if (url.pathname === "/api/apps" && req.method === "POST")
++      return sendJson(res, 201, {
++        ok: true,
++        app: await addCustomApp(await readJson(req)),
++      });
+     if (url.pathname.startsWith("/api/apps/") && req.method === "GET") {
+       const id = decodeURIComponent(url.pathname.split("/").pop());
+       const app = loadApps().find((item) => item.id === id);
+-      return app ? sendJson(res, 200, { app }) : sendJson(res, 404, { error: "not_found" });
++      return app
++        ? sendJson(res, 200, { app })
++        : sendJson(res, 404, { error: "not_found" });
+     }
+     if (url.pathname === "/api/refresh" && req.method === "POST") {
+-      const apps = await refreshApps({ mode: url.searchParams.get("mode") || "fixture" });
++      const apps = await refreshApps({
++        mode: url.searchParams.get("mode") || "fixture",
++      });
+       return sendJson(res, 200, { ok: true, apps });
+     }
+     if (serveStatic(req, res)) return;
+     sendJson(res, 404, { error: "not_found" });
+   } catch (error) {
+-    sendJson(res, 500, { error: error instanceof Error ? error.message : String(error) });
++    sendJson(res, 500, {
++      error: error instanceof Error ? error.message : String(error),
++    });
+   }
+ });
+ 
+ await refreshApps({ mode: "fixture" });
+-server.listen(port, () => console.log("Consumer App Radar listening on :" + port));
++server.listen(port, () =>
++  console.log("Consumer App Radar listening on :" + port),
++);
+diff --git a/apps/generated-consumer-app-radar/src/summary.js b/apps/generated-consumer-app-radar/src/summary.js
+index 5baf768..74bf1d5 100644
+--- a/apps/generated-consumer-app-radar/src/summary.js
++++ b/apps/generated-consumer-app-radar/src/summary.js
+@@ -4,23 +4,56 @@ export function buildSummary(apps) {
+   let totalFeatureRequests = 0;
+   for (const app of rows) {
+     byCategory.set(app.category, (byCategory.get(app.category) || 0) + 1);
+-    totalFeatureRequests += Array.isArray(app.featureRequests) ? app.featureRequests.length : 0;
++    totalFeatureRequests += Array.isArray(app.featureRequests)
++      ? app.featureRequests.length
++      : 0;
+   }
+-  const topCategory = [...byCategory.entries()].sort((a, b) => b[1] - a[1])[0] || ["n/a", 0];
+-  const fastestMover = rows.slice().sort((a, b) => Number(b.rankDelta4w || 0) - Number(a.rankDelta4w || 0))[0] || null;
+-  const emerging = rows.filter((app) => !app.isCategoryLeader && Number(app.currentRank || 999) > 15).length;
+-  const liveScraped = rows.filter((app) => app.growthHypothesis?.liveScraped).length;
++  const topCategory = [...byCategory.entries()].sort(
++    (a, b) => b[1] - a[1],
++  )[0] || ["n/a", 0];
++  const fastestMover =
++    rows
++      .slice()
++      .sort(
++        (a, b) => Number(b.rankDelta4w || 0) - Number(a.rankDelta4w || 0),
++      )[0] || null;
++  const emerging = rows.filter(
++    (app) => !app.isCategoryLeader && Number(app.currentRank || 999) > 15,
++  ).length;
++  const liveScraped = rows.filter(
++    (app) => app.growthHypothesis?.liveScraped,
++  ).length;
+   return {
+     trackedApps: rows.length,
+     emergingApps: emerging,
+     liveScrapedApps: liveScraped,
+     topCategory: { name: topCategory[0], count: topCategory[1] },
+-    fastestMover: fastestMover ? { name: fastestMover.name, rankDelta4w: fastestMover.rankDelta4w } : null,
++    fastestMover: fastestMover
++      ? { name: fastestMover.name, rankDelta4w: fastestMover.rankDelta4w }
++      : null,
+     totalFeatureRequests,
+     sourceStatus: [
+-      { name: "Apple App Store RSS", status: "adapter-ready", detail: "Review adapter exists; visible samples are fixture-backed unless a live run replaces them." },
+-      { name: "Apify TikTok/Instagram", status: process.env.APIFY_TOKEN && !process.env.APIFY_TOKEN.includes("{{") ? "token-present-not-run" : "needs-token", detail: "Growth hypotheses disclose whether content was actually scraped." },
+-      { name: "Emerging app filter", status: "active", detail: "Default ranking penalizes category leaders and favors rank 20-150 movers." }
+-    ]
++      {
++        name: "Apple App Store RSS",
++        status: "adapter-ready",
++        detail:
++          "Review adapter exists; visible samples are fixture-backed unless a live run replaces them.",
++      },
++      {
++        name: "Apify TikTok/Instagram",
++        status:
++          process.env.APIFY_TOKEN && !process.env.APIFY_TOKEN.includes("{{")
++            ? "token-present-not-run"
++            : "needs-token",
++        detail:
++          "Growth hypotheses disclose whether content was actually scraped.",
++      },
++      {
++        name: "Emerging app filter",
++        status: "active",
++        detail:
++          "Default ranking penalizes category leaders and favors rank 20-150 movers.",
++      },
++    ],
+   };
+ }
+diff --git a/apps/generated-consumer-app-radar/tests/feedback-surface.test.js b/apps/generated-consumer-app-radar/tests/feedback-surface.test.js
+index 012c7dc..430aae4 100644
+--- a/apps/generated-consumer-app-radar/tests/feedback-surface.test.js
++++ b/apps/generated-consumer-app-radar/tests/feedback-surface.test.js
+@@ -16,15 +16,35 @@ test("fixture data is explicit about non-live growth evidence", async () => {
+ 
+ test("ranking prefers emerging fast growers over category leaders", () => {
+   const ranked = rankApps([
+-    { id: "leader", rankDelta4w: 70, reviewDelta4w: 120, socialDelta4w: 200, currentRank: 2, isCategoryLeader: true, rating: 4.9 },
+-    { id: "emerging", rankDelta4w: 55, reviewDelta4w: 92, socialDelta4w: 150, currentRank: 64, isCategoryLeader: false, rating: 4.6 },
++    {
++      id: "leader",
++      rankDelta4w: 70,
++      reviewDelta4w: 120,
++      socialDelta4w: 200,
++      currentRank: 2,
++      isCategoryLeader: true,
++      rating: 4.9,
++    },
++    {
++      id: "emerging",
++      rankDelta4w: 55,
++      reviewDelta4w: 92,
++      socialDelta4w: 150,
++      currentRank: 64,
++      isCategoryLeader: false,
++      rating: 4.6,
++    },
+   ]);
+   assert.equal(ranked[0].id, "emerging");
+ });
+ 
+ test("custom app addition creates a ranked research seed", async () => {
+   await refreshApps({ mode: "fixture" });
+-  const app = await addCustomApp({ name: "Test Focus App", category: "Productivity", appStoreId: "test-focus-app" });
++  const app = await addCustomApp({
++    name: "Test Focus App",
++    category: "Productivity",
++    appStoreId: "test-focus-app",
++  });
+   assert.equal(app.name, "Test Focus App");
+   assert.equal(app.dataMode, "manual-seed");
+   assert.ok(app.reviewSamples.length >= 1);
+@@ -33,9 +53,25 @@ test("custom app addition creates a ranked research seed", async () => {
+ });
+ 
+ test("frontend surfaces feedback-driven controls and evidence panels", () => {
+-  const html = readFileSync(new URL("../public/index.html", import.meta.url), "utf8");
+-  const client = readFileSync(new URL("../public/app.js", import.meta.url), "utf8");
+-  for (const marker of ["refresh-mode", "add-app-form", "growth-hypothesis", "reviewSamples", "exampleContent", "categoryLeader"]) {
+-    assert.ok(html.includes(marker) || client.includes(marker), `missing frontend marker ${marker}`);
++  const html = readFileSync(
++    new URL("../public/index.html", import.meta.url),
++    "utf8",
++  );
++  const client = readFileSync(
++    new URL("../public/app.js", import.meta.url),
++    "utf8",
++  );
++  for (const marker of [
++    "refresh-mode",
++    "add-app-form",
++    "growth-hypothesis",
++    "reviewSamples",
++    "exampleContent",
++    "categoryLeader",
++  ]) {
++    assert.ok(
++      html.includes(marker) || client.includes(marker),
++      `missing frontend marker ${marker}`,
++    );
+   }
+ });
+diff --git a/reports/consumer-radar/quality/qlty-report.json b/reports/consumer-radar/quality/qlty-report.json
+index ec9c68a..d98ba90 100644
+--- a/reports/consumer-radar/quality/qlty-report.json
++++ b/reports/consumer-radar/quality/qlty-report.json
+@@ -1,14 +1,14 @@
+ {
+   "ok": true,
+   "real_mode": true,
+-  "allow_fallback": false,
++  "allow_fallback": true,
+   "qlty_available": true,
+   "install_status": null,
+   "fmt_status": 0,
+-  "retry_fmt_status": 0,
++  "retry_fmt_status": null,
+   "check_status": 0,
+-  "retry_check_status": 0,
++  "retry_check_status": null,
+   "hard_failures": [],
+-  "stdout": "✔ Formatted apps/generated-consumer-app-radar/.data/apps.json (prettier)\n✔ Formatted apps/generated-consumer-app-radar/fixtures/apps.json (prettier)\n✔ Formatted apps/generated-consumer-app-radar/public/app.js (prettier)\n✔ Formatted apps/generated-consumer-app-radar/public/index.html (prettier)\n✔ Formatted apps/generated-consumer-app-radar/public/styles.css (prettier)\n✔ Formatted apps/generated-consumer-app-radar/src/ingest.js (prettier)\n✔ Formatted apps/generated-consumer-app-radar/src/scoring.js (prettier)\n✔ Formatted apps/generated-consumer-app-radar/src/server.js (prettier)\n✔ Formatted apps/generated-consumer-app-radar/src/summary.js (prettier)\n✔ Formatted apps/generated-consumer-app-radar/tests/feedback-surface.test.js (prettier)\n\n✔ Formatted apps/generated-consumer-app-radar/public/styles.css (prettier)\n",
+-  "stderr": "✔ No issues\n\n✔ No issues\n"
++  "stdout": "✔ Formatted apps/generated-consumer-app-radar/.data/apps.json (prettier)\n✔ Formatted apps/generated-consumer-app-radar/fixtures/apps.json (prettier)\n✔ Formatted apps/generated-consumer-app-radar/public/app.js (prettier)\n✔ Formatted apps/generated-consumer-app-radar/public/index.html (prettier)\n✔ Formatted apps/generated-consumer-app-radar/public/styles.css (prettier)\n✔ Formatted apps/generated-consumer-app-radar/src/ingest.js (prettier)\n✔ Formatted apps/generated-consumer-app-radar/src/scoring.js (prettier)\n✔ Formatted apps/generated-consumer-app-radar/src/server.js (prettier)\n✔ Formatted apps/generated-consumer-app-radar/src/summary.js (prettier)\n✔ Formatted apps/generated-consumer-app-radar/tests/feedback-surface.test.js (prettier)\n",
++  "stderr": "✖ 1 issue\n✖ 1 unformatted file\n"
+ }
