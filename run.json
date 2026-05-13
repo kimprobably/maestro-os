@@ -1091,7 +1091,7 @@
     "kind": "running"
   },
   "status_updated_at": "2026-05-13T21:35:09.354425356Z",
-  "last_event_at": "2026-05-13T21:37:12.616523045Z",
+  "last_event_at": "2026-05-13T21:40:19.434325891Z",
   "pending_control": null,
   "checkpoints": [
     {
@@ -1390,9 +1390,9 @@
       }
     },
     {
-      "seq": 0,
+      "seq": 125,
       "checkpoint": {
-        "timestamp": "2026-05-13T21:37:12.692504817Z",
+        "timestamp": "2026-05-13T21:37:15.338334124Z",
         "current_node": "plan_eval",
         "completed_nodes": [
           "start",
@@ -1403,18 +1403,28 @@
         ],
         "node_retries": {},
         "context_values": {
-          "graph.retry_target": "implement_live_enrichment",
-          "internal.retry_count.start": 0,
-          "graph.outputs": "live_enriched_app, live_data_report, review_consensus, handoff",
-          "graph.inputs": "app_dir, real_mode, allow_fixture_fallback, minimum_live_apps, minimum_review_samples, minimum_social_examples, minimum_active_reviews",
-          "thread.implementation_plan_fanout.current_node": "plan_join",
-          "parallel.fan_in.best_outcome": "succeeded",
-          "internal.retry_count.live_source_preflight": 0,
+          "internal.thread_id": "plan_join",
+          "outcome": "failed",
+          "parallel.fan_in.best_id": "plan_live_sources",
+          "failure_signature": "plan_eval|deterministic|script failed with exit code: <n> ## output { \"ok\": false,\"verdict\": \"rejected\",\"stage\": \"workflow\",\"lineage\": { \"dataset_path\": null,\"dataset_version\": \"workflow-dataset-v0\",\"dataset_sha256\": null,\"prompt_version\": \"workflow-prompt-v0\",\"ru",
           "graph.default_max_retries": "2",
-          "graph.fallback_retry_target": "implementation_plan_fanout",
+          "internal.node_visit_count": 1,
+          "graph.inputs": "app_dir, real_mode, allow_fixture_fallback, minimum_live_apps, minimum_review_samples, minimum_social_examples, minimum_active_reviews",
+          "graph.persona": "consumer-radar-live-enrichment-builder",
           "graph.goal": "Implement Consumer Radar live discovery and enrichment with strict real-data gates",
-          "internal.run_id": "01KRHM7G28MDA9X8JFGP04ERQC",
+          "parallel.branch_count": 2,
           "failure_class": "deterministic",
+          "parallel.fan_in.best_outcome": "succeeded",
+          "internal.retry_count.plan_eval": 0,
+          "internal.retry_count.implementation_plan_fanout": 0,
+          "graph.rankdir": "LR",
+          "internal.work_dir": "/home/daytona/workspace",
+          "thread.plan_join.current_node": "plan_eval",
+          "graph.model_stylesheet": "\n            *          { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: low; }\n            .coding    { provider: openrouter; model: qwen/qwen3.6-plus; reasoning_effort: high; }\n            .review    { provider: openrouter; model: google/gemini-3.1-pro-preview; reasoning_effort: high; }\n            .cheap     { provider: openrouter; model: deepseek/deepseek-v4-flash; reasoning_effort: low; }\n        ",
+          "internal.retry_count.start": 0,
+          "thread.start.current_node": "live_source_preflight",
+          "internal.run_id": "01KRHM7G28MDA9X8JFGP04ERQC",
+          "graph.fallback_retry_target": "implementation_plan_fanout",
           "parallel.results": [
             {
               "id": "plan_live_sources",
@@ -1427,23 +1437,136 @@
               "head_sha": "81cc29f6025bca6db3f0358a2db281904f1d4530"
             }
           ],
+          "graph.retry_target": "implement_live_enrichment",
+          "graph.outputs": "live_enriched_app, live_data_report, review_consensus, handoff",
+          "thread.live_source_preflight.current_node": "implementation_plan_fanout",
+          "parallel.fan_in.best_head_sha": "0cd13ab6b46da62b0c268101a5cd3e6b883b9028",
+          "internal.fidelity": "compact",
+          "command.output": "blob://sha256/f797615a04916904597a1b3df797743cf89ac8b728ad4e370213b8e066251cbb",
+          "current_node": "plan_eval",
+          "internal.retry_count.live_source_preflight": 0,
+          "internal.retry_count.plan_join": 0,
+          "thread.implementation_plan_fanout.current_node": "plan_join"
+        },
+        "node_outcomes": {
+          "plan_join": {
+            "status": "succeeded",
+            "context_updates": {
+              "parallel.fan_in.best_id": "plan_live_sources",
+              "parallel.fan_in.best_head_sha": "0cd13ab6b46da62b0c268101a5cd3e6b883b9028",
+              "parallel.fan_in.best_outcome": "succeeded"
+            },
+            "notes": "Selected best candidate: plan_live_sources",
+            "usage": null
+          },
+          "live_source_preflight": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/5e35254a5e6757cfd34a36d5bcb6dd4e7878884b76ab0a6ce38c03c9c4364ef4"
+            },
+            "notes": "Script completed: echo APIFY_TOKEN live source preflight; node scripts/app-feedback/live-source-preflight.mjs --app-dir 'apps/generated-consumer-app-radar' --real-mode 'true' --allow-fixture-fallback 'false' --out .workflow/consumer-radar-live-enrichment/source-preflight.json",
+            "usage": null
+          },
+          "start": {
+            "status": "succeeded",
+            "usage": null
+          },
+          "implementation_plan_fanout": {
+            "status": "partially_succeeded",
+            "jump_to_node": "plan_join",
+            "notes": "Parallel node dispatched 2 branches (1 succeeded, 1 failed)",
+            "usage": null
+          },
+          "plan_eval": {
+            "status": "failed",
+            "context_updates": {
+              "command.output": "blob://sha256/f797615a04916904597a1b3df797743cf89ac8b728ad4e370213b8e066251cbb"
+            },
+            "failure": {
+              "message": "Script failed with exit code: 1\n\n## output\n{\n  \"ok\": false,\n  \"VERDICT\": \"REJECTED\",\n  \"stage\": \"workflow\",\n  \"lineage\": {\n    \"dataset_path\": null,\n    \"dataset_version\": \"workflow-dataset-v0\",\n    \"dataset_sha256\": null,\n    \"prompt_version\": \"workflow-prompt-v0\",\n    \"rubric_version\": \"workflow-rubric-v0\",\n    \"judge_model\": \"deterministic-marker-v1\",\n    \"evaluator_version\": \"enhancement-artifact-evaluator-v1\",\n    \"generated_at\": \"2026-05-13T21:37:11.429Z\"\n  },\n  \"candidates_dir\": \"/home/daytona/workspace/.workflow/consumer-radar-live-enrichment/plans\",\n  \"candidate_count\": 0,\n  \"minimum_candidates\": 2,\n  \"minimum_eval_score\": 0.72,\n  \"rubric\": [\n    \"fanout\",\n    \"gate\",\n    \"retry\",\n    \"eval-driven\",\n    \"test-driven\",\n    \"simplification\"\n  ],\n  \"scores\": [],\n  \"selected\": null,\n  \"baseline\": null,\n  \"failures\": [\n    \"expected at least 2 workflow candidates, found 0\",\n    \"best workflow score is below minimum_eval_score 0.72\"\n  ]\n}\n",
+              "failure_class": "deterministic"
+            },
+            "usage": null
+          }
+        },
+        "next_node_id": "implementation_plan_fanout",
+        "git_commit_sha": "b31521ca212f6043ea179e473506d082bb5abdfc",
+        "loop_failure_signatures": {
+          "plan_eval|deterministic|script failed with exit code: <n> ## output { \"ok\": false,\"verdict\": \"rejected\",\"stage\": \"workflow\",\"lineage\": { \"dataset_path\": null,\"dataset_version\": \"workflow-dataset-v0\",\"dataset_sha256\": null,\"prompt_version\": \"workflow-prompt-v0\",\"ru": 1
+        },
+        "node_visits": {
+          "live_source_preflight": 1,
+          "plan_eval": 1,
+          "implementation_plan_fanout": 1,
+          "plan_join": 1,
+          "start": 1
+        }
+      },
+      "diff": {
+        "summary": {
+          "files_changed": 0,
+          "additions": 0,
+          "deletions": 0
+        }
+      }
+    },
+    {
+      "seq": 0,
+      "checkpoint": {
+        "timestamp": "2026-05-13T21:40:19.725099124Z",
+        "current_node": "implementation_plan_fanout",
+        "completed_nodes": [
+          "start",
+          "live_source_preflight",
+          "implementation_plan_fanout",
+          "plan_join",
+          "plan_eval",
+          "implementation_plan_fanout"
+        ],
+        "node_retries": {},
+        "context_values": {
+          "graph.retry_target": "implement_live_enrichment",
+          "internal.retry_count.start": 0,
+          "graph.outputs": "live_enriched_app, live_data_report, review_consensus, handoff",
+          "graph.inputs": "app_dir, real_mode, allow_fixture_fallback, minimum_live_apps, minimum_review_samples, minimum_social_examples, minimum_active_reviews",
+          "thread.implementation_plan_fanout.current_node": "plan_join",
+          "parallel.fan_in.best_outcome": "succeeded",
+          "internal.retry_count.live_source_preflight": 0,
+          "thread.plan_eval.current_node": "implementation_plan_fanout",
+          "graph.default_max_retries": "2",
+          "graph.fallback_retry_target": "implementation_plan_fanout",
+          "graph.goal": "Implement Consumer Radar live discovery and enrichment with strict real-data gates",
+          "internal.run_id": "01KRHM7G28MDA9X8JFGP04ERQC",
+          "failure_class": "",
+          "parallel.results": [
+            {
+              "id": "plan_live_sources",
+              "status": "failed",
+              "head_sha": "8d4461e82331be763e09a2f2b27a49c4249a5ede"
+            },
+            {
+              "id": "plan_product_surface",
+              "status": "succeeded",
+              "head_sha": "3e9a707943ac9f64e9b0fa8b59d192959ab3fcc3"
+            }
+          ],
           "parallel.branch_count": 2,
           "parallel.fan_in.best_id": "plan_live_sources",
           "command.output": "blob://sha256/f797615a04916904597a1b3df797743cf89ac8b728ad4e370213b8e066251cbb",
           "internal.retry_count.implementation_plan_fanout": 0,
-          "outcome": "failed",
+          "outcome": "partially_succeeded",
           "parallel.fan_in.best_head_sha": "0cd13ab6b46da62b0c268101a5cd3e6b883b9028",
           "internal.fidelity": "compact",
           "internal.work_dir": "/home/daytona/workspace",
           "graph.rankdir": "LR",
-          "failure_signature": "plan_eval|deterministic|script failed with exit code: <n> ## output { \"ok\": false,\"verdict\": \"rejected\",\"stage\": \"workflow\",\"lineage\": { \"dataset_path\": null,\"dataset_version\": \"workflow-dataset-v0\",\"dataset_sha256\": null,\"prompt_version\": \"workflow-prompt-v0\",\"ru",
+          "failure_signature": "",
           "graph.persona": "consumer-radar-live-enrichment-builder",
-          "internal.node_visit_count": 1,
+          "internal.node_visit_count": 2,
           "thread.start.current_node": "live_source_preflight",
           "thread.live_source_preflight.current_node": "implementation_plan_fanout",
-          "internal.thread_id": "plan_join",
+          "internal.thread_id": "plan_eval",
           "internal.retry_count.plan_join": 0,
-          "current_node": "plan_eval",
+          "current_node": "implementation_plan_fanout",
           "graph.model_stylesheet": "\n            *          { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: low; }\n            .coding    { provider: openrouter; model: qwen/qwen3.6-plus; reasoning_effort: high; }\n            .review    { provider: openrouter; model: google/gemini-3.1-pro-preview; reasoning_effort: high; }\n            .cheap     { provider: openrouter; model: deepseek/deepseek-v4-flash; reasoning_effort: low; }\n        ",
           "thread.plan_join.current_node": "plan_eval",
           "internal.retry_count.plan_eval": 0
@@ -1489,10 +1612,10 @@
             "usage": null
           }
         },
-        "next_node_id": "implementation_plan_fanout",
+        "next_node_id": "plan_join",
         "node_visits": {
           "start": 1,
-          "implementation_plan_fanout": 1,
+          "implementation_plan_fanout": 2,
           "plan_eval": 1,
           "live_source_preflight": 1,
           "plan_join": 1
@@ -1639,6 +1762,49 @@
       },
       "state": "succeeded"
     },
+    "plan_eval@1": {
+      "first_event_seq": 117,
+      "prompt": null,
+      "response": null,
+      "completion": {
+        "outcome": "failed",
+        "notes": null,
+        "failure_reason": "Script failed with exit code: 1\n\n## output\n{\n  \"ok\": false,\n  \"VERDICT\": \"REJECTED\",\n  \"stage\": \"workflow\",\n  \"lineage\": {\n    \"dataset_path\": null,\n    \"dataset_version\": \"workflow-dataset-v0\",\n    \"dataset_sha256\": null,\n    \"prompt_version\": \"workflow-prompt-v0\",\n    \"rubric_version\": \"workflow-rubric-v0\",\n    \"judge_model\": \"deterministic-marker-v1\",\n    \"evaluator_version\": \"enhancement-artifact-evaluator-v1\",\n    \"generated_at\": \"2026-05-13T21:37:11.429Z\"\n  },\n  \"candidates_dir\": \"/home/daytona/workspace/.workflow/consumer-radar-live-enrichment/plans\",\n  \"candidate_count\": 0,\n  \"minimum_candidates\": 2,\n  \"minimum_eval_score\": 0.72,\n  \"rubric\": [\n    \"fanout\",\n    \"gate\",\n    \"retry\",\n    \"eval-driven\",\n    \"test-driven\",\n    \"simplification\"\n  ],\n  \"scores\": [],\n  \"selected\": null,\n  \"baseline\": null,\n  \"failures\": [\n    \"expected at least 2 workflow candidates, found 0\",\n    \"best workflow score is below minimum_eval_score 0.72\"\n  ]\n}\n",
+        "timestamp": "2026-05-13T21:37:12.691614369Z"
+      },
+      "provider_used": null,
+      "diff": null,
+      "script_invocation": {
+        "script": "node scripts/app-feedback/evaluate-enhancement-artifact.mjs --stage workflow --candidates .workflow/consumer-radar-live-enrichment/plans --out .workflow/consumer-radar-live-enrichment/plan-eval.json --minimum-candidates 2 --minimum-eval-score 0.72",
+        "command": "exec 2>&1\nnode scripts/app-feedback/evaluate-enhancement-artifact.mjs --stage workflow --candidates .workflow/consumer-radar-live-enrichment/plans --out .workflow/consumer-radar-live-enrichment/plan-eval.json --minimum-candidates 2 --minimum-eval-score 0.72",
+        "language": "shell"
+      },
+      "script_timing": {
+        "output": "blob://sha256/f797615a04916904597a1b3df797743cf89ac8b728ad4e370213b8e066251cbb",
+        "exit_code": 1,
+        "duration_ms": 1246,
+        "termination": "exited",
+        "output_bytes": 913,
+        "live_streaming": true
+      },
+      "parallel_results": null,
+      "output": null,
+      "output_bytes": 913,
+      "live_streaming": true,
+      "termination": "exited",
+      "started_at": "2026-05-13T21:37:11.364117067Z",
+      "handler": "command",
+      "duration_ms": 1252,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "total_tokens": 0,
+        "reasoning_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "state": "failed"
+    },
     "plan_join@1": {
       "first_event_seq": 109,
       "prompt": null,
@@ -1668,40 +1834,28 @@
       },
       "state": "succeeded"
     },
-    "plan_eval@1": {
-      "first_event_seq": 117,
+    "plan_product_surface@2": {
+      "first_event_seq": 145,
       "prompt": null,
       "response": null,
       "completion": null,
       "provider_used": null,
       "diff": null,
-      "script_invocation": {
-        "script": "node scripts/app-feedback/evaluate-enhancement-artifact.mjs --stage workflow --candidates .workflow/consumer-radar-live-enrichment/plans --out .workflow/consumer-radar-live-enrichment/plan-eval.json --minimum-candidates 2 --minimum-eval-score 0.72",
-        "command": "exec 2>&1\nnode scripts/app-feedback/evaluate-enhancement-artifact.mjs --stage workflow --candidates .workflow/consumer-radar-live-enrichment/plans --out .workflow/consumer-radar-live-enrichment/plan-eval.json --minimum-candidates 2 --minimum-eval-score 0.72",
-        "language": "shell"
-      },
-      "script_timing": {
-        "output": "blob://sha256/f797615a04916904597a1b3df797743cf89ac8b728ad4e370213b8e066251cbb",
-        "exit_code": 1,
-        "duration_ms": 1246,
-        "termination": "exited",
-        "output_bytes": 913,
-        "live_streaming": true
-      },
+      "script_invocation": null,
+      "script_timing": null,
       "parallel_results": null,
       "output": null,
-      "output_bytes": 913,
-      "live_streaming": true,
-      "termination": "exited",
-      "started_at": "2026-05-13T21:37:11.364117067Z",
-      "handler": "command",
       "usage": {
-        "input_tokens": 0,
-        "output_tokens": 0,
-        "total_tokens": 0,
+        "input_tokens": 150710,
+        "output_tokens": 8003,
+        "total_tokens": 158713,
         "reasoning_tokens": 0,
         "cache_read_tokens": 0,
         "cache_write_tokens": 0
+      },
+      "model": {
+        "provider": "openrouter",
+        "model_id": "qwen/qwen3.6-plus-04-02"
       },
       "state": "running"
     },
@@ -1727,6 +1881,49 @@
       "model": {
         "provider": "openrouter",
         "model_id": "qwen/qwen3.6-plus-04-02"
+      },
+      "state": "running"
+    },
+    "implementation_plan_fanout@2": {
+      "first_event_seq": 128,
+      "prompt": null,
+      "response": null,
+      "completion": null,
+      "provider_used": {
+        "mode": "agent",
+        "provider": "openrouter",
+        "model": "qwen/qwen3.6-plus"
+      },
+      "diff": null,
+      "script_invocation": null,
+      "script_timing": null,
+      "parallel_results": [
+        {
+          "id": "plan_live_sources",
+          "status": "failed",
+          "head_sha": "8d4461e82331be763e09a2f2b27a49c4249a5ede"
+        },
+        {
+          "id": "plan_product_surface",
+          "status": "succeeded",
+          "head_sha": "3e9a707943ac9f64e9b0fa8b59d192959ab3fcc3"
+        }
+      ],
+      "output": null,
+      "started_at": "2026-05-13T21:37:15.341910160Z",
+      "handler": "parallel",
+      "usage": {
+        "input_tokens": 150710,
+        "output_tokens": 8003,
+        "total_tokens": 158713,
+        "reasoning_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "total_usd_micros": 64585
+      },
+      "model": {
+        "provider": "openrouter",
+        "model_id": "qwen/qwen3.6-plus"
       },
       "state": "running"
     }
