@@ -1,0 +1,34 @@
+_version = 1
+
+[workflow]
+graph = "build-consumer-app-radar.fabro"
+
+[run]
+goal = "Build Consumer App Radar from spec with CI, eval, and model review"
+
+[run.inputs]
+app_dir = "apps/generated-consumer-app-radar"
+spec_path = "specs/consumer-app-radar/spec.md"
+
+[run.sandbox]
+provider = "daytona"
+preserve = true
+stop_on_terminal = true
+
+[run.sandbox.env]
+APIFY_TOKEN = "{{ env.APIFY_TOKEN }}"
+OPENROUTER_API_KEY = "{{ env.OPENROUTER_API_KEY }}"
+APIFY_APPSTORE_ACTOR = "crawlerbros/appstore-scraper"
+APIFY_TIKTOK_ACTOR = "clockworks/tiktok-scraper"
+APIFY_INSTAGRAM_ACTOR = "apify/instagram-scraper"
+PROMPTFOO_DISABLE_TELEMETRY = "1"
+
+[run.sandbox.daytona]
+auto_stop_interval = 60
+
+[run.sandbox.daytona.snapshot]
+name = "maestro-dev"
+dockerfile = """
+FROM ubuntu:24.04
+RUN apt-get update && apt-get install -y bash ca-certificates curl git jq nodejs npm ripgrep && rm -rf /var/lib/apt/lists/*
+"""

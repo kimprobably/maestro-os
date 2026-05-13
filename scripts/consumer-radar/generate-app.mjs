@@ -1,0 +1,413 @@
+#!/usr/bin/env node
+import { mkdirSync, writeFileSync, rmSync } from "node:fs";
+import { dirname, resolve } from "node:path";
+
+function argValue(name, fallback) {
+  const index = process.argv.indexOf(name);
+  if (index === -1) return fallback;
+  const value = process.argv[index + 1];
+  if (!value || value.startsWith("--")) throw new Error("Missing value for " + name);
+  return value;
+}
+
+const appDir = resolve(argValue("--app-dir", "apps/generated-consumer-app-radar"));
+rmSync(appDir, { recursive: true, force: true });
+
+function write(relativePath, lines) {
+  const fullPath = resolve(appDir, relativePath);
+  mkdirSync(dirname(fullPath), { recursive: true });
+  const content = Array.isArray(lines) ? lines.join("\n") + "\n" : String(lines);
+  writeFileSync(fullPath, content.endsWith("\n") ? content : content + "\n");
+}
+
+const fixtureApps = [
+  {
+    id: "one-sec",
+    name: "one sec",
+    category: "Productivity",
+    country: "US",
+    appStoreId: "1532875441",
+    rankDelta4w: 76,
+    reviewDelta4w: 138,
+    rating: 4.8,
+    socialDelta4w: 212,
+    socialStrategy: ["Creator demos interrupting app-open autopilot", "Short before-after clips", "Academic credibility hooks"],
+    reviewThemes: ["Needs better schedule exceptions", "Users want stronger family controls", "More granular app groups requested"],
+    featureRequests: ["Calendar-aware focus rules", "Shared household accountability", "Weekly relapse insights"],
+    evidence: ["Fixture seed until live Apify ranking feed is tuned", "Apple RSS reviews supported by adapter"]
+  },
+  {
+    id: "opal",
+    name: "Opal",
+    category: "Screen Time",
+    country: "US",
+    appStoreId: "1497465230",
+    rankDelta4w: 42,
+    reviewDelta4w: 89,
+    rating: 4.7,
+    socialDelta4w: 156,
+    socialStrategy: ["Founder-led productivity clips", "Relatable addiction framing", "Creator routines"],
+    reviewThemes: ["Lock bypass confusion", "Subscription objections", "More reporting exports"],
+    featureRequests: ["Anti-bypass education", "Cheaper student plan", "CSV/report export"],
+    evidence: ["Fixture seed; social adapters support Apify enrichment"]
+  },
+  {
+    id: "stoic",
+    name: "stoic.",
+    category: "Wellness",
+    country: "US",
+    appStoreId: "1312926037",
+    rankDelta4w: 31,
+    reviewDelta4w: 64,
+    rating: 4.8,
+    socialDelta4w: 92,
+    socialStrategy: ["Calm aesthetic reels", "Journaling prompts", "Mental model education"],
+    reviewThemes: ["Users want gentler onboarding", "Export/sync concerns", "Prompt repetition"],
+    featureRequests: ["Adaptive prompts", "Better Apple Health context", "Private export"],
+    evidence: ["Fixture seed for repeatable CI"]
+  }
+];
+
+write("package.json", JSON.stringify({
+  name: "generated-consumer-app-radar",
+  private: true,
+  type: "module",
+  scripts: {
+    start: "node src/server.js",
+    dev: "node src/server.js",
+    test: "node --test tests/*.test.js",
+    typecheck: "node --check src/server.js && node --check src/scoring.js && node --check src/repository.js && node --check src/ingest.js && node --check src/sources/apify.js && node --check src/sources/apple.js && node --check public/app.js",
+    build: "node scripts/validate-artifacts.mjs"
+  },
+  dependencies: {},
+  devDependencies: {}
+}, null, 2));
+
+write("fixtures/apps.json", JSON.stringify(fixtureApps, null, 2));
+
+write("src/scoring.js", [
+  "export function clamp(value, min = 0, max = 100) {",
+  "  return Math.max(min, Math.min(max, Number(value) || 0));",
+  "}",
+  "",
+  "export function scoreApp(app) {",
+  "  const rank = clamp(app.rankDelta4w, 0, 120) / 120;",
+  "  const reviews = clamp(app.reviewDelta4w, 0, 180) / 180;",
+  "  const social = clamp(app.socialDelta4w, 0, 240) / 240;",
+  "  const pain = clamp((app.reviewThemes || []).length * 18 + (app.featureRequests || []).length * 12, 0, 100) / 100;",
+  "  const rating = clamp(((Number(app.rating) || 0) - 3.5) * 35, 0, 55) / 100;",
+  "  const score = (rank * 0.34 + reviews * 0.23 + social * 0.24 + pain * 0.14 + rating * 0.05) * 100;",
+  "  return Math.round(score);",
+  "}",
+  "",
+  "export function rankApps(apps) {",
+  "  return apps.map((app) => ({ ...app, opportunityScore: scoreApp(app) })).sort((a, b) => b.opportunityScore - a.opportunityScore);",
+  "}"
+]);
+
+write("src/repository.js", [
+  "import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';",
+  "import { dirname, resolve } from 'node:path';",
+  "",
+  "const dbPath = resolve('.data/apps.json');",
+  "",
+  "export function saveApps(apps) {",
+  "  mkdirSync(dirname(dbPath), { recursive: true });",
+  "  writeFileSync(dbPath, JSON.stringify(apps, null, 2) + '\\n');",
+  "}",
+  "",
+  "export function loadApps() {",
+  "  if (!existsSync(dbPath)) return [];",
+  "  return JSON.parse(readFileSync(dbPath, 'utf8'));",
+  "}"
+]);
+
+write("src/sources/apple.js", [
+  "export async function fetchAppleReviews(appStoreId, country = 'us', limit = 25) {",
+  "  const url = 'https://itunes.apple.com/' + country + '/rss/customerreviews/id=' + encodeURIComponent(appStoreId) + '/sortBy=mostRecent/json';",
+  "  const response = await fetch(url, { signal: AbortSignal.timeout(15000) });",
+  "  if (!response.ok) throw new Error('Apple review RSS failed: ' + response.status);",
+  "  const payload = await response.json();",
+  "  const entries = Array.isArray(payload?.feed?.entry) ? payload.feed.entry.slice(1) : [];",
+  "  return entries.slice(0, limit).map((entry) => ({",
+  "    title: entry?.title?.label || '',",
+  "    body: entry?.content?.label || '',",
+  "    rating: Number(entry?.['im:rating']?.label || 0),",
+  "    updated: entry?.updated?.label || null",
+  "  }));",
+  "}",
+  "",
+  "export async function searchAppleApps(term, country = 'US') {",
+  "  const url = 'https://itunes.apple.com/search?entity=software&limit=10&country=' + encodeURIComponent(country) + '&term=' + encodeURIComponent(term);",
+  "  const response = await fetch(url, { signal: AbortSignal.timeout(15000) });",
+  "  if (!response.ok) throw new Error('Apple search failed: ' + response.status);",
+  "  const payload = await response.json();",
+  "  return payload.results || [];",
+  "}"
+]);
+
+write("src/sources/apify.js", [
+  "function actorPath(actorId) {",
+  "  return String(actorId || '').replace('/', '~');",
+  "}",
+  "",
+  "export async function runApifyActor(actorId, input, { token = process.env.APIFY_TOKEN, timeoutMs = 180000 } = {}) {",
+  "  if (!token || token.includes('{{')) throw new Error('APIFY_TOKEN is not configured');",
+  "  const start = await fetch('https://api.apify.com/v2/acts/' + actorPath(actorId) + '/runs?token=' + encodeURIComponent(token), {",
+  "    method: 'POST',",
+  "    headers: { 'Content-Type': 'application/json' },",
+  "    body: JSON.stringify(input || {})",
+  "  });",
+  "  if (!start.ok) throw new Error('Apify actor start failed: ' + start.status);",
+  "  const started = await start.json();",
+  "  const runId = started?.data?.id;",
+  "  const deadline = Date.now() + timeoutMs;",
+  "  while (Date.now() < deadline) {",
+  "    await new Promise((resolve) => setTimeout(resolve, 3500));",
+  "    const status = await fetch('https://api.apify.com/v2/actor-runs/' + runId + '?token=' + encodeURIComponent(token));",
+  "    const statusPayload = await status.json();",
+  "    const state = statusPayload?.data?.status;",
+  "    if (state === 'SUCCEEDED') {",
+  "      const datasetId = statusPayload.data.defaultDatasetId;",
+  "      const dataset = await fetch('https://api.apify.com/v2/datasets/' + datasetId + '/items?clean=true&format=json&token=' + encodeURIComponent(token));",
+  "      if (!dataset.ok) throw new Error('Apify dataset fetch failed: ' + dataset.status);",
+  "      return dataset.json();",
+  "    }",
+  "    if (['FAILED', 'ABORTED', 'TIMED-OUT'].includes(state)) throw new Error('Apify actor ended with status ' + state);",
+  "  }",
+  "  throw new Error('Apify actor timed out');",
+  "}"
+]);
+
+write("src/ingest.js", [
+  "import { readFileSync } from 'node:fs';",
+  "import { rankApps } from './scoring.js';",
+  "import { saveApps } from './repository.js';",
+  "",
+  "export function loadFixtureApps() {",
+  "  return JSON.parse(readFileSync(new URL('../fixtures/apps.json', import.meta.url), 'utf8'));",
+  "}",
+  "",
+  "export async function refreshApps({ mode = 'fixture' } = {}) {",
+  "  const apps = loadFixtureApps();",
+  "  const ranked = rankApps(apps).map((app, index) => ({ ...app, radarRank: index + 1, dataMode: mode }));",
+  "  saveApps(ranked);",
+  "  return ranked;",
+  "}",
+  "",
+  "if (process.argv[1] && process.argv[1].endsWith('ingest.js')) {",
+  "  const apps = await refreshApps({ mode: process.argv.includes('--live') ? 'live-smoke' : 'fixture' });",
+  "  console.log(JSON.stringify({ ok: true, apps: apps.length }, null, 2));",
+  "}"
+]);
+
+write("src/server.js", [
+  "import { createServer } from 'node:http';",
+  "import { existsSync, createReadStream } from 'node:fs';",
+  "import { extname, join, resolve } from 'node:path';",
+  "import { loadApps } from './repository.js';",
+  "import { refreshApps } from './ingest.js';",
+  "",
+  "const publicDir = resolve('public');",
+  "const port = Number(process.env.PORT || 4317);",
+  "const types = { '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css' };",
+  "",
+  "function sendJson(res, status, body) {",
+  "  res.writeHead(status, { 'Content-Type': 'application/json' });",
+  "  res.end(JSON.stringify(body));",
+  "}",
+  "",
+  "function serveStatic(req, res) {",
+  "  const pathname = new URL(req.url, 'http://localhost').pathname;",
+  "  const file = pathname === '/' ? join(publicDir, 'index.html') : join(publicDir, pathname);",
+  "  if (!file.startsWith(publicDir) || !existsSync(file)) return false;",
+  "  res.writeHead(200, { 'Content-Type': types[extname(file)] || 'application/octet-stream' });",
+  "  createReadStream(file).pipe(res);",
+  "  return true;",
+  "}",
+  "",
+  "const server = createServer(async (req, res) => {",
+  "  const url = new URL(req.url, 'http://localhost');",
+  "  try {",
+  "    if (url.pathname === '/health') return sendJson(res, 200, { ok: true });",
+  "    if (url.pathname === '/api/apps' && req.method === 'GET') return sendJson(res, 200, { apps: loadApps() });",
+  "    if (url.pathname.startsWith('/api/apps/') && req.method === 'GET') {",
+  "      const id = decodeURIComponent(url.pathname.split('/').pop());",
+  "      const app = loadApps().find((item) => item.id === id);",
+  "      return app ? sendJson(res, 200, { app }) : sendJson(res, 404, { error: 'not_found' });",
+  "    }",
+  "    if (url.pathname === '/api/refresh' && req.method === 'POST') {",
+  "      const apps = await refreshApps({ mode: url.searchParams.get('mode') || 'fixture' });",
+  "      return sendJson(res, 200, { ok: true, apps });",
+  "    }",
+  "    if (serveStatic(req, res)) return;",
+  "    sendJson(res, 404, { error: 'not_found' });",
+  "  } catch (error) {",
+  "    sendJson(res, 500, { error: error instanceof Error ? error.message : String(error) });",
+  "  }",
+  "});",
+  "",
+  "await refreshApps({ mode: 'fixture' });",
+  "server.listen(port, () => console.log('Consumer App Radar listening on :' + port));"
+]);
+
+write("public/index.html", [
+  "<!doctype html>",
+  "<html lang=\"en\">",
+  "<head>",
+  "  <meta charset=\"utf-8\">",
+  "  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">",
+  "  <title>Consumer App Radar</title>",
+  "  <link rel=\"stylesheet\" href=\"/styles.css\">",
+  "</head>",
+  "<body>",
+  "  <main>",
+  "    <header class=\"topbar\">",
+  "      <div><h1>Consumer App Radar</h1><p>Fast-growing iPhone app opportunities</p></div>",
+  "      <button id=\"refresh\">Refresh</button>",
+  "    </header>",
+  "    <section class=\"layout\">",
+  "      <div class=\"panel\"><h2>Signals</h2><div id=\"apps\" class=\"apps\"></div></div>",
+  "      <aside class=\"panel detail\"><h2>Opportunity</h2><div id=\"detail\"></div></aside>",
+  "    </section>",
+  "  </main>",
+  "  <script type=\"module\" src=\"/app.js\"></script>",
+  "</body>",
+  "</html>"
+]);
+
+write("public/styles.css", [
+  ":root { color-scheme: light; --ink: #17202a; --muted: #607080; --line: #d9e2ea; --panel: #ffffff; --bg: #f5f7f9; --accent: #126c5f; --warn: #a15c14; }",
+  "* { box-sizing: border-box; }",
+  "body { margin: 0; font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; color: var(--ink); background: var(--bg); }",
+  "main { max-width: 1240px; margin: 0 auto; padding: 24px; }",
+  ".topbar { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 18px; }",
+  "h1, h2, h3, p { margin: 0; }",
+  "h1 { font-size: 28px; line-height: 1.15; }",
+  "h2 { font-size: 15px; margin-bottom: 12px; }",
+  "p { color: var(--muted); }",
+  "button { border: 1px solid var(--line); background: var(--ink); color: white; border-radius: 6px; padding: 10px 12px; font-weight: 650; cursor: pointer; }",
+  ".layout { display: grid; grid-template-columns: minmax(0, 1.4fr) 420px; gap: 16px; align-items: start; }",
+  ".panel { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 16px; }",
+  ".apps { display: grid; gap: 10px; }",
+  ".app-row { display: grid; grid-template-columns: 64px minmax(0, 1fr) 90px; gap: 12px; align-items: center; border: 1px solid var(--line); border-radius: 8px; padding: 12px; background: white; cursor: pointer; }",
+  ".score { width: 52px; height: 52px; border-radius: 50%; display: grid; place-items: center; background: #e7f4f0; color: var(--accent); font-weight: 800; }",
+  ".name { font-weight: 760; }",
+  ".meta { color: var(--muted); font-size: 13px; margin-top: 4px; }",
+  ".delta { text-align: right; color: var(--warn); font-weight: 750; }",
+  ".chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }",
+  ".chip { border: 1px solid var(--line); border-radius: 999px; padding: 5px 8px; font-size: 12px; color: var(--muted); }",
+  ".detail ul { padding-left: 18px; }",
+  ".detail li { margin: 8px 0; color: var(--ink); }",
+  "@media (max-width: 860px) { main { padding: 16px; } .layout { grid-template-columns: 1fr; } .topbar { align-items: flex-start; flex-direction: column; } .app-row { grid-template-columns: 54px minmax(0, 1fr); } .delta { grid-column: 2; text-align: left; } }"
+]);
+
+write("public/app.js", [
+  "let apps = [];",
+  "",
+  "function list(items) {",
+  "  return '<ul>' + (items || []).map((item) => '<li>' + item + '</li>').join('') + '</ul>';",
+  "}",
+  "",
+  "function renderDetail(app) {",
+  "  const target = document.querySelector('#detail');",
+  "  if (!app) { target.innerHTML = '<p>Select an app to inspect.</p>'; return; }",
+  "  target.innerHTML = '<h3>' + app.name + '</h3>' +",
+  "    '<p>' + app.category + ' / rating ' + app.rating + '</p>' +",
+  "    '<div class=\"chips\"><span class=\"chip\">rank +' + app.rankDelta4w + '</span><span class=\"chip\">reviews +' + app.reviewDelta4w + '</span><span class=\"chip\">social +' + app.socialDelta4w + '</span></div>' +",
+  "    '<h2>Social strategy</h2>' + list(app.socialStrategy) +",
+  "    '<h2>Review themes</h2>' + list(app.reviewThemes) +",
+  "    '<h2>Feature requests</h2>' + list(app.featureRequests);",
+  "}",
+  "",
+  "function renderApps() {",
+  "  const root = document.querySelector('#apps');",
+  "  root.innerHTML = apps.map((app) => '<article class=\"app-row\" data-id=\"' + app.id + '\">' +",
+  "    '<div class=\"score\">' + app.opportunityScore + '</div>' +",
+  "    '<div><div class=\"name\">' + app.radarRank + '. ' + app.name + '</div><div class=\"meta\">' + app.category + ' / ' + app.country + '</div></div>' +",
+  "    '<div class=\"delta\">+' + app.rankDelta4w + ' rank</div>' +",
+  "  '</article>').join('');",
+  "  document.querySelectorAll('.app-row').forEach((row) => row.addEventListener('click', () => renderDetail(apps.find((app) => app.id === row.dataset.id))));",
+  "  renderDetail(apps[0]);",
+  "}",
+  "",
+  "async function loadApps() {",
+  "  const response = await fetch('/api/apps');",
+  "  const payload = await response.json();",
+  "  apps = payload.apps || [];",
+  "  renderApps();",
+  "}",
+  "",
+  "document.querySelector('#refresh').addEventListener('click', async () => {",
+  "  await fetch('/api/refresh', { method: 'POST' });",
+  "  await loadApps();",
+  "});",
+  "",
+  "await loadApps();"
+]);
+
+write("scripts/validate-artifacts.mjs", [
+  "import { existsSync } from 'node:fs';",
+  "const required = ['package.json','src/server.js','src/scoring.js','public/index.html','public/app.js','fixtures/apps.json','tests/scoring.test.js'];",
+  "const missing = required.filter((file) => !existsSync(file));",
+  "if (missing.length) throw new Error('Missing generated artifacts: ' + missing.join(', '));",
+  "console.log(JSON.stringify({ ok: true, artifacts: required.length }, null, 2));"
+]);
+
+write("tests/scoring.test.js", [
+  "import test from 'node:test';",
+  "import assert from 'node:assert/strict';",
+  "import { rankApps, scoreApp } from '../src/scoring.js';",
+  "",
+  "test('score rewards acceleration and review/social velocity', () => {",
+  "  const fast = { rankDelta4w: 80, reviewDelta4w: 120, socialDelta4w: 200, rating: 4.8, reviewThemes: ['a','b'], featureRequests: ['c'] };",
+  "  const slow = { rankDelta4w: 5, reviewDelta4w: 8, socialDelta4w: 12, rating: 4.9, reviewThemes: [], featureRequests: [] };",
+  "  assert.ok(scoreApp(fast) > scoreApp(slow));",
+  "});",
+  "",
+  "test('rankApps sorts by opportunity score', () => {",
+  "  const ranked = rankApps([{ id: 'slow', rankDelta4w: 1 }, { id: 'fast', rankDelta4w: 90, reviewDelta4w: 90, socialDelta4w: 90 }]);",
+  "  assert.equal(ranked[0].id, 'fast');",
+  "});"
+]);
+
+write("tests/api-fixture.test.js", [
+  "import test from 'node:test';",
+  "import assert from 'node:assert/strict';",
+  "import { refreshApps } from '../src/ingest.js';",
+  "",
+  "test('fixture ingest produces ranked apps', async () => {",
+  "  const apps = await refreshApps({ mode: 'fixture' });",
+  "  assert.ok(apps.length >= 3);",
+  "  assert.equal(apps[0].radarRank, 1);",
+  "  assert.ok(apps[0].opportunityScore > 0);",
+  "});"
+]);
+
+write("README.md", [
+  "# Consumer App Radar",
+  "",
+  "Generated by the Fabro Consumer App Radar workflow.",
+  "",
+  "## Run",
+  "",
+  "~~~bash",
+  "npm test",
+  "npm start",
+  "~~~",
+  "",
+  "Open http://localhost:4317.",
+  "",
+  "## Live Data",
+  "",
+  "The first pass uses fixture data for repeatable CI. Live adapters are scaffolded for Apple RSS/iTunes and Apify actors. Set APIFY_TOKEN plus actor IDs in the workflow sandbox env before enabling live refresh."
+]);
+
+mkdirSync(".workflow/consumer-radar", { recursive: true });
+writeFileSync(resolve(appDir, ".workflow-build.json"), JSON.stringify({
+  ok: true,
+  app_dir: appDir,
+  generated_at: new Date().toISOString(),
+  files: 17
+}, null, 2) + "\n");
+console.log(JSON.stringify({ ok: true, app_dir: appDir }, null, 2));

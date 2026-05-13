@@ -1,0 +1,150 @@
+digraph ConsumerAppRadarBuild {
+    graph [
+        goal="Build Consumer App Radar from spec with CI, eval, and model review",
+        persona="code-factory",
+        inputs="app_dir, spec_path",
+        outputs="application, ci_report, eval_report, review_consensus, handoff",
+        default_max_retries=2,
+        retry_target="generate_app",
+        fallback_retry_target="generate_app",
+        model_stylesheet="
+            *          { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: low; }
+            .review    { provider: openrouter; model: google/gemini-3.1-pro-preview; reasoning_effort: high; }
+            .cheap     { provider: openrouter; model: deepseek/deepseek-v4-flash; reasoning_effort: low; }
+        "
+    ]
+    rankdir=LR
+
+    start [shape=Mdiamond, label="Start"]
+    exit  [shape=Msquare, label="Exit"]
+
+    bootstrap_spec [
+        label="Bootstrap Spec",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="bootstrap_spec",
+        script="node scripts/consumer-radar/bootstrap-spec.mjs --spec '{{ inputs.spec_path|default('specs/consumer-app-radar/spec.md') }}' --app-dir '{{ inputs.app_dir|default('apps/generated-consumer-app-radar') }}'"
+    ]
+
+    spec_kitty_gate [
+        label="Spec Kitty Gate",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="bootstrap_spec",
+        script="node scripts/consumer-radar/bootstrap-spec.mjs --spec '{{ inputs.spec_path|default('specs/consumer-app-radar/spec.md') }}' --app-dir '{{ inputs.app_dir|default('apps/generated-consumer-app-radar') }}' --spec-kitty"
+    ]
+
+    data_source_smoke [
+        label="Data Source Smoke",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="data_source_smoke",
+        script="node scripts/consumer-radar/data-source-smoke.mjs --output .workflow/consumer-radar/data-source-smoke.json"
+    ]
+
+    generate_app [
+        label="Generate App",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="generate_app",
+        script="node scripts/consumer-radar/generate-app.mjs --app-dir '{{ inputs.app_dir|default('apps/generated-consumer-app-radar') }}'"
+    ]
+
+    native_checks [
+        label="Native Checks",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="generate_app",
+        script="node scripts/consumer-radar/run-native-checks.mjs '{{ inputs.app_dir|default('apps/generated-consumer-app-radar') }}'"
+    ]
+
+    qlty_gate [
+        label="Qlty Gate",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="generate_app",
+        script="node scripts/consumer-radar/qlty-gate.mjs '{{ inputs.app_dir|default('apps/generated-consumer-app-radar') }}'"
+    ]
+
+    promptfoo_gate [
+        label="Promptfoo Gate",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="generate_app",
+        script="node scripts/consumer-radar/promptfoo-or-fallback.mjs '{{ inputs.app_dir|default('apps/generated-consumer-app-radar') }}'"
+    ]
+
+    review_fanout [shape=component, label="Parallel Review Fanout"]
+    review_kimi [
+        label="Kimi Review",
+        class="cheap",
+        shape=parallelogram,
+        script="node scripts/consumer-radar/openrouter-review.mjs --model moonshotai/kimi-k2.6 --role market_strategy --app-dir '{{ inputs.app_dir|default('apps/generated-consumer-app-radar') }}' --output .workflow/consumer-radar/reviews/kimi.json"
+    ]
+    review_qwen [
+        label="Qwen Review",
+        class="cheap",
+        shape=parallelogram,
+        script="node scripts/consumer-radar/openrouter-review.mjs --model qwen/qwen3.6-plus --role implementation_quality --app-dir '{{ inputs.app_dir|default('apps/generated-consumer-app-radar') }}' --output .workflow/consumer-radar/reviews/qwen.json"
+    ]
+    review_deepseek [
+        label="DeepSeek Review",
+        class="cheap",
+        shape=parallelogram,
+        script="node scripts/consumer-radar/openrouter-review.mjs --model deepseek/deepseek-v4-pro,deepseek/deepseek-v4-flash --role simplification_and_ci --app-dir '{{ inputs.app_dir|default('apps/generated-consumer-app-radar') }}' --output .workflow/consumer-radar/reviews/deepseek.json"
+    ]
+    review_join [shape=tripleoctagon, label="Review Join", join_policy="wait_all"]
+
+    review_consensus [
+        label="Review Consensus",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="generate_app",
+        script="node scripts/consumer-radar/review-consensus.mjs --reviews .workflow/consumer-radar/reviews --output .workflow/consumer-radar/review-consensus.json"
+    ]
+
+    artifact_gate [
+        label="Artifact Gate",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="generate_app",
+        script="node scripts/consumer-radar/validate-build-artifacts.mjs '{{ inputs.app_dir|default('apps/generated-consumer-app-radar') }}'"
+    ]
+
+    publish_handoff [
+        label="Publish Handoff",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="review_consensus",
+        script="node -e \"const fs=require('fs'); const path=require('path'); const app='{{ inputs.app_dir|default('apps/generated-consumer-app-radar') }}'; const out='.workflow/consumer-radar/handoff.json'; fs.mkdirSync(path.dirname(out),{recursive:true}); fs.writeFileSync(out, JSON.stringify({ok:true, app_dir:app, run_dir:process.cwd(), reports:['.workflow/consumer-radar/native-checks.json','.workflow/consumer-radar/qlty-report.json','.workflow/consumer-radar/promptfoo-report.json','.workflow/consumer-radar/review-consensus.json'], next:['Run npm start inside the generated app','Use POST /api/refresh with mode=live after Apify actors are tuned']}, null, 2)+'\\n'); console.log(fs.readFileSync(out,'utf8'));\""
+    ]
+
+    start -> bootstrap_spec
+    bootstrap_spec -> spec_kitty_gate [condition="outcome=succeeded"]
+    bootstrap_spec -> bootstrap_spec [label="Retry", loop_restart=true]
+    spec_kitty_gate -> data_source_smoke [condition="outcome=succeeded"]
+    spec_kitty_gate -> bootstrap_spec [label="Fix"]
+    data_source_smoke -> generate_app [condition="outcome=succeeded"]
+    data_source_smoke -> data_source_smoke [label="Retry", loop_restart=true]
+    generate_app -> native_checks [condition="outcome=succeeded"]
+    generate_app -> generate_app [label="Retry", loop_restart=true]
+    native_checks -> qlty_gate [condition="outcome=succeeded"]
+    native_checks -> generate_app [label="Fix"]
+    qlty_gate -> promptfoo_gate [condition="outcome=succeeded"]
+    qlty_gate -> generate_app [label="Fix"]
+    promptfoo_gate -> review_fanout [condition="outcome=succeeded"]
+    promptfoo_gate -> generate_app [label="Fix"]
+    review_fanout -> review_kimi
+    review_fanout -> review_qwen
+    review_fanout -> review_deepseek
+    review_kimi -> review_join
+    review_qwen -> review_join
+    review_deepseek -> review_join
+    review_join -> review_consensus
+    review_consensus -> artifact_gate [condition="outcome=succeeded"]
+    review_consensus -> generate_app [label="Fix"]
+    artifact_gate -> publish_handoff [condition="outcome=succeeded"]
+    artifact_gate -> generate_app [label="Fix"]
+    publish_handoff -> exit [condition="outcome=succeeded"]
+    publish_handoff -> review_consensus [label="Fix"]
+}

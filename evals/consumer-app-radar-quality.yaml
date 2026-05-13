@@ -1,0 +1,24 @@
+description: "Consumer App Radar opportunity quality eval"
+
+providers:
+  - id: openai-compatible
+    config:
+      apiBaseUrl: https://openrouter.ai/api/v1
+      apiKeyEnvar: OPENROUTER_API_KEY
+      model: anthropic/claude-haiku-4-5
+
+prompts:
+  - "Evaluate whether the generated Consumer App Radar fixture identifies fast-growing consumer iPhone apps, growth signals, social strategy, review themes, and feature requests. Return a concise JSON verdict."
+
+tests:
+  - description: "Fixture has complete opportunity evidence"
+    vars:
+      expected: "growth signals, social strategy, review themes, feature requests"
+    assert:
+      - type: contains-any
+        value: ["growth", "review", "social", "feature"]
+      - type: llm-rubric
+        value: "Output should be useful to a consumer app factory deciding what to investigate next."
+        threshold: 0.70
+
+outputPath: .workflow/consumer-radar/promptfoo-output.json
