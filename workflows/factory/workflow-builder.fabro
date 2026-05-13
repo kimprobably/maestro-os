@@ -23,7 +23,7 @@ digraph WorkflowBuilder {
         shape=parallelogram,
         goal_gate=true,
         retry_target="define_quality_bar",
-        script="mkdir -p .workflow/workflow-builder; node -e \"const fs=require('fs'); const quality={ok:true,target:'{{ inputs.target|default('consumer-app-radar') }}', requirements:['Fabro owns the app build process','repository-relative paths','Spec Kitty recorded','Qlty gate','Promptfoo or fallback eval','OpenRouter Kimi/Qwen/DeepSeek review fanout','no hardcoded secrets']}; fs.writeFileSync('.workflow/workflow-builder/quality-bar.json', JSON.stringify(quality,null,2)+'\\n'); console.log(JSON.stringify(quality));\""
+        script="mkdir -p .workflow/workflow-builder; node -e \"const fs=require('fs'); const quality={ok:true,target:'{{ inputs.target|default('consumer-app-radar') }}', requirements:['Fabro owns the app build process','repository-relative paths','Spec Kitty recorded','Product surface gate','Qlty gate','Promptfoo or fallback eval','OpenRouter Kimi/Qwen/DeepSeek review fanout','no hardcoded secrets']}; fs.writeFileSync('.workflow/workflow-builder/quality-bar.json', JSON.stringify(quality,null,2)+'\\n'); console.log(JSON.stringify(quality));\""
     ]
 
     materialize_consumer_radar [
@@ -55,7 +55,7 @@ digraph WorkflowBuilder {
         shape=parallelogram,
         goal_gate=true,
         retry_target="materialize_consumer_radar",
-        script="node scripts/consumer-radar/generate-app.mjs --app-dir .workflow/workflow-builder/smoke-app && node scripts/consumer-radar/run-native-checks.mjs .workflow/workflow-builder/smoke-app"
+        script="node scripts/consumer-radar/generate-app.mjs --app-dir .workflow/workflow-builder/smoke-app && node scripts/consumer-radar/run-native-checks.mjs .workflow/workflow-builder/smoke-app && node scripts/consumer-radar/assert-product-surface.mjs .workflow/workflow-builder/smoke-app"
     ]
 
     publish_builder_handoff [

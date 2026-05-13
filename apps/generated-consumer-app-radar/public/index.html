@@ -10,19 +10,68 @@
     <main>
       <header class="topbar">
         <div>
+          <p class="eyebrow">Consumer app factory intelligence</p>
           <h1>Consumer App Radar</h1>
-          <p>Fast-growing iPhone app opportunities</p>
+          <p>
+            Find fast-growing iPhone apps, understand their growth loops, and
+            spot product gaps worth building.
+          </p>
         </div>
-        <button id="refresh">Refresh</button>
+        <button id="refresh" type="button">Refresh data</button>
       </header>
+
+      <section
+        id="summary"
+        class="kpi-grid"
+        aria-label="Radar summary"
+      ></section>
+
+      <section class="toolbar" aria-label="Radar controls">
+        <label>
+          Search
+          <input
+            id="search"
+            type="search"
+            placeholder="App, category, request, strategy"
+          />
+        </label>
+        <label>
+          Category
+          <select id="category">
+            <option value="all">All categories</option>
+          </select>
+        </label>
+        <label>
+          Sort
+          <select id="sort">
+            <option value="opportunityScore">Opportunity score</option>
+            <option value="rankDelta4w">Rank velocity</option>
+            <option value="reviewDelta4w">Review growth</option>
+            <option value="socialDelta4w">Social growth</option>
+            <option value="rating">Rating</option>
+          </select>
+        </label>
+      </section>
+
       <section class="layout">
         <div class="panel">
-          <h2>Growth Signals</h2>
-          <div id="apps" class="apps"></div>
+          <div class="section-head">
+            <div>
+              <h2>Growth Signals</h2>
+              <p id="result-count"></p>
+            </div>
+          </div>
+          <div class="app-table" id="apps" role="list"></div>
         </div>
-        <aside class="panel detail">
-          <h2>Opportunity</h2>
-          <div id="detail"></div>
+        <aside class="detail" aria-live="polite">
+          <div class="panel">
+            <h2>Opportunity Brief</h2>
+            <div id="detail"></div>
+          </div>
+          <div class="panel">
+            <h2>Source Status</h2>
+            <div id="source-status" class="source-list"></div>
+          </div>
         </aside>
       </section>
     </main>

@@ -7,6 +7,7 @@ const required = [
   "workflows/consumer-radar/build-consumer-app-radar.fabro",
   "workflows/consumer-radar/build-consumer-app-radar.toml",
   "scripts/consumer-radar/generate-app.mjs",
+  "scripts/consumer-radar/assert-product-surface.mjs",
   "scripts/consumer-radar/openrouter-review.mjs",
   "scripts/consumer-radar/promptfoo-or-fallback.mjs",
   "evals/consumer-app-radar-quality.yaml",
@@ -21,6 +22,7 @@ const workflow = existsSync(required[2])
 const toml = existsSync(required[3]) ? readFileSync(required[3], "utf8") : "";
 const hasMarkers = [
   "review_fanout",
+  "product_surface_gate",
   "qlty_gate",
   "promptfoo_gate",
   "Spec Kitty",

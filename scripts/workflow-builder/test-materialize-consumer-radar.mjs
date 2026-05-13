@@ -38,6 +38,7 @@ const requiredFiles = [
   "workflows/consumer-radar/build-consumer-app-radar.fabro",
   "workflows/consumer-radar/build-consumer-app-radar.toml",
   "scripts/consumer-radar/generate-app.mjs",
+  "scripts/consumer-radar/assert-product-surface.mjs",
   "scripts/consumer-radar/openrouter-review.mjs",
   "scripts/consumer-radar/promptfoo-or-fallback.mjs",
   "evals/consumer-app-radar-quality.yaml",
@@ -68,6 +69,10 @@ const dataSourceSmoke = readFileSync(
 );
 const generateApp = readFileSync(
   resolve(outDir, "scripts/consumer-radar/generate-app.mjs"),
+  "utf8",
+);
+const productSurfaceGate = readFileSync(
+  resolve(outDir, "scripts/consumer-radar/assert-product-surface.mjs"),
   "utf8",
 );
 const openRouterReview = readFileSync(
@@ -101,6 +106,7 @@ for (const text of [
   "review_fanout",
   "qlty_gate",
   "promptfoo_gate",
+  "product_surface_gate",
   "moonshotai/kimi-k2.6",
   "qwen/qwen3.6-plus",
   "deepseek/deepseek-v4",
@@ -274,17 +280,34 @@ if (!qltyGate.includes("reports/consumer-radar/quality/qlty-report.json")) {
 }
 if (
   !artifactGate.includes("reports/consumer-radar/quality/native-checks.json") ||
-  !artifactGate.includes("reports/consumer-radar/quality/promptfoo-report.json")
+  !artifactGate.includes("reports/consumer-radar/quality/promptfoo-report.json") ||
+  !artifactGate.includes("product_surface_ok")
 ) {
   throw new Error("artifact gate must require tracked quality reports");
 }
 for (const text of [
+  "src/summary.js",
   "src/sources/social.js",
   "src/snapshots.js",
   "src/evidence.js",
   "Growth Signals",
   "Review Pain",
   "Social Strategy",
+  "renderSummary",
+  "renderSourceStatus",
+  "investigationAngles",
+  "weeklySnapshots",
+  "id=\"search\"",
+  "id=\"category\"",
+  "id=\"sort\"",
+  "id=\"summary\"",
+  "id=\"source-status\"",
+  ".kpi-grid",
+  ".toolbar",
+  ".app-table",
+  ".opportunity-grid",
+  "/api/summary",
+  "buildSummary",
 ]) {
   if (!generateApp.includes(text)) {
     throw new Error(
@@ -302,6 +325,15 @@ for (const text of [
       `generated app must address review hardening marker: ${text}`,
     );
   }
+}
+if (
+  !productSurfaceGate.includes("weeklySnapshots") ||
+  !productSurfaceGate.includes("investigationAngles") ||
+  !productSurfaceGate.includes("id=\"search\"")
+) {
+  throw new Error(
+    "product surface gate must enforce dashboard controls, evidence, and investigation angles",
+  );
 }
 if (
   !artifactGate.includes("minimum_apps") ||

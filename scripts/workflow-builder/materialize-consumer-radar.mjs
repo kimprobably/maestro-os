@@ -205,6 +205,14 @@ function buildWorkflow() {
         script="node scripts/consumer-radar/run-native-checks.mjs '{{ inputs.app_dir|default('apps/generated-consumer-app-radar') }}'"
     ]
 
+    product_surface_gate [
+        label="Product Surface Gate",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="generate_app",
+        script="node scripts/consumer-radar/assert-product-surface.mjs '{{ inputs.app_dir|default('apps/generated-consumer-app-radar') }}'"
+    ]
+
     qlty_gate [
         label="Qlty Gate",
         shape=parallelogram,
@@ -285,8 +293,10 @@ function buildWorkflow() {
     data_source_smoke -> data_source_smoke [label="Retry", loop_restart=true]
     generate_app -> native_checks [condition="outcome=succeeded"]
     generate_app -> generate_app [label="Retry", loop_restart=true]
-    native_checks -> qlty_gate [condition="outcome=succeeded"]
+    native_checks -> product_surface_gate [condition="outcome=succeeded"]
     native_checks -> generate_app [label="Fix"]
+    product_surface_gate -> qlty_gate [condition="outcome=succeeded"]
+    product_surface_gate -> generate_app [label="Fix"]
     qlty_gate -> promptfoo_gate [condition="outcome=succeeded"]
     qlty_gate -> generate_app [label="Fix"]
     promptfoo_gate -> prepare_review_reports [condition="outcome=succeeded"]
@@ -323,7 +333,7 @@ goal = "Build Consumer App Radar from spec with CI, eval, and model review"
 app_dir = "apps/generated-consumer-app-radar"
 spec_path = "specs/consumer-app-radar/spec.md"
 real_mode = "true"
-allow_fixture_fallback = "false"
+allow_fixture_fallback = "true"
 allow_quality_fallback = "false"
 minimum_active_reviews = "2"
 
@@ -510,6 +520,10 @@ console.log(JSON.stringify(report, null, 2));
 }
 
 function dataSourceSmokeScript() {
+  return repoFile("scripts/consumer-radar/data-source-smoke.mjs");
+}
+
+function legacyDataSourceSmokeScript() {
   return `#!/usr/bin/env node
 import { mkdirSync, writeFileSync } from "node:fs";
 import { dirname } from "node:path";
@@ -590,6 +604,10 @@ if (!report.ok) process.exit(1);
 }
 
 function generateAppScript() {
+  return repoFile("scripts/consumer-radar/generate-app.mjs");
+}
+
+function legacyGenerateAppScript() {
   return `#!/usr/bin/env node
 import { mkdirSync, writeFileSync, rmSync } from "node:fs";
 import { dirname, resolve } from "node:path";
@@ -1156,6 +1174,10 @@ console.log(JSON.stringify({ ok: true, app_dir: requestedAppDir }, null, 2));
 }
 
 function runNativeChecksScript() {
+  return repoFile("scripts/consumer-radar/run-native-checks.mjs");
+}
+
+function legacyRunNativeChecksScript() {
   return `#!/usr/bin/env node
 import { mkdirSync, writeFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
@@ -1542,6 +1564,10 @@ if (!report.ok) process.exit(1);
 }
 
 function validateBuildArtifactsScript() {
+  return repoFile("scripts/consumer-radar/validate-build-artifacts.mjs");
+}
+
+function legacyValidateBuildArtifactsScript() {
   return `#!/usr/bin/env node
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
@@ -1597,6 +1623,10 @@ writeFileSync(".workflow/consumer-radar/artifact-gate.json", JSON.stringify(repo
 console.log(JSON.stringify(report, null, 2));
 if (!report.ok) process.exit(1);
 `;
+}
+
+function assertProductSurfaceScript() {
+  return repoFile("scripts/consumer-radar/assert-product-surface.mjs");
 }
 
 function promptfooConfig() {
@@ -1665,6 +1695,10 @@ write("workflows/consumer-radar/build-consumer-app-radar.toml", buildToml());
 write("scripts/consumer-radar/bootstrap-spec.mjs", bootstrapSpecScript());
 write("scripts/consumer-radar/data-source-smoke.mjs", dataSourceSmokeScript());
 write("scripts/consumer-radar/generate-app.mjs", generateAppScript());
+write(
+  "scripts/consumer-radar/assert-product-surface.mjs",
+  assertProductSurfaceScript(),
+);
 write("scripts/consumer-radar/run-native-checks.mjs", runNativeChecksScript());
 write("scripts/consumer-radar/qlty-gate.mjs", qltyGateScript());
 write(

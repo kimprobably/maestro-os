@@ -3,6 +3,7 @@ import { existsSync, createReadStream } from "node:fs";
 import { extname, join, resolve } from "node:path";
 import { loadApps } from "./repository.js";
 import { refreshApps } from "./ingest.js";
+import { buildSummary } from "./summary.js";
 
 const publicDir = resolve("public");
 const port = Number(process.env.PORT || 4317);
@@ -40,6 +41,8 @@ const server = createServer(async (req, res) => {
   try {
     if (req.method === "OPTIONS") return sendJson(res, 204, {});
     if (url.pathname === "/health") return sendJson(res, 200, { ok: true });
+    if (url.pathname === "/api/summary" && req.method === "GET")
+      return sendJson(res, 200, buildSummary(loadApps()));
     if (url.pathname === "/api/apps" && req.method === "GET")
       return sendJson(res, 200, { apps: loadApps() });
     if (url.pathname.startsWith("/api/apps/") && req.method === "GET") {
