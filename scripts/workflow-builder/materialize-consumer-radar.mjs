@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { mkdirSync, writeFileSync } from "node:fs";
+import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -26,6 +26,10 @@ function write(relativePath, content) {
 
 function json(value) {
   return `${JSON.stringify(value, null, 2)}\n`;
+}
+
+function repoFile(relativePath) {
+  return readFileSync(resolve(repoRoot, relativePath), "utf8");
 }
 
 function consumerSpec() {
@@ -1189,82 +1193,7 @@ console.log(JSON.stringify({ ok: true, checks: results.length }, null, 2));
 }
 
 function qltyGateScript() {
-  return `#!/usr/bin/env node
-import { mkdirSync, writeFileSync } from "node:fs";
-import { spawnSync } from "node:child_process";
-import { dirname } from "node:path";
-
-function argValue(name, fallback) {
-  const index = process.argv.indexOf(name);
-  if (index === -1) return fallback;
-  const value = process.argv[index + 1];
-  if (!value || value.startsWith("--")) throw new Error("Missing value for " + name);
-  return value;
-}
-
-function argBool(name, fallback) {
-  const raw = argValue(name, String(fallback));
-  return raw === true || raw === "true" || raw === "1" || raw === "yes";
-}
-
-const appDir = process.argv[2] || "apps/generated-consumer-app-radar";
-const realMode = argBool("--real-mode", false);
-const allowFallback = argBool("--allow-fallback", true);
-mkdirSync(".workflow/consumer-radar", { recursive: true });
-
-function writeReport(report) {
-  for (const file of [".workflow/consumer-radar/qlty-report.json", "reports/consumer-radar/quality/qlty-report.json"]) {
-    mkdirSync(dirname(file), { recursive: true });
-    writeFileSync(file, JSON.stringify(report, null, 2) + "\\n");
-  }
-}
-
-function run(cmd) {
-  return spawnSync("sh", ["-lc", cmd], { cwd: appDir, encoding: "utf8", timeout: 180000 });
-}
-
-let available = spawnSync("sh", ["-lc", "command -v qlty >/dev/null 2>&1"], { encoding: "utf8" }).status === 0;
-let install = null;
-if (!available) {
-  install = spawnSync("sh", ["-lc", "curl -fsSL https://qlty.sh | sh >/tmp/qlty-install.log 2>&1"], { encoding: "utf8", timeout: 180000 });
-  available = spawnSync("sh", ["-lc", "export PATH=$HOME/.qlty/bin:$PATH; command -v qlty >/dev/null 2>&1"], { encoding: "utf8" }).status === 0;
-}
-
-let check = null;
-let fmt = null;
-if (available) {
-  const strictMode = realMode && !allowFallback;
-  if (strictMode) {
-    fmt = run("export PATH=$HOME/.qlty/bin:$PATH; qlty fmt --all --no-progress --no-upgrade-check");
-  }
-  const checkCommand = strictMode
-    ? "export PATH=$HOME/.qlty/bin:$PATH; qlty check --all --no-progress --summary --no-upgrade-check"
-    : "export PATH=$HOME/.qlty/bin:$PATH; qlty check --all --no-progress --no-fail --summary --no-upgrade-check";
-  check = run(checkCommand);
-}
-
-const hardFailures = [];
-if (realMode && !allowFallback) {
-  if (!available) hardFailures.push("Qlty unavailable in real mode");
-  if (fmt && fmt.status !== 0) hardFailures.push("Qlty formatter failed in real mode");
-  if (check && check.status !== 0) hardFailures.push("Qlty check command failed in real mode");
-}
-const report = {
-  ok: hardFailures.length === 0,
-  real_mode: realMode,
-  allow_fallback: allowFallback,
-  qlty_available: available,
-  install_status: install ? install.status : null,
-  fmt_status: fmt ? fmt.status : null,
-  check_status: check ? check.status : null,
-  hard_failures: hardFailures,
-  stdout: [fmt?.stdout, check?.stdout].filter(Boolean).join("\\n").slice(-5000),
-  stderr: [fmt?.stderr, check?.stderr].filter(Boolean).join("\\n").slice(-5000) || "qlty unavailable; native checks remain the blocking gate"
-};
-writeReport(report);
-console.log(JSON.stringify(report, null, 2));
-if (!report.ok) process.exit(1);
-`;
+  return repoFile("scripts/consumer-radar/qlty-gate.mjs");
 }
 
 function promptfooFallbackScript() {
@@ -1719,53 +1648,11 @@ outputPath: .workflow/consumer-radar/promptfoo-output.json
 }
 
 function workflowDoc() {
-  return `# Consumer App Radar Workflow
-
-This directory was materialized by \`workflows/factory/workflow-builder.fabro\`.
-
-Run the generated workflow through the Railway Fabro server:
-
-\`\`\`bash
-fabro run workflows/consumer-radar/build-consumer-app-radar.toml --server https://fabro-maestro-production.up.railway.app/api/v1 --preserve-sandbox
-\`\`\`
-
-The workflow builds \`apps/generated-consumer-app-radar\` inside the Daytona sandbox, runs native checks, attempts Qlty, attempts Promptfoo, and fans out OpenRouter reviews across Kimi, Qwen, and DeepSeek. It records transient gate logs under \`.workflow/consumer-radar\` and commit-visible review artifacts under \`reports/consumer-radar\`.
-
-Because this spike repo currently has no Git remote for Daytona to clone, remote runs include a short support-file wait stage. Start the run detached, then copy \`scripts/consumer-radar\`, \`specs/consumer-app-radar\`, and \`evals/consumer-app-radar-quality.yaml\` into the run sandbox with \`fabro sandbox cp\`.
-
-Secrets are not stored in this repo. \`APIFY_TOKEN\` and
-\`OPENROUTER_API_KEY\` are injected into the sandbox from the Fabro server
-secret vault via \`[run.sandbox.env]\`.
-`;
+  return repoFile("docs/CONSUMER-APP-RADAR-WORKFLOW.md");
 }
 
 function validateBuilderScript() {
-  return `#!/usr/bin/env node
-import { existsSync, readFileSync, writeFileSync, mkdirSync } from "node:fs";
-
-const required = [
-  "specs/consumer-app-radar/spec.md",
-  ".fabro/project.toml",
-  "workflows/consumer-radar/build-consumer-app-radar.fabro",
-  "workflows/consumer-radar/build-consumer-app-radar.toml",
-  "scripts/consumer-radar/generate-app.mjs",
-  "scripts/consumer-radar/openrouter-review.mjs",
-  "scripts/consumer-radar/promptfoo-or-fallback.mjs",
-  "evals/consumer-app-radar-quality.yaml"
-];
-const missing = required.filter((file) => !existsSync(file));
-const project = existsSync(required[1]) ? readFileSync(required[1], "utf8") : "";
-const workflow = existsSync(required[2]) ? readFileSync(required[2], "utf8") : "";
-const toml = existsSync(required[3]) ? readFileSync(required[3], "utf8") : "";
-const hasMarkers = ["review_fanout", "qlty_gate", "promptfoo_gate", "Spec Kitty", "moonshotai/kimi-k2.6", "qwen/qwen3.6-plus", "deepseek/deepseek-v4"].every((text) => workflow.includes(text) || toml.includes(text) || readFileSync(required[0], "utf8").includes(text));
-const hasProjectEnv = project.includes('[run.sandbox.env]') && project.includes('\${{ secrets.APIFY_TOKEN }}') && project.includes('\${{ secrets.OPENROUTER_API_KEY }}') && project.includes('network = "allow_all"');
-const leaks = /apify_api_|sk-or-v1-|xoxb-|xapp-/.test(project + workflow + toml);
-const report = { ok: missing.length === 0 && hasMarkers && hasProjectEnv && !leaks, missing, has_markers: hasMarkers, has_project_env: hasProjectEnv, leaks };
-mkdirSync(".workflow/workflow-builder", { recursive: true });
-writeFileSync(".workflow/workflow-builder/validation.json", JSON.stringify(report, null, 2) + "\\n");
-console.log(JSON.stringify(report, null, 2));
-if (!report.ok) process.exit(1);
-`;
+  return repoFile("scripts/workflow-builder/validate-consumer-radar-builder.mjs");
 }
 
 write("specs/consumer-app-radar/spec.md", consumerSpec());
