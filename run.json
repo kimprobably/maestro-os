@@ -1575,7 +1575,7 @@
     "kind": "running"
   },
   "status_updated_at": "2026-05-13T17:30:20.650038193Z",
-  "last_event_at": "2026-05-13T17:34:14.771924906Z",
+  "last_event_at": "2026-05-13T17:50:01.486670985Z",
   "pending_control": null,
   "checkpoints": [
     {
@@ -1962,9 +1962,9 @@
       }
     },
     {
-      "seq": 0,
+      "seq": 192,
       "checkpoint": {
-        "timestamp": "2026-05-13T17:34:14.818561128Z",
+        "timestamp": "2026-05-13T17:34:16.772855881Z",
         "current_node": "spec_join",
         "completed_nodes": [
           "start",
@@ -1976,26 +1976,31 @@
         ],
         "node_retries": {},
         "context_values": {
-          "failure_class": "",
-          "graph.fallback_retry_target": "workflow_fanout",
-          "command.output": "blob://sha256/2e78300898c34f783a2884184c50c33fefa4187fbe6f72d65e360ac55f308272",
-          "internal.retry_count.start": 0,
-          "outcome": "succeeded",
-          "thread.capability_audit.current_node": "spec_fanout",
-          "graph.rankdir": "LR",
-          "internal.retry_count.parse_requests": 0,
           "internal.retry_count.spec_join": 0,
-          "graph.model_stylesheet": "\n            *             { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: low; }\n            .spec          { provider: openrouter; model: google/gemini-3.1-pro-preview; reasoning_effort: high; }\n            .architecture  { provider: openrouter; model: qwen/qwen3.6-plus; reasoning_effort: high; }\n            .workflow      { provider: openrouter; model: moonshotai/kimi-k2.6; reasoning_effort: high; }\n            .eval          { provider: openrouter; model: deepseek/deepseek-v4-pro; reasoning_effort: high; }\n            .cheap         { provider: openrouter; model: deepseek/deepseek-v4-flash; reasoning_effort: low; }\n        ",
-          "thread.bootstrap.current_node": "parse_requests",
-          "internal.thread_id": "spec_fanout",
-          "internal.retry_count.capability_audit": 0,
-          "parallel.branch_count": 3,
-          "graph.inputs": "app_dir, feedback_path, target_adapter, generated_workflow, generated_run_config, real_mode, allow_fixture_fallback, execute_generated_workflow, minimum_spec_candidates, minimum_architecture_candidates, minimum_workflow_candidates, minimum_eval_score, minimum_active_reviews, require_simplification",
+          "failure_class": "",
+          "thread.parse_requests.current_node": "capability_audit",
+          "command.output": "blob://sha256/2e78300898c34f783a2884184c50c33fefa4187fbe6f72d65e360ac55f308272",
+          "graph.persona": "eval-driven-workflow-builder",
+          "parallel.fan_in.best_head_sha": "89c7d1b27ce57d7502bc0688f453e88f7dbe9ef4",
           "parallel.fan_in.best_outcome": "succeeded",
-          "failure_signature": "",
-          "internal.retry_count.bootstrap": 0,
+          "thread.spec_fanout.current_node": "spec_join",
+          "internal.thread_id": "spec_fanout",
+          "internal.run_id": "01KRH677GW51CSE7B4S02RQFE9",
           "graph.outputs": "capability_audit, selected_spec, selected_architecture, generated_enhancement_workflow, eval_reports, simplification_plan, final_handoff",
+          "graph.fallback_retry_target": "workflow_fanout",
+          "thread.bootstrap.current_node": "parse_requests",
+          "internal.work_dir": "/home/daytona/workspace",
           "graph.retry_target": "spec_fanout",
+          "graph.default_max_retries": "2",
+          "internal.retry_count.bootstrap": 0,
+          "graph.model_stylesheet": "\n            *             { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: low; }\n            .spec          { provider: openrouter; model: google/gemini-3.1-pro-preview; reasoning_effort: high; }\n            .architecture  { provider: openrouter; model: qwen/qwen3.6-plus; reasoning_effort: high; }\n            .workflow      { provider: openrouter; model: moonshotai/kimi-k2.6; reasoning_effort: high; }\n            .eval          { provider: openrouter; model: deepseek/deepseek-v4-pro; reasoning_effort: high; }\n            .cheap         { provider: openrouter; model: deepseek/deepseek-v4-flash; reasoning_effort: low; }\n        ",
+          "internal.retry_count.parse_requests": 0,
+          "graph.goal": "Use eval-driven development to discover the real Consumer Radar enhancement workflow required by product feedback",
+          "graph.rankdir": "LR",
+          "graph.inputs": "app_dir, feedback_path, target_adapter, generated_workflow, generated_run_config, real_mode, allow_fixture_fallback, execute_generated_workflow, minimum_spec_candidates, minimum_architecture_candidates, minimum_workflow_candidates, minimum_eval_score, minimum_active_reviews, require_simplification",
+          "parallel.fan_in.best_id": "spec_candidate_a",
+          "internal.fidelity": "compact",
+          "parallel.branch_count": 3,
           "parallel.results": [
             {
               "id": "spec_candidate_a",
@@ -2014,8 +2019,125 @@
             }
           ],
           "thread.start.current_node": "bootstrap",
+          "internal.retry_count.spec_fanout": 0,
+          "thread.capability_audit.current_node": "spec_fanout",
+          "internal.retry_count.capability_audit": 0,
+          "failure_signature": "",
+          "internal.retry_count.start": 0,
+          "outcome": "succeeded",
           "current_node": "spec_join",
+          "internal.node_visit_count": 1
+        },
+        "node_outcomes": {
+          "start": {
+            "status": "succeeded",
+            "usage": null
+          },
+          "capability_audit": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/2e78300898c34f783a2884184c50c33fefa4187fbe6f72d65e360ac55f308272"
+            },
+            "notes": "Script completed: node scripts/app-feedback/analyze-enhancement-capabilities.mjs --app-dir 'apps/generated-consumer-app-radar' --analysis .workflow/enhancement-discovery/request-analysis.json --target 'consumer-radar' --out .workflow/enhancement-discovery/capability-audit.json",
+            "usage": null
+          },
+          "parse_requests": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/b8ad9745eb032e1529021db56fb0316d1bbac9211156d215e74bdc779585d3f0"
+            },
+            "notes": "Script completed: node scripts/app-feedback/parse-feedback.mjs --feedback 'feedback/consumer-radar-product-feedback.md' --out .workflow/enhancement-discovery/request-analysis.json",
+            "usage": null
+          },
+          "spec_fanout": {
+            "status": "partially_succeeded",
+            "jump_to_node": "spec_join",
+            "notes": "Parallel node dispatched 3 branches (1 succeeded, 2 failed)",
+            "usage": null
+          },
+          "bootstrap": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/17c1b04b31687cffbb38c881b0ef8a6627d35f81c1821b18657bfc69bf73029b"
+            },
+            "notes": "Script completed: mkdir -p .workflow/enhancement-discovery/spec-candidates .workflow/enhancement-discovery/architecture-candidates .workflow/enhancement-discovery/workflow-candidates .workflow/enhancement-discovery/evals; test -f 'feedback/consumer-radar-product-feedback.md'; test -d 'apps/generated-consumer-app-radar'; echo eval_driven_development test_driven_development",
+            "usage": null
+          },
+          "spec_join": {
+            "status": "succeeded",
+            "context_updates": {
+              "parallel.fan_in.best_head_sha": "89c7d1b27ce57d7502bc0688f453e88f7dbe9ef4",
+              "parallel.fan_in.best_id": "spec_candidate_a",
+              "parallel.fan_in.best_outcome": "succeeded"
+            },
+            "notes": "Selected best candidate: spec_candidate_a",
+            "usage": null
+          }
+        },
+        "next_node_id": "spec_eval_fanout",
+        "git_commit_sha": "3a8ecb29f4694ea78a9219363e0339db38eac9b7",
+        "node_visits": {
+          "spec_fanout": 1,
+          "capability_audit": 1,
+          "parse_requests": 1,
+          "spec_join": 1,
+          "start": 1,
+          "bootstrap": 1
+        }
+      },
+      "diff": {}
+    },
+    {
+      "seq": 0,
+      "checkpoint": {
+        "timestamp": "2026-05-13T17:50:01.696393227Z",
+        "current_node": "spec_eval_fanout",
+        "completed_nodes": [
+          "start",
+          "bootstrap",
+          "parse_requests",
+          "capability_audit",
+          "spec_fanout",
+          "spec_join",
+          "spec_eval_fanout"
+        ],
+        "node_retries": {},
+        "context_values": {
+          "failure_class": "",
+          "graph.fallback_retry_target": "workflow_fanout",
+          "command.output": "blob://sha256/2e78300898c34f783a2884184c50c33fefa4187fbe6f72d65e360ac55f308272",
+          "internal.retry_count.start": 0,
+          "outcome": "partially_succeeded",
+          "thread.capability_audit.current_node": "spec_fanout",
+          "graph.rankdir": "LR",
+          "internal.retry_count.parse_requests": 0,
+          "internal.retry_count.spec_join": 0,
+          "graph.model_stylesheet": "\n            *             { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: low; }\n            .spec          { provider: openrouter; model: google/gemini-3.1-pro-preview; reasoning_effort: high; }\n            .architecture  { provider: openrouter; model: qwen/qwen3.6-plus; reasoning_effort: high; }\n            .workflow      { provider: openrouter; model: moonshotai/kimi-k2.6; reasoning_effort: high; }\n            .eval          { provider: openrouter; model: deepseek/deepseek-v4-pro; reasoning_effort: high; }\n            .cheap         { provider: openrouter; model: deepseek/deepseek-v4-flash; reasoning_effort: low; }\n        ",
+          "thread.bootstrap.current_node": "parse_requests",
+          "internal.thread_id": "spec_join",
+          "internal.retry_count.capability_audit": 0,
+          "parallel.branch_count": 2,
+          "graph.inputs": "app_dir, feedback_path, target_adapter, generated_workflow, generated_run_config, real_mode, allow_fixture_fallback, execute_generated_workflow, minimum_spec_candidates, minimum_architecture_candidates, minimum_workflow_candidates, minimum_eval_score, minimum_active_reviews, require_simplification",
+          "parallel.fan_in.best_outcome": "succeeded",
+          "failure_signature": "",
+          "internal.retry_count.bootstrap": 0,
+          "graph.outputs": "capability_audit, selected_spec, selected_architecture, generated_enhancement_workflow, eval_reports, simplification_plan, final_handoff",
+          "graph.retry_target": "spec_fanout",
+          "parallel.results": [
+            {
+              "id": "",
+              "status": "failed"
+            },
+            {
+              "id": "spec_eval_model",
+              "status": "succeeded",
+              "head_sha": "4be103dc71808e8adebd5ab1d663cfaec48b2c4f"
+            }
+          ],
+          "thread.start.current_node": "bootstrap",
+          "current_node": "spec_eval_fanout",
           "graph.persona": "eval-driven-workflow-builder",
+          "internal.retry_count.spec_eval_fanout": 0,
           "graph.default_max_retries": "2",
           "internal.run_id": "01KRH677GW51CSE7B4S02RQFE9",
           "internal.retry_count.spec_fanout": 0,
@@ -2023,12 +2145,36 @@
           "thread.spec_fanout.current_node": "spec_join",
           "internal.work_dir": "/home/daytona/workspace",
           "internal.node_visit_count": 1,
+          "thread.spec_join.current_node": "spec_eval_fanout",
           "parallel.fan_in.best_id": "spec_candidate_a",
           "parallel.fan_in.best_head_sha": "89c7d1b27ce57d7502bc0688f453e88f7dbe9ef4",
           "graph.goal": "Use eval-driven development to discover the real Consumer Radar enhancement workflow required by product feedback",
           "thread.parse_requests.current_node": "capability_audit"
         },
         "node_outcomes": {
+          "parse_requests": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/b8ad9745eb032e1529021db56fb0316d1bbac9211156d215e74bdc779585d3f0"
+            },
+            "notes": "Script completed: node scripts/app-feedback/parse-feedback.mjs --feedback 'feedback/consumer-radar-product-feedback.md' --out .workflow/enhancement-discovery/request-analysis.json",
+            "usage": null
+          },
+          "spec_eval_fanout": {
+            "status": "partially_succeeded",
+            "notes": "Parallel node dispatched 2 branches (1 succeeded, 1 failed)",
+            "usage": null
+          },
+          "spec_fanout": {
+            "status": "partially_succeeded",
+            "jump_to_node": "spec_join",
+            "notes": "Parallel node dispatched 3 branches (1 succeeded, 2 failed)",
+            "usage": null
+          },
+          "start": {
+            "status": "succeeded",
+            "usage": null
+          },
           "spec_join": {
             "status": "succeeded",
             "context_updates": {
@@ -2047,14 +2193,6 @@
             "notes": "Script completed: mkdir -p .workflow/enhancement-discovery/spec-candidates .workflow/enhancement-discovery/architecture-candidates .workflow/enhancement-discovery/workflow-candidates .workflow/enhancement-discovery/evals; test -f 'feedback/consumer-radar-product-feedback.md'; test -d 'apps/generated-consumer-app-radar'; echo eval_driven_development test_driven_development",
             "usage": null
           },
-          "parse_requests": {
-            "status": "succeeded",
-            "context_updates": {
-              "command.output": "blob://sha256/b8ad9745eb032e1529021db56fb0316d1bbac9211156d215e74bdc779585d3f0"
-            },
-            "notes": "Script completed: node scripts/app-feedback/parse-feedback.mjs --feedback 'feedback/consumer-radar-product-feedback.md' --out .workflow/enhancement-discovery/request-analysis.json",
-            "usage": null
-          },
           "capability_audit": {
             "status": "succeeded",
             "context_updates": {
@@ -2062,23 +2200,14 @@
             },
             "notes": "Script completed: node scripts/app-feedback/analyze-enhancement-capabilities.mjs --app-dir 'apps/generated-consumer-app-radar' --analysis .workflow/enhancement-discovery/request-analysis.json --target 'consumer-radar' --out .workflow/enhancement-discovery/capability-audit.json",
             "usage": null
-          },
-          "start": {
-            "status": "succeeded",
-            "usage": null
-          },
-          "spec_fanout": {
-            "status": "partially_succeeded",
-            "jump_to_node": "spec_join",
-            "notes": "Parallel node dispatched 3 branches (1 succeeded, 2 failed)",
-            "usage": null
           }
         },
-        "next_node_id": "spec_eval_fanout",
+        "next_node_id": "spec_eval_contract",
         "node_visits": {
           "start": 1,
           "capability_audit": 1,
           "spec_fanout": 1,
+          "spec_eval_fanout": 1,
           "spec_join": 1,
           "bootstrap": 1,
           "parse_requests": 1
@@ -2133,6 +2262,52 @@
       },
       "state": "succeeded"
     },
+    "spec_eval_fanout@1": {
+      "first_event_seq": 195,
+      "prompt": null,
+      "response": null,
+      "completion": null,
+      "provider_used": {
+        "mode": "agent",
+        "provider": "openrouter",
+        "model": "deepseek/deepseek-v4-pro"
+      },
+      "diff": null,
+      "script_invocation": {
+        "script": "node scripts/app-feedback/evaluate-enhancement-artifact.mjs --stage spec --candidates .workflow/enhancement-discovery/spec-candidates --out .workflow/enhancement-discovery/evals/spec-contract.json --minimum-candidates '3' --minimum-eval-score '0.78'",
+        "command": "exec 2>&1\nnode scripts/app-feedback/evaluate-enhancement-artifact.mjs --stage spec --candidates .workflow/enhancement-discovery/spec-candidates --out .workflow/enhancement-discovery/evals/spec-contract.json --minimum-candidates '3' --minimum-eval-score '0.78'",
+        "language": "shell"
+      },
+      "script_timing": null,
+      "parallel_results": [
+        {
+          "id": "",
+          "status": "failed"
+        },
+        {
+          "id": "spec_eval_model",
+          "status": "succeeded",
+          "head_sha": "4be103dc71808e8adebd5ab1d663cfaec48b2c4f"
+        }
+      ],
+      "output": null,
+      "started_at": "2026-05-13T17:34:16.776300730Z",
+      "handler": "parallel",
+      "usage": {
+        "input_tokens": 674772,
+        "output_tokens": 28924,
+        "total_tokens": 703696,
+        "reasoning_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "total_usd_micros": 318688
+      },
+      "model": {
+        "provider": "openrouter",
+        "model_id": "deepseek/deepseek-v4-pro"
+      },
+      "state": "running"
+    },
     "spec_candidate_a@1": {
       "first_event_seq": 76,
       "prompt": null,
@@ -2155,6 +2330,31 @@
       "model": {
         "provider": "openrouter",
         "model_id": "google/gemini-3.1-pro-preview-20260219"
+      },
+      "state": "running"
+    },
+    "spec_eval_model@1": {
+      "first_event_seq": 205,
+      "prompt": null,
+      "response": null,
+      "completion": null,
+      "provider_used": null,
+      "diff": null,
+      "script_invocation": null,
+      "script_timing": null,
+      "parallel_results": null,
+      "output": null,
+      "usage": {
+        "input_tokens": 674772,
+        "output_tokens": 28924,
+        "total_tokens": 703696,
+        "reasoning_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "model": {
+        "provider": "openrouter",
+        "model_id": "deepseek/deepseek-v4-pro-20260423"
       },
       "state": "running"
     },
@@ -2302,7 +2502,12 @@
       "first_event_seq": 185,
       "prompt": null,
       "response": null,
-      "completion": null,
+      "completion": {
+        "outcome": "succeeded",
+        "notes": "Selected best candidate: spec_candidate_a",
+        "failure_reason": null,
+        "timestamp": "2026-05-13T17:34:14.817437898Z"
+      },
       "provider_used": null,
       "diff": null,
       "script_invocation": null,
@@ -2311,6 +2516,7 @@
       "output": null,
       "started_at": "2026-05-13T17:34:14.771924906Z",
       "handler": "parallel.fan_in",
+      "duration_ms": 21,
       "usage": {
         "input_tokens": 0,
         "output_tokens": 0,
@@ -2319,7 +2525,7 @@
         "cache_read_tokens": 0,
         "cache_write_tokens": 0
       },
-      "state": "running"
+      "state": "succeeded"
     },
     "capability_audit@1": {
       "first_event_seq": 40,
