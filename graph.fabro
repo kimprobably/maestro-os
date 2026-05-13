@@ -1,0 +1,294 @@
+digraph EnhancementDiscovery {
+    graph [
+        goal="Turn app enhancement requests into an evaluated spec, architecture, generated enhancement workflow, simplification pass, and release handoff",
+        persona="eval-driven-workflow-builder",
+        inputs="app_dir, feedback_path, target_adapter, generated_workflow, generated_run_config, real_mode, allow_fixture_fallback, execute_generated_workflow, minimum_spec_candidates, minimum_architecture_candidates, minimum_workflow_candidates, minimum_eval_score, max_eval_regression, minimum_active_reviews, require_simplification",
+        outputs="capability_audit, selected_spec, selected_architecture, generated_enhancement_workflow, eval_reports, simplification_plan, final_handoff",
+        default_max_retries=2,
+        retry_target="spec_fanout",
+        fallback_retry_target="workflow_fanout",
+        model_stylesheet="
+            *             { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: low; }
+            .spec          { provider: openrouter; model: google/gemini-3.1-pro-preview; reasoning_effort: high; }
+            .architecture  { provider: openrouter; model: qwen/qwen3.6-plus; reasoning_effort: high; }
+            .workflow      { provider: openrouter; model: moonshotai/kimi-k2.6; reasoning_effort: high; }
+            .eval          { provider: openrouter; model: deepseek/deepseek-v4-pro; reasoning_effort: high; }
+            .cheap         { provider: openrouter; model: deepseek/deepseek-v4-flash; reasoning_effort: low; }
+        "
+    ]
+    rankdir=LR
+
+    start [shape=Mdiamond, label="Start"]
+    exit  [shape=Msquare, label="Exit"]
+
+    bootstrap [
+        label="Bootstrap Enhancement Discovery",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="bootstrap",
+        script="mkdir -p .workflow/enhancement-discovery/spec-candidates .workflow/enhancement-discovery/architecture-candidates .workflow/enhancement-discovery/workflow-candidates .workflow/enhancement-discovery/evals; test -f '{{ inputs.feedback_path|default('feedback/consumer-radar-product-feedback.md') }}'; test -d '{{ inputs.app_dir|default('apps/generated-consumer-app-radar') }}'; echo eval_driven_development test_driven_development"
+    ]
+
+    parse_requests [
+        label="Parse Enhancement Requests",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="bootstrap",
+        script="node scripts/app-feedback/parse-feedback.mjs --feedback '{{ inputs.feedback_path|default('feedback/consumer-radar-product-feedback.md') }}' --out .workflow/enhancement-discovery/request-analysis.json"
+    ]
+
+    capability_audit [
+        label="Capability Audit",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="parse_requests",
+        script="node scripts/app-feedback/analyze-enhancement-capabilities.mjs --app-dir '{{ inputs.app_dir|default('apps/generated-consumer-app-radar') }}' --analysis .workflow/enhancement-discovery/request-analysis.json --target '{{ inputs.target_adapter|default('consumer-radar') }}' --out .workflow/enhancement-discovery/capability-audit.json"
+    ]
+
+    spec_fanout [shape=component, label="Spec Candidate Fanout"]
+    spec_candidate_a [
+        label="Spec Candidate A - Data Truth",
+        class="spec",
+        prompt="@../../prompts/app-feedback/spec-candidate-a.md"
+    ]
+    spec_candidate_b [
+        label="Spec Candidate B - UX Outcome",
+        class="spec",
+        prompt="@../../prompts/app-feedback/spec-candidate-b.md"
+    ]
+    spec_candidate_c [
+        label="Spec Candidate C - Workflow First",
+        class="spec",
+        prompt="@../../prompts/app-feedback/spec-candidate-c.md"
+    ]
+    spec_join [shape=tripleoctagon, label="Spec Candidate Join", join_policy="wait_all"]
+
+    ensure_spec_candidates [
+        label="Ensure Spec Candidate Count",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="spec_fanout",
+        script="node scripts/app-feedback/ensure-enhancement-candidates.mjs --stage spec --dir .workflow/enhancement-discovery/spec-candidates --minimum '{{ inputs.minimum_spec_candidates|default('3') }}' --out .workflow/enhancement-discovery/evals/spec-candidate-ensure.json"
+    ]
+    spec_eval_contract [
+        label="Spec Contract Eval",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="spec_fanout",
+        script="node scripts/app-feedback/evaluate-enhancement-artifact.mjs --stage spec --candidates .workflow/enhancement-discovery/spec-candidates --out .workflow/enhancement-discovery/evals/spec-contract.json --minimum-candidates '{{ inputs.minimum_spec_candidates|default('3') }}' --minimum-eval-score '{{ inputs.minimum_eval_score|default('0.78') }}' --dataset evals/workflow-quality/datasets/enhancement-discovery-golden.jsonl --dataset-version workflow-quality-v1 --prompt-version app-feedback-spec-candidates-v1 --rubric-version enhancement-discovery-spec-rubric-v1 --judge-model deterministic-marker-v1 --baseline evals/workflow-quality/baselines/enhancement-discovery-spec.json --max-regression '{{ inputs.max_eval_regression|default('0.05') }}'"
+    ]
+    spec_eval_model [
+        label="Spec Rubric Eval",
+        class="eval",
+        prompt="@../../prompts/app-feedback/eval-consensus.md"
+    ]
+    spec_eval_consensus [
+        label="Spec Eval Consensus",
+        class="eval",
+        goal_gate=true,
+        retry_target="spec_fanout",
+        prompt="@../../prompts/app-feedback/eval-consensus.md"
+    ]
+
+    architecture_fanout [shape=component, label="Architecture Candidate Fanout"]
+    architecture_candidate_a [
+        label="Architecture Candidate A - Smallest Surface",
+        class="architecture",
+        prompt="@../../prompts/app-feedback/architecture-candidate-a.md"
+    ]
+    architecture_candidate_b [
+        label="Architecture Candidate B - Extensible Source Pipeline",
+        class="architecture",
+        prompt="@../../prompts/app-feedback/architecture-candidate-b.md"
+    ]
+    architecture_join [shape=tripleoctagon, label="Architecture Candidate Join", join_policy="wait_all"]
+    ensure_architecture_candidates [
+        label="Ensure Architecture Candidate Count",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="architecture_fanout",
+        script="node scripts/app-feedback/ensure-enhancement-candidates.mjs --stage architecture --dir .workflow/enhancement-discovery/architecture-candidates --minimum '{{ inputs.minimum_architecture_candidates|default('2') }}' --out .workflow/enhancement-discovery/evals/architecture-candidate-ensure.json"
+    ]
+    architecture_eval_contract [
+        label="Architecture Contract Eval",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="architecture_fanout",
+        script="node scripts/app-feedback/evaluate-enhancement-artifact.mjs --stage architecture --candidates .workflow/enhancement-discovery/architecture-candidates --out .workflow/enhancement-discovery/evals/architecture-contract.json --minimum-candidates '{{ inputs.minimum_architecture_candidates|default('2') }}' --minimum-eval-score '{{ inputs.minimum_eval_score|default('0.78') }}' --dataset evals/workflow-quality/datasets/enhancement-discovery-golden.jsonl --dataset-version workflow-quality-v1 --prompt-version app-feedback-architecture-candidates-v1 --rubric-version enhancement-discovery-architecture-rubric-v1 --judge-model deterministic-marker-v1 --baseline evals/workflow-quality/baselines/enhancement-discovery-architecture.json --max-regression '{{ inputs.max_eval_regression|default('0.05') }}'"
+    ]
+    architecture_eval_consensus [
+        label="Architecture Eval Consensus",
+        class="eval",
+        goal_gate=true,
+        retry_target="architecture_fanout",
+        prompt="@../../prompts/app-feedback/eval-consensus.md"
+    ]
+
+    workflow_fanout [shape=component, label="Workflow Candidate Fanout"]
+    workflow_candidate_a [
+        label="Workflow Candidate A - Direct Enhancement",
+        class="workflow",
+        prompt="@../../prompts/app-feedback/workflow-candidate-a.md"
+    ]
+    workflow_candidate_b [
+        label="Workflow Candidate B - Generated Subworkflow",
+        class="workflow",
+        prompt="@../../prompts/app-feedback/workflow-candidate-b.md"
+    ]
+    workflow_join [shape=tripleoctagon, label="Workflow Candidate Join", join_policy="wait_all"]
+    ensure_workflow_candidates [
+        label="Ensure Workflow Candidate Count",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="workflow_fanout",
+        script="node scripts/app-feedback/ensure-enhancement-candidates.mjs --stage workflow --dir .workflow/enhancement-discovery/workflow-candidates --minimum '{{ inputs.minimum_workflow_candidates|default('2') }}' --out .workflow/enhancement-discovery/evals/workflow-candidate-ensure.json"
+    ]
+    workflow_eval_contract [
+        label="Workflow Contract Eval",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="workflow_fanout",
+        script="node scripts/app-feedback/evaluate-enhancement-artifact.mjs --stage workflow --candidates .workflow/enhancement-discovery/workflow-candidates --out .workflow/enhancement-discovery/evals/workflow-contract.json --minimum-candidates '{{ inputs.minimum_workflow_candidates|default('2') }}' --minimum-eval-score '{{ inputs.minimum_eval_score|default('0.78') }}' --dataset evals/workflow-quality/datasets/enhancement-discovery-golden.jsonl --dataset-version workflow-quality-v1 --prompt-version app-feedback-workflow-candidates-v1 --rubric-version enhancement-discovery-workflow-rubric-v1 --judge-model deterministic-marker-v1 --baseline evals/workflow-quality/baselines/enhancement-discovery-workflow.json --max-regression '{{ inputs.max_eval_regression|default('0.05') }}'"
+    ]
+    workflow_eval_consensus [
+        label="Workflow Eval Consensus",
+        class="eval",
+        goal_gate=true,
+        retry_target="workflow_fanout",
+        prompt="@../../prompts/app-feedback/eval-consensus.md"
+    ]
+
+    materialize_enhancement_workflow [
+        label="Materialize Enhancement Workflow",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="workflow_fanout",
+        script="node scripts/app-feedback/materialize-enhancement-workflow.mjs --target '{{ inputs.target_adapter|default('consumer-radar') }}' --app-dir '{{ inputs.app_dir|default('apps/generated-consumer-app-radar') }}' --workflow '{{ inputs.generated_workflow|default('workflows/consumer-radar/live-enrichment.fabro') }}' --run-config '{{ inputs.generated_run_config|default('workflows/consumer-radar/live-enrichment.toml') }}' --real-mode '{{ inputs.real_mode|default('true') }}' --allow-fixture-fallback '{{ inputs.allow_fixture_fallback|default('false') }}'"
+    ]
+
+    validate_enhancement_workflow [
+        label="Validate Generated Enhancement Workflow",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="materialize_enhancement_workflow",
+        script="node scripts/app-feedback/validate-enhancement-discovery.mjs --workflow workflows/app-feedback/discover-enhancement.fabro --generated-workflow '{{ inputs.generated_workflow|default('workflows/consumer-radar/live-enrichment.fabro') }}' --out .workflow/enhancement-discovery/generated-workflow-validation.json"
+    ]
+
+    run_generated_enhancement_workflow [
+        label="Run Generated Enhancement Workflow",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="materialize_enhancement_workflow",
+        script="if [ '{{ inputs.execute_generated_workflow|default('false') }}' = 'true' ]; then fabro run '{{ inputs.generated_run_config|default('workflows/consumer-radar/live-enrichment.toml') }}' --no-upgrade-check; else node scripts/app-feedback/fabro-validate-compat.mjs '{{ inputs.generated_workflow|default('workflows/consumer-radar/live-enrichment.fabro') }}' --out .workflow/enhancement-discovery/generated-fabro-validate.json; fi"
+    ]
+
+    simplification_plan [
+        label="Simplification Plan",
+        class="eval",
+        goal_gate=true,
+        retry_target="materialize_enhancement_workflow",
+        prompt="@../../prompts/app-feedback/simplification-plan.md"
+    ]
+
+    final_eval_fanout [shape=component, label="Final Eval Fanout"]
+    final_eval_workflow_quality [
+        label="Final Workflow Quality Eval",
+        class="eval",
+        prompt="@../../prompts/app-feedback/eval-consensus.md"
+    ]
+    final_eval_simplification [
+        label="Final Simplification Eval",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="simplification_plan",
+        script="test '{{ inputs.require_simplification|default('true') }}' != 'true' || test -s .workflow/enhancement-discovery/simplification-plan.md"
+    ]
+    final_eval_join [shape=tripleoctagon, label="Final Eval Join", join_policy="wait_all"]
+    final_eval_consensus [
+        label="Final Eval Consensus",
+        class="eval",
+        goal_gate=true,
+        retry_target="simplification_plan",
+        prompt="@../../prompts/app-feedback/eval-consensus.md"
+    ]
+
+    promptfoo_workflow_quality [
+        label="Promptfoo Workflow Quality Gate",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="simplification_plan",
+        script="node scripts/app-feedback/promptfoo-workflow-quality.mjs --config evals/workflow-quality/enhancement-discovery.yaml --out .workflow/enhancement-discovery/evals/promptfoo-workflow-quality.json --allow-fallback true"
+    ]
+
+    publish_handoff [
+        label="Publish Enhancement Discovery Handoff",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="final_eval_consensus",
+        script="node scripts/app-feedback/publish-enhancement-discovery-handoff.mjs --app-dir '{{ inputs.app_dir|default('apps/generated-consumer-app-radar') }}' --generated-workflow '{{ inputs.generated_workflow|default('workflows/consumer-radar/live-enrichment.fabro') }}' --out .workflow/enhancement-discovery/handoff.json"
+    ]
+
+    start -> bootstrap
+    bootstrap -> parse_requests [condition="outcome=succeeded"]
+    bootstrap -> bootstrap [label="Retry", loop_restart=true]
+    parse_requests -> capability_audit [condition="outcome=succeeded"]
+    parse_requests -> bootstrap [label="Fix"]
+    capability_audit -> spec_fanout [condition="outcome=succeeded"]
+    capability_audit -> parse_requests [label="Fix"]
+    spec_fanout -> spec_candidate_a
+    spec_fanout -> spec_candidate_b
+    spec_fanout -> spec_candidate_c
+    spec_candidate_a -> spec_join
+    spec_candidate_b -> spec_join
+    spec_candidate_c -> spec_join
+    spec_join -> ensure_spec_candidates
+    ensure_spec_candidates -> spec_eval_contract [condition="outcome=succeeded"]
+    ensure_spec_candidates -> spec_fanout [label="Re-spec"]
+    spec_eval_contract -> spec_eval_model [condition="outcome=succeeded"]
+    spec_eval_contract -> spec_fanout [label="Re-spec"]
+    spec_eval_model -> spec_eval_consensus [condition="outcome=succeeded"]
+    spec_eval_model -> spec_fanout [label="Re-spec"]
+    spec_eval_consensus -> architecture_fanout [condition="outcome=succeeded"]
+    spec_eval_consensus -> spec_fanout [label="Re-spec"]
+    architecture_fanout -> architecture_candidate_a
+    architecture_fanout -> architecture_candidate_b
+    architecture_candidate_a -> architecture_join
+    architecture_candidate_b -> architecture_join
+    architecture_join -> ensure_architecture_candidates
+    ensure_architecture_candidates -> architecture_eval_contract [condition="outcome=succeeded"]
+    ensure_architecture_candidates -> architecture_fanout [label="Re-architect"]
+    architecture_eval_contract -> architecture_eval_consensus [condition="outcome=succeeded"]
+    architecture_eval_contract -> architecture_fanout [label="Re-architect"]
+    architecture_eval_consensus -> workflow_fanout [condition="outcome=succeeded"]
+    architecture_eval_consensus -> architecture_fanout [label="Re-architect"]
+    workflow_fanout -> workflow_candidate_a
+    workflow_fanout -> workflow_candidate_b
+    workflow_candidate_a -> workflow_join
+    workflow_candidate_b -> workflow_join
+    workflow_join -> ensure_workflow_candidates
+    ensure_workflow_candidates -> workflow_eval_contract [condition="outcome=succeeded"]
+    ensure_workflow_candidates -> workflow_fanout [label="Re-workflow"]
+    workflow_eval_contract -> workflow_eval_consensus [condition="outcome=succeeded"]
+    workflow_eval_contract -> workflow_fanout [label="Re-workflow"]
+    workflow_eval_consensus -> materialize_enhancement_workflow [condition="outcome=succeeded"]
+    workflow_eval_consensus -> workflow_fanout [label="Re-workflow"]
+    materialize_enhancement_workflow -> validate_enhancement_workflow [condition="outcome=succeeded"]
+    materialize_enhancement_workflow -> workflow_fanout [label="Fix"]
+    validate_enhancement_workflow -> run_generated_enhancement_workflow [condition="outcome=succeeded"]
+    validate_enhancement_workflow -> materialize_enhancement_workflow [label="Fix"]
+    run_generated_enhancement_workflow -> simplification_plan [condition="outcome=succeeded"]
+    run_generated_enhancement_workflow -> materialize_enhancement_workflow [label="Fix"]
+    simplification_plan -> final_eval_fanout [condition="outcome=succeeded"]
+    simplification_plan -> materialize_enhancement_workflow [label="Fix"]
+    final_eval_fanout -> final_eval_workflow_quality
+    final_eval_fanout -> final_eval_simplification
+    final_eval_workflow_quality -> final_eval_join
+    final_eval_simplification -> final_eval_join
+    final_eval_join -> final_eval_consensus
+    final_eval_consensus -> promptfoo_workflow_quality [condition="outcome=succeeded"]
+    final_eval_consensus -> simplification_plan [label="Fix"]
+    promptfoo_workflow_quality -> publish_handoff [condition="outcome=succeeded"]
+    promptfoo_workflow_quality -> simplification_plan [label="Fix"]
+    publish_handoff -> exit [condition="outcome=succeeded"]
+    publish_handoff -> final_eval_consensus [label="Fix"]
+}
