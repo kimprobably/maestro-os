@@ -1758,7 +1758,7 @@
     "kind": "running"
   },
   "status_updated_at": "2026-05-13T18:19:47.605663104Z",
-  "last_event_at": "2026-05-13T18:20:00.571861295Z",
+  "last_event_at": "2026-05-13T18:20:59.773506749Z",
   "pending_control": null,
   "checkpoints": [
     {
@@ -1943,9 +1943,9 @@
       }
     },
     {
-      "seq": 0,
+      "seq": 48,
       "checkpoint": {
-        "timestamp": "2026-05-13T18:20:00.725426387Z",
+        "timestamp": "2026-05-13T18:20:04.875366148Z",
         "current_node": "capability_audit",
         "completed_nodes": [
           "start",
@@ -1955,34 +1955,148 @@
         ],
         "node_retries": {},
         "context_values": {
-          "internal.retry_count.bootstrap": 0,
-          "graph.persona": "eval-driven-workflow-builder",
-          "graph.fallback_retry_target": "workflow_fanout",
-          "outcome": "succeeded",
-          "graph.default_max_retries": "2",
-          "graph.rankdir": "LR",
-          "internal.node_visit_count": 1,
-          "failure_signature": "",
-          "graph.retry_target": "spec_fanout",
-          "thread.bootstrap.current_node": "parse_requests",
-          "internal.retry_count.parse_requests": 0,
-          "internal.retry_count.start": 0,
           "current_node": "capability_audit",
+          "internal.retry_count.bootstrap": 0,
+          "failure_signature": "",
+          "graph.fallback_retry_target": "workflow_fanout",
+          "graph.outputs": "capability_audit, selected_spec, selected_architecture, generated_enhancement_workflow, eval_reports, simplification_plan, final_handoff",
+          "internal.node_visit_count": 1,
+          "graph.model_stylesheet": "\n            *             { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: low; }\n            .spec          { provider: openrouter; model: google/gemini-3.1-pro-preview; reasoning_effort: high; }\n            .architecture  { provider: openrouter; model: qwen/qwen3.6-plus; reasoning_effort: high; }\n            .workflow      { provider: openrouter; model: moonshotai/kimi-k2.6; reasoning_effort: high; }\n            .eval          { provider: openrouter; model: deepseek/deepseek-v4-pro; reasoning_effort: high; }\n            .cheap         { provider: openrouter; model: deepseek/deepseek-v4-flash; reasoning_effort: low; }\n        ",
+          "internal.retry_count.capability_audit": 0,
+          "internal.run_id": "01KRH91QR7AVN4R2SQ2NM1MZTQ",
+          "internal.work_dir": "/home/daytona/workspace",
+          "thread.bootstrap.current_node": "parse_requests",
+          "thread.parse_requests.current_node": "capability_audit",
+          "failure_class": "",
+          "outcome": "succeeded",
+          "internal.retry_count.parse_requests": 0,
+          "thread.start.current_node": "bootstrap",
+          "graph.default_max_retries": "2",
+          "internal.fidelity": "compact",
+          "graph.goal": "Use eval-driven development to discover the real Consumer Radar enhancement workflow required by product feedback",
+          "graph.persona": "eval-driven-workflow-builder",
+          "graph.retry_target": "spec_fanout",
+          "graph.rankdir": "LR",
+          "internal.retry_count.start": 0,
+          "internal.thread_id": "parse_requests",
+          "command.output": "blob://sha256/2e78300898c34f783a2884184c50c33fefa4187fbe6f72d65e360ac55f308272",
+          "graph.inputs": "app_dir, feedback_path, target_adapter, generated_workflow, generated_run_config, real_mode, allow_fixture_fallback, execute_generated_workflow, minimum_spec_candidates, minimum_architecture_candidates, minimum_workflow_candidates, minimum_eval_score, max_eval_regression, minimum_active_reviews, require_simplification"
+        },
+        "node_outcomes": {
+          "parse_requests": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/b8ad9745eb032e1529021db56fb0316d1bbac9211156d215e74bdc779585d3f0"
+            },
+            "notes": "Script completed: node scripts/app-feedback/parse-feedback.mjs --feedback 'feedback/consumer-radar-product-feedback.md' --out .workflow/enhancement-discovery/request-analysis.json",
+            "usage": null
+          },
+          "bootstrap": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/17c1b04b31687cffbb38c881b0ef8a6627d35f81c1821b18657bfc69bf73029b"
+            },
+            "notes": "Script completed: mkdir -p .workflow/enhancement-discovery/spec-candidates .workflow/enhancement-discovery/architecture-candidates .workflow/enhancement-discovery/workflow-candidates .workflow/enhancement-discovery/evals; test -f 'feedback/consumer-radar-product-feedback.md'; test -d 'apps/generated-consumer-app-radar'; echo eval_driven_development test_driven_development",
+            "usage": null
+          },
+          "capability_audit": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/2e78300898c34f783a2884184c50c33fefa4187fbe6f72d65e360ac55f308272"
+            },
+            "notes": "Script completed: node scripts/app-feedback/analyze-enhancement-capabilities.mjs --app-dir 'apps/generated-consumer-app-radar' --analysis .workflow/enhancement-discovery/request-analysis.json --target 'consumer-radar' --out .workflow/enhancement-discovery/capability-audit.json",
+            "usage": null
+          },
+          "start": {
+            "status": "succeeded",
+            "usage": null
+          }
+        },
+        "next_node_id": "spec_fanout",
+        "git_commit_sha": "ad801c2316d699b2686d06f8c7fec0bb7c4b0656",
+        "node_visits": {
+          "capability_audit": 1,
+          "start": 1,
+          "parse_requests": 1,
+          "bootstrap": 1
+        }
+      },
+      "diff": {
+        "summary": {
+          "files_changed": 0,
+          "additions": 0,
+          "deletions": 0
+        }
+      }
+    },
+    {
+      "seq": 0,
+      "checkpoint": {
+        "timestamp": "2026-05-13T18:20:59.858014151Z",
+        "current_node": "spec_fanout",
+        "completed_nodes": [
+          "start",
+          "bootstrap",
+          "parse_requests",
+          "capability_audit",
+          "spec_fanout"
+        ],
+        "node_retries": {},
+        "context_values": {
+          "internal.retry_count.bootstrap": 0,
+          "graph.fallback_retry_target": "workflow_fanout",
+          "outcome": "partially_succeeded",
+          "thread.capability_audit.current_node": "spec_fanout",
+          "graph.default_max_retries": "2",
+          "internal.node_visit_count": 1,
+          "internal.retry_count.parse_requests": 0,
+          "parallel.results": [
+            {
+              "id": "spec_candidate_a",
+              "status": "failed",
+              "head_sha": "cce997015f0a86dc15687a6d57416c6d63d6e493"
+            },
+            {
+              "id": "spec_candidate_b",
+              "status": "succeeded",
+              "head_sha": "90f391a792f644097f3e407bb1e5040eb2ad0422"
+            },
+            {
+              "id": "spec_candidate_c",
+              "status": "failed",
+              "head_sha": "1427f8c92423a28a047f8f030aa46252a7f959b1"
+            }
+          ],
+          "graph.retry_target": "spec_fanout",
+          "graph.outputs": "capability_audit, selected_spec, selected_architecture, generated_enhancement_workflow, eval_reports, simplification_plan, final_handoff",
+          "graph.model_stylesheet": "\n            *             { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: low; }\n            .spec          { provider: openrouter; model: google/gemini-3.1-pro-preview; reasoning_effort: high; }\n            .architecture  { provider: openrouter; model: qwen/qwen3.6-plus; reasoning_effort: high; }\n            .workflow      { provider: openrouter; model: moonshotai/kimi-k2.6; reasoning_effort: high; }\n            .eval          { provider: openrouter; model: deepseek/deepseek-v4-pro; reasoning_effort: high; }\n            .cheap         { provider: openrouter; model: deepseek/deepseek-v4-flash; reasoning_effort: low; }\n        ",
+          "thread.start.current_node": "bootstrap",
+          "internal.run_id": "01KRH91QR7AVN4R2SQ2NM1MZTQ",
+          "graph.persona": "eval-driven-workflow-builder",
+          "graph.rankdir": "LR",
+          "thread.bootstrap.current_node": "parse_requests",
+          "failure_signature": "",
+          "parallel.branch_count": 3,
+          "thread.parse_requests.current_node": "capability_audit",
+          "internal.retry_count.start": 0,
+          "current_node": "spec_fanout",
           "command.output": "blob://sha256/2e78300898c34f783a2884184c50c33fefa4187fbe6f72d65e360ac55f308272",
           "graph.inputs": "app_dir, feedback_path, target_adapter, generated_workflow, generated_run_config, real_mode, allow_fixture_fallback, execute_generated_workflow, minimum_spec_candidates, minimum_architecture_candidates, minimum_workflow_candidates, minimum_eval_score, max_eval_regression, minimum_active_reviews, require_simplification",
           "graph.goal": "Use eval-driven development to discover the real Consumer Radar enhancement workflow required by product feedback",
           "internal.work_dir": "/home/daytona/workspace",
-          "thread.parse_requests.current_node": "capability_audit",
-          "graph.outputs": "capability_audit, selected_spec, selected_architecture, generated_enhancement_workflow, eval_reports, simplification_plan, final_handoff",
           "internal.retry_count.capability_audit": 0,
-          "graph.model_stylesheet": "\n            *             { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: low; }\n            .spec          { provider: openrouter; model: google/gemini-3.1-pro-preview; reasoning_effort: high; }\n            .architecture  { provider: openrouter; model: qwen/qwen3.6-plus; reasoning_effort: high; }\n            .workflow      { provider: openrouter; model: moonshotai/kimi-k2.6; reasoning_effort: high; }\n            .eval          { provider: openrouter; model: deepseek/deepseek-v4-pro; reasoning_effort: high; }\n            .cheap         { provider: openrouter; model: deepseek/deepseek-v4-flash; reasoning_effort: low; }\n        ",
+          "internal.retry_count.spec_fanout": 0,
           "internal.fidelity": "compact",
-          "internal.thread_id": "parse_requests",
-          "thread.start.current_node": "bootstrap",
-          "internal.run_id": "01KRH91QR7AVN4R2SQ2NM1MZTQ",
+          "internal.thread_id": "capability_audit",
           "failure_class": ""
         },
         "node_outcomes": {
+          "spec_fanout": {
+            "status": "partially_succeeded",
+            "jump_to_node": "spec_join",
+            "notes": "Parallel node dispatched 3 branches (1 succeeded, 2 failed)",
+            "usage": null
+          },
           "parse_requests": {
             "status": "succeeded",
             "context_updates": {
@@ -2012,8 +2126,9 @@
             "usage": null
           }
         },
-        "next_node_id": "spec_fanout",
+        "next_node_id": "spec_join",
         "node_visits": {
+          "spec_fanout": 1,
           "parse_requests": 1,
           "bootstrap": 1,
           "capability_audit": 1,
@@ -2040,11 +2155,64 @@
   "superseded_by": null,
   "pending_interviews": {},
   "stages": {
+    "spec_fanout@1": {
+      "first_event_seq": 51,
+      "prompt": null,
+      "response": null,
+      "completion": null,
+      "provider_used": {
+        "mode": "agent",
+        "provider": "openrouter",
+        "model": "google/gemini-3.1-pro-preview"
+      },
+      "diff": null,
+      "script_invocation": null,
+      "script_timing": null,
+      "parallel_results": [
+        {
+          "id": "spec_candidate_a",
+          "status": "failed",
+          "head_sha": "cce997015f0a86dc15687a6d57416c6d63d6e493"
+        },
+        {
+          "id": "spec_candidate_b",
+          "status": "succeeded",
+          "head_sha": "90f391a792f644097f3e407bb1e5040eb2ad0422"
+        },
+        {
+          "id": "spec_candidate_c",
+          "status": "failed",
+          "head_sha": "1427f8c92423a28a047f8f030aa46252a7f959b1"
+        }
+      ],
+      "output": null,
+      "started_at": "2026-05-13T18:20:04.879247642Z",
+      "handler": "parallel",
+      "usage": {
+        "input_tokens": 44148,
+        "output_tokens": 2919,
+        "total_tokens": 47067,
+        "reasoning_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "total_usd_micros": 123324
+      },
+      "model": {
+        "provider": "openrouter",
+        "model_id": "google/gemini-3.1-pro-preview"
+      },
+      "state": "running"
+    },
     "capability_audit@1": {
       "first_event_seq": 40,
       "prompt": null,
       "response": null,
-      "completion": null,
+      "completion": {
+        "outcome": "succeeded",
+        "notes": "Script completed: node scripts/app-feedback/analyze-enhancement-capabilities.mjs --app-dir 'apps/generated-consumer-app-radar' --analysis .workflow/enhancement-discovery/request-analysis.json --target 'consumer-radar' --out .workflow/enhancement-discovery/capability-audit.json",
+        "failure_reason": null,
+        "timestamp": "2026-05-13T18:20:00.724611043Z"
+      },
       "provider_used": null,
       "diff": null,
       "script_invocation": {
@@ -2067,6 +2235,7 @@
       "termination": "exited",
       "started_at": "2026-05-13T18:19:58.781743238Z",
       "handler": "command",
+      "duration_ms": 1790,
       "usage": {
         "input_tokens": 0,
         "output_tokens": 0,
@@ -2074,6 +2243,31 @@
         "reasoning_tokens": 0,
         "cache_read_tokens": 0,
         "cache_write_tokens": 0
+      },
+      "state": "succeeded"
+    },
+    "spec_candidate_b@1": {
+      "first_event_seq": 76,
+      "prompt": null,
+      "response": null,
+      "completion": null,
+      "provider_used": null,
+      "diff": null,
+      "script_invocation": null,
+      "script_timing": null,
+      "parallel_results": null,
+      "output": null,
+      "usage": {
+        "input_tokens": 44148,
+        "output_tokens": 2919,
+        "total_tokens": 47067,
+        "reasoning_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "model": {
+        "provider": "openrouter",
+        "model_id": "google/gemini-3.1-pro-preview-20260219"
       },
       "state": "running"
     },
