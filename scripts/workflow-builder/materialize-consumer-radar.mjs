@@ -1,8 +1,10 @@
 #!/usr/bin/env node
 import { mkdirSync, writeFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
+import { fileURLToPath } from "node:url";
 
-const repoRoot = resolve(import.meta.dirname, "../..");
+const here = dirname(fileURLToPath(import.meta.url));
+const repoRoot = resolve(here, "../..");
 
 function argValue(name, fallback) {
   const index = process.argv.indexOf(name);

@@ -1,9 +1,12 @@
 #!/usr/bin/env node
 import { existsSync, rmSync, readFileSync } from "node:fs";
 import { resolve } from "node:path";
+import { dirname } from "node:path";
 import { spawnSync } from "node:child_process";
+import { fileURLToPath } from "node:url";
 
-const repoRoot = resolve(import.meta.dirname, "../..");
+const here = dirname(fileURLToPath(import.meta.url));
+const repoRoot = resolve(here, "../..");
 const outDir = resolve(repoRoot, ".workflow/test-consumer-radar-builder");
 
 rmSync(outDir, { recursive: true, force: true });
