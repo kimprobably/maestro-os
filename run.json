@@ -327,7 +327,7 @@
     "kind": "running"
   },
   "status_updated_at": "2026-05-13T13:18:25.513232Z",
-  "last_event_at": "2026-05-13T13:18:39.077603Z",
+  "last_event_at": "2026-05-13T13:18:41.539325Z",
   "pending_control": null,
   "checkpoints": [
     {
@@ -494,9 +494,9 @@
       }
     },
     {
-      "seq": 0,
+      "seq": 49,
       "checkpoint": {
-        "timestamp": "2026-05-13T13:18:39.261854Z",
+        "timestamp": "2026-05-13T13:18:41.539177Z",
         "current_node": "write_report",
         "completed_nodes": [
           "start",
@@ -506,28 +506,40 @@
         ],
         "node_retries": {},
         "context_values": {
-          "internal.node_visit_count": 1,
-          "current_node": "write_report",
-          "graph.outputs": "environment_report",
-          "graph.goal": "Verify the shared Daytona code-factory environment boots with the expected tools",
-          "thread.check_agent_state.current_node": "write_report",
-          "outcome": "succeeded",
-          "thread.check_environment.current_node": "check_agent_state",
-          "internal.work_dir": "/home/daytona/workspace",
-          "internal.run_id": "01KRGQSYTMGFWS1SQDA0W952Q8",
-          "failure_signature": "",
-          "command.output": "blob://sha256/17b0a002bc5ee0bfa1cd8b043400f8c1bf542efd4523643648663bd7721d757e",
-          "internal.retry_count.check_environment": 0,
-          "thread.start.current_node": "check_environment",
-          "internal.retry_count.write_report": 0,
-          "internal.fidelity": "compact",
-          "failure_class": "",
-          "graph.persona": "workflow-registry",
           "internal.thread_id": "check_agent_state",
+          "internal.fidelity": "compact",
+          "failure_signature": "",
           "internal.retry_count.check_agent_state": 0,
-          "internal.retry_count.start": 0
+          "internal.retry_count.check_environment": 0,
+          "internal.retry_count.write_report": 0,
+          "graph.goal": "Verify the shared Daytona code-factory environment boots with the expected tools",
+          "internal.work_dir": "/home/daytona/workspace",
+          "thread.check_environment.current_node": "check_agent_state",
+          "thread.start.current_node": "check_environment",
+          "graph.outputs": "environment_report",
+          "internal.node_visit_count": 1,
+          "internal.retry_count.start": 0,
+          "outcome": "succeeded",
+          "thread.check_agent_state.current_node": "write_report",
+          "command.output": "blob://sha256/17b0a002bc5ee0bfa1cd8b043400f8c1bf542efd4523643648663bd7721d757e",
+          "failure_class": "",
+          "internal.run_id": "01KRGQSYTMGFWS1SQDA0W952Q8",
+          "current_node": "write_report",
+          "graph.persona": "workflow-registry"
         },
         "node_outcomes": {
+          "check_agent_state": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/d0d37f54d2ab3aebe561dee9349fd28dd919571e50821b70817500540e9cf96a"
+            },
+            "notes": "Script completed: test -n \"${MAESTRO_AGENT_STATE_DIR:-}\"; test -d \"$MAESTRO_AGENT_STATE_DIR\"; test -w \"$MAESTRO_AGENT_STATE_DIR\"; mkdir -p \"$MAESTRO_AGENT_STATE_DIR/smoke\"; printf '%s\\n' volume-ready > \"$MAESTRO_AGENT_STATE_DIR/smoke/last-check.txt\"; cat \"$MAESTRO_AGENT_STATE_DIR/smoke/last-check.txt\"",
+            "usage": null
+          },
+          "start": {
+            "status": "succeeded",
+            "usage": null
+          },
           "write_report": {
             "status": "succeeded",
             "context_updates": {
@@ -543,32 +555,60 @@
             },
             "notes": "Script completed: mkdir -p .workflow/fabro; node -e \"const fs=require('fs'); const {spawnSync}=require('child_process'); const run=(cmd,args=[])=>{const r=spawnSync(cmd,args,{encoding:'utf8',timeout:45000}); return {cmd:[cmd,...args].join(' '), status:r.status, stdout:(r.stdout||'').trim().slice(0,400), stderr:(r.stderr||'').trim().slice(0,400)};}; const checks=[run('node',['--version']),run('npm',['--version']),run('bun',['--version']),run('qlty',['--version']),run('spec-kitty',['--version']),run('promptfoo',['--version']),run('claude',['--version']),run('codex',['--version']),run('curl',['-fsS','--max-time','20','https://api.github.com/rate_limit'])]; const env=['OPENROUTER_API_KEY','DAYTONA_API_KEY','LINEAR_API_KEY','FABRO_SLACK_BOT_TOKEN','FABRO_SLACK_CHANNEL_ID','APIFY_TOKEN'].reduce((acc,key)=>{const value=process.env[key]||''; const unresolved=value.charCodeAt(0)===123 && value.charCodeAt(1)===123; acc[key]=Boolean(value && !unresolved); return acc;},{}); const required=['node --version','npm --version','bun --version','qlty --version','spec-kitty --version','promptfoo --version','curl -fsS --max-time 20 https://api.github.com/rate_limit']; const failed=checks.filter((check)=>required.includes(check.cmd) && check.status!==0); const report={ok:failed.length===0, failed, checks, env}; fs.writeFileSync('.workflow/fabro/daytona-environment-smoke.json', JSON.stringify(report,null,2)+'\\n'); console.log(JSON.stringify(report,null,2)); if(!report.ok) process.exit(1);\"",
             "usage": null
-          },
-          "start": {
-            "status": "succeeded",
-            "usage": null
-          },
-          "check_agent_state": {
-            "status": "succeeded",
-            "context_updates": {
-              "command.output": "blob://sha256/d0d37f54d2ab3aebe561dee9349fd28dd919571e50821b70817500540e9cf96a"
-            },
-            "notes": "Script completed: test -n \"${MAESTRO_AGENT_STATE_DIR:-}\"; test -d \"$MAESTRO_AGENT_STATE_DIR\"; test -w \"$MAESTRO_AGENT_STATE_DIR\"; mkdir -p \"$MAESTRO_AGENT_STATE_DIR/smoke\"; printf '%s\\n' volume-ready > \"$MAESTRO_AGENT_STATE_DIR/smoke/last-check.txt\"; cat \"$MAESTRO_AGENT_STATE_DIR/smoke/last-check.txt\"",
-            "usage": null
           }
         },
         "next_node_id": "exit",
+        "git_commit_sha": "2866478ec591411cc3059bc24bfeb2323693097d",
         "node_visits": {
-          "write_report": 1,
+          "check_agent_state": 1,
           "start": 1,
-          "check_environment": 1,
-          "check_agent_state": 1
+          "write_report": 1,
+          "check_environment": 1
         }
       },
-      "diff": {}
+      "diff": {
+        "summary": {
+          "files_changed": 0,
+          "additions": 0,
+          "deletions": 0
+        }
+      }
     }
   ],
-  "conclusion": null,
+  "conclusion": {
+    "timestamp": "2026-05-13T13:18:41.561456Z",
+    "status": "succeeded",
+    "duration_ms": 16026,
+    "final_git_commit_sha": "2866478ec591411cc3059bc24bfeb2323693097d",
+    "stages": [
+      {
+        "stage_id": "start",
+        "stage_label": "start",
+        "duration_ms": 0,
+        "retries": 0
+      },
+      {
+        "stage_id": "check_environment",
+        "stage_label": "check_environment",
+        "duration_ms": 3448,
+        "retries": 0
+      },
+      {
+        "stage_id": "check_agent_state",
+        "stage_label": "check_agent_state",
+        "duration_ms": 2096,
+        "retries": 0
+      },
+      {
+        "stage_id": "write_report",
+        "stage_label": "write_report",
+        "duration_ms": 1523,
+        "retries": 0
+      }
+    ],
+    "total_retries": 0,
+    "diff": {}
+  },
   "sandbox": {
     "provider": "daytona",
     "image": "buildpack-deps:noble",
@@ -589,7 +629,12 @@
       "first_event_seq": 41,
       "prompt": null,
       "response": null,
-      "completion": null,
+      "completion": {
+        "outcome": "succeeded",
+        "notes": "Script completed: node -e \"const fs=require('fs'); const report=JSON.parse(fs.readFileSync('.workflow/fabro/daytona-environment-smoke.json','utf8')); const lines=['# Daytona Environment Smoke','', 'ok=' + report.ok, '', '## Tools', ...report.checks.map((check)=>'- ' + check.cmd + ' status=' + check.status + (check.stdout ? ' output=' + check.stdout.split('\\n')[0] : '')), '', '## Env', ...Object.entries(report.env).map(([key,value])=>'- ' + key + '=' + value)]; fs.writeFileSync('.workflow/fabro/daytona-environment-smoke.md', lines.join('\\n')+'\\n'); console.log(lines.join('\\n')); if(!report.ok) process.exit(1);\"",
+        "failure_reason": null,
+        "timestamp": "2026-05-13T13:18:39.261123Z"
+      },
       "provider_used": null,
       "diff": null,
       "script_invocation": {
@@ -612,6 +657,7 @@
       "termination": "exited",
       "started_at": "2026-05-13T13:18:37.554136Z",
       "handler": "command",
+      "duration_ms": 1523,
       "usage": {
         "input_tokens": 0,
         "output_tokens": 0,
@@ -620,7 +666,7 @@
         "cache_read_tokens": 0,
         "cache_write_tokens": 0
       },
-      "state": "running"
+      "state": "succeeded"
     },
     "check_environment@1": {
       "first_event_seq": 20,
@@ -698,6 +744,35 @@
       "started_at": "2026-05-13T13:18:32.971282Z",
       "handler": "command",
       "duration_ms": 2096,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "total_tokens": 0,
+        "reasoning_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "state": "succeeded"
+    },
+    "exit@1": {
+      "first_event_seq": 52,
+      "prompt": null,
+      "response": null,
+      "completion": {
+        "outcome": "succeeded",
+        "notes": null,
+        "failure_reason": null,
+        "timestamp": "2026-05-13T13:18:41.539325Z"
+      },
+      "provider_used": null,
+      "diff": null,
+      "script_invocation": null,
+      "script_timing": null,
+      "parallel_results": null,
+      "output": null,
+      "started_at": "2026-05-13T13:18:41.539304Z",
+      "handler": "exit",
+      "duration_ms": 0,
       "usage": {
         "input_tokens": 0,
         "output_tokens": 0,
