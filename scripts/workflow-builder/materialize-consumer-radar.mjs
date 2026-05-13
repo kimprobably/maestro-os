@@ -1559,6 +1559,15 @@ providers:
 evaluateOptions:
   maxConcurrency: 1
 
+defaultTest:
+  options:
+    provider:
+      id: openrouter:anthropic/claude-haiku-4-5
+      config:
+        apiKeyEnvar: OPENROUTER_API_KEY
+        temperature: 0
+        max_tokens: 400
+
 prompts:
   - |
     Evaluate whether the generated Consumer App Radar fixture identifies fast-growing consumer iPhone apps, growth signals, social strategy, review themes, and feature requests.
