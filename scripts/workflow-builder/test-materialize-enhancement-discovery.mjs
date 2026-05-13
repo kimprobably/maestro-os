@@ -34,9 +34,17 @@ const requiredFiles = [
   "scripts/app-feedback/analyze-enhancement-capabilities.mjs",
   "scripts/app-feedback/evaluate-enhancement-artifact.mjs",
   "scripts/app-feedback/materialize-enhancement-workflow.mjs",
+  "scripts/app-feedback/live-source-preflight.mjs",
+  "scripts/app-feedback/promptfoo-workflow-quality.mjs",
   "scripts/app-feedback/validate-enhancement-discovery.mjs",
   "scripts/app-feedback/publish-enhancement-discovery-handoff.mjs",
+  "scripts/app-feedback/test-eval-lineage-contract.mjs",
   "scripts/workflow-builder/validate-enhancement-discovery-builder.mjs",
+  "evals/workflow-quality/enhancement-discovery.yaml",
+  "evals/workflow-quality/datasets/enhancement-discovery-golden.jsonl",
+  "evals/workflow-quality/baselines/enhancement-discovery-spec.json",
+  "evals/workflow-quality/baselines/enhancement-discovery-architecture.json",
+  "evals/workflow-quality/baselines/enhancement-discovery-workflow.json",
   "prompts/app-feedback/spec-candidate-a.md",
   "prompts/app-feedback/spec-candidate-b.md",
   "prompts/app-feedback/spec-candidate-c.md",
@@ -106,6 +114,7 @@ for (const marker of [
   "simplification_plan",
   "final_eval_fanout",
   "final_eval_consensus",
+  "promptfoo_workflow_quality",
 ]) {
   if (!workflow.includes(marker)) throw new Error(`workflow missing marker: ${marker}`);
 }
@@ -117,6 +126,7 @@ for (const marker of [
   "minimum_architecture_candidates",
   "minimum_workflow_candidates",
   "minimum_eval_score",
+  "max_eval_regression",
   "require_simplification",
 ]) {
   if (!toml.includes(marker) && !workflow.includes(marker)) {
@@ -138,6 +148,10 @@ for (const marker of [
   "minimum_eval_score",
   "candidate_count",
   "scores",
+  "lineage",
+  "dataset_sha256",
+  "baseline",
+  "delta",
   "VERDICT",
   "REJECTED",
 ]) {

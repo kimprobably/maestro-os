@@ -2,7 +2,7 @@ digraph EnhancementDiscovery {
     graph [
         goal="Turn app enhancement requests into an evaluated spec, architecture, generated enhancement workflow, simplification pass, and release handoff",
         persona="eval-driven-workflow-builder",
-        inputs="app_dir, feedback_path, target_adapter, generated_workflow, generated_run_config, real_mode, allow_fixture_fallback, execute_generated_workflow, minimum_spec_candidates, minimum_architecture_candidates, minimum_workflow_candidates, minimum_eval_score, minimum_active_reviews, require_simplification",
+        inputs="app_dir, feedback_path, target_adapter, generated_workflow, generated_run_config, real_mode, allow_fixture_fallback, execute_generated_workflow, minimum_spec_candidates, minimum_architecture_candidates, minimum_workflow_candidates, minimum_eval_score, max_eval_regression, minimum_active_reviews, require_simplification",
         outputs="capability_audit, selected_spec, selected_architecture, generated_enhancement_workflow, eval_reports, simplification_plan, final_handoff",
         default_max_retries=2,
         retry_target="spec_fanout",
@@ -69,7 +69,7 @@ digraph EnhancementDiscovery {
         shape=parallelogram,
         goal_gate=true,
         retry_target="spec_fanout",
-        script="node scripts/app-feedback/evaluate-enhancement-artifact.mjs --stage spec --candidates .workflow/enhancement-discovery/spec-candidates --out .workflow/enhancement-discovery/evals/spec-contract.json --minimum-candidates '{{ inputs.minimum_spec_candidates|default('3') }}' --minimum-eval-score '{{ inputs.minimum_eval_score|default('0.78') }}'"
+        script="node scripts/app-feedback/evaluate-enhancement-artifact.mjs --stage spec --candidates .workflow/enhancement-discovery/spec-candidates --out .workflow/enhancement-discovery/evals/spec-contract.json --minimum-candidates '{{ inputs.minimum_spec_candidates|default('3') }}' --minimum-eval-score '{{ inputs.minimum_eval_score|default('0.78') }}' --dataset evals/workflow-quality/datasets/enhancement-discovery-golden.jsonl --dataset-version workflow-quality-v1 --prompt-version app-feedback-spec-candidates-v1 --rubric-version enhancement-discovery-spec-rubric-v1 --judge-model deterministic-marker-v1 --baseline evals/workflow-quality/baselines/enhancement-discovery-spec.json --max-regression '{{ inputs.max_eval_regression|default('0.05') }}'"
     ]
     spec_eval_model [
         label="Spec Rubric Eval",
@@ -102,7 +102,7 @@ digraph EnhancementDiscovery {
         shape=parallelogram,
         goal_gate=true,
         retry_target="architecture_fanout",
-        script="node scripts/app-feedback/evaluate-enhancement-artifact.mjs --stage architecture --candidates .workflow/enhancement-discovery/architecture-candidates --out .workflow/enhancement-discovery/evals/architecture-contract.json --minimum-candidates '{{ inputs.minimum_architecture_candidates|default('2') }}' --minimum-eval-score '{{ inputs.minimum_eval_score|default('0.78') }}'"
+        script="node scripts/app-feedback/evaluate-enhancement-artifact.mjs --stage architecture --candidates .workflow/enhancement-discovery/architecture-candidates --out .workflow/enhancement-discovery/evals/architecture-contract.json --minimum-candidates '{{ inputs.minimum_architecture_candidates|default('2') }}' --minimum-eval-score '{{ inputs.minimum_eval_score|default('0.78') }}' --dataset evals/workflow-quality/datasets/enhancement-discovery-golden.jsonl --dataset-version workflow-quality-v1 --prompt-version app-feedback-architecture-candidates-v1 --rubric-version enhancement-discovery-architecture-rubric-v1 --judge-model deterministic-marker-v1 --baseline evals/workflow-quality/baselines/enhancement-discovery-architecture.json --max-regression '{{ inputs.max_eval_regression|default('0.05') }}'"
     ]
     architecture_eval_consensus [
         label="Architecture Eval Consensus",
@@ -129,7 +129,7 @@ digraph EnhancementDiscovery {
         shape=parallelogram,
         goal_gate=true,
         retry_target="workflow_fanout",
-        script="node scripts/app-feedback/evaluate-enhancement-artifact.mjs --stage workflow --candidates .workflow/enhancement-discovery/workflow-candidates --out .workflow/enhancement-discovery/evals/workflow-contract.json --minimum-candidates '{{ inputs.minimum_workflow_candidates|default('2') }}' --minimum-eval-score '{{ inputs.minimum_eval_score|default('0.78') }}'"
+        script="node scripts/app-feedback/evaluate-enhancement-artifact.mjs --stage workflow --candidates .workflow/enhancement-discovery/workflow-candidates --out .workflow/enhancement-discovery/evals/workflow-contract.json --minimum-candidates '{{ inputs.minimum_workflow_candidates|default('2') }}' --minimum-eval-score '{{ inputs.minimum_eval_score|default('0.78') }}' --dataset evals/workflow-quality/datasets/enhancement-discovery-golden.jsonl --dataset-version workflow-quality-v1 --prompt-version app-feedback-workflow-candidates-v1 --rubric-version enhancement-discovery-workflow-rubric-v1 --judge-model deterministic-marker-v1 --baseline evals/workflow-quality/baselines/enhancement-discovery-workflow.json --max-regression '{{ inputs.max_eval_regression|default('0.05') }}'"
     ]
     workflow_eval_consensus [
         label="Workflow Eval Consensus",
@@ -193,6 +193,14 @@ digraph EnhancementDiscovery {
         prompt="@../../prompts/app-feedback/eval-consensus.md"
     ]
 
+    promptfoo_workflow_quality [
+        label="Promptfoo Workflow Quality Gate",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="simplification_plan",
+        script="node scripts/app-feedback/promptfoo-workflow-quality.mjs --config evals/workflow-quality/enhancement-discovery.yaml --out .workflow/enhancement-discovery/evals/promptfoo-workflow-quality.json --allow-fallback true"
+    ]
+
     publish_handoff [
         label="Publish Enhancement Discovery Handoff",
         shape=parallelogram,
@@ -251,8 +259,10 @@ digraph EnhancementDiscovery {
     final_eval_workflow_quality -> final_eval_join
     final_eval_simplification -> final_eval_join
     final_eval_join -> final_eval_consensus
-    final_eval_consensus -> publish_handoff [condition="outcome=succeeded"]
+    final_eval_consensus -> promptfoo_workflow_quality [condition="outcome=succeeded"]
     final_eval_consensus -> simplification_plan [label="Fix"]
+    promptfoo_workflow_quality -> publish_handoff [condition="outcome=succeeded"]
+    promptfoo_workflow_quality -> simplification_plan [label="Fix"]
     publish_handoff -> exit [condition="outcome=succeeded"]
     publish_handoff -> final_eval_consensus [label="Fix"]
 }

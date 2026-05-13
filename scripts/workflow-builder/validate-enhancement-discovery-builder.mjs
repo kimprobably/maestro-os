@@ -8,8 +8,14 @@ const required = [
   "scripts/app-feedback/evaluate-enhancement-artifact.mjs",
   "scripts/app-feedback/materialize-enhancement-workflow.mjs",
   "scripts/app-feedback/live-source-preflight.mjs",
+  "scripts/app-feedback/promptfoo-workflow-quality.mjs",
   "scripts/app-feedback/validate-enhancement-discovery.mjs",
   "scripts/app-feedback/publish-enhancement-discovery-handoff.mjs",
+  "evals/workflow-quality/enhancement-discovery.yaml",
+  "evals/workflow-quality/datasets/enhancement-discovery-golden.jsonl",
+  "evals/workflow-quality/baselines/enhancement-discovery-spec.json",
+  "evals/workflow-quality/baselines/enhancement-discovery-architecture.json",
+  "evals/workflow-quality/baselines/enhancement-discovery-workflow.json",
   "prompts/app-feedback/spec-candidate-a.md",
   "prompts/app-feedback/spec-candidate-b.md",
   "prompts/app-feedback/spec-candidate-c.md",
@@ -27,7 +33,8 @@ const workflow = existsSync(required[0]) ? readFileSync(required[0], "utf8") : "
 const toml = existsSync(required[1]) ? readFileSync(required[1], "utf8") : "";
 const evaluator = existsSync(required[3]) ? readFileSync(required[3], "utf8") : "";
 const materializer = existsSync(required[4]) ? readFileSync(required[4], "utf8") : "";
-const docs = existsSync(required[16]) ? readFileSync(required[16], "utf8") : "";
+const docsPath = "docs/ENHANCEMENT-DISCOVERY-WORKFLOW.md";
+const docs = existsSync(docsPath) ? readFileSync(docsPath, "utf8") : "";
 const prompts = required
   .filter((file) => file.startsWith("prompts/") && existsSync(file))
   .map((file) => readFileSync(file, "utf8"))
@@ -58,6 +65,7 @@ const configMarkers = [
   "minimum_architecture_candidates",
   "minimum_workflow_candidates",
   "minimum_eval_score",
+  "max_eval_regression",
   "require_simplification",
 ];
 const missingConfigMarkers = configMarkers.filter(
@@ -67,6 +75,19 @@ const missingConfigMarkers = configMarkers.filter(
 const evalMarkers = ["rubric", "pairwise", "non-cheating", "acceptance gates", "simplification"];
 const missingEvalMarkers = evalMarkers.filter(
   (marker) => !prompts.includes(marker) && !evaluator.includes(marker) && !docs.includes(marker),
+);
+
+const lineageMarkers = [
+  "dataset-version",
+  "prompt-version",
+  "rubric-version",
+  "judge-model",
+  "baseline",
+  "max-regression",
+  "promptfoo_workflow_quality",
+];
+const missingLineageMarkers = lineageMarkers.filter(
+  (marker) => !workflow.includes(marker) && !evaluator.includes(marker) && !docs.includes(marker),
 );
 
 const generatedWorkflowMarkers = [
@@ -99,12 +120,14 @@ const report = {
     missingWorkflowMarkers.length === 0 &&
     missingConfigMarkers.length === 0 &&
     missingEvalMarkers.length === 0 &&
+    missingLineageMarkers.length === 0 &&
     missingGeneratedWorkflowMarkers.length === 0 &&
     !leaks,
   missing,
   missing_workflow_markers: missingWorkflowMarkers,
   missing_config_markers: missingConfigMarkers,
   missing_eval_markers: missingEvalMarkers,
+  missing_lineage_markers: missingLineageMarkers,
   missing_generated_workflow_markers: missingGeneratedWorkflowMarkers,
   leaks,
 };

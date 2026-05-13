@@ -23,6 +23,25 @@ TDD covers objective behavior: files exist, workflows validate, endpoints exist,
 
 EDD covers subjective quality: whether a spec is good enough, whether an architecture is realistic, whether a workflow would actually solve the user's request, and whether simplification improves the result. Those stages use candidates, rubric scoring, pairwise comparison, consensus selection, and persisted eval artifacts.
 
+## Promptfoo Eval Contract
+
+The local EDD layer uses Promptfoo-compatible assets rather than Braintrust:
+
+- `evals/workflow-quality/datasets/enhancement-discovery-golden.jsonl` is the golden dataset.
+- `evals/workflow-quality/enhancement-discovery.yaml` is the Promptfoo workflow-quality eval.
+- `evals/workflow-quality/baselines/*.json` records the current approved baseline score for spec, architecture, and workflow contract evals.
+
+Every deterministic contract eval writes lineage:
+
+- dataset path, dataset version, and dataset SHA-256
+- prompt version
+- rubric version
+- judge model
+- baseline score
+- score delta and max allowed regression
+
+The workflow blocks if a stage drops below `minimum_eval_score` or regresses more than `max_eval_regression` from its baseline. Promptfoo runs as an additional workflow-quality gate, with a deterministic fallback that still requires the lineage and baseline artifacts to be present.
+
 ## Consumer Radar Target
 
 For Consumer Radar, the generated child workflow is:
@@ -42,6 +61,7 @@ Run the builder locally:
 
 ```bash
 node scripts/workflow-builder/materialize-enhancement-discovery.mjs
+node scripts/app-feedback/test-eval-lineage-contract.mjs
 node scripts/workflow-builder/validate-enhancement-discovery-builder.mjs
 fabro validate workflows/app-feedback/discover-enhancement.fabro --no-upgrade-check
 ```
