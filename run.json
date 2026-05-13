@@ -1064,7 +1064,7 @@
     "kind": "running"
   },
   "status_updated_at": "2026-05-13T16:52:28.919834646Z",
-  "last_event_at": "2026-05-13T16:57:07.198241728Z",
+  "last_event_at": "2026-05-13T16:57:13.089875982Z",
   "pending_control": null,
   "checkpoints": [
     {
@@ -2702,9 +2702,9 @@
       }
     },
     {
-      "seq": 0,
+      "seq": 199,
       "checkpoint": {
-        "timestamp": "2026-05-13T16:57:07.570517257Z",
+        "timestamp": "2026-05-13T16:57:11.136868169Z",
         "current_node": "review_consensus",
         "completed_nodes": [
           "start",
@@ -2724,14 +2724,244 @@
         ],
         "node_retries": {},
         "context_values": {
-          "thread.start.current_node": "wait_for_support_files",
+          "parallel.results": [
+            {
+              "id": "review_kimi",
+              "status": "failed",
+              "head_sha": "63df7654fcd2c81c8fd190d56f4b09bf0fd41f4f"
+            },
+            {
+              "id": "review_qwen",
+              "status": "succeeded",
+              "head_sha": "14ecc26a613f3478c44283c545e36bc092ab26e8"
+            },
+            {
+              "id": "review_deepseek",
+              "status": "succeeded",
+              "head_sha": "45159a5a4433e7af639b6fb2346b39d2e60468f7"
+            }
+          ],
+          "internal.retry_count.review_fanout": 0,
+          "outcome": "succeeded",
+          "thread.product_surface_gate.current_node": "feedback_acceptance_gate",
           "command.output": "blob://sha256/4d48dad854a9e8406beb318395d555937dff3cb90653b5e6e1e4c50117cb73eb",
+          "thread.promptfoo_gate.current_node": "prepare_review_reports",
+          "graph.default_max_retries": "2",
+          "graph.rankdir": "LR",
+          "thread.cheap.current_node": "apply_enhancement",
+          "internal.retry_count.promptfoo_gate": 0,
+          "graph.model_stylesheet": "\n            *       { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: low; }\n            .review { provider: openrouter; model: google/gemini-3.1-pro-preview; reasoning_effort: high; }\n            .cheap  { provider: openrouter; model: deepseek/deepseek-v4-flash; reasoning_effort: low; }\n        ",
+          "thread.feedback_acceptance_gate.current_node": "qlty_gate",
+          "failure_class": "",
+          "thread.native_checks.current_node": "product_surface_gate",
+          "graph.persona": "app-feedback-workflow-builder",
+          "thread.parse_feedback.current_node": "spec_kitty_feedback_gate",
+          "graph.fallback_retry_target": "apply_enhancement",
+          "internal.fidelity": "compact",
+          "graph.goal": "Enhance Consumer App Radar from product feedback using the generic app feedback workflow",
+          "thread.wait_for_support_files.current_node": "parse_feedback",
+          "thread.apply_enhancement.current_node": "native_checks",
+          "thread.prepare_review_reports.current_node": "review_fanout",
+          "internal.node_visit_count": 1,
+          "internal.retry_count.feedback_acceptance_gate": 0,
+          "internal.retry_count.prepare_review_reports": 0,
+          "thread.review_fanout.current_node": "review_join",
+          "internal.retry_count.review_join": 0,
+          "parallel.fan_in.best_head_sha": "45159a5a4433e7af639b6fb2346b39d2e60468f7",
+          "internal.work_dir": "/home/daytona/workspace",
+          "internal.retry_count.parse_feedback": 0,
+          "internal.retry_count.review_consensus": 0,
+          "thread.start.current_node": "wait_for_support_files",
+          "graph.outputs": "feedback_analysis, enhanced_app, quality_reports, review_consensus, handoff",
+          "internal.run_id": "01KRH41V4MPCQXV5V7Z0795E2T",
+          "internal.retry_count.native_checks": 0,
+          "internal.retry_count.apply_enhancement": 0,
+          "parallel.branch_count": 3,
+          "thread.qlty_gate.current_node": "promptfoo_gate",
+          "graph.inputs": "app_dir, feedback_path, target_adapter, real_mode, allow_quality_fallback, minimum_active_reviews",
+          "thread.review_join.current_node": "review_consensus",
+          "internal.retry_count.qlty_gate": 0,
+          "failure_signature": "",
+          "internal.retry_count.wait_for_support_files": 0,
+          "internal.thread_id": "review_join",
+          "current_node": "review_consensus",
+          "internal.retry_count.product_surface_gate": 0,
+          "graph.retry_target": "apply_enhancement",
+          "internal.retry_count.spec_kitty_feedback_gate": 0,
+          "internal.retry_count.start": 0,
+          "parallel.fan_in.best_id": "review_deepseek",
+          "parallel.fan_in.best_outcome": "succeeded"
+        },
+        "node_outcomes": {
+          "promptfoo_gate": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/999c98431d14f862d2e8cf8098865e337c11d4f64695502289679afb91fdbc1a"
+            },
+            "notes": "Script completed: node scripts/consumer-radar/promptfoo-or-fallback.mjs 'apps/generated-consumer-app-radar' --real-mode 'true' --allow-fallback 'true'",
+            "usage": null
+          },
+          "product_surface_gate": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/10236580d31bb7837ec1fd3bc1e6c8e4f05485ea7c46ef3f8e1af4ba69c6969b"
+            },
+            "notes": "Script completed: node scripts/consumer-radar/assert-product-surface.mjs 'apps/generated-consumer-app-radar'",
+            "usage": null
+          },
+          "qlty_gate": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/7eb045ae0014dad4091801509c31464c13ef747cc138cebe452bf6a162d732a3"
+            },
+            "notes": "Script completed: node scripts/consumer-radar/qlty-gate.mjs 'apps/generated-consumer-app-radar' --real-mode 'true' --allow-fallback 'true'",
+            "usage": null
+          },
+          "review_fanout": {
+            "status": "partially_succeeded",
+            "jump_to_node": "review_join",
+            "notes": "Parallel node dispatched 3 branches (2 succeeded, 1 failed)",
+            "usage": null
+          },
+          "review_consensus": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/4d48dad854a9e8406beb318395d555937dff3cb90653b5e6e1e4c50117cb73eb"
+            },
+            "notes": "Script completed: node scripts/consumer-radar/review-consensus.mjs --reviews reports/consumer-radar/reviews --output reports/consumer-radar/review-consensus.json --minimum-active-reviews '2'",
+            "usage": null
+          },
+          "review_join": {
+            "status": "succeeded",
+            "context_updates": {
+              "parallel.fan_in.best_head_sha": "45159a5a4433e7af639b6fb2346b39d2e60468f7",
+              "parallel.fan_in.best_outcome": "succeeded",
+              "parallel.fan_in.best_id": "review_deepseek"
+            },
+            "notes": "Selected best candidate: review_deepseek",
+            "usage": null
+          },
+          "parse_feedback": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/b8ad9745eb032e1529021db56fb0316d1bbac9211156d215e74bdc779585d3f0"
+            },
+            "notes": "Script completed: node scripts/app-feedback/parse-feedback.mjs --feedback 'feedback/consumer-radar-product-feedback.md' --out .workflow/app-feedback/feedback-analysis.json",
+            "usage": null
+          },
+          "start": {
+            "status": "succeeded",
+            "usage": null
+          },
+          "wait_for_support_files": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/b5a3a27785c10a6fc1f5a02472c6297fcb9708eaa1c0cfbdc52dacf40288112b"
+            },
+            "notes": "Script completed: for i in $(seq 1 90); do if [ -f scripts/app-feedback/parse-feedback.mjs ] && [ -f scripts/app-feedback/apply-feedback-enhancement.mjs ] && [ -f 'feedback/consumer-radar-product-feedback.md' ]; then echo feedback-support-ready; exit 0; fi; sleep 2; done; echo 'missing feedback enhancement support files' >&2; exit 1",
+            "usage": null
+          },
+          "native_checks": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/3cb84a9bb9e20844631d561961b12684816930e946cc09fc74b597b239f65682"
+            },
+            "notes": "Script completed: node scripts/consumer-radar/run-native-checks.mjs 'apps/generated-consumer-app-radar'",
+            "usage": null
+          },
+          "spec_kitty_feedback_gate": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/41c40c06c8259d1f1b0b7afabaabfd4ae60308f088df97538f8e7985070da89d"
+            },
+            "notes": "Script completed: node scripts/app-feedback/spec-kitty-feedback-gate.mjs --analysis .workflow/app-feedback/feedback-analysis.json --out .workflow/app-feedback/spec-kitty-feedback-gate.json --target 'consumer-radar'",
+            "usage": null
+          },
+          "feedback_acceptance_gate": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/141bf50092418d101db5a893ccc6be029a0e5e46ff2ed2164202b211885b872c"
+            },
+            "notes": "Script completed: node scripts/app-feedback/assert-feedback-enhancement.mjs 'apps/generated-consumer-app-radar' --target 'consumer-radar'",
+            "usage": null
+          },
+          "apply_enhancement": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/e13919244f75906e6e71bd55689542b555b043361da8bca8c82ef7a95a136f3a"
+            },
+            "notes": "Script completed: node scripts/app-feedback/apply-feedback-enhancement.mjs --target 'consumer-radar' --app-dir 'apps/generated-consumer-app-radar' --feedback 'feedback/consumer-radar-product-feedback.md'",
+            "usage": null
+          },
+          "prepare_review_reports": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/12ae32cb1ec02d01eda3581b127c1fee3b0dc53572ed6baf239721a03d82e126"
+            },
+            "notes": "Script completed: rm -rf reports/consumer-radar/reviews reports/consumer-radar/review-consensus.json && mkdir -p reports/consumer-radar/reviews",
+            "usage": null
+          }
+        },
+        "next_node_id": "artifact_gate",
+        "git_commit_sha": "30c8e6cfecf29f0ca07adbc00973afebf9d4c06d",
+        "node_visits": {
+          "apply_enhancement": 1,
+          "feedback_acceptance_gate": 1,
+          "parse_feedback": 1,
+          "native_checks": 1,
+          "prepare_review_reports": 1,
+          "promptfoo_gate": 1,
+          "review_consensus": 1,
+          "start": 1,
+          "product_surface_gate": 1,
+          "qlty_gate": 1,
+          "review_fanout": 1,
+          "review_join": 1,
+          "spec_kitty_feedback_gate": 1,
+          "wait_for_support_files": 1
+        }
+      },
+      "diff": {
+        "patch": "diff --git a/reports/consumer-radar/review-consensus.json b/reports/consumer-radar/review-consensus.json\nnew file mode 100644\nindex 0000000..2a8669a\n--- /dev/null\n+++ b/reports/consumer-radar/review-consensus.json\n@@ -0,0 +1,18 @@\n+{\n+  \"ok\": true,\n+  \"verdict\": \"APPROVE\",\n+  \"review_count\": 3,\n+  \"active_review_count\": 2,\n+  \"minimum_active_reviews\": 2,\n+  \"skipped_review_count\": 0,\n+  \"failed_review_count\": 1,\n+  \"review_sources\": [\n+    \"git:fabro/run/parallel/01KRH41V4MPCQXV5V7Z0795E2T/review-fanout/pass1/review-deepseek:reports/consumer-radar/reviews/deepseek-feedback.json\",\n+    \"git:fabro/run/parallel/01KRH41V4MPCQXV5V7Z0795E2T/review-fanout/pass1/review-kimi:reports/consumer-radar/reviews/kimi-feedback.json\",\n+    \"git:fabro/run/parallel/01KRH41V4MPCQXV5V7Z0795E2T/review-fanout/pass1/review-qwen:reports/consumer-radar/reviews/qwen-feedback.json\"\n+  ],\n+  \"average_model_score\": 0.85,\n+  \"blockers\": [],\n+  \"hard_failures\": [],\n+  \"note\": \"Consensus synthesized from available OpenRouter reviews.\"\n+}\n",
+        "summary": {
+          "files_changed": 9,
+          "additions": 162,
+          "deletions": 120
+        }
+      }
+    },
+    {
+      "seq": 0,
+      "checkpoint": {
+        "timestamp": "2026-05-13T16:57:13.250314979Z",
+        "current_node": "artifact_gate",
+        "completed_nodes": [
+          "start",
+          "wait_for_support_files",
+          "parse_feedback",
+          "spec_kitty_feedback_gate",
+          "apply_enhancement",
+          "native_checks",
+          "product_surface_gate",
+          "feedback_acceptance_gate",
+          "qlty_gate",
+          "promptfoo_gate",
+          "prepare_review_reports",
+          "review_fanout",
+          "review_join",
+          "review_consensus",
+          "artifact_gate"
+        ],
+        "node_retries": {},
+        "context_values": {
+          "thread.start.current_node": "wait_for_support_files",
+          "command.output": "blob://sha256/589befb204b3fdfc267b17d7d6b20117b0511e904e4fd66abe34b2a30dc5d3d7",
           "internal.retry_count.qlty_gate": 0,
           "thread.promptfoo_gate.current_node": "prepare_review_reports",
           "thread.qlty_gate.current_node": "promptfoo_gate",
           "internal.retry_count.promptfoo_gate": 0,
           "internal.work_dir": "/home/daytona/workspace",
-          "current_node": "review_consensus",
+          "current_node": "artifact_gate",
           "parallel.fan_in.best_head_sha": "45159a5a4433e7af639b6fb2346b39d2e60468f7",
           "internal.retry_count.review_join": 0,
           "internal.retry_count.wait_for_support_files": 0,
@@ -2741,7 +2971,7 @@
           "thread.product_surface_gate.current_node": "feedback_acceptance_gate",
           "graph.outputs": "feedback_analysis, enhanced_app, quality_reports, review_consensus, handoff",
           "graph.inputs": "app_dir, feedback_path, target_adapter, real_mode, allow_quality_fallback, minimum_active_reviews",
-          "internal.thread_id": "review_join",
+          "internal.thread_id": "review_consensus",
           "graph.model_stylesheet": "\n            *       { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: low; }\n            .review { provider: openrouter; model: google/gemini-3.1-pro-preview; reasoning_effort: high; }\n            .cheap  { provider: openrouter; model: deepseek/deepseek-v4-flash; reasoning_effort: low; }\n        ",
           "thread.prepare_review_reports.current_node": "review_fanout",
           "parallel.fan_in.best_id": "review_deepseek",
@@ -2772,6 +3002,8 @@
           "graph.retry_target": "apply_enhancement",
           "thread.review_fanout.current_node": "review_join",
           "internal.retry_count.review_consensus": 0,
+          "thread.review_consensus.current_node": "artifact_gate",
+          "internal.retry_count.artifact_gate": 0,
           "graph.goal": "Enhance Consumer App Radar from product feedback using the generic app feedback workflow",
           "graph.persona": "app-feedback-workflow-builder",
           "graph.rankdir": "LR",
@@ -2900,24 +3132,33 @@
             },
             "notes": "Script completed: node scripts/consumer-radar/assert-product-surface.mjs 'apps/generated-consumer-app-radar'",
             "usage": null
+          },
+          "artifact_gate": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/589befb204b3fdfc267b17d7d6b20117b0511e904e4fd66abe34b2a30dc5d3d7"
+            },
+            "notes": "Script completed: node scripts/consumer-radar/validate-build-artifacts.mjs 'apps/generated-consumer-app-radar' --minimum-apps 6 --minimum-reports 4 && test -f .workflow/app-feedback/feedback-acceptance.json",
+            "usage": null
           }
         },
-        "next_node_id": "artifact_gate",
+        "next_node_id": "publish_handoff",
         "node_visits": {
-          "apply_enhancement": 1,
           "start": 1,
-          "wait_for_support_files": 1,
           "parse_feedback": 1,
           "spec_kitty_feedback_gate": 1,
           "product_surface_gate": 1,
           "feedback_acceptance_gate": 1,
-          "promptfoo_gate": 1,
           "qlty_gate": 1,
+          "native_checks": 1,
+          "apply_enhancement": 1,
+          "wait_for_support_files": 1,
           "prepare_review_reports": 1,
-          "review_fanout": 1,
-          "review_join": 1,
+          "artifact_gate": 1,
+          "promptfoo_gate": 1,
           "review_consensus": 1,
-          "native_checks": 1
+          "review_join": 1,
+          "review_fanout": 1
         }
       },
       "diff": {}
@@ -2940,49 +3181,6 @@
   "superseded_by": null,
   "pending_interviews": {},
   "stages": {
-    "feedback_acceptance_gate@1": {
-      "first_event_seq": 94,
-      "prompt": null,
-      "response": null,
-      "completion": {
-        "outcome": "succeeded",
-        "notes": "Script completed: node scripts/app-feedback/assert-feedback-enhancement.mjs 'apps/generated-consumer-app-radar' --target 'consumer-radar'",
-        "failure_reason": null,
-        "timestamp": "2026-05-13T16:53:02.157887870Z"
-      },
-      "provider_used": null,
-      "diff": null,
-      "script_invocation": {
-        "script": "node scripts/app-feedback/assert-feedback-enhancement.mjs 'apps/generated-consumer-app-radar' --target 'consumer-radar'",
-        "command": "exec 2>&1\nnode scripts/app-feedback/assert-feedback-enhancement.mjs 'apps/generated-consumer-app-radar' --target 'consumer-radar'",
-        "language": "shell"
-      },
-      "script_timing": {
-        "output": "blob://sha256/141bf50092418d101db5a893ccc6be029a0e5e46ff2ed2164202b211885b872c",
-        "exit_code": 0,
-        "duration_ms": 1644,
-        "termination": "exited",
-        "output_bytes": 332,
-        "live_streaming": true
-      },
-      "parallel_results": null,
-      "output": null,
-      "output_bytes": 332,
-      "live_streaming": true,
-      "termination": "exited",
-      "started_at": "2026-05-13T16:53:00.348477003Z",
-      "handler": "command",
-      "duration_ms": 1649,
-      "usage": {
-        "input_tokens": 0,
-        "output_tokens": 0,
-        "total_tokens": 0,
-        "reasoning_tokens": 0,
-        "cache_read_tokens": 0,
-        "cache_write_tokens": 0
-      },
-      "state": "succeeded"
-    },
     "review_fanout@1": {
       "first_event_seq": 148,
       "prompt": null,
@@ -3042,201 +3240,6 @@
       },
       "state": "partially_succeeded"
     },
-    "parse_feedback@1": {
-      "first_event_seq": 29,
-      "prompt": null,
-      "response": null,
-      "completion": {
-        "outcome": "succeeded",
-        "notes": "Script completed: node scripts/app-feedback/parse-feedback.mjs --feedback 'feedback/consumer-radar-product-feedback.md' --out .workflow/app-feedback/feedback-analysis.json",
-        "failure_reason": null,
-        "timestamp": "2026-05-13T16:52:36.359564156Z"
-      },
-      "provider_used": null,
-      "diff": null,
-      "script_invocation": {
-        "script": "node scripts/app-feedback/parse-feedback.mjs --feedback 'feedback/consumer-radar-product-feedback.md' --out .workflow/app-feedback/feedback-analysis.json",
-        "command": "exec 2>&1\nnode scripts/app-feedback/parse-feedback.mjs --feedback 'feedback/consumer-radar-product-feedback.md' --out .workflow/app-feedback/feedback-analysis.json",
-        "language": "shell"
-      },
-      "script_timing": {
-        "output": "blob://sha256/b8ad9745eb032e1529021db56fb0316d1bbac9211156d215e74bdc779585d3f0",
-        "exit_code": 0,
-        "duration_ms": 1643,
-        "termination": "exited",
-        "output_bytes": 1524,
-        "live_streaming": true
-      },
-      "parallel_results": null,
-      "output": null,
-      "output_bytes": 1524,
-      "live_streaming": true,
-      "termination": "exited",
-      "started_at": "2026-05-13T16:52:34.552244605Z",
-      "handler": "command",
-      "duration_ms": 1648,
-      "usage": {
-        "input_tokens": 0,
-        "output_tokens": 0,
-        "total_tokens": 0,
-        "reasoning_tokens": 0,
-        "cache_read_tokens": 0,
-        "cache_write_tokens": 0
-      },
-      "state": "succeeded"
-    },
-    "review_join@1": {
-      "first_event_seq": 183,
-      "prompt": null,
-      "response": null,
-      "completion": {
-        "outcome": "succeeded",
-        "notes": "Selected best candidate: review_deepseek",
-        "failure_reason": null,
-        "timestamp": "2026-05-13T16:57:01.467474217Z"
-      },
-      "provider_used": null,
-      "diff": null,
-      "script_invocation": null,
-      "script_timing": null,
-      "parallel_results": null,
-      "output": null,
-      "started_at": "2026-05-13T16:57:01.168775579Z",
-      "handler": "parallel.fan_in",
-      "duration_ms": 217,
-      "usage": {
-        "input_tokens": 0,
-        "output_tokens": 0,
-        "total_tokens": 0,
-        "reasoning_tokens": 0,
-        "cache_read_tokens": 0,
-        "cache_write_tokens": 0
-      },
-      "state": "succeeded"
-    },
-    "promptfoo_gate@1": {
-      "first_event_seq": 126,
-      "prompt": null,
-      "response": null,
-      "completion": {
-        "outcome": "succeeded",
-        "notes": "Script completed: node scripts/consumer-radar/promptfoo-or-fallback.mjs 'apps/generated-consumer-app-radar' --real-mode 'true' --allow-fallback 'true'",
-        "failure_reason": null,
-        "timestamp": "2026-05-13T16:55:44.614103788Z"
-      },
-      "provider_used": null,
-      "diff": null,
-      "script_invocation": {
-        "script": "node scripts/consumer-radar/promptfoo-or-fallback.mjs 'apps/generated-consumer-app-radar' --real-mode 'true' --allow-fallback 'true'",
-        "command": "exec 2>&1\nnode scripts/consumer-radar/promptfoo-or-fallback.mjs 'apps/generated-consumer-app-radar' --real-mode 'true' --allow-fallback 'true'",
-        "language": "shell"
-      },
-      "script_timing": {
-        "output": "blob://sha256/999c98431d14f862d2e8cf8098865e337c11d4f64695502289679afb91fdbc1a",
-        "exit_code": 0,
-        "duration_ms": 136424,
-        "termination": "exited",
-        "output_bytes": 895,
-        "live_streaming": true
-      },
-      "parallel_results": null,
-      "output": null,
-      "output_bytes": 895,
-      "live_streaming": true,
-      "termination": "exited",
-      "started_at": "2026-05-13T16:53:27.805725300Z",
-      "handler": "command",
-      "duration_ms": 136430,
-      "usage": {
-        "input_tokens": 0,
-        "output_tokens": 0,
-        "total_tokens": 0,
-        "reasoning_tokens": 0,
-        "cache_read_tokens": 0,
-        "cache_write_tokens": 0
-      },
-      "state": "succeeded"
-    },
-    "review_consensus@1": {
-      "first_event_seq": 191,
-      "prompt": null,
-      "response": null,
-      "completion": null,
-      "provider_used": null,
-      "diff": null,
-      "script_invocation": {
-        "script": "node scripts/consumer-radar/review-consensus.mjs --reviews reports/consumer-radar/reviews --output reports/consumer-radar/review-consensus.json --minimum-active-reviews '2'",
-        "command": "exec 2>&1\nnode scripts/consumer-radar/review-consensus.mjs --reviews reports/consumer-radar/reviews --output reports/consumer-radar/review-consensus.json --minimum-active-reviews '2'",
-        "language": "shell"
-      },
-      "script_timing": {
-        "output": "blob://sha256/4d48dad854a9e8406beb318395d555937dff3cb90653b5e6e1e4c50117cb73eb",
-        "exit_code": 0,
-        "duration_ms": 1925,
-        "termination": "exited",
-        "output_bytes": 771,
-        "live_streaming": true
-      },
-      "parallel_results": null,
-      "output": null,
-      "output_bytes": 771,
-      "live_streaming": true,
-      "termination": "exited",
-      "started_at": "2026-05-13T16:57:05.267560694Z",
-      "handler": "command",
-      "usage": {
-        "input_tokens": 0,
-        "output_tokens": 0,
-        "total_tokens": 0,
-        "reasoning_tokens": 0,
-        "cache_read_tokens": 0,
-        "cache_write_tokens": 0
-      },
-      "state": "running"
-    },
-    "spec_kitty_feedback_gate@1": {
-      "first_event_seq": 40,
-      "prompt": null,
-      "response": null,
-      "completion": {
-        "outcome": "succeeded",
-        "notes": "Script completed: node scripts/app-feedback/spec-kitty-feedback-gate.mjs --analysis .workflow/app-feedback/feedback-analysis.json --out .workflow/app-feedback/spec-kitty-feedback-gate.json --target 'consumer-radar'",
-        "failure_reason": null,
-        "timestamp": "2026-05-13T16:52:41.207822344Z"
-      },
-      "provider_used": null,
-      "diff": null,
-      "script_invocation": {
-        "script": "node scripts/app-feedback/spec-kitty-feedback-gate.mjs --analysis .workflow/app-feedback/feedback-analysis.json --out .workflow/app-feedback/spec-kitty-feedback-gate.json --target 'consumer-radar'",
-        "command": "exec 2>&1\nnode scripts/app-feedback/spec-kitty-feedback-gate.mjs --analysis .workflow/app-feedback/feedback-analysis.json --out .workflow/app-feedback/spec-kitty-feedback-gate.json --target 'consumer-radar'",
-        "language": "shell"
-      },
-      "script_timing": {
-        "output": "blob://sha256/41c40c06c8259d1f1b0b7afabaabfd4ae60308f088df97538f8e7985070da89d",
-        "exit_code": 0,
-        "duration_ms": 1778,
-        "termination": "exited",
-        "output_bytes": 1026,
-        "live_streaming": true
-      },
-      "parallel_results": null,
-      "output": null,
-      "output_bytes": 1026,
-      "live_streaming": true,
-      "termination": "exited",
-      "started_at": "2026-05-13T16:52:39.237961902Z",
-      "handler": "command",
-      "duration_ms": 1784,
-      "usage": {
-        "input_tokens": 0,
-        "output_tokens": 0,
-        "total_tokens": 0,
-        "reasoning_tokens": 0,
-        "cache_read_tokens": 0,
-        "cache_write_tokens": 0
-      },
-      "state": "succeeded"
-    },
     "start@1": {
       "first_event_seq": 15,
       "prompt": null,
@@ -3256,49 +3259,6 @@
       "started_at": "2026-05-13T16:52:29.743360091Z",
       "handler": "start",
       "duration_ms": 0,
-      "usage": {
-        "input_tokens": 0,
-        "output_tokens": 0,
-        "total_tokens": 0,
-        "reasoning_tokens": 0,
-        "cache_read_tokens": 0,
-        "cache_write_tokens": 0
-      },
-      "state": "succeeded"
-    },
-    "wait_for_support_files@1": {
-      "first_event_seq": 19,
-      "prompt": null,
-      "response": null,
-      "completion": {
-        "outcome": "succeeded",
-        "notes": "Script completed: for i in $(seq 1 90); do if [ -f scripts/app-feedback/parse-feedback.mjs ] && [ -f scripts/app-feedback/apply-feedback-enhancement.mjs ] && [ -f 'feedback/consumer-radar-product-feedback.md' ]; then echo feedback-support-ready; exit 0; fi; sleep 2; done; echo 'missing feedback enhancement support files' >&2; exit 1",
-        "failure_reason": null,
-        "timestamp": "2026-05-13T16:52:31.565474058Z"
-      },
-      "provider_used": null,
-      "diff": null,
-      "script_invocation": {
-        "script": "for i in $(seq 1 90); do if [ -f scripts/app-feedback/parse-feedback.mjs ] && [ -f scripts/app-feedback/apply-feedback-enhancement.mjs ] && [ -f 'feedback/consumer-radar-product-feedback.md' ]; then echo feedback-support-ready; exit 0; fi; sleep 2; done; echo 'missing feedback enhancement support files' >&2; exit 1",
-        "command": "exec 2>&1\nfor i in $(seq 1 90); do if [ -f scripts/app-feedback/parse-feedback.mjs ] && [ -f scripts/app-feedback/apply-feedback-enhancement.mjs ] && [ -f 'feedback/consumer-radar-product-feedback.md' ]; then echo feedback-support-ready; exit 0; fi; sleep 2; done; echo 'missing feedback enhancement support files' >&2; exit 1",
-        "language": "shell"
-      },
-      "script_timing": {
-        "output": "blob://sha256/b5a3a27785c10a6fc1f5a02472c6297fcb9708eaa1c0cfbdc52dacf40288112b",
-        "exit_code": 0,
-        "duration_ms": 1649,
-        "termination": "exited",
-        "output_bytes": 23,
-        "live_streaming": true
-      },
-      "parallel_results": null,
-      "output": null,
-      "output_bytes": 23,
-      "live_streaming": true,
-      "termination": "exited",
-      "started_at": "2026-05-13T16:52:29.826358807Z",
-      "handler": "command",
-      "duration_ms": 1656,
       "usage": {
         "input_tokens": 0,
         "output_tokens": 0,
@@ -3395,39 +3355,33 @@
       },
       "state": "succeeded"
     },
-    "prepare_review_reports@1": {
-      "first_event_seq": 138,
+    "artifact_gate@1": {
+      "first_event_seq": 202,
       "prompt": null,
       "response": null,
-      "completion": {
-        "outcome": "succeeded",
-        "notes": "Script completed: rm -rf reports/consumer-radar/reviews reports/consumer-radar/review-consensus.json && mkdir -p reports/consumer-radar/reviews",
-        "failure_reason": null,
-        "timestamp": "2026-05-13T16:55:49.443484123Z"
-      },
+      "completion": null,
       "provider_used": null,
       "diff": null,
       "script_invocation": {
-        "script": "rm -rf reports/consumer-radar/reviews reports/consumer-radar/review-consensus.json && mkdir -p reports/consumer-radar/reviews",
-        "command": "exec 2>&1\nrm -rf reports/consumer-radar/reviews reports/consumer-radar/review-consensus.json && mkdir -p reports/consumer-radar/reviews",
+        "script": "node scripts/consumer-radar/validate-build-artifacts.mjs 'apps/generated-consumer-app-radar' --minimum-apps 6 --minimum-reports 4 && test -f .workflow/app-feedback/feedback-acceptance.json",
+        "command": "exec 2>&1\nnode scripts/consumer-radar/validate-build-artifacts.mjs 'apps/generated-consumer-app-radar' --minimum-apps 6 --minimum-reports 4 && test -f .workflow/app-feedback/feedback-acceptance.json",
         "language": "shell"
       },
       "script_timing": {
-        "output": "blob://sha256/12ae32cb1ec02d01eda3581b127c1fee3b0dc53572ed6baf239721a03d82e126",
+        "output": "blob://sha256/589befb204b3fdfc267b17d7d6b20117b0511e904e4fd66abe34b2a30dc5d3d7",
         "exit_code": 0,
-        "duration_ms": 1675,
+        "duration_ms": 1937,
         "termination": "exited",
-        "output_bytes": 0,
-        "live_streaming": false
+        "output_bytes": 255,
+        "live_streaming": true
       },
       "parallel_results": null,
       "output": null,
-      "output_bytes": 0,
-      "live_streaming": false,
+      "output_bytes": 255,
+      "live_streaming": true,
       "termination": "exited",
-      "started_at": "2026-05-13T16:55:47.680265914Z",
+      "started_at": "2026-05-13T16:57:11.146690139Z",
       "handler": "command",
-      "duration_ms": 1681,
       "usage": {
         "input_tokens": 0,
         "output_tokens": 0,
@@ -3436,7 +3390,7 @@
         "cache_read_tokens": 0,
         "cache_write_tokens": 0
       },
-      "state": "succeeded"
+      "state": "running"
     },
     "apply_enhancement@1": {
       "first_event_seq": 51,
@@ -3481,6 +3435,78 @@
       },
       "state": "succeeded"
     },
+    "feedback_acceptance_gate@1": {
+      "first_event_seq": 94,
+      "prompt": null,
+      "response": null,
+      "completion": {
+        "outcome": "succeeded",
+        "notes": "Script completed: node scripts/app-feedback/assert-feedback-enhancement.mjs 'apps/generated-consumer-app-radar' --target 'consumer-radar'",
+        "failure_reason": null,
+        "timestamp": "2026-05-13T16:53:02.157887870Z"
+      },
+      "provider_used": null,
+      "diff": null,
+      "script_invocation": {
+        "script": "node scripts/app-feedback/assert-feedback-enhancement.mjs 'apps/generated-consumer-app-radar' --target 'consumer-radar'",
+        "command": "exec 2>&1\nnode scripts/app-feedback/assert-feedback-enhancement.mjs 'apps/generated-consumer-app-radar' --target 'consumer-radar'",
+        "language": "shell"
+      },
+      "script_timing": {
+        "output": "blob://sha256/141bf50092418d101db5a893ccc6be029a0e5e46ff2ed2164202b211885b872c",
+        "exit_code": 0,
+        "duration_ms": 1644,
+        "termination": "exited",
+        "output_bytes": 332,
+        "live_streaming": true
+      },
+      "parallel_results": null,
+      "output": null,
+      "output_bytes": 332,
+      "live_streaming": true,
+      "termination": "exited",
+      "started_at": "2026-05-13T16:53:00.348477003Z",
+      "handler": "command",
+      "duration_ms": 1649,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "total_tokens": 0,
+        "reasoning_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "state": "succeeded"
+    },
+    "review_join@1": {
+      "first_event_seq": 183,
+      "prompt": null,
+      "response": null,
+      "completion": {
+        "outcome": "succeeded",
+        "notes": "Selected best candidate: review_deepseek",
+        "failure_reason": null,
+        "timestamp": "2026-05-13T16:57:01.467474217Z"
+      },
+      "provider_used": null,
+      "diff": null,
+      "script_invocation": null,
+      "script_timing": null,
+      "parallel_results": null,
+      "output": null,
+      "started_at": "2026-05-13T16:57:01.168775579Z",
+      "handler": "parallel.fan_in",
+      "duration_ms": 217,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "total_tokens": 0,
+        "reasoning_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "state": "succeeded"
+    },
     "native_checks@1": {
       "first_event_seq": 72,
       "prompt": null,
@@ -3514,6 +3540,264 @@
       "started_at": "2026-05-13T16:52:50.082765725Z",
       "handler": "command",
       "duration_ms": 2081,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "total_tokens": 0,
+        "reasoning_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "state": "succeeded"
+    },
+    "parse_feedback@1": {
+      "first_event_seq": 29,
+      "prompt": null,
+      "response": null,
+      "completion": {
+        "outcome": "succeeded",
+        "notes": "Script completed: node scripts/app-feedback/parse-feedback.mjs --feedback 'feedback/consumer-radar-product-feedback.md' --out .workflow/app-feedback/feedback-analysis.json",
+        "failure_reason": null,
+        "timestamp": "2026-05-13T16:52:36.359564156Z"
+      },
+      "provider_used": null,
+      "diff": null,
+      "script_invocation": {
+        "script": "node scripts/app-feedback/parse-feedback.mjs --feedback 'feedback/consumer-radar-product-feedback.md' --out .workflow/app-feedback/feedback-analysis.json",
+        "command": "exec 2>&1\nnode scripts/app-feedback/parse-feedback.mjs --feedback 'feedback/consumer-radar-product-feedback.md' --out .workflow/app-feedback/feedback-analysis.json",
+        "language": "shell"
+      },
+      "script_timing": {
+        "output": "blob://sha256/b8ad9745eb032e1529021db56fb0316d1bbac9211156d215e74bdc779585d3f0",
+        "exit_code": 0,
+        "duration_ms": 1643,
+        "termination": "exited",
+        "output_bytes": 1524,
+        "live_streaming": true
+      },
+      "parallel_results": null,
+      "output": null,
+      "output_bytes": 1524,
+      "live_streaming": true,
+      "termination": "exited",
+      "started_at": "2026-05-13T16:52:34.552244605Z",
+      "handler": "command",
+      "duration_ms": 1648,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "total_tokens": 0,
+        "reasoning_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "state": "succeeded"
+    },
+    "promptfoo_gate@1": {
+      "first_event_seq": 126,
+      "prompt": null,
+      "response": null,
+      "completion": {
+        "outcome": "succeeded",
+        "notes": "Script completed: node scripts/consumer-radar/promptfoo-or-fallback.mjs 'apps/generated-consumer-app-radar' --real-mode 'true' --allow-fallback 'true'",
+        "failure_reason": null,
+        "timestamp": "2026-05-13T16:55:44.614103788Z"
+      },
+      "provider_used": null,
+      "diff": null,
+      "script_invocation": {
+        "script": "node scripts/consumer-radar/promptfoo-or-fallback.mjs 'apps/generated-consumer-app-radar' --real-mode 'true' --allow-fallback 'true'",
+        "command": "exec 2>&1\nnode scripts/consumer-radar/promptfoo-or-fallback.mjs 'apps/generated-consumer-app-radar' --real-mode 'true' --allow-fallback 'true'",
+        "language": "shell"
+      },
+      "script_timing": {
+        "output": "blob://sha256/999c98431d14f862d2e8cf8098865e337c11d4f64695502289679afb91fdbc1a",
+        "exit_code": 0,
+        "duration_ms": 136424,
+        "termination": "exited",
+        "output_bytes": 895,
+        "live_streaming": true
+      },
+      "parallel_results": null,
+      "output": null,
+      "output_bytes": 895,
+      "live_streaming": true,
+      "termination": "exited",
+      "started_at": "2026-05-13T16:53:27.805725300Z",
+      "handler": "command",
+      "duration_ms": 136430,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "total_tokens": 0,
+        "reasoning_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "state": "succeeded"
+    },
+    "review_consensus@1": {
+      "first_event_seq": 191,
+      "prompt": null,
+      "response": null,
+      "completion": {
+        "outcome": "succeeded",
+        "notes": "Script completed: node scripts/consumer-radar/review-consensus.mjs --reviews reports/consumer-radar/reviews --output reports/consumer-radar/review-consensus.json --minimum-active-reviews '2'",
+        "failure_reason": null,
+        "timestamp": "2026-05-13T16:57:07.569706846Z"
+      },
+      "provider_used": null,
+      "diff": null,
+      "script_invocation": {
+        "script": "node scripts/consumer-radar/review-consensus.mjs --reviews reports/consumer-radar/reviews --output reports/consumer-radar/review-consensus.json --minimum-active-reviews '2'",
+        "command": "exec 2>&1\nnode scripts/consumer-radar/review-consensus.mjs --reviews reports/consumer-radar/reviews --output reports/consumer-radar/review-consensus.json --minimum-active-reviews '2'",
+        "language": "shell"
+      },
+      "script_timing": {
+        "output": "blob://sha256/4d48dad854a9e8406beb318395d555937dff3cb90653b5e6e1e4c50117cb73eb",
+        "exit_code": 0,
+        "duration_ms": 1925,
+        "termination": "exited",
+        "output_bytes": 771,
+        "live_streaming": true
+      },
+      "parallel_results": null,
+      "output": null,
+      "output_bytes": 771,
+      "live_streaming": true,
+      "termination": "exited",
+      "started_at": "2026-05-13T16:57:05.267560694Z",
+      "handler": "command",
+      "duration_ms": 1930,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "total_tokens": 0,
+        "reasoning_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "state": "succeeded"
+    },
+    "spec_kitty_feedback_gate@1": {
+      "first_event_seq": 40,
+      "prompt": null,
+      "response": null,
+      "completion": {
+        "outcome": "succeeded",
+        "notes": "Script completed: node scripts/app-feedback/spec-kitty-feedback-gate.mjs --analysis .workflow/app-feedback/feedback-analysis.json --out .workflow/app-feedback/spec-kitty-feedback-gate.json --target 'consumer-radar'",
+        "failure_reason": null,
+        "timestamp": "2026-05-13T16:52:41.207822344Z"
+      },
+      "provider_used": null,
+      "diff": null,
+      "script_invocation": {
+        "script": "node scripts/app-feedback/spec-kitty-feedback-gate.mjs --analysis .workflow/app-feedback/feedback-analysis.json --out .workflow/app-feedback/spec-kitty-feedback-gate.json --target 'consumer-radar'",
+        "command": "exec 2>&1\nnode scripts/app-feedback/spec-kitty-feedback-gate.mjs --analysis .workflow/app-feedback/feedback-analysis.json --out .workflow/app-feedback/spec-kitty-feedback-gate.json --target 'consumer-radar'",
+        "language": "shell"
+      },
+      "script_timing": {
+        "output": "blob://sha256/41c40c06c8259d1f1b0b7afabaabfd4ae60308f088df97538f8e7985070da89d",
+        "exit_code": 0,
+        "duration_ms": 1778,
+        "termination": "exited",
+        "output_bytes": 1026,
+        "live_streaming": true
+      },
+      "parallel_results": null,
+      "output": null,
+      "output_bytes": 1026,
+      "live_streaming": true,
+      "termination": "exited",
+      "started_at": "2026-05-13T16:52:39.237961902Z",
+      "handler": "command",
+      "duration_ms": 1784,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "total_tokens": 0,
+        "reasoning_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "state": "succeeded"
+    },
+    "wait_for_support_files@1": {
+      "first_event_seq": 19,
+      "prompt": null,
+      "response": null,
+      "completion": {
+        "outcome": "succeeded",
+        "notes": "Script completed: for i in $(seq 1 90); do if [ -f scripts/app-feedback/parse-feedback.mjs ] && [ -f scripts/app-feedback/apply-feedback-enhancement.mjs ] && [ -f 'feedback/consumer-radar-product-feedback.md' ]; then echo feedback-support-ready; exit 0; fi; sleep 2; done; echo 'missing feedback enhancement support files' >&2; exit 1",
+        "failure_reason": null,
+        "timestamp": "2026-05-13T16:52:31.565474058Z"
+      },
+      "provider_used": null,
+      "diff": null,
+      "script_invocation": {
+        "script": "for i in $(seq 1 90); do if [ -f scripts/app-feedback/parse-feedback.mjs ] && [ -f scripts/app-feedback/apply-feedback-enhancement.mjs ] && [ -f 'feedback/consumer-radar-product-feedback.md' ]; then echo feedback-support-ready; exit 0; fi; sleep 2; done; echo 'missing feedback enhancement support files' >&2; exit 1",
+        "command": "exec 2>&1\nfor i in $(seq 1 90); do if [ -f scripts/app-feedback/parse-feedback.mjs ] && [ -f scripts/app-feedback/apply-feedback-enhancement.mjs ] && [ -f 'feedback/consumer-radar-product-feedback.md' ]; then echo feedback-support-ready; exit 0; fi; sleep 2; done; echo 'missing feedback enhancement support files' >&2; exit 1",
+        "language": "shell"
+      },
+      "script_timing": {
+        "output": "blob://sha256/b5a3a27785c10a6fc1f5a02472c6297fcb9708eaa1c0cfbdc52dacf40288112b",
+        "exit_code": 0,
+        "duration_ms": 1649,
+        "termination": "exited",
+        "output_bytes": 23,
+        "live_streaming": true
+      },
+      "parallel_results": null,
+      "output": null,
+      "output_bytes": 23,
+      "live_streaming": true,
+      "termination": "exited",
+      "started_at": "2026-05-13T16:52:29.826358807Z",
+      "handler": "command",
+      "duration_ms": 1656,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "total_tokens": 0,
+        "reasoning_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "state": "succeeded"
+    },
+    "prepare_review_reports@1": {
+      "first_event_seq": 138,
+      "prompt": null,
+      "response": null,
+      "completion": {
+        "outcome": "succeeded",
+        "notes": "Script completed: rm -rf reports/consumer-radar/reviews reports/consumer-radar/review-consensus.json && mkdir -p reports/consumer-radar/reviews",
+        "failure_reason": null,
+        "timestamp": "2026-05-13T16:55:49.443484123Z"
+      },
+      "provider_used": null,
+      "diff": null,
+      "script_invocation": {
+        "script": "rm -rf reports/consumer-radar/reviews reports/consumer-radar/review-consensus.json && mkdir -p reports/consumer-radar/reviews",
+        "command": "exec 2>&1\nrm -rf reports/consumer-radar/reviews reports/consumer-radar/review-consensus.json && mkdir -p reports/consumer-radar/reviews",
+        "language": "shell"
+      },
+      "script_timing": {
+        "output": "blob://sha256/12ae32cb1ec02d01eda3581b127c1fee3b0dc53572ed6baf239721a03d82e126",
+        "exit_code": 0,
+        "duration_ms": 1675,
+        "termination": "exited",
+        "output_bytes": 0,
+        "live_streaming": false
+      },
+      "parallel_results": null,
+      "output": null,
+      "output_bytes": 0,
+      "live_streaming": false,
+      "termination": "exited",
+      "started_at": "2026-05-13T16:55:47.680265914Z",
+      "handler": "command",
+      "duration_ms": 1681,
       "usage": {
         "input_tokens": 0,
         "output_tokens": 0,
