@@ -19,10 +19,16 @@ function extractJson(text) {
   return null;
 }
 
+function argBool(name, fallback) {
+  const raw = argValue(name, String(fallback));
+  return raw === true || raw === "true" || raw === "1" || raw === "yes";
+}
+
 const models = argValue("--model", "deepseek/deepseek-v4-flash").split(",").map((item) => item.trim()).filter(Boolean);
 const role = argValue("--role", "review");
 const appDir = argValue("--app-dir", "apps/generated-consumer-app-radar");
 const output = argValue("--output", ".workflow/consumer-radar/reviews/review.json");
+const realMode = argBool("--real-mode", false);
 const token = process.env.OPENROUTER_API_KEY;
 mkdirSync(dirname(output), { recursive: true });
 
@@ -36,10 +42,10 @@ const prompt = {
 };
 
 if (!token || token.includes("{{")) {
-  const skipped = { ok: true, skipped: true, reason: "OPENROUTER_API_KEY unavailable in sandbox", role, models };
+  const skipped = { ok: !realMode, skipped: true, real_mode: realMode, reason: "OPENROUTER_API_KEY unavailable in sandbox", role, models };
   writeFileSync(output, JSON.stringify(skipped, null, 2) + "\n");
   console.log(JSON.stringify(skipped, null, 2));
-  process.exit(0);
+  process.exit(realMode ? 1 : 0);
 }
 
 let finalReport = null;
@@ -68,12 +74,13 @@ for (const model of models) {
     const payload = await response.json().catch(() => ({}));
     const content = payload?.choices?.[0]?.message?.content || "";
     const parsed = extractJson(content);
-    finalReport = { ok: true, skipped: false, model, role, status: response.status, parsed, raw_excerpt: String(content).slice(0, 800), error: response.ok ? null : payload?.error || payload };
+    finalReport = { ok: response.ok && Boolean(parsed), skipped: false, real_mode: realMode, model, role, status: response.status, parsed, raw_excerpt: String(content).slice(0, 800), error: response.ok ? null : payload?.error || payload };
     if (response.ok && parsed) break;
   } catch (error) {
-    finalReport = { ok: true, skipped: false, model, role, error: error instanceof Error ? error.message : String(error) };
+    finalReport = { ok: false, skipped: false, real_mode: realMode, model, role, error: error instanceof Error ? error.message : String(error) };
   }
 }
 
 writeFileSync(output, JSON.stringify(finalReport, null, 2) + "\n");
 console.log(JSON.stringify(finalReport, null, 2));
+if (realMode && !finalReport?.ok) process.exit(1);

@@ -65,6 +65,81 @@ const fixtureApps = [
     reviewThemes: ["Users want gentler onboarding", "Export/sync concerns", "Prompt repetition"],
     featureRequests: ["Adaptive prompts", "Better Apple Health context", "Private export"],
     evidence: ["Fixture seed for repeatable CI"]
+  },
+  {
+    id: "screenzen",
+    name: "ScreenZen",
+    category: "Screen Time",
+    country: "US",
+    appStoreId: "1541027222",
+    rankDelta4w: 58,
+    reviewDelta4w: 73,
+    rating: 4.8,
+    socialDelta4w: 118,
+    socialStrategy: ["Reddit-style authenticity", "Anti-subscription positioning", "Direct comparisons to expensive blockers"],
+    reviewThemes: ["Users praise free controls", "Setup friction appears repeatedly", "Requests for more lockout nuance"],
+    featureRequests: ["Preset lockout templates", "Onboarding checklist", "Cross-device shared rules"],
+    evidence: ["Seed target for live chart/review enrichment"]
+  },
+  {
+    id: "structured",
+    name: "Structured",
+    category: "Productivity",
+    country: "US",
+    appStoreId: "1499198946",
+    rankDelta4w: 36,
+    reviewDelta4w: 82,
+    rating: 4.8,
+    socialDelta4w: 134,
+    socialStrategy: ["ADHD creator routines", "Calendar before-after clips", "Aesthetic planning screenshots"],
+    reviewThemes: ["Sync reliability matters", "Users want faster capture", "Recurring task UX is a purchase driver"],
+    featureRequests: ["Natural-language task capture", "More robust calendar sync", "Better widgets"],
+    evidence: ["Seed target for productivity category monitoring"]
+  },
+  {
+    id: "finch",
+    name: "Finch",
+    category: "Positivity",
+    country: "US",
+    appStoreId: "1528595748",
+    rankDelta4w: 29,
+    reviewDelta4w: 151,
+    rating: 4.9,
+    socialDelta4w: 177,
+    socialStrategy: ["Character-led UGC", "Mental health community clips", "Gift/share loops"],
+    reviewThemes: ["Emotional attachment is strong", "Users want more personalization", "Subscription boundaries are sensitive"],
+    featureRequests: ["Adaptive self-care journeys", "More low-cost social gifting", "Smarter mood insights"],
+    evidence: ["Seed target for positivity/wellness benchmarking"]
+  },
+  {
+    id: "rise",
+    name: "Rise",
+    category: "Health",
+    country: "US",
+    appStoreId: "1453884781",
+    rankDelta4w: 24,
+    reviewDelta4w: 57,
+    rating: 4.6,
+    socialDelta4w: 102,
+    socialStrategy: ["Sleep debt education", "Science-backed creator explainers", "Routine optimization hooks"],
+    reviewThemes: ["Accuracy questions", "Paywall complaints", "Users want wearable context"],
+    featureRequests: ["Clearer accuracy explanations", "Better Apple Health summaries", "Actionable weekly plan"],
+    evidence: ["Seed target for health/wellness category monitoring"]
+  },
+  {
+    id: "ladder",
+    name: "Ladder",
+    category: "Fitness",
+    country: "US",
+    appStoreId: "1502936453",
+    rankDelta4w: 51,
+    reviewDelta4w: 68,
+    rating: 4.9,
+    socialDelta4w: 189,
+    socialStrategy: ["Trainer-led short clips", "Transformation proof", "Community/accountability framing"],
+    reviewThemes: ["Program switching requests", "Equipment substitutions", "More beginner guidance"],
+    featureRequests: ["Adaptive equipment swaps", "Beginner ramp plans", "Progress story exports"],
+    evidence: ["Seed target for fitness category monitoring"]
   }
 ];
 
@@ -76,7 +151,7 @@ write("package.json", JSON.stringify({
     start: "node src/server.js",
     dev: "node src/server.js",
     test: "node --test tests/*.test.js",
-    typecheck: "node --check src/server.js && node --check src/scoring.js && node --check src/repository.js && node --check src/ingest.js && node --check src/sources/apify.js && node --check src/sources/apple.js && node --check public/app.js",
+    typecheck: "node --check src/server.js && node --check src/scoring.js && node --check src/repository.js && node --check src/ingest.js && node --check src/snapshots.js && node --check src/evidence.js && node --check src/sources/apify.js && node --check src/sources/apple.js && node --check src/sources/social.js && node --check public/app.js",
     build: "node scripts/validate-artifacts.mjs"
   },
   dependencies: {},
@@ -179,6 +254,68 @@ write("src/sources/apify.js", [
   "}"
 ]);
 
+write("src/sources/social.js", [
+  "import { runApifyActor } from './apify.js';",
+  "",
+  "export async function fetchTikTokSignals(appName, { actorId = process.env.APIFY_TIKTOK_ACTOR || 'clockworks/tiktok-scraper' } = {}) {",
+  "  const items = await runApifyActor(actorId, { searchTerms: [appName], maxItems: 20 });",
+  "  return summarizeSocialItems(items, 'tiktok');",
+  "}",
+  "",
+  "export async function fetchInstagramSignals(appName, { actorId = process.env.APIFY_INSTAGRAM_ACTOR || 'apify/instagram-scraper' } = {}) {",
+  "  const items = await runApifyActor(actorId, { search: appName, resultsLimit: 20 });",
+  "  return summarizeSocialItems(items, 'instagram');",
+  "}",
+  "",
+  "export function summarizeSocialItems(items, platform) {",
+  "  const posts = Array.isArray(items) ? items : [];",
+  "  const engagements = posts.map((item) => Number(item.likes || item.likeCount || item.playCount || item.views || 0)).filter(Number.isFinite);",
+  "  const totalEngagement = engagements.reduce((sum, value) => sum + value, 0);",
+  "  return { platform, postCount: posts.length, totalEngagement, sampleCaptions: posts.slice(0, 5).map((item) => item.text || item.caption || item.description || '').filter(Boolean) };",
+  "}"
+]);
+
+write("src/snapshots.js", [
+  "export function computeWeeklyDeltas(snapshots) {",
+  "  const rows = Array.isArray(snapshots) ? snapshots : [];",
+  "  return rows.map((row, index) => {",
+  "    const previous = rows[index - 1] || row;",
+  "    return {",
+  "      ...row,",
+  "      rankDelta: Number(previous.rank || row.rank || 0) - Number(row.rank || previous.rank || 0),",
+  "      reviewDelta: Number(row.reviewCount || 0) - Number(previous.reviewCount || 0),",
+  "      socialDelta: Number(row.socialMentions || 0) - Number(previous.socialMentions || 0)",
+  "    };",
+  "  });",
+  "}",
+  "",
+  "export function latestFourWeekVelocity(snapshots) {",
+  "  const deltas = computeWeeklyDeltas(snapshots).slice(-4);",
+  "  return deltas.reduce((sum, row) => sum + Math.max(0, row.rankDelta) + Math.max(0, row.reviewDelta) + Math.max(0, row.socialDelta), 0);",
+  "}"
+]);
+
+write("src/evidence.js", [
+  "const REQUEST_WORDS = ['wish', 'please add', 'need', 'missing', 'would love', 'feature'];",
+  "",
+  "export function extractReviewThemes(reviews) {",
+  "  const text = (Array.isArray(reviews) ? reviews : []).map((review) => [review.title, review.body].filter(Boolean).join(' ')).join(' ').toLowerCase();",
+  "  const themes = [];",
+  "  if (/price|subscription|paywall|expensive/.test(text)) themes.push('Pricing and subscription sensitivity');",
+  "  if (/sync|calendar|apple health|widget/.test(text)) themes.push('Ecosystem integration requests');",
+  "  if (/confusing|setup|onboarding|hard/.test(text)) themes.push('Onboarding and setup friction');",
+  "  if (/bug|crash|slow|reliable/.test(text)) themes.push('Reliability concerns');",
+  "  return themes;",
+  "}",
+  "",
+  "export function featureRequestsFromReviews(reviews) {",
+  "  return (Array.isArray(reviews) ? reviews : [])",
+  "    .filter((review) => REQUEST_WORDS.some((word) => String(review.body || '').toLowerCase().includes(word)))",
+  "    .slice(0, 8)",
+  "    .map((review) => ({ title: review.title || 'Review request', excerpt: String(review.body || '').slice(0, 220) }));",
+  "}"
+]);
+
 write("src/ingest.js", [
   "import { readFileSync } from 'node:fs';",
   "import { rankApps } from './scoring.js';",
@@ -267,7 +404,7 @@ write("public/index.html", [
   "      <button id=\"refresh\">Refresh</button>",
   "    </header>",
   "    <section class=\"layout\">",
-  "      <div class=\"panel\"><h2>Signals</h2><div id=\"apps\" class=\"apps\"></div></div>",
+  "      <div class=\"panel\"><h2>Growth Signals</h2><div id=\"apps\" class=\"apps\"></div></div>",
   "      <aside class=\"panel detail\"><h2>Opportunity</h2><div id=\"detail\"></div></aside>",
   "    </section>",
   "  </main>",
@@ -315,8 +452,8 @@ write("public/app.js", [
   "  target.innerHTML = '<h3>' + app.name + '</h3>' +",
   "    '<p>' + app.category + ' / rating ' + app.rating + '</p>' +",
   "    '<div class=\"chips\"><span class=\"chip\">rank +' + app.rankDelta4w + '</span><span class=\"chip\">reviews +' + app.reviewDelta4w + '</span><span class=\"chip\">social +' + app.socialDelta4w + '</span></div>' +",
-  "    '<h2>Social strategy</h2>' + list(app.socialStrategy) +",
-  "    '<h2>Review themes</h2>' + list(app.reviewThemes) +",
+  "    '<h2>Social Strategy</h2>' + list(app.socialStrategy) +",
+  "    '<h2>Review Pain</h2>' + list(app.reviewThemes) +",
   "    '<h2>Feature requests</h2>' + list(app.featureRequests);",
   "}",
   "",
@@ -348,7 +485,7 @@ write("public/app.js", [
 
 write("scripts/validate-artifacts.mjs", [
   "import { existsSync } from 'node:fs';",
-  "const required = ['package.json','src/server.js','src/scoring.js','public/index.html','public/app.js','fixtures/apps.json','tests/scoring.test.js'];",
+  "const required = ['package.json','src/server.js','src/scoring.js','src/snapshots.js','src/evidence.js','src/sources/social.js','public/index.html','public/app.js','fixtures/apps.json','tests/scoring.test.js'];",
   "const missing = required.filter((file) => !existsSync(file));",
   "if (missing.length) throw new Error('Missing generated artifacts: ' + missing.join(', '));",
   "console.log(JSON.stringify({ ok: true, artifacts: required.length }, null, 2));"

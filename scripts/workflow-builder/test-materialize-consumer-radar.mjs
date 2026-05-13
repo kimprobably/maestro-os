@@ -53,6 +53,13 @@ const toml = readFileSync(
   "utf8"
 );
 const spec = readFileSync(resolve(outDir, "specs/consumer-app-radar/spec.md"), "utf8");
+const dataSourceSmoke = readFileSync(resolve(outDir, "scripts/consumer-radar/data-source-smoke.mjs"), "utf8");
+const generateApp = readFileSync(resolve(outDir, "scripts/consumer-radar/generate-app.mjs"), "utf8");
+const openRouterReview = readFileSync(resolve(outDir, "scripts/consumer-radar/openrouter-review.mjs"), "utf8");
+const reviewConsensus = readFileSync(resolve(outDir, "scripts/consumer-radar/review-consensus.mjs"), "utf8");
+const promptfooGate = readFileSync(resolve(outDir, "scripts/consumer-radar/promptfoo-or-fallback.mjs"), "utf8");
+const qltyGate = readFileSync(resolve(outDir, "scripts/consumer-radar/qlty-gate.mjs"), "utf8");
+const artifactGate = readFileSync(resolve(outDir, "scripts/consumer-radar/validate-build-artifacts.mjs"), "utf8");
 
 for (const text of [
   "Spec Kitty",
@@ -76,6 +83,34 @@ if (/apify_api_|sk-or-v1-|xoxb-|xapp-/.test(workflow + toml + spec)) {
 }
 if (!toml.includes('[run.sandbox.env]') || !toml.includes('{{ env.APIFY_TOKEN }}')) {
   throw new Error("generated run config must inject APIFY_TOKEN by env reference");
+}
+for (const text of ["real_mode", "allow_fixture_fallback", "allow_quality_fallback", "minimum_active_reviews"]) {
+  if (!workflow.includes(text) && !toml.includes(text)) {
+    throw new Error(`generated workflow must include strict mode marker: ${text}`);
+  }
+}
+if (!dataSourceSmoke.includes("env_injected_by_fabro") || !dataSourceSmoke.includes("realMode") || !dataSourceSmoke.includes("process.exit(1)")) {
+  throw new Error("data source smoke must verify Fabro env injection and fail in real mode");
+}
+if (!openRouterReview.includes("realMode") || !openRouterReview.includes("process.exit(realMode ? 1 : 0)") || !openRouterReview.includes("OPENROUTER_API_KEY unavailable")) {
+  throw new Error("OpenRouter review must support real-mode hard failure for missing credentials");
+}
+if (!reviewConsensus.includes("minimumActiveReviews") || !reviewConsensus.includes("active.length < minimumActiveReviews")) {
+  throw new Error("review consensus must fail when all model reviews are skipped");
+}
+if (!promptfooGate.includes("allowFallback") || !promptfooGate.includes("Promptfoo failed in real mode")) {
+  throw new Error("promptfoo gate must make fallback opt-in in real mode");
+}
+if (!qltyGate.includes("allowFallback") || !qltyGate.includes("Qlty unavailable in real mode")) {
+  throw new Error("qlty gate must make unavailable qlty opt-in in real mode");
+}
+for (const text of ["src/sources/social.js", "src/snapshots.js", "src/evidence.js", "Growth Signals", "Review Pain", "Social Strategy"]) {
+  if (!generateApp.includes(text)) {
+    throw new Error(`generated app must include richer product surface marker: ${text}`);
+  }
+}
+if (!artifactGate.includes("minimum_apps") || !artifactGate.includes("minimum_reports")) {
+  throw new Error("artifact gate must enforce richer artifact thresholds");
 }
 
 console.log(JSON.stringify({

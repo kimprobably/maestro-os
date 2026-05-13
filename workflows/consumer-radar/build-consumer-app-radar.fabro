@@ -2,7 +2,7 @@ digraph ConsumerAppRadarBuild {
     graph [
         goal="Build Consumer App Radar from spec with CI, eval, and model review",
         persona="code-factory",
-        inputs="app_dir, spec_path",
+        inputs="app_dir, spec_path, real_mode, allow_fixture_fallback, allow_quality_fallback, minimum_active_reviews",
         outputs="application, ci_report, eval_report, review_consensus, handoff",
         default_max_retries=2,
         retry_target="generate_app",
@@ -47,7 +47,7 @@ digraph ConsumerAppRadarBuild {
         shape=parallelogram,
         goal_gate=true,
         retry_target="data_source_smoke",
-        script="node scripts/consumer-radar/data-source-smoke.mjs --output .workflow/consumer-radar/data-source-smoke.json"
+        script="node scripts/consumer-radar/data-source-smoke.mjs --output .workflow/consumer-radar/data-source-smoke.json --real-mode '{{ inputs.real_mode|default('true') }}' --allow-fixture-fallback '{{ inputs.allow_fixture_fallback|default('false') }}'"
     ]
 
     generate_app [
@@ -71,7 +71,7 @@ digraph ConsumerAppRadarBuild {
         shape=parallelogram,
         goal_gate=true,
         retry_target="generate_app",
-        script="node scripts/consumer-radar/qlty-gate.mjs '{{ inputs.app_dir|default('apps/generated-consumer-app-radar') }}'"
+        script="node scripts/consumer-radar/qlty-gate.mjs '{{ inputs.app_dir|default('apps/generated-consumer-app-radar') }}' --real-mode '{{ inputs.real_mode|default('true') }}' --allow-fallback '{{ inputs.allow_quality_fallback|default('false') }}'"
     ]
 
     promptfoo_gate [
@@ -79,7 +79,7 @@ digraph ConsumerAppRadarBuild {
         shape=parallelogram,
         goal_gate=true,
         retry_target="generate_app",
-        script="node scripts/consumer-radar/promptfoo-or-fallback.mjs '{{ inputs.app_dir|default('apps/generated-consumer-app-radar') }}'"
+        script="node scripts/consumer-radar/promptfoo-or-fallback.mjs '{{ inputs.app_dir|default('apps/generated-consumer-app-radar') }}' --real-mode '{{ inputs.real_mode|default('true') }}' --allow-fallback '{{ inputs.allow_quality_fallback|default('false') }}'"
     ]
 
     review_fanout [shape=component, label="Parallel Review Fanout"]
@@ -87,19 +87,19 @@ digraph ConsumerAppRadarBuild {
         label="Kimi Review",
         class="cheap",
         shape=parallelogram,
-        script="node scripts/consumer-radar/openrouter-review.mjs --model moonshotai/kimi-k2.6 --role market_strategy --app-dir '{{ inputs.app_dir|default('apps/generated-consumer-app-radar') }}' --output .workflow/consumer-radar/reviews/kimi.json"
+        script="node scripts/consumer-radar/openrouter-review.mjs --model moonshotai/kimi-k2.6 --role market_strategy --app-dir '{{ inputs.app_dir|default('apps/generated-consumer-app-radar') }}' --output .workflow/consumer-radar/reviews/kimi.json --real-mode '{{ inputs.real_mode|default('true') }}'"
     ]
     review_qwen [
         label="Qwen Review",
         class="cheap",
         shape=parallelogram,
-        script="node scripts/consumer-radar/openrouter-review.mjs --model qwen/qwen3.6-plus --role implementation_quality --app-dir '{{ inputs.app_dir|default('apps/generated-consumer-app-radar') }}' --output .workflow/consumer-radar/reviews/qwen.json"
+        script="node scripts/consumer-radar/openrouter-review.mjs --model qwen/qwen3.6-plus --role implementation_quality --app-dir '{{ inputs.app_dir|default('apps/generated-consumer-app-radar') }}' --output .workflow/consumer-radar/reviews/qwen.json --real-mode '{{ inputs.real_mode|default('true') }}'"
     ]
     review_deepseek [
         label="DeepSeek Review",
         class="cheap",
         shape=parallelogram,
-        script="node scripts/consumer-radar/openrouter-review.mjs --model deepseek/deepseek-v4-pro,deepseek/deepseek-v4-flash --role simplification_and_ci --app-dir '{{ inputs.app_dir|default('apps/generated-consumer-app-radar') }}' --output .workflow/consumer-radar/reviews/deepseek.json"
+        script="node scripts/consumer-radar/openrouter-review.mjs --model deepseek/deepseek-v4-pro,deepseek/deepseek-v4-flash --role simplification_and_ci --app-dir '{{ inputs.app_dir|default('apps/generated-consumer-app-radar') }}' --output .workflow/consumer-radar/reviews/deepseek.json --real-mode '{{ inputs.real_mode|default('true') }}'"
     ]
     review_join [shape=tripleoctagon, label="Review Join", join_policy="wait_all"]
 
@@ -108,7 +108,7 @@ digraph ConsumerAppRadarBuild {
         shape=parallelogram,
         goal_gate=true,
         retry_target="generate_app",
-        script="node scripts/consumer-radar/review-consensus.mjs --reviews .workflow/consumer-radar/reviews --output .workflow/consumer-radar/review-consensus.json"
+        script="node scripts/consumer-radar/review-consensus.mjs --reviews .workflow/consumer-radar/reviews --output .workflow/consumer-radar/review-consensus.json --minimum-active-reviews '{{ inputs.minimum_active_reviews|default('2') }}'"
     ]
 
     artifact_gate [
@@ -116,7 +116,7 @@ digraph ConsumerAppRadarBuild {
         shape=parallelogram,
         goal_gate=true,
         retry_target="generate_app",
-        script="node scripts/consumer-radar/validate-build-artifacts.mjs '{{ inputs.app_dir|default('apps/generated-consumer-app-radar') }}'"
+        script="node scripts/consumer-radar/validate-build-artifacts.mjs '{{ inputs.app_dir|default('apps/generated-consumer-app-radar') }}' --real-mode '{{ inputs.real_mode|default('true') }}' --minimum-apps 6 --minimum-reports 4"
     ]
 
     publish_handoff [

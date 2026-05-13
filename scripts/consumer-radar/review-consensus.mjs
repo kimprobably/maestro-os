@@ -12,6 +12,7 @@ function argValue(name, fallback) {
 
 const reviewDir = argValue("--reviews", ".workflow/consumer-radar/reviews");
 const output = argValue("--output", ".workflow/consumer-radar/review-consensus.json");
+const minimumActiveReviews = Number(argValue("--minimum-active-reviews", "1"));
 const reviews = existsSync(reviewDir)
   ? readdirSync(reviewDir).filter((file) => file.endsWith(".json")).map((file) => JSON.parse(readFileSync(join(reviewDir, file), "utf8")))
   : [];
@@ -20,14 +21,17 @@ const parsed = active.map((row) => row.parsed).filter(Boolean);
 const scores = parsed.map((row) => Number(row.score)).filter((score) => Number.isFinite(score));
 const avg = scores.length ? scores.reduce((a, b) => a + b, 0) / scores.length : null;
 const blockers = parsed.flatMap((row) => row.findings || []).filter((finding) => /blocker|critical|high/i.test(String(finding.severity)));
+const insufficientReviews = active.length < minimumActiveReviews;
 const report = {
-  ok: blockers.length === 0,
-  verdict: blockers.length === 0 ? "APPROVE" : "REVISE",
+  ok: blockers.length === 0 && !insufficientReviews,
+  verdict: blockers.length === 0 && !insufficientReviews ? "APPROVE" : "REVISE",
   review_count: reviews.length,
   active_review_count: active.length,
+  minimum_active_reviews: minimumActiveReviews,
   skipped_review_count: reviews.length - active.length,
   average_model_score: avg == null ? null : Number(avg.toFixed(2)),
   blockers,
+  hard_failures: insufficientReviews ? ["Not enough active OpenRouter reviews"] : [],
   note: active.length === 0 ? "All model reviews skipped; deterministic gates are authoritative for this run." : "Consensus synthesized from available OpenRouter reviews."
 };
 mkdirSync(dirname(output), { recursive: true });

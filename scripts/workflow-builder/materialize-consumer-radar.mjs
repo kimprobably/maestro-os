@@ -131,7 +131,7 @@ function buildWorkflow() {
     graph [
         goal="Build Consumer App Radar from spec with CI, eval, and model review",
         persona="code-factory",
-        inputs="app_dir, spec_path",
+        inputs="app_dir, spec_path, real_mode, allow_fixture_fallback, allow_quality_fallback, minimum_active_reviews",
         outputs="application, ci_report, eval_report, review_consensus, handoff",
         default_max_retries=2,
         retry_target="generate_app",
@@ -176,7 +176,7 @@ function buildWorkflow() {
         shape=parallelogram,
         goal_gate=true,
         retry_target="data_source_smoke",
-        script="node scripts/consumer-radar/data-source-smoke.mjs --output .workflow/consumer-radar/data-source-smoke.json"
+        script="node scripts/consumer-radar/data-source-smoke.mjs --output .workflow/consumer-radar/data-source-smoke.json --real-mode '{{ inputs.real_mode|default('true') }}' --allow-fixture-fallback '{{ inputs.allow_fixture_fallback|default('false') }}'"
     ]
 
     generate_app [
@@ -200,7 +200,7 @@ function buildWorkflow() {
         shape=parallelogram,
         goal_gate=true,
         retry_target="generate_app",
-        script="node scripts/consumer-radar/qlty-gate.mjs '{{ inputs.app_dir|default('apps/generated-consumer-app-radar') }}'"
+        script="node scripts/consumer-radar/qlty-gate.mjs '{{ inputs.app_dir|default('apps/generated-consumer-app-radar') }}' --real-mode '{{ inputs.real_mode|default('true') }}' --allow-fallback '{{ inputs.allow_quality_fallback|default('false') }}'"
     ]
 
     promptfoo_gate [
@@ -208,7 +208,7 @@ function buildWorkflow() {
         shape=parallelogram,
         goal_gate=true,
         retry_target="generate_app",
-        script="node scripts/consumer-radar/promptfoo-or-fallback.mjs '{{ inputs.app_dir|default('apps/generated-consumer-app-radar') }}'"
+        script="node scripts/consumer-radar/promptfoo-or-fallback.mjs '{{ inputs.app_dir|default('apps/generated-consumer-app-radar') }}' --real-mode '{{ inputs.real_mode|default('true') }}' --allow-fallback '{{ inputs.allow_quality_fallback|default('false') }}'"
     ]
 
     review_fanout [shape=component, label="Parallel Review Fanout"]
@@ -216,19 +216,19 @@ function buildWorkflow() {
         label="Kimi Review",
         class="cheap",
         shape=parallelogram,
-        script="node scripts/consumer-radar/openrouter-review.mjs --model moonshotai/kimi-k2.6 --role market_strategy --app-dir '{{ inputs.app_dir|default('apps/generated-consumer-app-radar') }}' --output .workflow/consumer-radar/reviews/kimi.json"
+        script="node scripts/consumer-radar/openrouter-review.mjs --model moonshotai/kimi-k2.6 --role market_strategy --app-dir '{{ inputs.app_dir|default('apps/generated-consumer-app-radar') }}' --output .workflow/consumer-radar/reviews/kimi.json --real-mode '{{ inputs.real_mode|default('true') }}'"
     ]
     review_qwen [
         label="Qwen Review",
         class="cheap",
         shape=parallelogram,
-        script="node scripts/consumer-radar/openrouter-review.mjs --model qwen/qwen3.6-plus --role implementation_quality --app-dir '{{ inputs.app_dir|default('apps/generated-consumer-app-radar') }}' --output .workflow/consumer-radar/reviews/qwen.json"
+        script="node scripts/consumer-radar/openrouter-review.mjs --model qwen/qwen3.6-plus --role implementation_quality --app-dir '{{ inputs.app_dir|default('apps/generated-consumer-app-radar') }}' --output .workflow/consumer-radar/reviews/qwen.json --real-mode '{{ inputs.real_mode|default('true') }}'"
     ]
     review_deepseek [
         label="DeepSeek Review",
         class="cheap",
         shape=parallelogram,
-        script="node scripts/consumer-radar/openrouter-review.mjs --model deepseek/deepseek-v4-pro,deepseek/deepseek-v4-flash --role simplification_and_ci --app-dir '{{ inputs.app_dir|default('apps/generated-consumer-app-radar') }}' --output .workflow/consumer-radar/reviews/deepseek.json"
+        script="node scripts/consumer-radar/openrouter-review.mjs --model deepseek/deepseek-v4-pro,deepseek/deepseek-v4-flash --role simplification_and_ci --app-dir '{{ inputs.app_dir|default('apps/generated-consumer-app-radar') }}' --output .workflow/consumer-radar/reviews/deepseek.json --real-mode '{{ inputs.real_mode|default('true') }}'"
     ]
     review_join [shape=tripleoctagon, label="Review Join", join_policy="wait_all"]
 
@@ -237,7 +237,7 @@ function buildWorkflow() {
         shape=parallelogram,
         goal_gate=true,
         retry_target="generate_app",
-        script="node scripts/consumer-radar/review-consensus.mjs --reviews .workflow/consumer-radar/reviews --output .workflow/consumer-radar/review-consensus.json"
+        script="node scripts/consumer-radar/review-consensus.mjs --reviews .workflow/consumer-radar/reviews --output .workflow/consumer-radar/review-consensus.json --minimum-active-reviews '{{ inputs.minimum_active_reviews|default('2') }}'"
     ]
 
     artifact_gate [
@@ -245,7 +245,7 @@ function buildWorkflow() {
         shape=parallelogram,
         goal_gate=true,
         retry_target="generate_app",
-        script="node scripts/consumer-radar/validate-build-artifacts.mjs '{{ inputs.app_dir|default('apps/generated-consumer-app-radar') }}'"
+        script="node scripts/consumer-radar/validate-build-artifacts.mjs '{{ inputs.app_dir|default('apps/generated-consumer-app-radar') }}' --real-mode '{{ inputs.real_mode|default('true') }}' --minimum-apps 6 --minimum-reports 4"
     ]
 
     publish_handoff [
@@ -302,6 +302,10 @@ goal = "Build Consumer App Radar from spec with CI, eval, and model review"
 [run.inputs]
 app_dir = "apps/generated-consumer-app-radar"
 spec_path = "specs/consumer-app-radar/spec.md"
+real_mode = "true"
+allow_fixture_fallback = "false"
+allow_quality_fallback = "false"
+minimum_active_reviews = "2"
 
 [run.sandbox]
 provider = "daytona"
@@ -320,10 +324,12 @@ PROMPTFOO_DISABLE_TELEMETRY = "1"
 auto_stop_interval = 60
 
 [run.sandbox.daytona.snapshot]
-name = "maestro-dev"
+name = "maestro-code-factory"
 dockerfile = """
-FROM ubuntu:24.04
-RUN apt-get update && apt-get install -y bash ca-certificates curl git jq nodejs npm ripgrep && rm -rf /var/lib/apt/lists/*
+FROM node:22-bookworm
+RUN apt-get update && apt-get install -y bash ca-certificates curl git jq ripgrep python3 python3-pip pipx openssh-client && rm -rf /var/lib/apt/lists/*
+RUN npm install -g promptfoo @openai/codex @anthropic-ai/claude-code
+RUN curl -fsSL https://qlty.sh | sh && ln -sf /root/.qlty/bin/qlty /usr/local/bin/qlty
 """
 `;
 }
@@ -389,15 +395,26 @@ function argValue(name, fallback) {
   return value;
 }
 
+function argBool(name, fallback) {
+  const raw = argValue(name, String(fallback));
+  return raw === true || raw === "true" || raw === "1" || raw === "yes";
+}
+
 function usableSecret(value) {
   return Boolean(value && !value.includes("{{") && !value.includes("}}"));
 }
 
 const output = argValue("--output", ".workflow/consumer-radar/data-source-smoke.json");
+const realMode = argBool("--real-mode", false);
+const allowFixtureFallback = argBool("--allow-fixture-fallback", true);
 const report = {
   ok: true,
+  real_mode: realMode,
+  allow_fixture_fallback: allowFixtureFallback,
+  env_injected_by_fabro: true,
   checked_at: new Date().toISOString(),
   apify_token_available: usableSecret(process.env.APIFY_TOKEN),
+  openrouter_key_available: usableSecret(process.env.OPENROUTER_API_KEY),
   actors: {
     appstore: process.env.APIFY_APPSTORE_ACTOR || "crawlerbros/appstore-scraper",
     tiktok: process.env.APIFY_TIKTOK_ACTOR || "clockworks/tiktok-scraper",
@@ -408,7 +425,7 @@ const report = {
 };
 
 try {
-  const response = await fetch("https://itunes.apple.com/us/rss/customerreviews/id=1610430305/sortBy=mostRecent/json", {
+  const response = await fetch("https://itunes.apple.com/us/rss/topfreeapplications/limit=25/genre=6007/json", {
     signal: AbortSignal.timeout(12000)
   });
   report.apple_review_rss = { ok: response.ok, status: response.status };
@@ -429,9 +446,19 @@ if (report.apify_token_available) {
   report.apify_identity = { ok: false, status: "missing_or_unresolved_token" };
 }
 
+const hardFailures = [];
+if (realMode && !allowFixtureFallback) {
+  if (!report.apify_token_available) hardFailures.push("APIFY_TOKEN missing or unresolved");
+  if (!report.openrouter_key_available) hardFailures.push("OPENROUTER_API_KEY missing or unresolved");
+  if (!report.apple_review_rss?.ok) hardFailures.push("Apple RSS smoke failed");
+  if (!report.apify_identity?.ok) hardFailures.push("Apify identity smoke failed");
+}
+report.hard_failures = hardFailures;
+report.ok = hardFailures.length === 0;
 mkdirSync(dirname(output), { recursive: true });
 writeFileSync(output, JSON.stringify(report, null, 2) + "\\n");
 console.log(JSON.stringify(report, null, 2));
+if (!report.ok) process.exit(1);
 `;
 }
 
@@ -503,6 +530,81 @@ const fixtureApps = [
     reviewThemes: ["Users want gentler onboarding", "Export/sync concerns", "Prompt repetition"],
     featureRequests: ["Adaptive prompts", "Better Apple Health context", "Private export"],
     evidence: ["Fixture seed for repeatable CI"]
+  },
+  {
+    id: "screenzen",
+    name: "ScreenZen",
+    category: "Screen Time",
+    country: "US",
+    appStoreId: "1541027222",
+    rankDelta4w: 58,
+    reviewDelta4w: 73,
+    rating: 4.8,
+    socialDelta4w: 118,
+    socialStrategy: ["Reddit-style authenticity", "Anti-subscription positioning", "Direct comparisons to expensive blockers"],
+    reviewThemes: ["Users praise free controls", "Setup friction appears repeatedly", "Requests for more lockout nuance"],
+    featureRequests: ["Preset lockout templates", "Onboarding checklist", "Cross-device shared rules"],
+    evidence: ["Seed target for live chart/review enrichment"]
+  },
+  {
+    id: "structured",
+    name: "Structured",
+    category: "Productivity",
+    country: "US",
+    appStoreId: "1499198946",
+    rankDelta4w: 36,
+    reviewDelta4w: 82,
+    rating: 4.8,
+    socialDelta4w: 134,
+    socialStrategy: ["ADHD creator routines", "Calendar before-after clips", "Aesthetic planning screenshots"],
+    reviewThemes: ["Sync reliability matters", "Users want faster capture", "Recurring task UX is a purchase driver"],
+    featureRequests: ["Natural-language task capture", "More robust calendar sync", "Better widgets"],
+    evidence: ["Seed target for productivity category monitoring"]
+  },
+  {
+    id: "finch",
+    name: "Finch",
+    category: "Positivity",
+    country: "US",
+    appStoreId: "1528595748",
+    rankDelta4w: 29,
+    reviewDelta4w: 151,
+    rating: 4.9,
+    socialDelta4w: 177,
+    socialStrategy: ["Character-led UGC", "Mental health community clips", "Gift/share loops"],
+    reviewThemes: ["Emotional attachment is strong", "Users want more personalization", "Subscription boundaries are sensitive"],
+    featureRequests: ["Adaptive self-care journeys", "More low-cost social gifting", "Smarter mood insights"],
+    evidence: ["Seed target for positivity/wellness benchmarking"]
+  },
+  {
+    id: "rise",
+    name: "Rise",
+    category: "Health",
+    country: "US",
+    appStoreId: "1453884781",
+    rankDelta4w: 24,
+    reviewDelta4w: 57,
+    rating: 4.6,
+    socialDelta4w: 102,
+    socialStrategy: ["Sleep debt education", "Science-backed creator explainers", "Routine optimization hooks"],
+    reviewThemes: ["Accuracy questions", "Paywall complaints", "Users want wearable context"],
+    featureRequests: ["Clearer accuracy explanations", "Better Apple Health summaries", "Actionable weekly plan"],
+    evidence: ["Seed target for health/wellness category monitoring"]
+  },
+  {
+    id: "ladder",
+    name: "Ladder",
+    category: "Fitness",
+    country: "US",
+    appStoreId: "1502936453",
+    rankDelta4w: 51,
+    reviewDelta4w: 68,
+    rating: 4.9,
+    socialDelta4w: 189,
+    socialStrategy: ["Trainer-led short clips", "Transformation proof", "Community/accountability framing"],
+    reviewThemes: ["Program switching requests", "Equipment substitutions", "More beginner guidance"],
+    featureRequests: ["Adaptive equipment swaps", "Beginner ramp plans", "Progress story exports"],
+    evidence: ["Seed target for fitness category monitoring"]
   }
 ];
 
@@ -514,7 +616,7 @@ write("package.json", JSON.stringify({
     start: "node src/server.js",
     dev: "node src/server.js",
     test: "node --test tests/*.test.js",
-    typecheck: "node --check src/server.js && node --check src/scoring.js && node --check src/repository.js && node --check src/ingest.js && node --check src/sources/apify.js && node --check src/sources/apple.js && node --check public/app.js",
+    typecheck: "node --check src/server.js && node --check src/scoring.js && node --check src/repository.js && node --check src/ingest.js && node --check src/snapshots.js && node --check src/evidence.js && node --check src/sources/apify.js && node --check src/sources/apple.js && node --check src/sources/social.js && node --check public/app.js",
     build: "node scripts/validate-artifacts.mjs"
   },
   dependencies: {},
@@ -617,6 +719,68 @@ write("src/sources/apify.js", [
   "}"
 ]);
 
+write("src/sources/social.js", [
+  "import { runApifyActor } from './apify.js';",
+  "",
+  "export async function fetchTikTokSignals(appName, { actorId = process.env.APIFY_TIKTOK_ACTOR || 'clockworks/tiktok-scraper' } = {}) {",
+  "  const items = await runApifyActor(actorId, { searchTerms: [appName], maxItems: 20 });",
+  "  return summarizeSocialItems(items, 'tiktok');",
+  "}",
+  "",
+  "export async function fetchInstagramSignals(appName, { actorId = process.env.APIFY_INSTAGRAM_ACTOR || 'apify/instagram-scraper' } = {}) {",
+  "  const items = await runApifyActor(actorId, { search: appName, resultsLimit: 20 });",
+  "  return summarizeSocialItems(items, 'instagram');",
+  "}",
+  "",
+  "export function summarizeSocialItems(items, platform) {",
+  "  const posts = Array.isArray(items) ? items : [];",
+  "  const engagements = posts.map((item) => Number(item.likes || item.likeCount || item.playCount || item.views || 0)).filter(Number.isFinite);",
+  "  const totalEngagement = engagements.reduce((sum, value) => sum + value, 0);",
+  "  return { platform, postCount: posts.length, totalEngagement, sampleCaptions: posts.slice(0, 5).map((item) => item.text || item.caption || item.description || '').filter(Boolean) };",
+  "}"
+]);
+
+write("src/snapshots.js", [
+  "export function computeWeeklyDeltas(snapshots) {",
+  "  const rows = Array.isArray(snapshots) ? snapshots : [];",
+  "  return rows.map((row, index) => {",
+  "    const previous = rows[index - 1] || row;",
+  "    return {",
+  "      ...row,",
+  "      rankDelta: Number(previous.rank || row.rank || 0) - Number(row.rank || previous.rank || 0),",
+  "      reviewDelta: Number(row.reviewCount || 0) - Number(previous.reviewCount || 0),",
+  "      socialDelta: Number(row.socialMentions || 0) - Number(previous.socialMentions || 0)",
+  "    };",
+  "  });",
+  "}",
+  "",
+  "export function latestFourWeekVelocity(snapshots) {",
+  "  const deltas = computeWeeklyDeltas(snapshots).slice(-4);",
+  "  return deltas.reduce((sum, row) => sum + Math.max(0, row.rankDelta) + Math.max(0, row.reviewDelta) + Math.max(0, row.socialDelta), 0);",
+  "}"
+]);
+
+write("src/evidence.js", [
+  "const REQUEST_WORDS = ['wish', 'please add', 'need', 'missing', 'would love', 'feature'];",
+  "",
+  "export function extractReviewThemes(reviews) {",
+  "  const text = (Array.isArray(reviews) ? reviews : []).map((review) => [review.title, review.body].filter(Boolean).join(' ')).join(' ').toLowerCase();",
+  "  const themes = [];",
+  "  if (/price|subscription|paywall|expensive/.test(text)) themes.push('Pricing and subscription sensitivity');",
+  "  if (/sync|calendar|apple health|widget/.test(text)) themes.push('Ecosystem integration requests');",
+  "  if (/confusing|setup|onboarding|hard/.test(text)) themes.push('Onboarding and setup friction');",
+  "  if (/bug|crash|slow|reliable/.test(text)) themes.push('Reliability concerns');",
+  "  return themes;",
+  "}",
+  "",
+  "export function featureRequestsFromReviews(reviews) {",
+  "  return (Array.isArray(reviews) ? reviews : [])",
+  "    .filter((review) => REQUEST_WORDS.some((word) => String(review.body || '').toLowerCase().includes(word)))",
+  "    .slice(0, 8)",
+  "    .map((review) => ({ title: review.title || 'Review request', excerpt: String(review.body || '').slice(0, 220) }));",
+  "}"
+]);
+
 write("src/ingest.js", [
   "import { readFileSync } from 'node:fs';",
   "import { rankApps } from './scoring.js';",
@@ -705,7 +869,7 @@ write("public/index.html", [
   "      <button id=\\"refresh\\">Refresh</button>",
   "    </header>",
   "    <section class=\\"layout\\">",
-  "      <div class=\\"panel\\"><h2>Signals</h2><div id=\\"apps\\" class=\\"apps\\"></div></div>",
+  "      <div class=\\"panel\\"><h2>Growth Signals</h2><div id=\\"apps\\" class=\\"apps\\"></div></div>",
   "      <aside class=\\"panel detail\\"><h2>Opportunity</h2><div id=\\"detail\\"></div></aside>",
   "    </section>",
   "  </main>",
@@ -753,8 +917,8 @@ write("public/app.js", [
   "  target.innerHTML = '<h3>' + app.name + '</h3>' +",
   "    '<p>' + app.category + ' / rating ' + app.rating + '</p>' +",
   "    '<div class=\\"chips\\"><span class=\\"chip\\">rank +' + app.rankDelta4w + '</span><span class=\\"chip\\">reviews +' + app.reviewDelta4w + '</span><span class=\\"chip\\">social +' + app.socialDelta4w + '</span></div>' +",
-  "    '<h2>Social strategy</h2>' + list(app.socialStrategy) +",
-  "    '<h2>Review themes</h2>' + list(app.reviewThemes) +",
+  "    '<h2>Social Strategy</h2>' + list(app.socialStrategy) +",
+  "    '<h2>Review Pain</h2>' + list(app.reviewThemes) +",
   "    '<h2>Feature requests</h2>' + list(app.featureRequests);",
   "}",
   "",
@@ -786,7 +950,7 @@ write("public/app.js", [
 
 write("scripts/validate-artifacts.mjs", [
   "import { existsSync } from 'node:fs';",
-  "const required = ['package.json','src/server.js','src/scoring.js','public/index.html','public/app.js','fixtures/apps.json','tests/scoring.test.js'];",
+  "const required = ['package.json','src/server.js','src/scoring.js','src/snapshots.js','src/evidence.js','src/sources/social.js','public/index.html','public/app.js','fixtures/apps.json','tests/scoring.test.js'];",
   "const missing = required.filter((file) => !existsSync(file));",
   "if (missing.length) throw new Error('Missing generated artifacts: ' + missing.join(', '));",
   "console.log(JSON.stringify({ ok: true, artifacts: required.length }, null, 2));"
@@ -886,7 +1050,22 @@ function qltyGateScript() {
 import { mkdirSync, writeFileSync } from "node:fs";
 import { spawnSync } from "node:child_process";
 
+function argValue(name, fallback) {
+  const index = process.argv.indexOf(name);
+  if (index === -1) return fallback;
+  const value = process.argv[index + 1];
+  if (!value || value.startsWith("--")) throw new Error("Missing value for " + name);
+  return value;
+}
+
+function argBool(name, fallback) {
+  const raw = argValue(name, String(fallback));
+  return raw === true || raw === "true" || raw === "1" || raw === "yes";
+}
+
 const appDir = process.argv[2] || "apps/generated-consumer-app-radar";
+const realMode = argBool("--real-mode", false);
+const allowFallback = argBool("--allow-fallback", true);
 mkdirSync(".workflow/consumer-radar", { recursive: true });
 
 function run(cmd) {
@@ -905,16 +1084,25 @@ if (available) {
   check = run("export PATH=$HOME/.qlty/bin:$PATH; qlty check --all --no-progress --no-fail --summary --no-upgrade-check");
 }
 
+const hardFailures = [];
+if (realMode && !allowFallback) {
+  if (!available) hardFailures.push("Qlty unavailable in real mode");
+  if (check && check.status !== 0) hardFailures.push("Qlty check command failed in real mode");
+}
 const report = {
-  ok: true,
+  ok: hardFailures.length === 0,
+  real_mode: realMode,
+  allow_fallback: allowFallback,
   qlty_available: available,
   install_status: install ? install.status : null,
   check_status: check ? check.status : null,
+  hard_failures: hardFailures,
   stdout: check ? check.stdout.slice(-5000) : "",
   stderr: check ? check.stderr.slice(-5000) : "qlty unavailable; native checks remain the blocking gate"
 };
 writeFileSync(".workflow/consumer-radar/qlty-report.json", JSON.stringify(report, null, 2) + "\\n");
-console.log(JSON.stringify({ ok: true, qlty_available: available, check_status: report.check_status }, null, 2));
+console.log(JSON.stringify(report, null, 2));
+if (!report.ok) process.exit(1);
 `;
 }
 
@@ -923,7 +1111,22 @@ function promptfooFallbackScript() {
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { spawnSync } from "node:child_process";
 
+function argValue(name, fallback) {
+  const index = process.argv.indexOf(name);
+  if (index === -1) return fallback;
+  const value = process.argv[index + 1];
+  if (!value || value.startsWith("--")) throw new Error("Missing value for " + name);
+  return value;
+}
+
+function argBool(name, fallback) {
+  const raw = argValue(name, String(fallback));
+  return raw === true || raw === "true" || raw === "1" || raw === "yes";
+}
+
 const appDir = process.argv[2] || "apps/generated-consumer-app-radar";
+const realMode = argBool("--real-mode", false);
+const allowFallback = argBool("--allow-fallback", true);
 mkdirSync(".workflow/consumer-radar", { recursive: true });
 
 let promptfoo = spawnSync("sh", ["-lc", "command -v npx >/dev/null 2>&1"], { encoding: "utf8" }).status === 0;
@@ -938,18 +1141,25 @@ if (promptfoo) {
 const appsPath = appDir + "/fixtures/apps.json";
 const apps = existsSync(appsPath) ? JSON.parse(readFileSync(appsPath, "utf8")) : [];
 const fallbackAssertions = [
-  { name: "has_three_apps", passed: apps.length >= 3 },
+  { name: "has_six_apps", passed: apps.length >= 6 },
   { name: "has_social_strategy", passed: apps.every((app) => Array.isArray(app.socialStrategy) && app.socialStrategy.length > 0) },
   { name: "has_review_themes", passed: apps.every((app) => Array.isArray(app.reviewThemes) && app.reviewThemes.length > 0) },
   { name: "has_feature_requests", passed: apps.every((app) => Array.isArray(app.featureRequests) && app.featureRequests.length > 0) }
 ];
 
+const hardFailures = [];
+if (realMode && !allowFallback && (!promptfooResult || promptfooResult.status !== 0)) {
+  hardFailures.push("Promptfoo failed in real mode");
+}
 const report = {
-  ok: fallbackAssertions.every((row) => row.passed),
+  ok: fallbackAssertions.every((row) => row.passed) && hardFailures.length === 0,
+  real_mode: realMode,
+  allow_fallback: allowFallback,
   promptfoo_attempted: Boolean(promptfooResult),
   promptfoo_status: promptfooResult ? promptfooResult.status : null,
   promptfoo_stdout_excerpt: promptfooResult ? promptfooResult.stdout.slice(-3000) : "",
   promptfoo_stderr_excerpt: promptfooResult ? promptfooResult.stderr.slice(-3000) : "",
+  hard_failures: hardFailures,
   fallback_assertions: fallbackAssertions
 };
 writeFileSync(".workflow/consumer-radar/promptfoo-report.json", JSON.stringify(report, null, 2) + "\\n");
@@ -980,10 +1190,16 @@ function extractJson(text) {
   return null;
 }
 
+function argBool(name, fallback) {
+  const raw = argValue(name, String(fallback));
+  return raw === true || raw === "true" || raw === "1" || raw === "yes";
+}
+
 const models = argValue("--model", "deepseek/deepseek-v4-flash").split(",").map((item) => item.trim()).filter(Boolean);
 const role = argValue("--role", "review");
 const appDir = argValue("--app-dir", "apps/generated-consumer-app-radar");
 const output = argValue("--output", ".workflow/consumer-radar/reviews/review.json");
+const realMode = argBool("--real-mode", false);
 const token = process.env.OPENROUTER_API_KEY;
 mkdirSync(dirname(output), { recursive: true });
 
@@ -997,10 +1213,10 @@ const prompt = {
 };
 
 if (!token || token.includes("{{")) {
-  const skipped = { ok: true, skipped: true, reason: "OPENROUTER_API_KEY unavailable in sandbox", role, models };
+  const skipped = { ok: !realMode, skipped: true, real_mode: realMode, reason: "OPENROUTER_API_KEY unavailable in sandbox", role, models };
   writeFileSync(output, JSON.stringify(skipped, null, 2) + "\\n");
   console.log(JSON.stringify(skipped, null, 2));
-  process.exit(0);
+  process.exit(realMode ? 1 : 0);
 }
 
 let finalReport = null;
@@ -1029,15 +1245,16 @@ for (const model of models) {
     const payload = await response.json().catch(() => ({}));
     const content = payload?.choices?.[0]?.message?.content || "";
     const parsed = extractJson(content);
-    finalReport = { ok: true, skipped: false, model, role, status: response.status, parsed, raw_excerpt: String(content).slice(0, 800), error: response.ok ? null : payload?.error || payload };
+    finalReport = { ok: response.ok && Boolean(parsed), skipped: false, real_mode: realMode, model, role, status: response.status, parsed, raw_excerpt: String(content).slice(0, 800), error: response.ok ? null : payload?.error || payload };
     if (response.ok && parsed) break;
   } catch (error) {
-    finalReport = { ok: true, skipped: false, model, role, error: error instanceof Error ? error.message : String(error) };
+    finalReport = { ok: false, skipped: false, real_mode: realMode, model, role, error: error instanceof Error ? error.message : String(error) };
   }
 }
 
 writeFileSync(output, JSON.stringify(finalReport, null, 2) + "\\n");
 console.log(JSON.stringify(finalReport, null, 2));
+if (realMode && !finalReport?.ok) process.exit(1);
 `;
 }
 
@@ -1056,6 +1273,7 @@ function argValue(name, fallback) {
 
 const reviewDir = argValue("--reviews", ".workflow/consumer-radar/reviews");
 const output = argValue("--output", ".workflow/consumer-radar/review-consensus.json");
+const minimumActiveReviews = Number(argValue("--minimum-active-reviews", "1"));
 const reviews = existsSync(reviewDir)
   ? readdirSync(reviewDir).filter((file) => file.endsWith(".json")).map((file) => JSON.parse(readFileSync(join(reviewDir, file), "utf8")))
   : [];
@@ -1064,14 +1282,17 @@ const parsed = active.map((row) => row.parsed).filter(Boolean);
 const scores = parsed.map((row) => Number(row.score)).filter((score) => Number.isFinite(score));
 const avg = scores.length ? scores.reduce((a, b) => a + b, 0) / scores.length : null;
 const blockers = parsed.flatMap((row) => row.findings || []).filter((finding) => /blocker|critical|high/i.test(String(finding.severity)));
+const insufficientReviews = active.length < minimumActiveReviews;
 const report = {
-  ok: blockers.length === 0,
-  verdict: blockers.length === 0 ? "APPROVE" : "REVISE",
+  ok: blockers.length === 0 && !insufficientReviews,
+  verdict: blockers.length === 0 && !insufficientReviews ? "APPROVE" : "REVISE",
   review_count: reviews.length,
   active_review_count: active.length,
+  minimum_active_reviews: minimumActiveReviews,
   skipped_review_count: reviews.length - active.length,
   average_model_score: avg == null ? null : Number(avg.toFixed(2)),
   blockers,
+  hard_failures: insufficientReviews ? ["Not enough active OpenRouter reviews"] : [],
   note: active.length === 0 ? "All model reviews skipped; deterministic gates are authoritative for this run." : "Consensus synthesized from available OpenRouter reviews."
 };
 mkdirSync(dirname(output), { recursive: true });
@@ -1086,13 +1307,26 @@ function validateBuildArtifactsScript() {
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
 
+function argValue(name, fallback) {
+  const index = process.argv.indexOf(name);
+  if (index === -1) return fallback;
+  const value = process.argv[index + 1];
+  if (!value || value.startsWith("--")) throw new Error("Missing value for " + name);
+  return value;
+}
+
 const appDir = process.argv[2] || "apps/generated-consumer-app-radar";
+const minimum_apps = Number(argValue("--minimum-apps", "3"));
+const minimum_reports = Number(argValue("--minimum-reports", "4"));
 const required = [
   "package.json",
   "src/server.js",
   "src/scoring.js",
+  "src/snapshots.js",
+  "src/evidence.js",
   "src/sources/apify.js",
   "src/sources/apple.js",
+  "src/sources/social.js",
   "public/index.html",
   "public/app.js",
   "public/styles.css",
@@ -1107,12 +1341,16 @@ const reports = [
   ".workflow/consumer-radar/review-consensus.json"
 ];
 const missingReports = reports.filter((file) => !existsSync(file));
+const presentReports = reports.length - missingReports.length;
 const apps = existsSync(resolve(appDir, "fixtures/apps.json")) ? JSON.parse(readFileSync(resolve(appDir, "fixtures/apps.json"), "utf8")) : [];
 const report = {
-  ok: missing.length === 0 && missingReports.length === 0 && apps.length >= 3,
+  ok: missing.length === 0 && missingReports.length === 0 && apps.length >= minimum_apps && presentReports >= minimum_reports,
   app_dir: appDir,
   missing,
   missing_reports: missingReports,
+  reports_present: presentReports,
+  minimum_apps,
+  minimum_reports,
   fixture_apps: apps.length
 };
 mkdirSync(".workflow/consumer-radar", { recursive: true });
@@ -1126,11 +1364,11 @@ function promptfooConfig() {
   return `description: "Consumer App Radar opportunity quality eval"
 
 providers:
-  - id: openai-compatible
+  - id: openrouter:anthropic/claude-haiku-4-5
     config:
-      apiBaseUrl: https://openrouter.ai/api/v1
       apiKeyEnvar: OPENROUTER_API_KEY
-      model: anthropic/claude-haiku-4-5
+      temperature: 0
+      max_tokens: 400
 
 prompts:
   - "Evaluate whether the generated Consumer App Radar fixture identifies fast-growing consumer iPhone apps, growth signals, social strategy, review themes, and feature requests. Return a concise JSON verdict."
