@@ -758,14 +758,112 @@
     }
   },
   "web_url": "http://127.0.0.1:32276/runs/01KRGNH6QYC6XMWDQRS3Q5E0KW",
-  "start": null,
-  "status": {
-    "kind": "starting"
+  "start": {
+    "start_time": "2026-05-13T12:38:58.819219Z",
+    "run_branch": "fabro/run/01KRGNH6QYC6XMWDQRS3Q5E0KW",
+    "base_sha": "c99e79519c33d8055c30461bacd0b400da4691a7"
   },
-  "status_updated_at": "2026-05-13T12:38:35.568123Z",
-  "last_event_at": "2026-05-13T12:38:58.603609Z",
+  "status": {
+    "kind": "running"
+  },
+  "status_updated_at": "2026-05-13T12:38:58.819297Z",
+  "last_event_at": "2026-05-13T12:39:00.208030Z",
   "pending_control": null,
-  "checkpoints": [],
+  "checkpoints": [
+    {
+      "seq": 20,
+      "checkpoint": {
+        "timestamp": "2026-05-13T12:39:00.050508Z",
+        "current_node": "start",
+        "completed_nodes": [
+          "start"
+        ],
+        "node_retries": {},
+        "context_values": {
+          "failure_signature": "",
+          "outcome": "succeeded",
+          "failure_class": "",
+          "internal.node_visit_count": 1,
+          "graph.rankdir": "LR",
+          "internal.run_id": "01KRGNH6QYC6XMWDQRS3Q5E0KW",
+          "graph.goal": "Generate a toy Slack hello Fabro workflow from the scaffold spec",
+          "internal.thread_id": null,
+          "graph.model_stylesheet": "\n            *          { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: low; }\n            .reasoning { backend: cli; provider: anthropic; model: claude-sonnet-4-5; reasoning_effort: high; }\n            .coding    { backend: cli; provider: anthropic; model: claude-sonnet-4-5; reasoning_effort: high; }\n            .review    { backend: cli; provider: anthropic; model: claude-sonnet-4-5; reasoning_effort: high; }\n        ",
+          "graph.persona": "workflow-architect",
+          "internal.fidelity": "compact",
+          "internal.retry_count.start": 0,
+          "graph.inputs": "spec, workflow_path, const_path",
+          "current_node": "start",
+          "graph.outputs": "validated_workflow, registration_record",
+          "internal.work_dir": "/workspace"
+        },
+        "node_outcomes": {
+          "start": {
+            "status": "succeeded",
+            "usage": null
+          }
+        },
+        "next_node_id": "load_const",
+        "node_visits": {
+          "start": 1
+        }
+      },
+      "diff": {}
+    },
+    {
+      "seq": 0,
+      "checkpoint": {
+        "timestamp": "2026-05-13T12:39:00.262961Z",
+        "current_node": "load_const",
+        "completed_nodes": [
+          "start",
+          "load_const"
+        ],
+        "node_retries": {},
+        "context_values": {
+          "internal.work_dir": "/workspace",
+          "internal.run_id": "01KRGNH6QYC6XMWDQRS3Q5E0KW",
+          "internal.fidelity": "compact",
+          "internal.node_visit_count": 1,
+          "failure_class": "",
+          "graph.inputs": "spec, workflow_path, const_path",
+          "internal.retry_count.load_const": 0,
+          "graph.goal": "Generate a toy Slack hello Fabro workflow from the scaffold spec",
+          "command.output": "blob://sha256/24bd977dde4173a15144f0bf15c6fe8f701ee24ceb8a3c9ef72c49c708aebcfa",
+          "graph.rankdir": "LR",
+          "graph.outputs": "validated_workflow, registration_record",
+          "outcome": "succeeded",
+          "graph.model_stylesheet": "\n            *          { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: low; }\n            .reasoning { backend: cli; provider: anthropic; model: claude-sonnet-4-5; reasoning_effort: high; }\n            .coding    { backend: cli; provider: anthropic; model: claude-sonnet-4-5; reasoning_effort: high; }\n            .review    { backend: cli; provider: anthropic; model: claude-sonnet-4-5; reasoning_effort: high; }\n        ",
+          "current_node": "load_const",
+          "internal.thread_id": "start",
+          "internal.retry_count.start": 0,
+          "failure_signature": "",
+          "graph.persona": "workflow-architect",
+          "thread.start.current_node": "load_const"
+        },
+        "node_outcomes": {
+          "start": {
+            "status": "succeeded",
+            "usage": null
+          },
+          "load_const": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/24bd977dde4173a15144f0bf15c6fe8f701ee24ceb8a3c9ef72c49c708aebcfa"
+            },
+            "notes": "Script completed: cd '/Users/timlife/Documents/claude code/maestro-os'; mkdir -p .maestro/scaffold; ./bin/maestro knowledge get architecture-principles workflow-standards cli-conventions known-gotchas validator-library personas --format text > ${CONST:-.maestro/scaffold/constitution.md}; echo constitution-loaded",
+            "usage": null
+          }
+        },
+        "next_node_id": "parse_spec",
+        "node_visits": {
+          "load_const": 1,
+          "start": 1
+        }
+      },
+      "diff": {}
+    }
+  ],
   "conclusion": null,
   "sandbox": {
     "provider": "docker",
@@ -782,5 +880,72 @@
   "pull_request": null,
   "superseded_by": null,
   "pending_interviews": {},
-  "stages": {}
+  "stages": {
+    "start@1": {
+      "first_event_seq": 17,
+      "prompt": null,
+      "response": null,
+      "completion": {
+        "outcome": "succeeded",
+        "notes": null,
+        "failure_reason": null,
+        "timestamp": "2026-05-13T12:39:00.050291Z"
+      },
+      "provider_used": null,
+      "diff": null,
+      "script_invocation": null,
+      "script_timing": null,
+      "parallel_results": null,
+      "output": null,
+      "started_at": "2026-05-13T12:38:59.998124Z",
+      "handler": "start",
+      "duration_ms": 0,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "total_tokens": 0,
+        "reasoning_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "state": "succeeded"
+    },
+    "load_const@1": {
+      "first_event_seq": 21,
+      "prompt": null,
+      "response": null,
+      "completion": null,
+      "provider_used": null,
+      "diff": null,
+      "script_invocation": {
+        "script": "cd '/Users/timlife/Documents/claude code/maestro-os'; mkdir -p .maestro/scaffold; ./bin/maestro knowledge get architecture-principles workflow-standards cli-conventions known-gotchas validator-library personas --format text > ${CONST:-.maestro/scaffold/constitution.md}; echo constitution-loaded",
+        "command": "exec 2>&1\ncd '/Users/timlife/Documents/claude code/maestro-os'; mkdir -p .maestro/scaffold; ./bin/maestro knowledge get architecture-principles workflow-standards cli-conventions known-gotchas validator-library personas --format text > ${CONST:-.maestro/scaffold/constitution.md}; echo constitution-loaded",
+        "language": "shell"
+      },
+      "script_timing": {
+        "output": "blob://sha256/24bd977dde4173a15144f0bf15c6fe8f701ee24ceb8a3c9ef72c49c708aebcfa",
+        "exit_code": 0,
+        "duration_ms": 152,
+        "termination": "exited",
+        "output_bytes": 178,
+        "live_streaming": true
+      },
+      "parallel_results": null,
+      "output": null,
+      "output_bytes": 178,
+      "live_streaming": true,
+      "termination": "exited",
+      "started_at": "2026-05-13T12:39:00.050655Z",
+      "handler": "command",
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "total_tokens": 0,
+        "reasoning_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "state": "running"
+    }
+  }
 }
