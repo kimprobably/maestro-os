@@ -1758,7 +1758,7 @@
     "kind": "running"
   },
   "status_updated_at": "2026-05-13T17:55:39.577535323Z",
-  "last_event_at": "2026-05-13T17:56:58.643079761Z",
+  "last_event_at": "2026-05-13T17:57:02.000286727Z",
   "pending_control": null,
   "checkpoints": [
     {
@@ -2145,9 +2145,9 @@
       }
     },
     {
-      "seq": 0,
+      "seq": 125,
       "checkpoint": {
-        "timestamp": "2026-05-13T17:56:58.691368351Z",
+        "timestamp": "2026-05-13T17:57:00.717797353Z",
         "current_node": "spec_join",
         "completed_nodes": [
           "start",
@@ -2156,6 +2156,139 @@
           "capability_audit",
           "spec_fanout",
           "spec_join"
+        ],
+        "node_retries": {},
+        "context_values": {
+          "thread.start.current_node": "bootstrap",
+          "graph.outputs": "capability_audit, selected_spec, selected_architecture, generated_enhancement_workflow, eval_reports, simplification_plan, final_handoff",
+          "graph.persona": "eval-driven-workflow-builder",
+          "parallel.fan_in.best_head_sha": "a1ef995de1131f4acfe41ad588b19df0d253df46",
+          "thread.parse_requests.current_node": "capability_audit",
+          "thread.spec_fanout.current_node": "spec_join",
+          "graph.default_max_retries": "2",
+          "parallel.branch_count": 3,
+          "internal.retry_count.capability_audit": 0,
+          "internal.thread_id": "spec_fanout",
+          "outcome": "succeeded",
+          "internal.run_id": "01KRH7NJQ5B2TGC6FVA233FW07",
+          "internal.retry_count.start": 0,
+          "thread.bootstrap.current_node": "parse_requests",
+          "graph.goal": "Use eval-driven development to discover the real Consumer Radar enhancement workflow required by product feedback",
+          "failure_signature": "",
+          "failure_class": "",
+          "internal.node_visit_count": 1,
+          "graph.rankdir": "LR",
+          "internal.retry_count.spec_fanout": 0,
+          "parallel.fan_in.best_id": "spec_candidate_b",
+          "command.output": "blob://sha256/2e78300898c34f783a2884184c50c33fefa4187fbe6f72d65e360ac55f308272",
+          "internal.work_dir": "/home/daytona/workspace",
+          "internal.retry_count.spec_join": 0,
+          "parallel.fan_in.best_outcome": "succeeded",
+          "graph.inputs": "app_dir, feedback_path, target_adapter, generated_workflow, generated_run_config, real_mode, allow_fixture_fallback, execute_generated_workflow, minimum_spec_candidates, minimum_architecture_candidates, minimum_workflow_candidates, minimum_eval_score, max_eval_regression, minimum_active_reviews, require_simplification",
+          "graph.model_stylesheet": "\n            *             { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: low; }\n            .spec          { provider: openrouter; model: google/gemini-3.1-pro-preview; reasoning_effort: high; }\n            .architecture  { provider: openrouter; model: qwen/qwen3.6-plus; reasoning_effort: high; }\n            .workflow      { provider: openrouter; model: moonshotai/kimi-k2.6; reasoning_effort: high; }\n            .eval          { provider: openrouter; model: deepseek/deepseek-v4-pro; reasoning_effort: high; }\n            .cheap         { provider: openrouter; model: deepseek/deepseek-v4-flash; reasoning_effort: low; }\n        ",
+          "parallel.results": [
+            {
+              "id": "spec_candidate_a",
+              "status": "failed",
+              "head_sha": "6fb4da3f2b746444940d7e4d742891204bd4f5b2"
+            },
+            {
+              "id": "spec_candidate_b",
+              "status": "succeeded",
+              "head_sha": "a1ef995de1131f4acfe41ad588b19df0d253df46"
+            },
+            {
+              "id": "spec_candidate_c",
+              "status": "failed",
+              "head_sha": "19adab109eed096c1a123f80110ef35242d6770d"
+            }
+          ],
+          "thread.capability_audit.current_node": "spec_fanout",
+          "current_node": "spec_join",
+          "graph.fallback_retry_target": "workflow_fanout",
+          "internal.retry_count.bootstrap": 0,
+          "graph.retry_target": "spec_fanout",
+          "internal.fidelity": "compact",
+          "internal.retry_count.parse_requests": 0
+        },
+        "node_outcomes": {
+          "capability_audit": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/2e78300898c34f783a2884184c50c33fefa4187fbe6f72d65e360ac55f308272"
+            },
+            "notes": "Script completed: node scripts/app-feedback/analyze-enhancement-capabilities.mjs --app-dir 'apps/generated-consumer-app-radar' --analysis .workflow/enhancement-discovery/request-analysis.json --target 'consumer-radar' --out .workflow/enhancement-discovery/capability-audit.json",
+            "usage": null
+          },
+          "bootstrap": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/17c1b04b31687cffbb38c881b0ef8a6627d35f81c1821b18657bfc69bf73029b"
+            },
+            "notes": "Script completed: mkdir -p .workflow/enhancement-discovery/spec-candidates .workflow/enhancement-discovery/architecture-candidates .workflow/enhancement-discovery/workflow-candidates .workflow/enhancement-discovery/evals; test -f 'feedback/consumer-radar-product-feedback.md'; test -d 'apps/generated-consumer-app-radar'; echo eval_driven_development test_driven_development",
+            "usage": null
+          },
+          "spec_fanout": {
+            "status": "partially_succeeded",
+            "jump_to_node": "spec_join",
+            "notes": "Parallel node dispatched 3 branches (1 succeeded, 2 failed)",
+            "usage": null
+          },
+          "spec_join": {
+            "status": "succeeded",
+            "context_updates": {
+              "parallel.fan_in.best_outcome": "succeeded",
+              "parallel.fan_in.best_head_sha": "a1ef995de1131f4acfe41ad588b19df0d253df46",
+              "parallel.fan_in.best_id": "spec_candidate_b"
+            },
+            "notes": "Selected best candidate: spec_candidate_b",
+            "usage": null
+          },
+          "start": {
+            "status": "succeeded",
+            "usage": null
+          },
+          "parse_requests": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/b8ad9745eb032e1529021db56fb0316d1bbac9211156d215e74bdc779585d3f0"
+            },
+            "notes": "Script completed: node scripts/app-feedback/parse-feedback.mjs --feedback 'feedback/consumer-radar-product-feedback.md' --out .workflow/enhancement-discovery/request-analysis.json",
+            "usage": null
+          }
+        },
+        "next_node_id": "ensure_spec_candidates",
+        "git_commit_sha": "0f6b2acdb29b638dd8154df6311418ab41c37c22",
+        "node_visits": {
+          "start": 1,
+          "spec_fanout": 1,
+          "bootstrap": 1,
+          "capability_audit": 1,
+          "parse_requests": 1,
+          "spec_join": 1
+        }
+      },
+      "diff": {
+        "summary": {
+          "files_changed": 0,
+          "additions": 0,
+          "deletions": 0
+        }
+      }
+    },
+    {
+      "seq": 0,
+      "checkpoint": {
+        "timestamp": "2026-05-13T17:57:02.239567119Z",
+        "current_node": "ensure_spec_candidates",
+        "completed_nodes": [
+          "start",
+          "bootstrap",
+          "parse_requests",
+          "capability_audit",
+          "spec_fanout",
+          "spec_join",
+          "ensure_spec_candidates"
         ],
         "node_retries": {},
         "context_values": {
@@ -2184,16 +2317,18 @@
           "thread.spec_fanout.current_node": "spec_join",
           "graph.default_max_retries": "2",
           "graph.goal": "Use eval-driven development to discover the real Consumer Radar enhancement workflow required by product feedback",
-          "command.output": "blob://sha256/2e78300898c34f783a2884184c50c33fefa4187fbe6f72d65e360ac55f308272",
+          "thread.spec_join.current_node": "ensure_spec_candidates",
+          "command.output": "blob://sha256/0495f05dcdeca796c9f80a4ceb603298c4d20efcd6687e039d410fa1c7cd4542",
           "internal.retry_count.spec_fanout": 0,
           "internal.retry_count.parse_requests": 0,
-          "internal.thread_id": "spec_fanout",
+          "internal.thread_id": "spec_join",
           "thread.parse_requests.current_node": "capability_audit",
           "internal.run_id": "01KRH7NJQ5B2TGC6FVA233FW07",
           "internal.node_visit_count": 1,
+          "internal.retry_count.ensure_spec_candidates": 0,
           "internal.fidelity": "compact",
           "internal.retry_count.capability_audit": 0,
-          "current_node": "spec_join",
+          "current_node": "ensure_spec_candidates",
           "parallel.fan_in.best_outcome": "succeeded",
           "internal.retry_count.spec_join": 0,
           "graph.rankdir": "LR",
@@ -2230,14 +2365,22 @@
             "notes": "Selected best candidate: spec_candidate_b",
             "usage": null
           },
-          "start": {
+          "ensure_spec_candidates": {
             "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/0495f05dcdeca796c9f80a4ceb603298c4d20efcd6687e039d410fa1c7cd4542"
+            },
+            "notes": "Script completed: node scripts/app-feedback/ensure-enhancement-candidates.mjs --stage spec --dir .workflow/enhancement-discovery/spec-candidates --minimum '3' --out .workflow/enhancement-discovery/evals/spec-candidate-ensure.json",
             "usage": null
           },
           "spec_fanout": {
             "status": "partially_succeeded",
             "jump_to_node": "spec_join",
             "notes": "Parallel node dispatched 3 branches (1 succeeded, 2 failed)",
+            "usage": null
+          },
+          "start": {
+            "status": "succeeded",
             "usage": null
           },
           "bootstrap": {
@@ -2257,14 +2400,15 @@
             "usage": null
           }
         },
-        "next_node_id": "ensure_spec_candidates",
+        "next_node_id": "spec_eval_contract",
         "node_visits": {
           "parse_requests": 1,
           "spec_join": 1,
           "bootstrap": 1,
           "start": 1,
           "capability_audit": 1,
-          "spec_fanout": 1
+          "spec_fanout": 1,
+          "ensure_spec_candidates": 1
         }
       },
       "diff": {}
@@ -2384,49 +2528,6 @@
       },
       "state": "succeeded"
     },
-    "parse_requests@1": {
-      "first_event_seq": 29,
-      "prompt": null,
-      "response": null,
-      "completion": {
-        "outcome": "succeeded",
-        "notes": "Script completed: node scripts/app-feedback/parse-feedback.mjs --feedback 'feedback/consumer-radar-product-feedback.md' --out .workflow/enhancement-discovery/request-analysis.json",
-        "failure_reason": null,
-        "timestamp": "2026-05-13T17:55:45.502737629Z"
-      },
-      "provider_used": null,
-      "diff": null,
-      "script_invocation": {
-        "script": "node scripts/app-feedback/parse-feedback.mjs --feedback 'feedback/consumer-radar-product-feedback.md' --out .workflow/enhancement-discovery/request-analysis.json",
-        "command": "exec 2>&1\nnode scripts/app-feedback/parse-feedback.mjs --feedback 'feedback/consumer-radar-product-feedback.md' --out .workflow/enhancement-discovery/request-analysis.json",
-        "language": "shell"
-      },
-      "script_timing": {
-        "output": "blob://sha256/b8ad9745eb032e1529021db56fb0316d1bbac9211156d215e74bdc779585d3f0",
-        "exit_code": 0,
-        "duration_ms": 1381,
-        "termination": "exited",
-        "output_bytes": 1524,
-        "live_streaming": true
-      },
-      "parallel_results": null,
-      "output": null,
-      "output_bytes": 1524,
-      "live_streaming": true,
-      "termination": "exited",
-      "started_at": "2026-05-13T17:55:43.985852099Z",
-      "handler": "command",
-      "duration_ms": 1386,
-      "usage": {
-        "input_tokens": 0,
-        "output_tokens": 0,
-        "total_tokens": 0,
-        "reasoning_tokens": 0,
-        "cache_read_tokens": 0,
-        "cache_write_tokens": 0
-      },
-      "state": "succeeded"
-    },
     "capability_audit@1": {
       "first_event_seq": 40,
       "prompt": null,
@@ -2474,7 +2575,12 @@
       "first_event_seq": 120,
       "prompt": null,
       "response": null,
-      "completion": null,
+      "completion": {
+        "outcome": "succeeded",
+        "notes": "Selected best candidate: spec_candidate_b",
+        "failure_reason": null,
+        "timestamp": "2026-05-13T17:56:58.690377309Z"
+      },
       "provider_used": null,
       "diff": null,
       "script_invocation": null,
@@ -2483,35 +2589,7 @@
       "output": null,
       "started_at": "2026-05-13T17:56:58.643079761Z",
       "handler": "parallel.fan_in",
-      "usage": {
-        "input_tokens": 0,
-        "output_tokens": 0,
-        "total_tokens": 0,
-        "reasoning_tokens": 0,
-        "cache_read_tokens": 0,
-        "cache_write_tokens": 0
-      },
-      "state": "running"
-    },
-    "start@1": {
-      "first_event_seq": 15,
-      "prompt": null,
-      "response": null,
-      "completion": {
-        "outcome": "succeeded",
-        "notes": null,
-        "failure_reason": null,
-        "timestamp": "2026-05-13T17:55:40.478932180Z"
-      },
-      "provider_used": null,
-      "diff": null,
-      "script_invocation": null,
-      "script_timing": null,
-      "parallel_results": null,
-      "output": null,
-      "started_at": "2026-05-13T17:55:40.449721628Z",
-      "handler": "start",
-      "duration_ms": 0,
+      "duration_ms": 23,
       "usage": {
         "input_tokens": 0,
         "output_tokens": 0,
@@ -2546,6 +2624,115 @@
         "model_id": "google/gemini-3.1-pro-preview-20260219"
       },
       "state": "running"
+    },
+    "ensure_spec_candidates@1": {
+      "first_event_seq": 128,
+      "prompt": null,
+      "response": null,
+      "completion": null,
+      "provider_used": null,
+      "diff": null,
+      "script_invocation": {
+        "script": "node scripts/app-feedback/ensure-enhancement-candidates.mjs --stage spec --dir .workflow/enhancement-discovery/spec-candidates --minimum '3' --out .workflow/enhancement-discovery/evals/spec-candidate-ensure.json",
+        "command": "exec 2>&1\nnode scripts/app-feedback/ensure-enhancement-candidates.mjs --stage spec --dir .workflow/enhancement-discovery/spec-candidates --minimum '3' --out .workflow/enhancement-discovery/evals/spec-candidate-ensure.json",
+        "language": "shell"
+      },
+      "script_timing": {
+        "output": "blob://sha256/0495f05dcdeca796c9f80a4ceb603298c4d20efcd6687e039d410fa1c7cd4542",
+        "exit_code": 0,
+        "duration_ms": 1273,
+        "termination": "exited",
+        "output_bytes": 635,
+        "live_streaming": true
+      },
+      "parallel_results": null,
+      "output": null,
+      "output_bytes": 635,
+      "live_streaming": true,
+      "termination": "exited",
+      "started_at": "2026-05-13T17:57:00.721405786Z",
+      "handler": "command",
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "total_tokens": 0,
+        "reasoning_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "state": "running"
+    },
+    "parse_requests@1": {
+      "first_event_seq": 29,
+      "prompt": null,
+      "response": null,
+      "completion": {
+        "outcome": "succeeded",
+        "notes": "Script completed: node scripts/app-feedback/parse-feedback.mjs --feedback 'feedback/consumer-radar-product-feedback.md' --out .workflow/enhancement-discovery/request-analysis.json",
+        "failure_reason": null,
+        "timestamp": "2026-05-13T17:55:45.502737629Z"
+      },
+      "provider_used": null,
+      "diff": null,
+      "script_invocation": {
+        "script": "node scripts/app-feedback/parse-feedback.mjs --feedback 'feedback/consumer-radar-product-feedback.md' --out .workflow/enhancement-discovery/request-analysis.json",
+        "command": "exec 2>&1\nnode scripts/app-feedback/parse-feedback.mjs --feedback 'feedback/consumer-radar-product-feedback.md' --out .workflow/enhancement-discovery/request-analysis.json",
+        "language": "shell"
+      },
+      "script_timing": {
+        "output": "blob://sha256/b8ad9745eb032e1529021db56fb0316d1bbac9211156d215e74bdc779585d3f0",
+        "exit_code": 0,
+        "duration_ms": 1381,
+        "termination": "exited",
+        "output_bytes": 1524,
+        "live_streaming": true
+      },
+      "parallel_results": null,
+      "output": null,
+      "output_bytes": 1524,
+      "live_streaming": true,
+      "termination": "exited",
+      "started_at": "2026-05-13T17:55:43.985852099Z",
+      "handler": "command",
+      "duration_ms": 1386,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "total_tokens": 0,
+        "reasoning_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "state": "succeeded"
+    },
+    "start@1": {
+      "first_event_seq": 15,
+      "prompt": null,
+      "response": null,
+      "completion": {
+        "outcome": "succeeded",
+        "notes": null,
+        "failure_reason": null,
+        "timestamp": "2026-05-13T17:55:40.478932180Z"
+      },
+      "provider_used": null,
+      "diff": null,
+      "script_invocation": null,
+      "script_timing": null,
+      "parallel_results": null,
+      "output": null,
+      "started_at": "2026-05-13T17:55:40.449721628Z",
+      "handler": "start",
+      "duration_ms": 0,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "total_tokens": 0,
+        "reasoning_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "state": "succeeded"
     }
   }
 }
