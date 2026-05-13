@@ -41,6 +41,8 @@ const generatedFiles = [
   "scripts/app-feedback/validate-enhancement-discovery.mjs",
   "scripts/app-feedback/publish-enhancement-discovery-handoff.mjs",
   "scripts/app-feedback/test-eval-lineage-contract.mjs",
+  "scripts/consumer-radar/assert-live-enrichment.mjs",
+  "scripts/consumer-radar/test-assert-live-enrichment.mjs",
   "scripts/workflow-builder/validate-enhancement-discovery-builder.mjs",
   "evals/workflow-quality/enhancement-discovery.yaml",
   "evals/workflow-quality/datasets/enhancement-discovery-golden.jsonl",
