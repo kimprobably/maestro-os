@@ -1125,7 +1125,7 @@
     "kind": "running"
   },
   "status_updated_at": "2026-05-13T22:05:24.558680697Z",
-  "last_event_at": "2026-05-13T22:09:11.284671629Z",
+  "last_event_at": "2026-05-13T22:09:16.355052219Z",
   "pending_control": null,
   "checkpoints": [
     {
@@ -1830,9 +1830,9 @@
       }
     },
     {
-      "seq": 0,
+      "seq": 246,
       "checkpoint": {
-        "timestamp": "2026-05-13T22:09:11.511622640Z",
+        "timestamp": "2026-05-13T22:09:14.711419479Z",
         "current_node": "native_checks",
         "completed_nodes": [
           "start",
@@ -1846,16 +1846,195 @@
         ],
         "node_retries": {},
         "context_values": {
+          "last_response": "Now I have a thorough understanding of the codebase. Let me implement the live enrichment step by step, following the winning plan (source-first-fallback). I'll start with tests, then implement the co",
+          "graph.default_max_retries": "2",
+          "internal.retry_count.implementation_plan_fanout": 0,
+          "thread.implementation_plan_fanout.current_node": "plan_join",
+          "thread.coding.current_node": "implement_live_enrichment",
+          "thread.implement_live_enrichment.current_node": "native_checks",
+          "internal.retry_count.plan_join": 0,
+          "parallel.fan_in.best_head_sha": "8a776804d5472254a0c3beb68c607340480c20ed",
+          "thread.start.current_node": "live_source_preflight",
+          "internal.node_visit_count": 1,
+          "last_stage": "implement_live_enrichment",
+          "failure_class": "",
+          "internal.retry_count.start": 0,
+          "internal.retry_count.implement_live_enrichment": 0,
+          "internal.retry_count.native_checks": 0,
+          "current_node": "native_checks",
+          "graph.goal": "Implement Consumer Radar live discovery and enrichment with strict real-data gates",
+          "graph.model_stylesheet": "\n            *          { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: low; }\n            .coding    { provider: openrouter; model: qwen/qwen3.6-plus; reasoning_effort: high; }\n            .review    { provider: openrouter; model: google/gemini-3.1-pro-preview; reasoning_effort: high; }\n            .cheap     { provider: openrouter; model: deepseek/deepseek-v4-flash; reasoning_effort: low; }\n        ",
+          "graph.fallback_retry_target": "implementation_plan_fanout",
+          "internal.fidelity": "compact",
+          "internal.retry_count.live_source_preflight": 0,
+          "graph.inputs": "app_dir, real_mode, allow_fixture_fallback, minimum_live_apps, minimum_review_samples, minimum_social_examples, minimum_active_reviews",
+          "failure_signature": "",
+          "parallel.branch_count": 2,
+          "command.output": "blob://sha256/3cb84a9bb9e20844631d561961b12684816930e946cc09fc74b597b239f65682",
+          "graph.retry_target": "implement_live_enrichment",
+          "parallel.fan_in.best_id": "plan_product_surface",
+          "thread.live_source_preflight.current_node": "implementation_plan_fanout",
+          "thread.ensure_plan_candidates.current_node": "plan_eval",
+          "thread.plan_join.current_node": "ensure_plan_candidates",
+          "graph.persona": "consumer-radar-live-enrichment-builder",
+          "graph.rankdir": "LR",
+          "parallel.fan_in.best_outcome": "succeeded",
+          "graph.outputs": "live_enriched_app, live_data_report, review_consensus, handoff",
+          "outcome": "succeeded",
+          "internal.retry_count.ensure_plan_candidates": 0,
+          "internal.thread_id": "implement_live_enrichment",
+          "response.implement_live_enrichment": "Now I have a thorough understanding of the codebase. Let me implement the live enrichment step by step, following the winning plan (source-first-fallback). I'll start with tests, then implement the core changes, UI, gate scripts, and report.\n\n",
+          "internal.work_dir": "/home/daytona/workspace",
+          "internal.retry_count.plan_eval": 0,
+          "internal.run_id": "01KRHNYVA8TJ5XEY0N3E60V8D0",
+          "parallel.results": [
+            {
+              "id": "plan_live_sources",
+              "status": "failed",
+              "head_sha": "6bf9aafb4bc57a0415b47fec793db0ffe76cba49"
+            },
+            {
+              "id": "plan_product_surface",
+              "status": "succeeded",
+              "head_sha": "8a776804d5472254a0c3beb68c607340480c20ed"
+            }
+          ]
+        },
+        "node_outcomes": {
+          "implementation_plan_fanout": {
+            "status": "partially_succeeded",
+            "jump_to_node": "plan_join",
+            "notes": "Parallel node dispatched 2 branches (1 succeeded, 1 failed)",
+            "usage": null
+          },
+          "live_source_preflight": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/5e35254a5e6757cfd34a36d5bcb6dd4e7878884b76ab0a6ce38c03c9c4364ef4"
+            },
+            "notes": "Script completed: echo APIFY_TOKEN live source preflight; node scripts/app-feedback/live-source-preflight.mjs --app-dir 'apps/generated-consumer-app-radar' --real-mode 'true' --allow-fixture-fallback 'false' --out .workflow/consumer-radar-live-enrichment/source-preflight.json",
+            "usage": null
+          },
+          "plan_eval": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/75a6ec5fd165d6d1df62c216d0e90a13e727ca431c93a45f3555964ae79011d8"
+            },
+            "notes": "Script completed: node scripts/app-feedback/evaluate-enhancement-artifact.mjs --stage workflow --candidates .workflow/consumer-radar-live-enrichment/plans --out .workflow/consumer-radar-live-enrichment/plan-eval.json --minimum-candidates 2 --minimum-eval-score 0.72",
+            "usage": null
+          },
+          "ensure_plan_candidates": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/6ecc61b9d08792a9d6530ef6040a1b074c5d4dfeee7f4c40deeeb4f61fcb4ddd"
+            },
+            "notes": "Script completed: node scripts/app-feedback/ensure-live-enrichment-plans.mjs --plans .workflow/consumer-radar-live-enrichment/plans --minimum-candidates 2",
+            "usage": null
+          },
+          "implement_live_enrichment": {
+            "status": "succeeded",
+            "context_updates": {
+              "last_response": "Now I have a thorough understanding of the codebase. Let me implement the live enrichment step by step, following the winning plan (source-first-fallback). I'll start with tests, then implement the co",
+              "response.implement_live_enrichment": "Now I have a thorough understanding of the codebase. Let me implement the live enrichment step by step, following the winning plan (source-first-fallback). I'll start with tests, then implement the core changes, UI, gate scripts, and report.\n\n",
+              "last_stage": "implement_live_enrichment"
+            },
+            "notes": "Stage completed: implement_live_enrichment",
+            "usage": {
+              "input": {
+                "usage": {
+                  "model": {
+                    "provider": "openrouter",
+                    "model_id": "qwen/qwen3.6-plus"
+                  },
+                  "tokens": {
+                    "input_tokens": 198630,
+                    "output_tokens": 1441,
+                    "reasoning_tokens": 0,
+                    "cache_read_tokens": 0,
+                    "cache_write_tokens": 0
+                  }
+                },
+                "facts": {
+                  "provider": "open_router"
+                }
+              },
+              "total_usd_micros": 67363
+            }
+          },
+          "plan_join": {
+            "status": "succeeded",
+            "context_updates": {
+              "parallel.fan_in.best_head_sha": "8a776804d5472254a0c3beb68c607340480c20ed",
+              "parallel.fan_in.best_id": "plan_product_surface",
+              "parallel.fan_in.best_outcome": "succeeded"
+            },
+            "notes": "Selected best candidate: plan_product_surface",
+            "usage": null
+          },
+          "start": {
+            "status": "succeeded",
+            "usage": null
+          },
+          "native_checks": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/3cb84a9bb9e20844631d561961b12684816930e946cc09fc74b597b239f65682"
+            },
+            "notes": "Script completed: node scripts/consumer-radar/run-native-checks.mjs 'apps/generated-consumer-app-radar'",
+            "usage": null
+          }
+        },
+        "next_node_id": "live_data_gate",
+        "git_commit_sha": "6ad5f078ca0713f1f698d84a60e9b95694c14400",
+        "node_visits": {
+          "native_checks": 1,
+          "implementation_plan_fanout": 1,
+          "live_source_preflight": 1,
+          "ensure_plan_candidates": 1,
+          "implement_live_enrichment": 1,
+          "plan_join": 1,
+          "start": 1,
+          "plan_eval": 1
+        }
+      },
+      "diff": {
+        "patch": "diff --git a/apps/generated-consumer-app-radar/.data/apps.json b/apps/generated-consumer-app-radar/.data/apps.json\nindex 5da8242..f7e2aa5 100644\n--- a/apps/generated-consumer-app-radar/.data/apps.json\n+++ b/apps/generated-consumer-app-radar/.data/apps.json\n@@ -91,7 +91,7 @@\n       \"confidence\": 0.58,\n       \"basis\": \"Fixture-backed hypothesis. No live Apify social scrape was completed in this run.\",\n       \"liveScraped\": false,\n-      \"sourceMode\": \"fixture\"\n+      \"sourceMode\": \"manual-seed\"\n     },\n     \"reviewSamples\": [\n       {\n@@ -129,7 +129,7 @@\n         \"verifiedLiveScrape\": false\n       }\n     ],\n-    \"dataMode\": \"fixture\",\n+    \"dataMode\": \"manual-seed\",\n     \"opportunityScore\": 92,\n     \"radarRank\": 1\n   },\n@@ -224,7 +224,7 @@\n       \"confidence\": 0.58,\n       \"basis\": \"Fixture-backed hypothesis. No live Apify social scrape was completed in this run.\",\n       \"liveScraped\": false,\n-      \"sourceMode\": \"fixture\"\n+      \"sourceMode\": \"manual-seed\"\n     },\n     \"reviewSamples\": [\n       {\n@@ -262,7 +262,7 @@\n         \"verifiedLiveScrape\": false\n       }\n     ],\n-    \"dataMode\": \"fixture\",\n+    \"dataMode\": \"manual-seed\",\n     \"opportunityScore\": 77,\n     \"radarRank\": 2\n   },\n@@ -357,7 +357,7 @@\n       \"confidence\": 0.58,\n       \"basis\": \"Fixture-backed hypothesis. No live Apify social scrape was completed in this run.\",\n       \"liveScraped\": false,\n-      \"sourceMode\": \"fixture\"\n+      \"sourceMode\": \"manual-seed\"\n     },\n     \"reviewSamples\": [\n       {\n@@ -395,7 +395,7 @@\n         \"verifiedLiveScrape\": false\n       }\n     ],\n-    \"dataMode\": \"fixture\",\n+    \"dataMode\": \"manual-seed\",\n     \"opportunityScore\": 74,\n     \"radarRank\": 3\n   },\n@@ -490,7 +490,7 @@\n       \"confidence\": 0.58,\n       \"basis\": \"Fixture-backed hypothesis. No live Apify social scrape was completed in this run.\",\n       \"liveScraped\": false,\n-      \"sourceMode\": \"fixture\"\n+      \"sourceMode\": \"manual-seed\"\n     },\n     \"reviewSamples\": [\n       {\n@@ -528,7 +528,7 @@\n         \"verifiedLiveScrape\": false\n       }\n     ],\n-    \"dataMode\": \"fixture\",\n+    \"dataMode\": \"manual-seed\",\n     \"opportunityScore\": 71,\n     \"radarRank\": 4\n   },\n@@ -623,7 +623,7 @@\n       \"confidence\": 0.58,\n       \"basis\": \"Fixture-backed hypothesis. No live Apify social scrape was completed in this run.\",\n       \"liveScraped\": false,\n-      \"sourceMode\": \"fixture\"\n+      \"sourceMode\": \"manual-seed\"\n     },\n     \"reviewSamples\": [\n       {\n@@ -661,7 +661,7 @@\n         \"verifiedLiveScrape\": false\n       }\n     ],\n-    \"dataMode\": \"fixture\",\n+    \"dataMode\": \"manual-seed\",\n     \"opportunityScore\": 70,\n     \"radarRank\": 5\n   },\n@@ -756,7 +756,7 @@\n       \"confidence\": 0.58,\n       \"basis\": \"Fixture-backed hypothesis. No live Apify social scrape was completed in this run.\",\n       \"liveScraped\": false,\n-      \"sourceMode\": \"fixture\"\n+      \"sourceMode\": \"manual-seed\"\n     },\n     \"reviewSamples\": [\n       {\n@@ -794,7 +794,7 @@\n         \"verifiedLiveScrape\": false\n       }\n     ],\n-    \"dataMode\": \"fixture\",\n+    \"dataMode\": \"manual-seed\",\n     \"opportunityScore\": 66,\n     \"radarRank\": 6\n   },\n@@ -889,7 +889,7 @@\n       \"confidence\": 0.58,\n       \"basis\": \"Fixture-backed hypothesis. No live Apify social scrape was completed in this run.\",\n       \"liveScraped\": false,\n-      \"sourceMode\": \"fixture\"\n+      \"sourceMode\": \"manual-seed\"\n     },\n     \"reviewSamples\": [\n       {\n@@ -927,7 +927,7 @@\n         \"verifiedLiveScrape\": false\n       }\n     ],\n-    \"dataMode\": \"fixture\",\n+    \"dataMode\": \"manual-seed\",\n     \"opportunityScore\": 59,\n     \"radarRank\": 7\n   },\n@@ -1022,7 +1022,7 @@\n       \"confidence\": 0.58,\n       \"basis\": \"Fixture-backed hypothesis. No live Apify social scrape was completed in this run.\",\n       \"liveScraped\": false,\n-      \"sourceMode\": \"fixture\"\n+      \"sourceMode\": \"manual-seed\"\n     },\n     \"reviewSamples\": [\n       {\n@@ -1060,8 +1060,115 @@\n         \"verifiedLiveScrape\": false\n       }\n     ],\n-    \"dataMode\": \"fixture\",\n+    \"dataMode\": \"manual-seed\",\n     \"opportunityScore\": 57,\n     \"radarRank\": 8\n+  },\n+  {\n+    \"id\": \"test-focus-app\",\n+    \"name\": \"Test Focus App\",\n+    \"category\": \"Productivity\",\n+    \"country\": \"US\",\n+    \"appStoreId\": \"test-focus-app\",\n+    \"currentRank\": 140,\n+    \"isCategoryLeader\": false,\n+    \"categoryLeader\": false,\n+    \"sizeBand\": \"manual-seed\",\n+    \"rankDelta4w\": 18,\n+    \"reviewDelta4w\": 12,\n+    \"rating\": 4.5,\n+    \"socialDelta4w\": 20,\n+    \"socialStrategy\": [\n+      \"Manual seed awaiting live social scrape\"\n+    ],\n+    \"reviewThemes\": [\n+      \"Research target added manually\"\n+    ],\n+    \"featureRequests\": [\n+      \"Run live review scrape\",\n+      \"Find TikTok and Instagram content examples\"\n+    ],\n+    \"evidence\": [\n+      \"Manual seed from Add app form\"\n+    ],\n+    \"weeklySnapshots\": [\n+      {\n+        \"week\": \"4w ago\",\n+        \"rank\": 158,\n+        \"reviewCount\": 90,\n+        \"socialMentions\": 45\n+      },\n+      {\n+        \"week\": \"3w ago\",\n+        \"rank\": 153,\n+        \"reviewCount\": 95,\n+        \"socialMentions\": 50\n+      },\n+      {\n+        \"week\": \"2w ago\",\n+        \"rank\": 148,\n+        \"reviewCount\": 99,\n+        \"socialMentions\": 57\n+      },\n+      {\n+        \"week\": \"1w ago\",\n+        \"rank\": 143,\n+        \"reviewCount\": 103,\n+        \"socialMentions\": 62\n+      },\n+      {\n+        \"week\": \"current\",\n+        \"rank\": 140,\n+        \"reviewCount\": 108,\n+        \"socialMentions\": 69\n+      }\n+    ],\n+    \"investigationAngles\": [\n+      \"Validate App Store rank movement before treating this as a true opportunity.\",\n+      \"Run Apify search for TikTok and Instagram posts that mention this app.\",\n+      \"Scrape recent App Store reviews and replace the manual placeholder pain points.\"\n+    ],\n+    \"growthHypothesis\": {\n+      \"text\": \"Manual research seed; no growth claim yet.\",\n+      \"confidence\": 0.25,\n+      \"basis\": \"Fixture-backed hypothesis. No live Apify social scrape was completed in this run.\",\n+      \"liveScraped\": false,\n+      \"sourceMode\": \"manual-seed\"\n+    },\n+    \"reviewSamples\": [\n+      {\n+        \"rating\": 0,\n+        \"title\": \"Manual seed\",\n+        \"body\": \"Run review ingestion to populate real customer feedback.\",\n+        \"source\": \"manual-placeholder\"\n+      }\n+    ],\n+    \"exampleContent\": [\n+      {\n+        \"platform\": \"TikTok\",\n+        \"creator\": \"pending\",\n+        \"format\": \"pending scrape\",\n+        \"hook\": \"Search needed\",\n+        \"caption\": \"Run Apify to find example content.\",\n+        \"engagement\": 0,\n+        \"source\": \"manual-placeholder\",\n+        \"verifiedLiveScrape\": false\n+      }\n+    ],\n+    \"dataSources\": [\n+      {\n+        \"name\": \"Manual seed\",\n+        \"status\": \"active\",\n+        \"note\": \"Added through the dashboard form.\"\n+      },\n+      {\n+        \"name\": \"Apify TikTok/Instagram\",\n+        \"status\": \"not-run\",\n+        \"note\": \"Use live refresh once actors are tuned.\"\n+      }\n+    ],\n+    \"dataMode\": \"manual-seed\",\n+    \"opportunityScore\": 34,\n+    \"radarRank\": 9\n   }\n ]\ndiff --git a/reports/consumer-radar/quality/native-checks.json b/reports/consumer-radar/quality/native-checks.json\nindex e6d6af6..98b93a3 100644\n--- a/reports/consumer-radar/quality/native-checks.json\n+++ b/reports/consumer-radar/quality/native-checks.json\n@@ -11,7 +11,7 @@\n     {\n       \"command\": \"npm test\",\n       \"status\": 0,\n-      \"stdout\": \"\\n> test\\n> node --test tests/*.test.js\\n\\n✔ fixture ingest produces ranked apps (1.885834ms)\\n✔ fixture data is explicit about non-live growth evidence (2.089458ms)\\n✔ ranking prefers emerging fast growers over category leaders (0.130792ms)\\n✔ custom app addition creates a ranked research seed (1.904167ms)\\n✔ frontend surfaces feedback-driven controls and evidence panels (0.259125ms)\\n✔ score rewards acceleration and review/social velocity (1.573167ms)\\n✔ rankApps sorts by opportunity score (0.1985ms)\\nℹ tests 7\\nℹ suites 0\\nℹ pass 7\\nℹ fail 0\\nℹ cancelled 0\\nℹ skipped 0\\nℹ todo 0\\nℹ duration_ms 80.105625\\n\",\n+      \"stdout\": \"\\n> test\\n> node --test tests/*.test.js\\n\\nTAP version 13\\n# Subtest: fixture ingest produces ranked apps\\nok 1 - fixture ingest produces ranked apps\\n  ---\\n  duration_ms: 2.11673\\n  type: 'test'\\n  ...\\n# Subtest: fixture data is explicit about non-live growth evidence\\nok 2 - fixture data is explicit about non-live growth evidence\\n  ---\\n  duration_ms: 2.118971\\n  type: 'test'\\n  ...\\n# Subtest: ranking prefers emerging fast growers over category leaders\\nok 3 - ranking prefers emerging fast growers over category leaders\\n  ---\\n  duration_ms: 0.17377\\n  type: 'test'\\n  ...\\n# Subtest: custom app addition creates a ranked research seed\\nok 4 - custom app addition creates a ranked research seed\\n  ---\\n  duration_ms: 1.944321\\n  type: 'test'\\n  ...\\n# Subtest: frontend surfaces feedback-driven controls and evidence panels\\nok 5 - frontend surfaces feedback-driven controls and evidence panels\\n  ---\\n  duration_ms: 0.21318\\n  type: 'test'\\n  ...\\n# Subtest: score rewards acceleration and review/social velocity\\nok 6 - score rewards acceleration and review/social velocity\\n  ---\\n  duration_ms: 0.588541\\n  type: 'test'\\n  ...\\n# Subtest: rankApps sorts by opportunity score\\nok 7 - rankApps sorts by opportunity score\\n  ---\\n  duration_ms: 0.19617\\n  type: 'test'\\n  ...\\n1..7\\n# tests 7\\n# suites 0\\n# pass 7\\n# fail 0\\n# cancelled 0\\n# skipped 0\\n# todo 0\\n# duration_ms 119.018287\\n\",\n       \"stderr\": \"\"\n     },\n     {\n",
+        "summary": {
+          "files_changed": 2,
+          "additions": 124,
+          "deletions": 17
+        }
+      }
+    },
+    {
+      "seq": 0,
+      "checkpoint": {
+        "timestamp": "2026-05-13T22:09:16.586211641Z",
+        "current_node": "live_data_gate",
+        "completed_nodes": [
+          "start",
+          "live_source_preflight",
+          "implementation_plan_fanout",
+          "plan_join",
+          "ensure_plan_candidates",
+          "plan_eval",
+          "implement_live_enrichment",
+          "native_checks",
+          "live_data_gate"
+        ],
+        "node_retries": {},
+        "context_values": {
           "graph.retry_target": "implement_live_enrichment",
           "internal.retry_count.implementation_plan_fanout": 0,
           "graph.inputs": "app_dir, real_mode, allow_fixture_fallback, minimum_live_apps, minimum_review_samples, minimum_social_examples, minimum_active_reviews",
           "parallel.fan_in.best_head_sha": "8a776804d5472254a0c3beb68c607340480c20ed",
           "internal.retry_count.implement_live_enrichment": 0,
           "thread.plan_join.current_node": "ensure_plan_candidates",
-          "failure_signature": "",
-          "internal.thread_id": "implement_live_enrichment",
+          "internal.retry_count.live_data_gate": 0,
+          "failure_signature": "live_data_gate|deterministic|script failed with exit code: <n> ## output { \"ok\": false,\"app_dir\": \"apps/generated-consumer-app-radar\",\"real_mode\": true,\"allow_fixture_fallback\": false,\"data_path\": \"/home/daytona/workspace/apps/generated-consumer-app-radar/.data/apps.js",
+          "internal.thread_id": "native_checks",
           "last_response": "Now I have a thorough understanding of the codebase. Let me implement the live enrichment step by step, following the winning plan (source-first-fallback). I'll start with tests, then implement the co",
-          "current_node": "native_checks",
+          "current_node": "live_data_gate",
           "graph.rankdir": "LR",
           "internal.retry_count.native_checks": 0,
           "internal.run_id": "01KRHNYVA8TJ5XEY0N3E60V8D0",
@@ -1866,8 +2045,9 @@
           "internal.retry_count.start": 0,
           "thread.implement_live_enrichment.current_node": "native_checks",
           "internal.retry_count.plan_join": 0,
+          "thread.native_checks.current_node": "live_data_gate",
           "parallel.branch_count": 2,
-          "failure_class": "",
+          "failure_class": "deterministic",
           "graph.outputs": "live_enriched_app, live_data_report, review_consensus, handoff",
           "parallel.fan_in.best_outcome": "succeeded",
           "parallel.fan_in.best_id": "plan_product_surface",
@@ -1891,16 +2071,27 @@
             }
           ],
           "internal.node_visit_count": 1,
-          "outcome": "succeeded",
+          "outcome": "failed",
           "internal.retry_count.live_source_preflight": 0,
           "last_stage": "implement_live_enrichment",
           "internal.retry_count.plan_eval": 0,
           "thread.start.current_node": "live_source_preflight",
           "thread.live_source_preflight.current_node": "implementation_plan_fanout",
           "graph.fallback_retry_target": "implementation_plan_fanout",
-          "command.output": "blob://sha256/3cb84a9bb9e20844631d561961b12684816930e946cc09fc74b597b239f65682"
+          "command.output": "blob://sha256/e9e4192245163b0d23ae443b3bb3ceecf31798d06318083ab7399e57933df97b"
         },
         "node_outcomes": {
+          "live_data_gate": {
+            "status": "failed",
+            "context_updates": {
+              "command.output": "blob://sha256/e9e4192245163b0d23ae443b3bb3ceecf31798d06318083ab7399e57933df97b"
+            },
+            "failure": {
+              "message": "Script failed with exit code: 1\n\n## output\n{\n  \"ok\": false,\n  \"app_dir\": \"apps/generated-consumer-app-radar\",\n  \"real_mode\": true,\n  \"allow_fixture_fallback\": false,\n  \"data_path\": \"/home/daytona/workspace/apps/generated-consumer-app-radar/.data/apps.json\",\n  \"totals\": {\n    \"app_count\": 9,\n    \"review_sample_count\": 17,\n    \"social_example_count\": 17\n  },\n  \"live_app_count\": 0,\n  \"live_review_sample_count\": 0,\n  \"live_social_example_count\": 0,\n  \"minimums\": {\n    \"live_apps\": 8,\n    \"review_samples\": 12,\n    \"social_examples\": 8\n  },\n  \"warnings\": [],\n  \"failures\": [\n    \"live_app_count 0 below minimum 8\",\n    \"live_review_sample_count 0 below minimum 12\",\n    \"live_social_example_count 0 below minimum 8\",\n    \"missing /api/fetch-more endpoint\",\n    \"missing /api/enrich-app endpoint\",\n    \"missing fetch-more frontend control\"\n  ]\n}\n",
+              "failure_class": "deterministic"
+            },
+            "usage": null
+          },
           "implementation_plan_fanout": {
             "status": "partially_succeeded",
             "jump_to_node": "plan_join",
@@ -1984,9 +2175,10 @@
             "usage": null
           }
         },
-        "next_node_id": "live_data_gate",
+        "next_node_id": "implement_live_enrichment",
         "node_visits": {
           "plan_eval": 1,
+          "live_data_gate": 1,
           "plan_join": 1,
           "live_source_preflight": 1,
           "start": 1,
@@ -2020,7 +2212,12 @@
       "first_event_seq": 237,
       "prompt": null,
       "response": null,
-      "completion": null,
+      "completion": {
+        "outcome": "succeeded",
+        "notes": "Script completed: node scripts/consumer-radar/run-native-checks.mjs 'apps/generated-consumer-app-radar'",
+        "failure_reason": null,
+        "timestamp": "2026-05-13T22:09:11.510719228Z"
+      },
       "provider_used": null,
       "diff": null,
       "script_invocation": {
@@ -2043,6 +2240,7 @@
       "termination": "exited",
       "started_at": "2026-05-13T22:09:09.049860323Z",
       "handler": "command",
+      "duration_ms": 2235,
       "usage": {
         "input_tokens": 0,
         "output_tokens": 0,
@@ -2051,7 +2249,7 @@
         "cache_read_tokens": 0,
         "cache_write_tokens": 0
       },
-      "state": "running"
+      "state": "succeeded"
     },
     "start@1": {
       "first_event_seq": 16,
@@ -2308,6 +2506,43 @@
         "model_id": "qwen/qwen3.6-plus"
       },
       "state": "partially_succeeded"
+    },
+    "live_data_gate@1": {
+      "first_event_seq": 249,
+      "prompt": null,
+      "response": null,
+      "completion": null,
+      "provider_used": null,
+      "diff": null,
+      "script_invocation": {
+        "script": "node scripts/consumer-radar/assert-live-enrichment.mjs 'apps/generated-consumer-app-radar' --real-mode 'true' --allow-fixture-fallback 'false' --minimum-live-apps '8' --minimum-review-samples '12' --minimum-social-examples '8'",
+        "command": "exec 2>&1\nnode scripts/consumer-radar/assert-live-enrichment.mjs 'apps/generated-consumer-app-radar' --real-mode 'true' --allow-fixture-fallback 'false' --minimum-live-apps '8' --minimum-review-samples '12' --minimum-social-examples '8'",
+        "language": "shell"
+      },
+      "script_timing": {
+        "output": "blob://sha256/e9e4192245163b0d23ae443b3bb3ceecf31798d06318083ab7399e57933df97b",
+        "exit_code": 1,
+        "duration_ms": 1632,
+        "termination": "exited",
+        "output_bytes": 802,
+        "live_streaming": true
+      },
+      "parallel_results": null,
+      "output": null,
+      "output_bytes": 802,
+      "live_streaming": true,
+      "termination": "exited",
+      "started_at": "2026-05-13T22:09:14.717086449Z",
+      "handler": "command",
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "total_tokens": 0,
+        "reasoning_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "state": "running"
     },
     "ensure_plan_candidates@1": {
       "first_event_seq": 149,
