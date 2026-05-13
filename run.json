@@ -1,0 +1,388 @@
+{
+  "title": "Validate, quality-check, and register all spike Fabro workflows in Daytona",
+  "spec": {
+    "run_id": "01KRGSDRE8PHTBM1XMHBZDZ5SY",
+    "settings": {
+      "project": {
+        "name": "maestro-os",
+        "description": null,
+        "metadata": {}
+      },
+      "workflow": {
+        "name": null,
+        "description": null,
+        "graph": "workflow.fabro",
+        "metadata": {}
+      },
+      "run": {
+        "goal": {
+          "type": "inline",
+          "value": "Validate, quality-check, and register all spike Fabro workflows in Daytona"
+        },
+        "working_dir": null,
+        "metadata": {},
+        "inputs": {},
+        "model": {
+          "provider": "anthropic",
+          "name": "claude-sonnet-4-6",
+          "fallbacks": []
+        },
+        "git": {
+          "author": null
+        },
+        "prepare": {
+          "commands": [],
+          "timeout_ms": 300000
+        },
+        "execution": {
+          "mode": "normal",
+          "approval": "auto"
+        },
+        "checkpoint": {
+          "exclude_globs": []
+        },
+        "sandbox": {
+          "provider": "daytona",
+          "preserve": false,
+          "stop_on_terminal": true,
+          "devcontainer": false,
+          "env": {
+            "LINEAR_API_URL": "${{ secrets.LINEAR_API_URL }}",
+            "APIFY_TIKTOK_ACTOR": "clockworks/tiktok-scraper",
+            "APIFY_TOKEN": "${{ secrets.APIFY_TOKEN }}",
+            "LINEAR_API_KEY": "${{ secrets.LINEAR_API_KEY }}",
+            "APIFY_APPSTORE_ACTOR": "crawlerbros/appstore-scraper",
+            "FABRO_SLACK_CHANNEL_ID": "${{ secrets.FABRO_SLACK_CHANNEL_ID }}",
+            "OPENROUTER_API_KEY": "${{ secrets.OPENROUTER_API_KEY }}",
+            "FABRO_SLACK_BOT_TOKEN": "${{ secrets.FABRO_SLACK_BOT_TOKEN }}",
+            "DAYTONA_API_URL": "${{ secrets.DAYTONA_API_URL }}",
+            "MAESTRO_AGENT_STATE_DIR": "/home/daytona/agent-state",
+            "APIFY_INSTAGRAM_ACTOR": "apify/instagram-scraper",
+            "FABRO_SERVER": "${{ secrets.FABRO_SERVER }}",
+            "PROMPTFOO_DISABLE_TELEMETRY": "1",
+            "DAYTONA_API_KEY": "${{ secrets.DAYTONA_API_KEY }}",
+            "FABRO_DEV_TOKEN": "${{ secrets.FABRO_DEV_TOKEN }}"
+          },
+          "docker": {
+            "image": "buildpack-deps:noble",
+            "network_mode": null,
+            "memory_limit": 4000000000,
+            "cpu_quota": 200000,
+            "env_vars": {},
+            "skip_clone": false
+          },
+          "daytona": {
+            "auto_stop_interval": 60,
+            "labels": {
+              "purpose": "code-factory",
+              "project": "maestro-os"
+            },
+            "volumes": [
+              {
+                "volume_id": "beefe1da-59a0-48f6-9e19-a513d1790ce3",
+                "mount_path": "/home/daytona/agent-state",
+                "subpath": "agent-auth"
+              }
+            ],
+            "snapshot": {
+              "name": "maestro-code-factory-v5",
+              "cpu": 2,
+              "memory_gb": 4,
+              "disk_gb": 10,
+              "dockerfile": {
+                "type": "inline",
+                "value": "FROM ubuntu:24.04\n\nENV DEBIAN_FRONTEND=noninteractive\nENV BUN_INSTALL=/root/.bun\nENV PATH=\"/root/.fabro/bin:/root/.bun/bin:/root/.local/bin:/root/.qlty/bin:${PATH}\"\nWORKDIR /home/daytona\n\nRUN apt-get update && apt-get install -y --no-install-recommends bash ca-certificates curl git jq openssh-client python3 python3-pip pipx ripgrep shellcheck unzip xz-utils && rm -rf /var/lib/apt/lists/*\n\nRUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash - && apt-get update && apt-get install -y --no-install-recommends nodejs && npm install -g @anthropic-ai/claude-code @openai/codex promptfoo && npm cache clean --force && rm -rf /var/lib/apt/lists/*\n\nRUN curl -fsSL https://bun.sh/install | bash -s \"bun-v1.2.22\" && ln -sf /root/.bun/bin/bun /usr/local/bin/bun\n\nRUN pipx install spec-kitty-cli==3.1.8 && curl -fsSL https://qlty.sh | sh && ln -sf /root/.qlty/bin/qlty /usr/local/bin/qlty\n\nRUN set -eux; target=\"x86_64-unknown-linux-gnu\"; asset=\"fabro-${target}.tar.gz\"; url=\"$(curl -fsSL https://api.github.com/repos/fabro-sh/fabro/releases/latest | jq -r --arg asset \"$asset\" '.assets[] | select(.name == $asset) | .browser_download_url')\"; test -n \"$url\"; curl -fsSL \"$url\" -o /tmp/fabro.tar.gz; tar -xzf /tmp/fabro.tar.gz -C /tmp; install -m 0755 \"/tmp/fabro-${target}/fabro\" /usr/local/bin/fabro; rm -rf /tmp/fabro.tar.gz \"/tmp/fabro-${target}\"; fabro --version\n\nCMD [\"/bin/bash\"]\n"
+              }
+            },
+            "network": "allow_all",
+            "skip_clone": false
+          }
+        },
+        "notifications": {},
+        "interviews": {
+          "provider": null,
+          "slack": null
+        },
+        "agent": {
+          "permissions": "full",
+          "mcps": {}
+        },
+        "hooks": [],
+        "scm": {
+          "provider": null,
+          "owner": null,
+          "repository": null,
+          "github": null
+        },
+        "pull_request": null,
+        "artifacts": {
+          "include": [
+            ".workflow/**",
+            "reports/**",
+            "evals/output/**",
+            "apps/generated-*/README.md",
+            "apps/generated-*/.workflow-build.json",
+            "apps/generated-*/fixtures/**",
+            "apps/generated-*/public/**",
+            "apps/generated-*/src/**",
+            "apps/generated-*/tests/**"
+          ]
+        },
+        "integrations": {
+          "github": {
+            "permissions": {
+              "actions": "read",
+              "issues": "write",
+              "pull_requests": "write",
+              "contents": "write",
+              "metadata": "read"
+            }
+          }
+        }
+      }
+    },
+    "graph": {
+      "name": "SpikeWorkflowRegistrySmoke",
+      "nodes": {
+        "register_workflows": {
+          "id": "register_workflows",
+          "attrs": {
+            "label": {
+              "String": "Register Spike Workflows"
+            },
+            "provider": {
+              "String": "openrouter"
+            },
+            "shape": {
+              "String": "parallelogram"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "retry_target": {
+              "String": "register_workflows"
+            },
+            "model": {
+              "String": "anthropic/claude-haiku-4-5"
+            },
+            "script": {
+              "String": "node scripts/register-spike-workflows.mjs .workflow/spike-workflow-registry.json"
+            },
+            "goal_gate": {
+              "Boolean": true
+            }
+          }
+        },
+        "start": {
+          "id": "start",
+          "attrs": {
+            "shape": {
+              "String": "Mdiamond"
+            },
+            "model": {
+              "String": "anthropic/claude-haiku-4-5"
+            },
+            "provider": {
+              "String": "openrouter"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "label": {
+              "String": "Start"
+            }
+          }
+        },
+        "exit": {
+          "id": "exit",
+          "attrs": {
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "shape": {
+              "String": "Msquare"
+            },
+            "label": {
+              "String": "Exit"
+            },
+            "model": {
+              "String": "anthropic/claude-haiku-4-5"
+            },
+            "provider": {
+              "String": "openrouter"
+            }
+          }
+        },
+        "write_report": {
+          "id": "write_report",
+          "attrs": {
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "model": {
+              "String": "anthropic/claude-haiku-4-5"
+            },
+            "goal_gate": {
+              "Boolean": true
+            },
+            "label": {
+              "String": "Write Registry Report"
+            },
+            "shape": {
+              "String": "parallelogram"
+            },
+            "script": {
+              "String": "node -e \"const fs=require('fs'); const report=JSON.parse(fs.readFileSync('.workflow/spike-workflow-registry.json','utf8')); if (!report.ok) throw new Error('registry report failed'); const lines=['# Spike Workflow Registry Smoke', '', 'workflow_count=' + report.workflow_count, 'failed_count=' + report.failed_count, '', ...report.workflows.map((item)=>'- ' + item.workflow + '=' + item.ok)]; fs.writeFileSync('.workflow/spike-workflow-registry-smoke.md', lines.join('\\n') + '\\n'); console.log(lines.join('\\n'));\""
+            },
+            "provider": {
+              "String": "openrouter"
+            },
+            "retry_target": {
+              "String": "register_workflows"
+            }
+          }
+        }
+      },
+      "edges": [
+        {
+          "from": "start",
+          "to": "register_workflows",
+          "attrs": {}
+        },
+        {
+          "from": "register_workflows",
+          "to": "write_report",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "register_workflows",
+          "to": "register_workflows",
+          "attrs": {
+            "max_visits": {
+              "Integer": 2
+            },
+            "label": {
+              "String": "Retry"
+            },
+            "loop_restart": {
+              "Boolean": true
+            }
+          }
+        },
+        {
+          "from": "write_report",
+          "to": "exit",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "write_report",
+          "to": "register_workflows",
+          "attrs": {
+            "loop_restart": {
+              "Boolean": true
+            },
+            "label": {
+              "String": "Repair"
+            }
+          }
+        }
+      ],
+      "attrs": {
+        "fallback_retry_target": {
+          "String": "register_workflows"
+        },
+        "default_max_retries": {
+          "Integer": 1
+        },
+        "persona": {
+          "String": "workflow-registry"
+        },
+        "goal": {
+          "String": "Validate, quality-check, and register all spike Fabro workflows in Daytona"
+        },
+        "retry_target": {
+          "String": "register_workflows"
+        },
+        "inputs": {
+          "String": ""
+        },
+        "rankdir": {
+          "String": "LR"
+        },
+        "model_stylesheet": {
+          "String": "\n            *       { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: low; }\n            .coding { provider: openrouter; model: qwen/qwen3.6-plus; reasoning_effort: high; }\n            .review { provider: openrouter; model: google/gemini-3.1-pro-preview; reasoning_effort: high; }\n        "
+        },
+        "outputs": {
+          "String": "spike_workflow_registry_report"
+        }
+      }
+    },
+    "graph_source": "digraph SpikeWorkflowRegistrySmoke {\n    graph [\n        goal=\"Validate, quality-check, and register all spike Fabro workflows\",\n        persona=\"workflow-registry\",\n        inputs=\"\",\n        outputs=\"spike_workflow_registry_report\",\n        default_max_retries=1,\n        retry_target=\"register_workflows\",\n        fallback_retry_target=\"register_workflows\",\n        model_stylesheet=\"\n            *       { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: low; }\n            .coding { provider: openrouter; model: qwen/qwen3.6-plus; reasoning_effort: high; }\n            .review { provider: openrouter; model: google/gemini-3.1-pro-preview; reasoning_effort: high; }\n        \"\n    ]\n    rankdir=LR\n\n    start [shape=Mdiamond, label=\"Start\"]\n    exit  [shape=Msquare, label=\"Exit\"]\n\n    register_workflows [\n        label=\"Register Spike Workflows\",\n        shape=parallelogram,\n        goal_gate=true,\n        retry_target=\"register_workflows\",\n        script=\"node scripts/register-spike-workflows.mjs .workflow/spike-workflow-registry.json\"\n    ]\n\n    write_report [\n        label=\"Write Registry Report\",\n        shape=parallelogram,\n        goal_gate=true,\n        retry_target=\"register_workflows\",\n        script=\"node -e \\\"const fs=require('fs'); const report=JSON.parse(fs.readFileSync('.workflow/spike-workflow-registry.json','utf8')); if (!report.ok) throw new Error('registry report failed'); const lines=['# Spike Workflow Registry Smoke', '', 'workflow_count=' + report.workflow_count, 'failed_count=' + report.failed_count, '', ...report.workflows.map((item)=>'- ' + item.workflow + '=' + item.ok)]; fs.writeFileSync('.workflow/spike-workflow-registry-smoke.md', lines.join('\\\\n') + '\\\\n'); console.log(lines.join('\\\\n'));\\\"\"\n    ]\n\n    start -> register_workflows\n    register_workflows -> write_report [condition=\"outcome=succeeded\"]\n    register_workflows -> register_workflows [label=\"Retry\", loop_restart=true, max_visits=2]\n    write_report -> exit [condition=\"outcome=succeeded\"]\n    write_report -> register_workflows [label=\"Repair\", loop_restart=true]\n}\n",
+    "workflow_slug": "spike-workflow-registry-smoke",
+    "source_directory": "/Users/timlife/Documents/claude code/maestro-os",
+    "provenance": {
+      "server": {
+        "version": "0.231.0-nightly.1"
+      },
+      "client": {
+        "user_agent": "fabro-cli/0.231.0-nightly.1",
+        "name": "fabro-cli",
+        "version": "0.231.0-nightly.1"
+      },
+      "subject": {
+        "kind": "user",
+        "identity": {
+          "issuer": "fabro:dev",
+          "subject": "dev"
+        },
+        "login": "dev",
+        "auth_method": "dev_token"
+      }
+    },
+    "manifest_blob": "576f39583bd180af01a6d18903520f6cbee1fb1811f1d7fa12a6590722e2ef2c",
+    "definition_blob": "138e8ed7f2f42174caf255d9b6da3eb0d7da72b06ef084c8df013fc3e032dd4b",
+    "git": {
+      "origin_url": "https://github.com/kimprobably/maestro-os",
+      "branch": "spike/fabro-code-factory-v5",
+      "sha": "32470c7fd05da43f37594dd839ca129d0123a523",
+      "dirty": "clean",
+      "push_outcome": {
+        "type": "not_attempted"
+      }
+    }
+  },
+  "web_url": "http://127.0.0.1:32276/runs/01KRGSDRE8PHTBM1XMHBZDZ5SY",
+  "start": null,
+  "status": {
+    "kind": "starting"
+  },
+  "status_updated_at": "2026-05-13T13:46:36.907628Z",
+  "last_event_at": "2026-05-13T13:46:43.697093Z",
+  "pending_control": null,
+  "checkpoints": [],
+  "conclusion": null,
+  "sandbox": {
+    "provider": "daytona",
+    "image": "buildpack-deps:noble",
+    "snapshot": "maestro-code-factory-v5",
+    "runtime": {
+      "id": "fabro-01KRGSDRE8PHTBM1XMHBZDZ5SY",
+      "working_directory": "/home/daytona/workspace",
+      "repo_cloned": true,
+      "clone_origin_url": "https://github.com/kimprobably/maestro-os",
+      "clone_branch": "spike/fabro-code-factory-v5"
+    }
+  },
+  "pull_request": null,
+  "superseded_by": null,
+  "pending_interviews": {},
+  "stages": {}
+}
