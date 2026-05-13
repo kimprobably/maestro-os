@@ -1125,7 +1125,7 @@
     "kind": "running"
   },
   "status_updated_at": "2026-05-13T22:05:24.558680697Z",
-  "last_event_at": "2026-05-13T22:05:27.191101410Z",
+  "last_event_at": "2026-05-13T22:08:04.945385334Z",
   "pending_control": null,
   "checkpoints": [
     {
@@ -1172,9 +1172,9 @@
       "diff": {}
     },
     {
-      "seq": 0,
+      "seq": 28,
       "checkpoint": {
-        "timestamp": "2026-05-13T22:05:27.346333869Z",
+        "timestamp": "2026-05-13T22:05:31.147841481Z",
         "current_node": "live_source_preflight",
         "completed_nodes": [
           "start",
@@ -1182,28 +1182,28 @@
         ],
         "node_retries": {},
         "context_values": {
-          "graph.retry_target": "implement_live_enrichment",
-          "thread.start.current_node": "live_source_preflight",
-          "command.output": "blob://sha256/5e35254a5e6757cfd34a36d5bcb6dd4e7878884b76ab0a6ce38c03c9c4364ef4",
-          "internal.work_dir": "/home/daytona/workspace",
-          "failure_signature": "",
-          "graph.goal": "Implement Consumer Radar live discovery and enrichment with strict real-data gates",
-          "graph.persona": "consumer-radar-live-enrichment-builder",
-          "internal.thread_id": "start",
           "current_node": "live_source_preflight",
-          "graph.rankdir": "LR",
-          "internal.run_id": "01KRHNYVA8TJ5XEY0N3E60V8D0",
-          "graph.default_max_retries": "2",
-          "internal.node_visit_count": 1,
-          "graph.model_stylesheet": "\n            *          { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: low; }\n            .coding    { provider: openrouter; model: qwen/qwen3.6-plus; reasoning_effort: high; }\n            .review    { provider: openrouter; model: google/gemini-3.1-pro-preview; reasoning_effort: high; }\n            .cheap     { provider: openrouter; model: deepseek/deepseek-v4-flash; reasoning_effort: low; }\n        ",
-          "internal.fidelity": "compact",
-          "internal.retry_count.start": 0,
-          "outcome": "succeeded",
-          "internal.retry_count.live_source_preflight": 0,
-          "graph.fallback_retry_target": "implementation_plan_fanout",
+          "graph.goal": "Implement Consumer Radar live discovery and enrichment with strict real-data gates",
           "graph.inputs": "app_dir, real_mode, allow_fixture_fallback, minimum_live_apps, minimum_review_samples, minimum_social_examples, minimum_active_reviews",
+          "outcome": "succeeded",
+          "internal.run_id": "01KRHNYVA8TJ5XEY0N3E60V8D0",
+          "thread.start.current_node": "live_source_preflight",
+          "graph.fallback_retry_target": "implementation_plan_fanout",
+          "internal.fidelity": "compact",
+          "failure_class": "",
+          "graph.persona": "consumer-radar-live-enrichment-builder",
+          "internal.node_visit_count": 1,
+          "internal.work_dir": "/home/daytona/workspace",
+          "internal.thread_id": "start",
           "graph.outputs": "live_enriched_app, live_data_report, review_consensus, handoff",
-          "failure_class": ""
+          "graph.rankdir": "LR",
+          "command.output": "blob://sha256/5e35254a5e6757cfd34a36d5bcb6dd4e7878884b76ab0a6ce38c03c9c4364ef4",
+          "graph.retry_target": "implement_live_enrichment",
+          "internal.retry_count.live_source_preflight": 0,
+          "internal.retry_count.start": 0,
+          "graph.model_stylesheet": "\n            *          { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: low; }\n            .coding    { provider: openrouter; model: qwen/qwen3.6-plus; reasoning_effort: high; }\n            .review    { provider: openrouter; model: google/gemini-3.1-pro-preview; reasoning_effort: high; }\n            .cheap     { provider: openrouter; model: deepseek/deepseek-v4-flash; reasoning_effort: low; }\n        ",
+          "failure_signature": "",
+          "graph.default_max_retries": "2"
         },
         "node_outcomes": {
           "start": {
@@ -1220,9 +1220,95 @@
           }
         },
         "next_node_id": "implementation_plan_fanout",
+        "git_commit_sha": "613bffdc95f2b67fb5478ced7fa5f1d90dd8c9e9",
+        "node_visits": {
+          "live_source_preflight": 1,
+          "start": 1
+        }
+      },
+      "diff": {
+        "summary": {
+          "files_changed": 0,
+          "additions": 0,
+          "deletions": 0
+        }
+      }
+    },
+    {
+      "seq": 0,
+      "checkpoint": {
+        "timestamp": "2026-05-13T22:08:05.164066651Z",
+        "current_node": "implementation_plan_fanout",
+        "completed_nodes": [
+          "start",
+          "live_source_preflight",
+          "implementation_plan_fanout"
+        ],
+        "node_retries": {},
+        "context_values": {
+          "graph.retry_target": "implement_live_enrichment",
+          "thread.start.current_node": "live_source_preflight",
+          "command.output": "blob://sha256/5e35254a5e6757cfd34a36d5bcb6dd4e7878884b76ab0a6ce38c03c9c4364ef4",
+          "thread.live_source_preflight.current_node": "implementation_plan_fanout",
+          "parallel.branch_count": 2,
+          "internal.retry_count.implementation_plan_fanout": 0,
+          "internal.work_dir": "/home/daytona/workspace",
+          "failure_signature": "",
+          "graph.goal": "Implement Consumer Radar live discovery and enrichment with strict real-data gates",
+          "graph.persona": "consumer-radar-live-enrichment-builder",
+          "internal.thread_id": "live_source_preflight",
+          "current_node": "implementation_plan_fanout",
+          "graph.rankdir": "LR",
+          "internal.run_id": "01KRHNYVA8TJ5XEY0N3E60V8D0",
+          "graph.default_max_retries": "2",
+          "parallel.results": [
+            {
+              "id": "plan_live_sources",
+              "status": "failed",
+              "head_sha": "6bf9aafb4bc57a0415b47fec793db0ffe76cba49"
+            },
+            {
+              "id": "plan_product_surface",
+              "status": "succeeded",
+              "head_sha": "8a776804d5472254a0c3beb68c607340480c20ed"
+            }
+          ],
+          "internal.node_visit_count": 1,
+          "graph.model_stylesheet": "\n            *          { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: low; }\n            .coding    { provider: openrouter; model: qwen/qwen3.6-plus; reasoning_effort: high; }\n            .review    { provider: openrouter; model: google/gemini-3.1-pro-preview; reasoning_effort: high; }\n            .cheap     { provider: openrouter; model: deepseek/deepseek-v4-flash; reasoning_effort: low; }\n        ",
+          "internal.fidelity": "compact",
+          "internal.retry_count.start": 0,
+          "outcome": "partially_succeeded",
+          "internal.retry_count.live_source_preflight": 0,
+          "graph.fallback_retry_target": "implementation_plan_fanout",
+          "graph.inputs": "app_dir, real_mode, allow_fixture_fallback, minimum_live_apps, minimum_review_samples, minimum_social_examples, minimum_active_reviews",
+          "graph.outputs": "live_enriched_app, live_data_report, review_consensus, handoff",
+          "failure_class": ""
+        },
+        "node_outcomes": {
+          "implementation_plan_fanout": {
+            "status": "partially_succeeded",
+            "jump_to_node": "plan_join",
+            "notes": "Parallel node dispatched 2 branches (1 succeeded, 1 failed)",
+            "usage": null
+          },
+          "start": {
+            "status": "succeeded",
+            "usage": null
+          },
+          "live_source_preflight": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/5e35254a5e6757cfd34a36d5bcb6dd4e7878884b76ab0a6ce38c03c9c4364ef4"
+            },
+            "notes": "Script completed: echo APIFY_TOKEN live source preflight; node scripts/app-feedback/live-source-preflight.mjs --app-dir 'apps/generated-consumer-app-radar' --real-mode 'true' --allow-fixture-fallback 'false' --out .workflow/consumer-radar-live-enrichment/source-preflight.json",
+            "usage": null
+          }
+        },
+        "next_node_id": "plan_join",
         "node_visits": {
           "start": 1,
-          "live_source_preflight": 1
+          "live_source_preflight": 1,
+          "implementation_plan_fanout": 1
         }
       },
       "diff": {}
@@ -1245,6 +1331,49 @@
   "superseded_by": null,
   "pending_interviews": {},
   "stages": {
+    "implementation_plan_fanout@1": {
+      "first_event_seq": 31,
+      "prompt": null,
+      "response": null,
+      "completion": null,
+      "provider_used": {
+        "mode": "agent",
+        "provider": "openrouter",
+        "model": "qwen/qwen3.6-plus"
+      },
+      "diff": null,
+      "script_invocation": null,
+      "script_timing": null,
+      "parallel_results": [
+        {
+          "id": "plan_live_sources",
+          "status": "failed",
+          "head_sha": "6bf9aafb4bc57a0415b47fec793db0ffe76cba49"
+        },
+        {
+          "id": "plan_product_surface",
+          "status": "succeeded",
+          "head_sha": "8a776804d5472254a0c3beb68c607340480c20ed"
+        }
+      ],
+      "output": null,
+      "started_at": "2026-05-13T22:05:31.149942304Z",
+      "handler": "parallel",
+      "usage": {
+        "input_tokens": 317402,
+        "output_tokens": 6798,
+        "total_tokens": 324200,
+        "reasoning_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "total_usd_micros": 116411
+      },
+      "model": {
+        "provider": "openrouter",
+        "model_id": "qwen/qwen3.6-plus"
+      },
+      "state": "running"
+    },
     "start@1": {
       "first_event_seq": 16,
       "prompt": null,
@@ -1278,7 +1407,12 @@
       "first_event_seq": 20,
       "prompt": null,
       "response": null,
-      "completion": null,
+      "completion": {
+        "outcome": "succeeded",
+        "notes": "Script completed: echo APIFY_TOKEN live source preflight; node scripts/app-feedback/live-source-preflight.mjs --app-dir 'apps/generated-consumer-app-radar' --real-mode 'true' --allow-fixture-fallback 'false' --out .workflow/consumer-radar-live-enrichment/source-preflight.json",
+        "failure_reason": null,
+        "timestamp": "2026-05-13T22:05:27.345050792Z"
+      },
       "provider_used": null,
       "diff": null,
       "script_invocation": {
@@ -1301,6 +1435,7 @@
       "termination": "exited",
       "started_at": "2026-05-13T22:05:25.496013389Z",
       "handler": "command",
+      "duration_ms": 1695,
       "usage": {
         "input_tokens": 0,
         "output_tokens": 0,
@@ -1308,6 +1443,31 @@
         "reasoning_tokens": 0,
         "cache_read_tokens": 0,
         "cache_write_tokens": 0
+      },
+      "state": "succeeded"
+    },
+    "plan_product_surface@1": {
+      "first_event_seq": 48,
+      "prompt": null,
+      "response": null,
+      "completion": null,
+      "provider_used": null,
+      "diff": null,
+      "script_invocation": null,
+      "script_timing": null,
+      "parallel_results": null,
+      "output": null,
+      "usage": {
+        "input_tokens": 317402,
+        "output_tokens": 6798,
+        "total_tokens": 324200,
+        "reasoning_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "model": {
+        "provider": "openrouter",
+        "model_id": "qwen/qwen3.6-plus-04-02"
       },
       "state": "running"
     }
