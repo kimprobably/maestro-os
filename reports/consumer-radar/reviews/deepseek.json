@@ -2,36 +2,32 @@
   "ok": true,
   "skipped": false,
   "real_mode": true,
-  "model": "deepseek/deepseek-v4-flash",
+  "model": "deepseek/deepseek-v4-pro",
   "role": "simplification_and_ci",
   "status": 200,
   "parsed": {
     "verdict": "APPROVE",
-    "score": 0.95,
+    "score": 0.92,
     "findings": [
       {
         "severity": "low",
-        "issue": "No error handling for missing fixture file in loadFixtureApps.",
-        "fix": "Wrap readFileSync in try/catch and return empty array on failure."
+        "issue": "refreshApps always loads fixture data regardless of mode, making live-smoke mode identical to fixture.",
+        "fix": "In ingest.js, branch on mode to call live adapters when mode is 'live-smoke' and fall back to fixture on failure."
       },
       {
         "severity": "low",
-        "issue": "POST /api/refresh does not validate request body or mode parameter.",
-        "fix": "Add validation for mode parameter to accept only 'fixture' or 'live-smoke'."
-      },
-      {
-        "severity": "info",
-        "issue": "No CORS headers on API responses; may block cross-origin requests.",
-        "fix": "Add 'Access-Control-Allow-Origin: *' header to all API responses."
+        "issue": "No evidence of Qlty or Promptfoo gates being executed; spec requires recording their absence.",
+        "fix": "Add a pre-test script that checks for Qlty/Promptfoo, logs warnings if missing, and exits 0 to keep the spike moving."
       }
     ],
     "suggested_next_steps": [
-      "Add error handling for fixture file loading",
-      "Add request validation for /api/refresh",
-      "Add CORS headers for broader compatibility"
+      "Wire live-smoke mode to Apple/Apify adapters with fixture fallback.",
+      "Add Qlty/Promptfoo presence checks and record warnings in CI output.",
+      "Add a test for the /api/apps/:id endpoint and the POST /api/refresh endpoint."
     ]
   },
-  "raw_excerpt": "{\n  \"verdict\": \"APPROVE\",\n  \"score\": 0.95,\n  \"findings\": [\n    {\n      \"severity\": \"low\",\n      \"issue\": \"No error handling for missing fixture file in loadFixtureApps.\",\n      \"fix\": \"Wrap readFileSync in try/catch and return empty array on failure.\"\n    },\n    {\n      \"severity\": \"low\",\n      \"issue\": \"POST /api/refresh does not validate request body or mode parameter.\",\n      \"fix\": \"Add validation for mode parameter to accept only 'fixture' or 'live-smoke'.\"\n    },\n    {\n      \"severity\": \"info\",\n      \"issue\": \"No CORS headers on API responses; may block cross-origin requests.\",\n      \"fix\": \"Add 'Access-Control-Allow-Origin: *' header to all API responses.\"\n    }\n  ],\n  \"suggested_next_steps\": [\n    \"Add error handling for fixture file loading\",\n    \"Add request validation for /api/refresh\",\n    \"Add CORS headers for broader compatibility\"\n  ]\n}",
+  "raw_excerpt": "{\n  \"verdict\": \"APPROVE\",\n  \"score\": 0.92,\n  \"findings\": [\n    {\n      \"severity\": \"low\",\n      \"issue\": \"refreshApps always loads fixture data regardless of mode, making live-smoke mode identical to fixture.\",\n      \"fix\": \"In ingest.js, branch on mode to call live adapters when mode is 'live-smoke' and fall back to fixture on failure.\"\n    },\n    {\n      \"severity\": \"low\",\n      \"issue\": \"No evidence of Qlty or Promptfoo gates being executed; spec requires recording their absence.\",\n      \"fix\": \"Add a pre-test script that checks for Qlty/Promptfoo, logs warnings if missing, and exits 0 to keep the spike moving.\"\n    }\n  ],\n  \"suggested_next_steps\": [\n    \"Wire live-smoke mode to Apple/Apify adapters with fixture fallback.\",\n    \"Add Qlty/Promptfoo presence checks and record warnings in CI output.\",\n    \"Add a test for the /api/apps/:id endpoint and the POST /api/refresh endpoint.\"\n  ]\n}",
   "error": null,
-  "payload_excerpt": null
+  "payload_excerpt": null,
+  "payload_text_excerpt": "\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n{\"id\":\"gen-1778671725-hjY9c2y9By8k3V5SbNNA\",\"object\":\"chat.completion\",\"created\":1778671725,\"model\":\"deepseek/deepseek-v4-pro-20260423\",\"provider\":\"DeepInfra\",\"system_fingerprint\":null,\"choices\":[{\"index\":0,\"logprobs\":null,\"finish_reason\":\"stop\",\"native_finish_reason\":\"stop\",\"message\":{\"role\":\"assistant\",\"content\":\"{\\n  \\\"verdict\\\": \\\"APPROVE\\\",\\n  \\\"score\\\": 0.92,\\n  \\\"findings\\\": [\\n    {\\n      \\\"severity\\\": \\\"low\\\",\\n      \\\"issue\\\": \\\"refreshApps always loads fixture data regardless of mode, making live-smoke mode identical to fixture.\\\",\\n      \\\"fix"
 }
