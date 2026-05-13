@@ -1,0 +1,786 @@
+{
+  "title": "Generate a toy Slack hello Fabro workflow from the scaffold spec",
+  "spec": {
+    "run_id": "01KRGNH6QYC6XMWDQRS3Q5E0KW",
+    "settings": {
+      "project": {
+        "name": "maestro-os",
+        "description": null,
+        "metadata": {}
+      },
+      "workflow": {
+        "name": null,
+        "description": null,
+        "graph": "workflow.fabro",
+        "metadata": {}
+      },
+      "run": {
+        "goal": {
+          "type": "inline",
+          "value": "Generate a toy Slack hello Fabro workflow from the scaffold spec"
+        },
+        "working_dir": null,
+        "metadata": {},
+        "inputs": {
+          "const_path": ".maestro/scaffold/constitution.md",
+          "spec": "specs/scaffold/toy-slack-hello.md",
+          "workflow_path": "workflows/scaffold/generated-toy-slack-hello.fabro"
+        },
+        "model": {
+          "provider": "anthropic",
+          "name": "claude-sonnet-4-6",
+          "fallbacks": []
+        },
+        "git": {
+          "author": null
+        },
+        "prepare": {
+          "commands": [],
+          "timeout_ms": 300000
+        },
+        "execution": {
+          "mode": "normal",
+          "approval": "auto"
+        },
+        "checkpoint": {
+          "exclude_globs": []
+        },
+        "sandbox": {
+          "provider": "docker",
+          "preserve": false,
+          "stop_on_terminal": true,
+          "devcontainer": false,
+          "env": {
+            "LINEAR_API_URL": "${{ secrets.LINEAR_API_URL }}",
+            "APIFY_TIKTOK_ACTOR": "clockworks/tiktok-scraper",
+            "FABRO_SLACK_CHANNEL_ID": "${{ secrets.FABRO_SLACK_CHANNEL_ID }}",
+            "LINEAR_API_KEY": "${{ secrets.LINEAR_API_KEY }}",
+            "OPENROUTER_API_KEY": "${{ secrets.OPENROUTER_API_KEY }}",
+            "FABRO_SERVER": "${{ secrets.FABRO_SERVER }}",
+            "APIFY_INSTAGRAM_ACTOR": "apify/instagram-scraper",
+            "APIFY_TOKEN": "${{ secrets.APIFY_TOKEN }}",
+            "DAYTONA_API_KEY": "${{ secrets.DAYTONA_API_KEY }}",
+            "DAYTONA_API_URL": "${{ secrets.DAYTONA_API_URL }}",
+            "APIFY_APPSTORE_ACTOR": "crawlerbros/appstore-scraper",
+            "FABRO_SLACK_BOT_TOKEN": "${{ secrets.FABRO_SLACK_BOT_TOKEN }}",
+            "PROMPTFOO_DISABLE_TELEMETRY": "1",
+            "FABRO_DEV_TOKEN": "${{ secrets.FABRO_DEV_TOKEN }}"
+          },
+          "docker": {
+            "image": "buildpack-deps:noble",
+            "network_mode": null,
+            "memory_limit": 4000000000,
+            "cpu_quota": 200000,
+            "env_vars": {},
+            "skip_clone": false
+          },
+          "daytona": {
+            "auto_stop_interval": 60,
+            "labels": {
+              "project": "maestro-os",
+              "purpose": "code-factory"
+            },
+            "snapshot": {
+              "name": "maestro-code-factory-v3",
+              "cpu": 2,
+              "memory_gb": 4,
+              "disk_gb": 10,
+              "dockerfile": {
+                "type": "inline",
+                "value": "FROM ubuntu:24.04\n\nENV DEBIAN_FRONTEND=noninteractive\nENV BUN_INSTALL=/root/.bun\nENV PATH=\"/root/.bun/bin:/root/.local/bin:/root/.qlty/bin:${PATH}\"\nWORKDIR /home/daytona\n\nRUN apt-get update && apt-get install -y --no-install-recommends bash ca-certificates curl git jq openssh-client python3 python3-pip pipx ripgrep shellcheck unzip xz-utils && rm -rf /var/lib/apt/lists/*\n\nRUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash - && apt-get update && apt-get install -y --no-install-recommends nodejs && npm install -g @anthropic-ai/claude-code @openai/codex promptfoo && npm cache clean --force && rm -rf /var/lib/apt/lists/*\n\nRUN curl -fsSL https://bun.sh/install | bash -s \"bun-v1.2.22\" && ln -sf /root/.bun/bin/bun /usr/local/bin/bun\n\nRUN pipx install spec-kitty-cli==3.1.8 && curl -fsSL https://qlty.sh | sh && ln -sf /root/.qlty/bin/qlty /usr/local/bin/qlty\n\nCMD [\"/bin/bash\"]\n"
+              }
+            },
+            "network": "allow_all",
+            "skip_clone": false
+          }
+        },
+        "notifications": {},
+        "interviews": {
+          "provider": null,
+          "slack": null
+        },
+        "agent": {
+          "permissions": "full",
+          "mcps": {}
+        },
+        "hooks": [],
+        "scm": {
+          "provider": null,
+          "owner": null,
+          "repository": null,
+          "github": null
+        },
+        "pull_request": null,
+        "artifacts": {
+          "include": [
+            ".workflow/**",
+            "reports/**",
+            "evals/output/**",
+            "apps/generated-*/README.md",
+            "apps/generated-*/.workflow-build.json",
+            "apps/generated-*/fixtures/**",
+            "apps/generated-*/public/**",
+            "apps/generated-*/src/**",
+            "apps/generated-*/tests/**"
+          ]
+        },
+        "integrations": {
+          "github": {
+            "permissions": {
+              "contents": "write",
+              "metadata": "read",
+              "issues": "write",
+              "pull_requests": "write",
+              "actions": "read"
+            }
+          }
+        }
+      }
+    },
+    "graph": {
+      "name": "ScaffoldWorkflow",
+      "nodes": {
+        "review": {
+          "id": "review",
+          "attrs": {
+            "goal_gate": {
+              "Boolean": true
+            },
+            "model": {
+              "String": "claude-sonnet-4-5"
+            },
+            "label": {
+              "String": "Review Against Standards"
+            },
+            "class": {
+              "String": "review"
+            },
+            "backend": {
+              "String": "cli"
+            },
+            "provider": {
+              "String": "anthropic"
+            },
+            "prompt": {
+              "String": "You are the spec-review-agent and workflow standards reviewer for Maestro.\n\nReview `workflows/scaffold/generated-toy-slack-hello.fabro` against `.maestro/scaffold/constitution.md` and the approved plan.\n\nRun or inspect these gates before deciding:\n- `./bin/maestro verify dot-syntax workflows/scaffold/generated-toy-slack-hello.fabro`\n- `./bin/maestro verify workflow-quality workflows/scaffold/generated-toy-slack-hello.fabro`\n\nWrite your review JSON to `.maestro/scaffold/review.json`, then respond with the same JSON object.\n\nJSON shape:\n\n```json\n{\n  \"score\": 0.0,\n  \"passed\": false,\n  \"issues\": [\n    {\n      \"severity\": \"blocker|major|minor\",\n      \"stage\": \"stage id or graph\",\n      \"finding\": \"specific problem\",\n      \"required_fix\": \"specific fix\"\n    }\n  ],\n  \"checks\": {\n    \"fabro_syntax\": \"pass|fail|not_run\",\n    \"constitution_compliance\": \"pass|fail\",\n    \"validator_coverage\": \"pass|fail\",\n    \"human_gate_coverage\": \"pass|fail\",\n    \"persona_and_failure_path\": \"pass|fail\",\n    \"spec_kitty_usage\": \"pass|fail|not_applicable\",\n    \"adr_handling\": \"pass|fail|not_applicable\",\n    \"qlty_or_native_quality_gates\": \"pass|fail|not_applicable\",\n    \"memory_write_policy\": \"pass|fail|not_applicable\"\n  },\n  \"suggestions\": []\n}\n```\n\nScoring:\n- Start at 1.0.\n- Subtract 0.25 for each blocker.\n- Subtract 0.10 for each major issue.\n- Subtract 0.03 for each minor issue.\n- `passed` is true only when score is at least 0.85 and no blockers remain.\n\nReview rules:\n- Do not rewrite the workflow here. Findings only.\n- Do not recommend undocumented Fabro attributes such as `output_file`. If a prompt output must become a file, require a real command/script stage or a command-only flow.\n- Missing STOP gates before irreversible operations are blockers.\n- Missing validators after material outputs are major issues.\n- Ambiguous routing from stages with failure/fix/retry fallbacks is a blocker. Passing edges from those stages must use `condition=\"outcome=succeeded\"` so successful stages cannot route into failure handlers.\n- Missing Spec Kitty updates in code/spec workflows are major issues.\n- Missing Qlty/native quality gates in code workflows are major issues.\n- Uncontrolled long-term memory writes are blockers.\n- ADR-affecting changes without ADR manager coverage are blockers."
+            },
+            "reasoning_effort": {
+              "String": "high"
+            },
+            "retry_target": {
+              "String": "fix_loop"
+            }
+          },
+          "classes": [
+            "review"
+          ]
+        },
+        "load_const": {
+          "id": "load_const",
+          "attrs": {
+            "label": {
+              "String": "Load Constitution"
+            },
+            "script": {
+              "String": "cd '/Users/timlife/Documents/claude code/maestro-os'; mkdir -p .maestro/scaffold; ./bin/maestro knowledge get architecture-principles workflow-standards cli-conventions known-gotchas validator-library personas --format text > ${CONST:-.maestro/scaffold/constitution.md}; echo constitution-loaded"
+            },
+            "provider": {
+              "String": "openrouter"
+            },
+            "shape": {
+              "String": "parallelogram"
+            },
+            "model": {
+              "String": "anthropic/claude-haiku-4-5"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            }
+          }
+        },
+        "approve_plan": {
+          "id": "approve_plan",
+          "attrs": {
+            "shape": {
+              "String": "hexagon"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "provider": {
+              "String": "openrouter"
+            },
+            "label": {
+              "String": "Approve Plan"
+            },
+            "model": {
+              "String": "anthropic/claude-haiku-4-5"
+            }
+          }
+        },
+        "review_gate": {
+          "id": "review_gate",
+          "attrs": {
+            "provider": {
+              "String": "openrouter"
+            },
+            "goal_gate": {
+              "Boolean": true
+            },
+            "shape": {
+              "String": "parallelogram"
+            },
+            "retry_target": {
+              "String": "fix_loop"
+            },
+            "label": {
+              "String": "Review Verdict Gate"
+            },
+            "script": {
+              "String": "cd '/Users/timlife/Documents/claude code/maestro-os'; ./bin/maestro verify text-gate .maestro/scaffold/review.json --pass '\"passed\"\\s*:\\s*true' --fail '\"passed\"\\s*:\\s*false|\"severity\"\\s*:\\s*\"blocker\"'"
+            },
+            "model": {
+              "String": "anthropic/claude-haiku-4-5"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            }
+          }
+        },
+        "exit": {
+          "id": "exit",
+          "attrs": {
+            "shape": {
+              "String": "Msquare"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "provider": {
+              "String": "openrouter"
+            },
+            "label": {
+              "String": "Exit"
+            },
+            "model": {
+              "String": "anthropic/claude-haiku-4-5"
+            }
+          }
+        },
+        "start": {
+          "id": "start",
+          "attrs": {
+            "shape": {
+              "String": "Mdiamond"
+            },
+            "provider": {
+              "String": "openrouter"
+            },
+            "model": {
+              "String": "anthropic/claude-haiku-4-5"
+            },
+            "label": {
+              "String": "Start"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            }
+          }
+        },
+        "fix_loop": {
+          "id": "fix_loop",
+          "attrs": {
+            "backend": {
+              "String": "cli"
+            },
+            "max_visits": {
+              "Integer": 3
+            },
+            "label": {
+              "String": "Fix Loop"
+            },
+            "model": {
+              "String": "claude-sonnet-4-5"
+            },
+            "provider": {
+              "String": "anthropic"
+            },
+            "reasoning_effort": {
+              "String": "high"
+            },
+            "prompt": {
+              "String": "You are the fix-loop worker for Maestro scaffolded workflows.\n\nInputs:\n- Workflow path: `workflows/scaffold/generated-toy-slack-hello.fabro`\n- Constitution: `.maestro/scaffold/constitution.md`\n- Latest review JSON from the previous stage.\n\nIf the review passed, make no edits and return:\n\n```json\n{\"changed\": false, \"reason\": \"review passed\"}\n```\n\nIf the review did not pass:\n- Edit only `workflows/scaffold/generated-toy-slack-hello.fabro` and directly related prompt files for that generated workflow.\n- Fix blocker issues first, then major issues.\n- Keep the workflow small enough to inspect.\n- Do not remove gates, validators, Spec Kitty stages, ADR stages, Qlty/native quality gates, or memory-curator policy unless the review explicitly says they are wrong.\n- Preserve Fabro as the runtime. Rig is allowed only inside generated Rust AI application templates selected by the spec.\n- Do not invent magic persistence attributes such as `output_file`. Prompt node outputs are context; command stages read files. If a command needs a file, add a real script stage that writes it or convert that part to a command-only flow.\n- Rerun or prepare to rerun:\n  - `./bin/maestro verify dot-syntax workflows/scaffold/generated-toy-slack-hello.fabro`\n  - `./bin/maestro verify workflow-quality workflows/scaffold/generated-toy-slack-hello.fabro`\n\nReturn only JSON:\n\n```json\n{\n  \"changed\": true,\n  \"files_changed\": [\"path\"],\n  \"fixes\": [\"short concrete fix\"],\n  \"remaining_risk\": []\n}\n```"
+            },
+            "class": {
+              "String": "coding"
+            }
+          },
+          "classes": [
+            "coding"
+          ]
+        },
+        "quality_gate": {
+          "id": "quality_gate",
+          "attrs": {
+            "goal_gate": {
+              "Boolean": true
+            },
+            "script": {
+              "String": "cd '/Users/timlife/Documents/claude code/maestro-os'; ./bin/maestro verify workflow-quality ${WORKFLOW_PATH:-workflows/scaffold/generated-toy-slack-hello.fabro}"
+            },
+            "provider": {
+              "String": "openrouter"
+            },
+            "model": {
+              "String": "anthropic/claude-haiku-4-5"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "retry_target": {
+              "String": "fix_loop"
+            },
+            "shape": {
+              "String": "parallelogram"
+            },
+            "label": {
+              "String": "Workflow Quality Gate"
+            }
+          }
+        },
+        "approve_final": {
+          "id": "approve_final",
+          "attrs": {
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "provider": {
+              "String": "openrouter"
+            },
+            "shape": {
+              "String": "hexagon"
+            },
+            "label": {
+              "String": "Approve Final"
+            },
+            "model": {
+              "String": "anthropic/claude-haiku-4-5"
+            }
+          }
+        },
+        "lint": {
+          "id": "lint",
+          "attrs": {
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "shape": {
+              "String": "parallelogram"
+            },
+            "model": {
+              "String": "anthropic/claude-haiku-4-5"
+            },
+            "provider": {
+              "String": "openrouter"
+            },
+            "script": {
+              "String": "cd '/Users/timlife/Documents/claude code/maestro-os'; ./bin/maestro verify dot-syntax ${WORKFLOW_PATH:-workflows/scaffold/generated-toy-slack-hello.fabro} 2>&1"
+            },
+            "retry_target": {
+              "String": "generate_workflow"
+            },
+            "label": {
+              "String": "Lint Workflow"
+            },
+            "goal_gate": {
+              "Boolean": true
+            }
+          }
+        },
+        "generate_workflow": {
+          "id": "generate_workflow",
+          "attrs": {
+            "reasoning_effort": {
+              "String": "high"
+            },
+            "retry_target": {
+              "String": "generate_workflow"
+            },
+            "provider": {
+              "String": "anthropic"
+            },
+            "class": {
+              "String": "coding"
+            },
+            "prompt": {
+              "String": "You are the workflow-generation worker for Maestro.\n\nUse the approved JSON plan from the previous stage plus `.maestro/scaffold/constitution.md`.\n\nWrite one Fabro workflow file to `workflows/scaffold/generated-toy-slack-hello.fabro`. If that path is absent from the approved plan, use:\n\n`workflows/<category>/<workflow_name>.fabro`\n\nOutput requirements:\n- Valid Fabro DOT syntax.\n- ASCII-only DOT. Do not use C-style block comments or decorative Unicode separators.\n- Use commas between attributes inside `graph [...]` and node `[...]` blocks.\n- Use Fabro's documented double-curly `inputs.<name>` template syntax for run inputs.\n- Do not use `${CONTEXT:...}`, JavaScript ternary/`||` expressions inside `${...}`, lowercase `${name}` interpolation, or dotted `${stage.field}` interpolation.\n- Do not use shell brace-style parameter expansion in workflow strings, including shell-native length checks. Fabro templates parse braces before shell execution. Prefer `printf %s \"$VAR\" | wc -c` or small `node -e` snippets.\n- When stages need to pass structured data, write JSON files and validate/read those files from command stages.\n- Prompt node outputs are context, not files. If a later command reads a file, create an earlier command stage that writes that file, or keep the data flow entirely in command stages.\n- Use real Fabro handlers: `shape=tab` with `prompt=...` for prompt nodes, `shape=parallelogram` with `script=...` for shell command nodes, and `shape=hexagon` with labeled outgoing edges for human gates.\n- Do not invent runtime attributes such as `stage_type`, `validator_type`, `checks`, `on_fail`, `output_key`, `capture_stdout`, or `command`.\n- `digraph` name in PascalCase.\n- `graph` has clear `goal`, `persona`, `inputs`, and `outputs` attributes.\n- `model_stylesheet` includes cheap default stages plus stronger classes for reasoning, coding, and review.\n- Every workflow has exactly one terminal node named `exit`; route success, failure, and rejection paths to that same `exit`.\n- If a node has a failure, fix, retry, or loop fallback edge, every success edge from that same node must be explicit with `condition=\"outcome=succeeded\"`. Labels such as `label=\"Failed\"` are only fallback labels; they do not make the other edge a success edge.\n- Every LLM output stage has either a deterministic validator, an LLM judge, or a human review gate.\n- If you reference `prompt=\"@...\"`, create that prompt file too. Otherwise use inline `prompt=\"...\"`.\n- Use real command stages for validators, such as `script=\"./bin/maestro validate required-fields path.json field1,field2\"` or `script=\"./bin/maestro verify ...\"`.\n- Every irreversible action has an explicit STOP gate before it. For Slack posts, include a hexagon node with `gate_type=\"STOP\"`, `message`, `details`, and `options`.\n- Every workflow has a persona-aware failure path that posts to Slack through `maestro slack post` when Slack context is present.\n- Every workflow completion emits or appends a run summary event and validates that summary before `exit`.\n- Workflows that learn append memory through a memory-curator stage, not directly from worker stages.\n- For code workflows, include Spec Kitty work-package updates, ADR scan/review when needed, Qlty gates, and risk-based reviewer fanout.\n- For Rust output projects, add native gates: `cargo fmt --check`, `cargo clippy --workspace --all-targets --all-features -- -D warnings`, tests, docs warnings, dependency checks, and coverage where appropriate.\n- For generated Rust AI applications, Rig may be used inside the generated app if the approved plan chose it. Fabro remains the workflow runtime.\n\nKeep shell commands repository-relative where possible. If an absolute path is unavoidable for the current spike, use `/Users/timlife/Documents/claude code/maestro-os`.\nBefore returning, run or prepare the workflow to pass:\n- `./bin/maestro verify dot-syntax <workflow_path>`\n- `./bin/maestro verify workflow-quality <workflow_path>`\n\nAfter writing the workflow, respond with JSON:\n\n```json\n{\n  \"workflow_path\": \"path written\",\n  \"summary\": \"one sentence\",\n  \"validators\": [\"commands expected to pass\"],\n  \"human_gates\": [\"gate names\"],\n  \"review_agents\": [\"agent names\"],\n  \"known_limits\": []\n}\n```"
+            },
+            "backend": {
+              "String": "cli"
+            },
+            "model": {
+              "String": "claude-sonnet-4-5"
+            },
+            "goal_gate": {
+              "Boolean": true
+            },
+            "label": {
+              "String": "Generate Workflow"
+            }
+          },
+          "classes": [
+            "coding"
+          ]
+        },
+        "register": {
+          "id": "register",
+          "attrs": {
+            "script": {
+              "String": "cd '/Users/timlife/Documents/claude code/maestro-os'; ./bin/maestro workflow register ${WORKFLOW_PATH:-workflows/scaffold/generated-toy-slack-hello.fabro}"
+            },
+            "goal_gate": {
+              "Boolean": true
+            },
+            "model": {
+              "String": "anthropic/claude-haiku-4-5"
+            },
+            "provider": {
+              "String": "openrouter"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "label": {
+              "String": "Register Workflow"
+            },
+            "shape": {
+              "String": "parallelogram"
+            },
+            "retry_target": {
+              "String": "fix_loop"
+            }
+          }
+        },
+        "parse_spec": {
+          "id": "parse_spec",
+          "attrs": {
+            "reasoning_effort": {
+              "String": "high"
+            },
+            "retry_target": {
+              "String": "parse_spec"
+            },
+            "goal_gate": {
+              "Boolean": true
+            },
+            "backend": {
+              "String": "cli"
+            },
+            "class": {
+              "String": "reasoning"
+            },
+            "provider": {
+              "String": "anthropic"
+            },
+            "label": {
+              "String": "Parse Spec"
+            },
+            "model": {
+              "String": "claude-sonnet-4-5"
+            },
+            "prompt": {
+              "String": "You are the spec-agent for Maestro.\n\nInputs:\n- Natural-language spec path: `specs/scaffold/toy-slack-hello.md`\n- Constitution path: `.maestro/scaffold/constitution.md`\n- Target workflow path: `workflows/scaffold/generated-toy-slack-hello.fabro`\n\nRead the spec and constitution. Produce only JSON with this shape:\n\n```json\n{\n  \"workflow_name\": \"kebab-case-name\",\n  \"category\": \"gtm|code|manager|memory|scaffold|other\",\n  \"persona\": \"maestro|quill|scout|smith|test-bot\",\n  \"purpose\": \"one sentence\",\n  \"spec_kitty\": {\n    \"package_required\": true,\n    \"spec_markdown_path\": \"specs/<category>/<workflow_name>.md\",\n    \"spec_json_path\": \"specs/<category>/<workflow_name>.json\",\n    \"updates_during_run\": [\"when spec is approved\", \"when ADR changes\", \"when review findings change scope\"]\n  },\n  \"inputs\": [],\n  \"outputs\": [],\n  \"risk_tags\": [],\n  \"stages\": [\n    {\n      \"id\": \"snake_case_stage_id\",\n      \"type\": \"llm|command|gate|decision\",\n      \"class\": \"reasoning|coding|review|drafting|judging\",\n      \"summary\": \"what the stage does\",\n      \"validator\": \"required validator command or null\"\n    }\n  ],\n  \"gates\": [\n    {\n      \"id\": \"gate_id\",\n      \"kind\": \"STOP|FLAG\",\n      \"reason\": \"why the gate exists\"\n    }\n  ],\n  \"review_fanout\": [\n    \"correctness-review-agent\",\n    \"test-review-agent\"\n  ],\n  \"adr\": {\n    \"required\": false,\n    \"reason\": \"why\"\n  },\n  \"deterministic_quality_gates\": [\n    \"maestro verify dot-syntax <path>\"\n  ],\n  \"memory_writes\": [\n    {\n      \"namespace\": \"persona/<persona>/episodic\",\n      \"writer\": \"memory-curator-agent\",\n      \"when\": \"after human-approved run summary\"\n    }\n  ],\n  \"open_questions\": []\n}\n```\n\nRules:\n- Use Spec Kitty as the work-package layer whenever a workflow creates or changes specs.\n- Always include correctness and test review. Add security, migration, dependency, performance, and ADR reviewers only when the risk tags justify them.\n- Include STOP gates for irreversible operations: send, merge, deploy, delete, migration, billing, enrichment spend, or long-term memory writes not handled by the curator.\n- Use Qlty as the baseline quality gate for code repositories; add native Rust gates when the target output is Rust.\n- Rig can be selected only as an output app framework for generated Rust AI applications. Do not use Rig as the Maestro/Fabro runtime.\n- Durable memory writes go through `memory-curator-agent` by default.\n- If the spec is ambiguous, keep the workflow minimal and put concrete questions in `open_questions`."
+            }
+          },
+          "classes": [
+            "reasoning"
+          ]
+        }
+      },
+      "edges": [
+        {
+          "from": "start",
+          "to": "load_const",
+          "attrs": {}
+        },
+        {
+          "from": "load_const",
+          "to": "parse_spec",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "load_const",
+          "to": "load_const",
+          "attrs": {
+            "loop_restart": {
+              "Boolean": true
+            }
+          }
+        },
+        {
+          "from": "parse_spec",
+          "to": "approve_plan",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "parse_spec",
+          "to": "parse_spec",
+          "attrs": {
+            "loop_restart": {
+              "Boolean": true
+            }
+          }
+        },
+        {
+          "from": "approve_plan",
+          "to": "generate_workflow",
+          "attrs": {
+            "label": {
+              "String": "[A] Approve"
+            }
+          }
+        },
+        {
+          "from": "approve_plan",
+          "to": "parse_spec",
+          "attrs": {
+            "label": {
+              "String": "[R] Revise"
+            }
+          }
+        },
+        {
+          "from": "generate_workflow",
+          "to": "lint",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "generate_workflow",
+          "to": "generate_workflow",
+          "attrs": {
+            "loop_restart": {
+              "Boolean": true
+            }
+          }
+        },
+        {
+          "from": "lint",
+          "to": "quality_gate",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "lint",
+          "to": "generate_workflow",
+          "attrs": {
+            "loop_restart": {
+              "Boolean": true
+            }
+          }
+        },
+        {
+          "from": "quality_gate",
+          "to": "review",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "quality_gate",
+          "to": "fix_loop",
+          "attrs": {
+            "label": {
+              "String": "Fix"
+            }
+          }
+        },
+        {
+          "from": "review",
+          "to": "review_gate",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "review",
+          "to": "fix_loop",
+          "attrs": {
+            "label": {
+              "String": "Fix"
+            }
+          }
+        },
+        {
+          "from": "review_gate",
+          "to": "approve_final",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "review_gate",
+          "to": "fix_loop",
+          "attrs": {
+            "label": {
+              "String": "Fix"
+            }
+          }
+        },
+        {
+          "from": "fix_loop",
+          "to": "lint",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "fix_loop",
+          "to": "fix_loop",
+          "attrs": {
+            "loop_restart": {
+              "Boolean": true
+            }
+          }
+        },
+        {
+          "from": "approve_final",
+          "to": "register",
+          "attrs": {
+            "label": {
+              "String": "[A] Approve"
+            }
+          }
+        },
+        {
+          "from": "approve_final",
+          "to": "fix_loop",
+          "attrs": {
+            "label": {
+              "String": "[R] Revise"
+            }
+          }
+        },
+        {
+          "from": "register",
+          "to": "exit",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "register",
+          "to": "fix_loop",
+          "attrs": {
+            "label": {
+              "String": "Fix"
+            }
+          }
+        }
+      ],
+      "attrs": {
+        "persona": {
+          "String": "workflow-architect"
+        },
+        "rankdir": {
+          "String": "LR"
+        },
+        "outputs": {
+          "String": "validated_workflow, registration_record"
+        },
+        "goal": {
+          "String": "Generate a toy Slack hello Fabro workflow from the scaffold spec"
+        },
+        "model_stylesheet": {
+          "String": "\n            *          { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: low; }\n            .reasoning { backend: cli; provider: anthropic; model: claude-sonnet-4-5; reasoning_effort: high; }\n            .coding    { backend: cli; provider: anthropic; model: claude-sonnet-4-5; reasoning_effort: high; }\n            .review    { backend: cli; provider: anthropic; model: claude-sonnet-4-5; reasoning_effort: high; }\n        "
+        },
+        "inputs": {
+          "String": "spec, workflow_path, const_path"
+        }
+      }
+    },
+    "graph_source": "digraph ScaffoldWorkflow {\n    graph [\n        goal=\"Generate a new Fabro workflow from a natural-language spec\",\n        persona=\"workflow-architect\",\n        inputs=\"spec, workflow_path, const_path\",\n        outputs=\"validated_workflow, registration_record\",\n        model_stylesheet=\"\n            *          { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: low; }\n            .reasoning { backend: cli; provider: anthropic; model: claude-sonnet-4-5; reasoning_effort: high; }\n            .coding    { backend: cli; provider: anthropic; model: claude-sonnet-4-5; reasoning_effort: high; }\n            .review    { backend: cli; provider: anthropic; model: claude-sonnet-4-5; reasoning_effort: high; }\n        \"\n    ]\n    rankdir=LR\n\n    start [shape=Mdiamond, label=\"Start\"]\n    exit  [shape=Msquare, label=\"Exit\"]\n\n    load_const [\n        label=\"Load Constitution\",\n        shape=parallelogram,\n        script=\"cd '/Users/timlife/Documents/claude code/maestro-os'; mkdir -p .maestro/scaffold; ./bin/maestro knowledge get architecture-principles workflow-standards cli-conventions known-gotchas validator-library personas --format text > ${CONST:-.maestro/scaffold/constitution.md}; echo constitution-loaded\"\n    ]\n    parse_spec [\n        label=\"Parse Spec\",\n        class=\"reasoning\",\n        goal_gate=true,\n        retry_target=\"parse_spec\",\n        prompt=\"@../../prompts/scaffold/parse-spec.md\"\n    ]\n    approve_plan [shape=hexagon, label=\"Approve Plan\"]\n\n    generate_workflow [\n        label=\"Generate Workflow\",\n        class=\"coding\",\n        goal_gate=true,\n        retry_target=\"generate_workflow\",\n        prompt=\"@../../prompts/scaffold/generate-workflow.md\"\n    ]\n    lint [\n        label=\"Lint Workflow\",\n        shape=parallelogram,\n        goal_gate=true,\n        retry_target=\"generate_workflow\",\n        script=\"cd '/Users/timlife/Documents/claude code/maestro-os'; ./bin/maestro verify dot-syntax ${WORKFLOW_PATH:-workflows/scaffold/generated-toy-slack-hello.fabro} 2>&1\"\n    ]\n\n    review [\n        label=\"Review Against Standards\",\n        class=\"review\",\n        goal_gate=true,\n        retry_target=\"fix_loop\",\n        prompt=\"@../../prompts/scaffold/review-workflow.md\"\n    ]\n    review_gate [\n        label=\"Review Verdict Gate\",\n        shape=parallelogram,\n        goal_gate=true,\n        retry_target=\"fix_loop\",\n        script=\"cd '/Users/timlife/Documents/claude code/maestro-os'; ./bin/maestro verify text-gate .maestro/scaffold/review.json --pass '\\\"passed\\\"\\\\s*:\\\\s*true' --fail '\\\"passed\\\"\\\\s*:\\\\s*false|\\\"severity\\\"\\\\s*:\\\\s*\\\"blocker\\\"'\"\n    ]\n    quality_gate [\n        label=\"Workflow Quality Gate\",\n        shape=parallelogram,\n        goal_gate=true,\n        retry_target=\"fix_loop\",\n        script=\"cd '/Users/timlife/Documents/claude code/maestro-os'; ./bin/maestro verify workflow-quality ${WORKFLOW_PATH:-workflows/scaffold/generated-toy-slack-hello.fabro}\"\n    ]\n    fix_loop [\n        label=\"Fix Loop\",\n        class=\"coding\",\n        max_visits=3,\n        prompt=\"@../../prompts/scaffold/fix-loop.md\"\n    ]\n    approve_final [shape=hexagon, label=\"Approve Final\"]\n    register [\n        label=\"Register Workflow\",\n        shape=parallelogram,\n        goal_gate=true,\n        retry_target=\"fix_loop\",\n        script=\"cd '/Users/timlife/Documents/claude code/maestro-os'; ./bin/maestro workflow register ${WORKFLOW_PATH:-workflows/scaffold/generated-toy-slack-hello.fabro}\"\n    ]\n\n    start -> load_const\n    load_const -> parse_spec [condition=\"outcome=succeeded\"]\n    load_const -> load_const [loop_restart=true]\n    parse_spec -> approve_plan [condition=\"outcome=succeeded\"]\n    parse_spec -> parse_spec [loop_restart=true]\n\n    approve_plan -> generate_workflow [label=\"[A] Approve\"]\n    approve_plan -> parse_spec        [label=\"[R] Revise\"]\n\n    generate_workflow -> lint              [condition=\"outcome=succeeded\"]\n    generate_workflow -> generate_workflow [loop_restart=true]\n    lint -> quality_gate      [condition=\"outcome=succeeded\"]\n    lint -> generate_workflow [loop_restart=true]\n    quality_gate -> review   [condition=\"outcome=succeeded\"]\n    quality_gate -> fix_loop [label=\"Fix\"]\n    review -> review_gate    [condition=\"outcome=succeeded\"]\n    review -> fix_loop       [label=\"Fix\"]\n    review_gate -> approve_final [condition=\"outcome=succeeded\"]\n    review_gate -> fix_loop      [label=\"Fix\"]\n\n    fix_loop -> lint [condition=\"outcome=succeeded\"]\n    fix_loop -> fix_loop [loop_restart=true]\n\n    approve_final -> register          [label=\"[A] Approve\"]\n    approve_final -> fix_loop          [label=\"[R] Revise\"]\n    register -> exit     [condition=\"outcome=succeeded\"]\n    register -> fix_loop [label=\"Fix\"]\n}\n",
+    "workflow_slug": "scaffold-workflow",
+    "source_directory": "/Users/timlife/Documents/claude code/maestro-os",
+    "provenance": {
+      "server": {
+        "version": "0.231.0-nightly.1"
+      },
+      "client": {
+        "user_agent": "fabro-cli/0.231.0-nightly.1",
+        "name": "fabro-cli",
+        "version": "0.231.0-nightly.1"
+      },
+      "subject": {
+        "kind": "user",
+        "identity": {
+          "issuer": "fabro:dev",
+          "subject": "dev"
+        },
+        "login": "dev",
+        "auth_method": "dev_token"
+      }
+    },
+    "manifest_blob": "89cc51391de001fe9e7ff4e3ad30c02d8b2ff6b01869730c0d1fe82b126dbbd7",
+    "definition_blob": "f114ab29f4a5b4f998102a17ef26f1974127c9710e2fc5f7efaf3748f6372e8b",
+    "git": {
+      "origin_url": "https://github.com/kimprobably/maestro-os",
+      "branch": "main",
+      "sha": "c99e79519c33d8055c30461bacd0b400da4691a7",
+      "dirty": "dirty",
+      "push_outcome": {
+        "type": "not_attempted"
+      }
+    }
+  },
+  "web_url": "http://127.0.0.1:32276/runs/01KRGNH6QYC6XMWDQRS3Q5E0KW",
+  "start": null,
+  "status": {
+    "kind": "starting"
+  },
+  "status_updated_at": "2026-05-13T12:38:35.568123Z",
+  "last_event_at": "2026-05-13T12:38:58.603609Z",
+  "pending_control": null,
+  "checkpoints": [],
+  "conclusion": null,
+  "sandbox": {
+    "provider": "docker",
+    "image": "buildpack-deps:noble",
+    "snapshot": "maestro-code-factory-v3",
+    "runtime": {
+      "id": "e3016f03b05ac738fe9509463cb5969831e2e5a75fca8c17a494f63af4cbb2a9",
+      "working_directory": "/workspace",
+      "repo_cloned": true,
+      "clone_origin_url": "https://github.com/kimprobably/maestro-os",
+      "clone_branch": "main"
+    }
+  },
+  "pull_request": null,
+  "superseded_by": null,
+  "pending_interviews": {},
+  "stages": {}
+}
