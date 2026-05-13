@@ -295,7 +295,7 @@
     "kind": "running"
   },
   "status_updated_at": "2026-05-13T13:15:04.388065Z",
-  "last_event_at": "2026-05-13T13:15:13.043264Z",
+  "last_event_at": "2026-05-13T13:15:15.890521Z",
   "pending_control": null,
   "checkpoints": [
     {
@@ -393,9 +393,9 @@
       }
     },
     {
-      "seq": 0,
+      "seq": 39,
       "checkpoint": {
-        "timestamp": "2026-05-13T13:15:13.357012Z",
+        "timestamp": "2026-05-13T13:15:15.890335Z",
         "current_node": "write_report",
         "completed_nodes": [
           "start",
@@ -404,24 +404,24 @@
         ],
         "node_retries": {},
         "context_values": {
-          "internal.node_visit_count": 1,
-          "thread.check_environment.current_node": "write_report",
-          "internal.retry_count.start": 0,
-          "internal.fidelity": "compact",
-          "internal.work_dir": "/home/daytona/workspace",
-          "failure_class": "",
           "graph.outputs": "environment_report",
-          "internal.thread_id": "check_environment",
           "failure_signature": "",
-          "command.output": "blob://sha256/17b0a002bc5ee0bfa1cd8b043400f8c1bf542efd4523643648663bd7721d757e",
-          "internal.retry_count.check_environment": 0,
-          "internal.retry_count.write_report": 0,
-          "graph.goal": "Verify the shared Daytona code-factory environment boots with the expected tools",
+          "internal.fidelity": "compact",
+          "internal.retry_count.start": 0,
+          "current_node": "write_report",
           "outcome": "succeeded",
+          "internal.retry_count.check_environment": 0,
+          "internal.node_visit_count": 1,
+          "command.output": "blob://sha256/17b0a002bc5ee0bfa1cd8b043400f8c1bf542efd4523643648663bd7721d757e",
+          "failure_class": "",
+          "internal.work_dir": "/home/daytona/workspace",
           "thread.start.current_node": "check_environment",
+          "internal.thread_id": "check_environment",
           "internal.run_id": "01KRGQKSW8VSB4G7Z35JZJ6PMP",
-          "graph.persona": "workflow-registry",
-          "current_node": "write_report"
+          "graph.goal": "Verify the shared Daytona code-factory environment boots with the expected tools",
+          "thread.check_environment.current_node": "write_report",
+          "internal.retry_count.write_report": 0,
+          "graph.persona": "workflow-registry"
         },
         "node_outcomes": {
           "check_environment": {
@@ -446,16 +446,50 @@
           }
         },
         "next_node_id": "exit",
+        "git_commit_sha": "a9832bf88f3dda636fba4c2086fcc7707bff384b",
         "node_visits": {
-          "check_environment": 1,
           "write_report": 1,
+          "check_environment": 1,
           "start": 1
         }
       },
-      "diff": {}
+      "diff": {
+        "summary": {
+          "files_changed": 0,
+          "additions": 0,
+          "deletions": 0
+        }
+      }
     }
   ],
-  "conclusion": null,
+  "conclusion": {
+    "timestamp": "2026-05-13T13:15:15.916090Z",
+    "status": "succeeded",
+    "duration_ms": 11502,
+    "final_git_commit_sha": "a9832bf88f3dda636fba4c2086fcc7707bff384b",
+    "stages": [
+      {
+        "stage_id": "start",
+        "stage_label": "start",
+        "duration_ms": 0,
+        "retries": 0
+      },
+      {
+        "stage_id": "check_environment",
+        "stage_label": "check_environment",
+        "duration_ms": 3365,
+        "retries": 0
+      },
+      {
+        "stage_id": "write_report",
+        "stage_label": "write_report",
+        "duration_ms": 1398,
+        "retries": 0
+      }
+    ],
+    "total_retries": 0,
+    "diff": {}
+  },
   "sandbox": {
     "provider": "daytona",
     "image": "buildpack-deps:noble",
@@ -472,6 +506,35 @@
   "superseded_by": null,
   "pending_interviews": {},
   "stages": {
+    "exit@1": {
+      "first_event_seq": 42,
+      "prompt": null,
+      "response": null,
+      "completion": {
+        "outcome": "succeeded",
+        "notes": null,
+        "failure_reason": null,
+        "timestamp": "2026-05-13T13:15:15.890521Z"
+      },
+      "provider_used": null,
+      "diff": null,
+      "script_invocation": null,
+      "script_timing": null,
+      "parallel_results": null,
+      "output": null,
+      "started_at": "2026-05-13T13:15:15.890492Z",
+      "handler": "exit",
+      "duration_ms": 0,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "total_tokens": 0,
+        "reasoning_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "state": "succeeded"
+    },
     "check_environment@1": {
       "first_event_seq": 20,
       "prompt": null,
@@ -519,7 +582,12 @@
       "first_event_seq": 31,
       "prompt": null,
       "response": null,
-      "completion": null,
+      "completion": {
+        "outcome": "succeeded",
+        "notes": "Script completed: node -e \"const fs=require('fs'); const report=JSON.parse(fs.readFileSync('.workflow/fabro/daytona-environment-smoke.json','utf8')); const lines=['# Daytona Environment Smoke','', 'ok=' + report.ok, '', '## Tools', ...report.checks.map((check)=>'- ' + check.cmd + ' status=' + check.status + (check.stdout ? ' output=' + check.stdout.split('\\n')[0] : '')), '', '## Env', ...Object.entries(report.env).map(([key,value])=>'- ' + key + '=' + value)]; fs.writeFileSync('.workflow/fabro/daytona-environment-smoke.md', lines.join('\\n')+'\\n'); console.log(lines.join('\\n')); if(!report.ok) process.exit(1);\"",
+        "failure_reason": null,
+        "timestamp": "2026-05-13T13:15:13.356219Z"
+      },
       "provider_used": null,
       "diff": null,
       "script_invocation": {
@@ -542,6 +610,7 @@
       "termination": "exited",
       "started_at": "2026-05-13T13:15:11.644788Z",
       "handler": "command",
+      "duration_ms": 1398,
       "usage": {
         "input_tokens": 0,
         "output_tokens": 0,
@@ -550,7 +619,7 @@
         "cache_read_tokens": 0,
         "cache_write_tokens": 0
       },
-      "state": "running"
+      "state": "succeeded"
     },
     "start@1": {
       "first_event_seq": 16,
