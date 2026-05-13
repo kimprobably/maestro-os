@@ -179,7 +179,7 @@ digraph EnhancementDiscovery {
         shape=parallelogram,
         goal_gate=true,
         retry_target="materialize_enhancement_workflow",
-        script="if [ '{{ inputs.execute_generated_workflow|default('false') }}' = 'true' ]; then fabro run '{{ inputs.generated_run_config|default('workflows/consumer-radar/live-enrichment.toml') }}' --no-upgrade-check; else fabro validate '{{ inputs.generated_workflow|default('workflows/consumer-radar/live-enrichment.fabro') }}' --no-upgrade-check; fi"
+        script="if [ '{{ inputs.execute_generated_workflow|default('false') }}' = 'true' ]; then fabro run '{{ inputs.generated_run_config|default('workflows/consumer-radar/live-enrichment.toml') }}' --no-upgrade-check; else node scripts/app-feedback/fabro-validate-compat.mjs '{{ inputs.generated_workflow|default('workflows/consumer-radar/live-enrichment.fabro') }}' --out .workflow/enhancement-discovery/generated-fabro-validate.json; fi"
     ]
 
     simplification_plan [
