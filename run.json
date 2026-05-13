@@ -560,7 +560,7 @@
     "kind": "running"
   },
   "status_updated_at": "2026-05-13T13:57:56.906618Z",
-  "last_event_at": "2026-05-13T13:58:03.684983Z",
+  "last_event_at": "2026-05-13T13:58:08.252139Z",
   "pending_control": null,
   "checkpoints": [
     {
@@ -670,9 +670,9 @@
       }
     },
     {
-      "seq": 0,
+      "seq": 37,
       "checkpoint": {
-        "timestamp": "2026-05-13T13:58:03.896001Z",
+        "timestamp": "2026-05-13T13:58:06.750158Z",
         "current_node": "wait_for_builder_files",
         "completed_nodes": [
           "start",
@@ -681,15 +681,92 @@
         ],
         "node_retries": {},
         "context_values": {
+          "graph.model_stylesheet": "\n            *       { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: low; }\n            .coding { provider: openrouter; model: qwen/qwen3.6-plus; reasoning_effort: high; }\n            .review { provider: openrouter; model: google/gemini-3.1-pro-preview; reasoning_effort: high; }\n        ",
+          "graph.inputs": "target, output_root",
+          "internal.retry_count.wait_for_builder_files": 0,
+          "failure_class": "",
+          "failure_signature": "",
+          "internal.fidelity": "compact",
+          "internal.retry_count.define_quality_bar": 0,
+          "graph.retry_target": "materialize_consumer_radar",
+          "graph.outputs": "generated_workflow, generated_supporting_code, validation_report",
+          "graph.goal": "Build the Consumer App Radar workflow-builder output, then validate it",
+          "internal.thread_id": "define_quality_bar",
+          "outcome": "succeeded",
+          "thread.start.current_node": "define_quality_bar",
+          "graph.persona": "workflow-builder",
+          "internal.retry_count.start": 0,
+          "graph.default_max_retries": "2",
+          "internal.run_id": "01KRGT2AA3HDKAF828R00GCKGX",
+          "internal.work_dir": "/home/daytona/workspace",
+          "graph.rankdir": "LR",
+          "current_node": "wait_for_builder_files",
+          "thread.define_quality_bar.current_node": "wait_for_builder_files",
+          "graph.fallback_retry_target": "materialize_consumer_radar",
+          "command.output": "blob://sha256/4a0b08156ae71f5c060cf4bb2fedc3574cc148be2241c1a56c605a21668034d8",
+          "internal.node_visit_count": 1
+        },
+        "node_outcomes": {
+          "wait_for_builder_files": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/4a0b08156ae71f5c060cf4bb2fedc3574cc148be2241c1a56c605a21668034d8"
+            },
+            "notes": "Script completed: for i in $(seq 1 90); do if [ -f scripts/workflow-builder/materialize-consumer-radar.mjs ]; then echo builder-files-ready; exit 0; fi; sleep 2; done; echo 'missing builder support files' >&2; exit 1",
+            "usage": null
+          },
+          "start": {
+            "status": "succeeded",
+            "usage": null
+          },
+          "define_quality_bar": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/8bbfea879e993bc23b4b56612c5396a86e30224501a513ba0224279660aee978"
+            },
+            "notes": "Script completed: mkdir -p .workflow/workflow-builder; node -e \"const fs=require('fs'); const quality={ok:true,target:'consumer-app-radar', requirements:['Fabro owns the app build process','repository-relative paths','Spec Kitty recorded','Qlty gate','Promptfoo or fallback eval','OpenRouter Kimi/Qwen/DeepSeek review fanout','no hardcoded secrets']}; fs.writeFileSync('.workflow/workflow-builder/quality-bar.json', JSON.stringify(quality,null,2)+'\\n'); console.log(JSON.stringify(quality));\"",
+            "usage": null
+          }
+        },
+        "next_node_id": "materialize_consumer_radar",
+        "git_commit_sha": "368e59ddb52114074d9431659083f1465b359e7d",
+        "node_visits": {
+          "wait_for_builder_files": 1,
+          "define_quality_bar": 1,
+          "start": 1
+        }
+      },
+      "diff": {
+        "summary": {
+          "files_changed": 0,
+          "additions": 0,
+          "deletions": 0
+        }
+      }
+    },
+    {
+      "seq": 0,
+      "checkpoint": {
+        "timestamp": "2026-05-13T13:58:08.369680Z",
+        "current_node": "materialize_consumer_radar",
+        "completed_nodes": [
+          "start",
+          "define_quality_bar",
+          "wait_for_builder_files",
+          "materialize_consumer_radar"
+        ],
+        "node_retries": {},
+        "context_values": {
           "graph.goal": "Build the Consumer App Radar workflow-builder output, then validate it",
           "graph.fallback_retry_target": "materialize_consumer_radar",
           "internal.retry_count.define_quality_bar": 0,
           "internal.retry_count.wait_for_builder_files": 0,
+          "internal.retry_count.materialize_consumer_radar": 0,
           "thread.start.current_node": "define_quality_bar",
           "graph.rankdir": "LR",
-          "command.output": "blob://sha256/4a0b08156ae71f5c060cf4bb2fedc3574cc148be2241c1a56c605a21668034d8",
-          "internal.thread_id": "define_quality_bar",
-          "current_node": "wait_for_builder_files",
+          "command.output": "blob://sha256/a6470c839f2dc87d958f69cf237a985d42909d641f63da581186b0f87158c909",
+          "internal.thread_id": "wait_for_builder_files",
+          "current_node": "materialize_consumer_radar",
           "internal.node_visit_count": 1,
           "internal.retry_count.start": 0,
           "outcome": "succeeded",
@@ -703,6 +780,7 @@
           "graph.model_stylesheet": "\n            *       { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: low; }\n            .coding { provider: openrouter; model: qwen/qwen3.6-plus; reasoning_effort: high; }\n            .review { provider: openrouter; model: google/gemini-3.1-pro-preview; reasoning_effort: high; }\n        ",
           "failure_signature": "",
           "thread.define_quality_bar.current_node": "wait_for_builder_files",
+          "thread.wait_for_builder_files.current_node": "materialize_consumer_radar",
           "internal.run_id": "01KRGT2AA3HDKAF828R00GCKGX",
           "graph.default_max_retries": "2"
         },
@@ -726,13 +804,22 @@
             },
             "notes": "Script completed: for i in $(seq 1 90); do if [ -f scripts/workflow-builder/materialize-consumer-radar.mjs ]; then echo builder-files-ready; exit 0; fi; sleep 2; done; echo 'missing builder support files' >&2; exit 1",
             "usage": null
+          },
+          "materialize_consumer_radar": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/a6470c839f2dc87d958f69cf237a985d42909d641f63da581186b0f87158c909"
+            },
+            "notes": "Script completed: node scripts/workflow-builder/materialize-consumer-radar.mjs --output-root '.'",
+            "usage": null
           }
         },
-        "next_node_id": "materialize_consumer_radar",
+        "next_node_id": "validate_generated",
         "node_visits": {
+          "define_quality_bar": 1,
           "wait_for_builder_files": 1,
           "start": 1,
-          "define_quality_bar": 1
+          "materialize_consumer_radar": 1
         }
       },
       "diff": {}
@@ -788,7 +875,12 @@
       "first_event_seq": 30,
       "prompt": null,
       "response": null,
-      "completion": null,
+      "completion": {
+        "outcome": "succeeded",
+        "notes": "Script completed: for i in $(seq 1 90); do if [ -f scripts/workflow-builder/materialize-consumer-radar.mjs ]; then echo builder-files-ready; exit 0; fi; sleep 2; done; echo 'missing builder support files' >&2; exit 1",
+        "failure_reason": null,
+        "timestamp": "2026-05-13T13:58:03.895047Z"
+      },
       "provider_used": null,
       "diff": null,
       "script_invocation": {
@@ -811,6 +903,7 @@
       "termination": "exited",
       "started_at": "2026-05-13T13:58:02.297066Z",
       "handler": "command",
+      "duration_ms": 1388,
       "usage": {
         "input_tokens": 0,
         "output_tokens": 0,
@@ -819,7 +912,7 @@
         "cache_read_tokens": 0,
         "cache_write_tokens": 0
       },
-      "state": "running"
+      "state": "succeeded"
     },
     "define_quality_bar@1": {
       "first_event_seq": 19,
@@ -863,6 +956,43 @@
         "cache_write_tokens": 0
       },
       "state": "succeeded"
+    },
+    "materialize_consumer_radar@1": {
+      "first_event_seq": 40,
+      "prompt": null,
+      "response": null,
+      "completion": null,
+      "provider_used": null,
+      "diff": null,
+      "script_invocation": {
+        "script": "node scripts/workflow-builder/materialize-consumer-radar.mjs --output-root '.'",
+        "command": "exec 2>&1\nnode scripts/workflow-builder/materialize-consumer-radar.mjs --output-root '.'",
+        "language": "shell"
+      },
+      "script_timing": {
+        "output": "blob://sha256/a6470c839f2dc87d958f69cf237a985d42909d641f63da581186b0f87158c909",
+        "exit_code": 0,
+        "duration_ms": 1495,
+        "termination": "exited",
+        "output_bytes": 149,
+        "live_streaming": true
+      },
+      "parallel_results": null,
+      "output": null,
+      "output_bytes": 149,
+      "live_streaming": true,
+      "termination": "exited",
+      "started_at": "2026-05-13T13:58:06.752469Z",
+      "handler": "command",
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "total_tokens": 0,
+        "reasoning_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "state": "running"
     }
   }
 }
