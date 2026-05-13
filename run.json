@@ -551,14 +551,118 @@
     }
   },
   "web_url": "http://127.0.0.1:32276/runs/01KRGT2AA3HDKAF828R00GCKGX",
-  "start": null,
-  "status": {
-    "kind": "starting"
+  "start": {
+    "start_time": "2026-05-13T13:57:56.906578Z",
+    "run_branch": "fabro/run/01KRGT2AA3HDKAF828R00GCKGX",
+    "base_sha": "fdc6fcf8154488fb285388c7886615ed6d9521e7"
   },
-  "status_updated_at": "2026-05-13T13:57:50.571103Z",
-  "last_event_at": "2026-05-13T13:57:56.686401Z",
+  "status": {
+    "kind": "running"
+  },
+  "status_updated_at": "2026-05-13T13:57:56.906618Z",
+  "last_event_at": "2026-05-13T13:57:59.774853Z",
   "pending_control": null,
-  "checkpoints": [],
+  "checkpoints": [
+    {
+      "seq": 18,
+      "checkpoint": {
+        "timestamp": "2026-05-13T13:57:58.301035Z",
+        "current_node": "start",
+        "completed_nodes": [
+          "start"
+        ],
+        "node_retries": {},
+        "context_values": {
+          "graph.default_max_retries": "2",
+          "internal.run_id": "01KRGT2AA3HDKAF828R00GCKGX",
+          "internal.node_visit_count": 1,
+          "graph.model_stylesheet": "\n            *       { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: low; }\n            .coding { provider: openrouter; model: qwen/qwen3.6-plus; reasoning_effort: high; }\n            .review { provider: openrouter; model: google/gemini-3.1-pro-preview; reasoning_effort: high; }\n        ",
+          "graph.retry_target": "materialize_consumer_radar",
+          "graph.persona": "workflow-builder",
+          "graph.outputs": "generated_workflow, generated_supporting_code, validation_report",
+          "internal.retry_count.start": 0,
+          "graph.fallback_retry_target": "materialize_consumer_radar",
+          "current_node": "start",
+          "graph.inputs": "target, output_root",
+          "internal.fidelity": "compact",
+          "graph.goal": "Build the Consumer App Radar workflow-builder output, then validate it",
+          "graph.rankdir": "LR",
+          "failure_class": "",
+          "outcome": "succeeded",
+          "failure_signature": "",
+          "internal.work_dir": "/home/daytona/workspace",
+          "internal.thread_id": null
+        },
+        "node_outcomes": {
+          "start": {
+            "status": "succeeded",
+            "usage": null
+          }
+        },
+        "next_node_id": "define_quality_bar",
+        "node_visits": {
+          "start": 1
+        }
+      },
+      "diff": {}
+    },
+    {
+      "seq": 0,
+      "checkpoint": {
+        "timestamp": "2026-05-13T13:57:59.850831Z",
+        "current_node": "define_quality_bar",
+        "completed_nodes": [
+          "start",
+          "define_quality_bar"
+        ],
+        "node_retries": {},
+        "context_values": {
+          "graph.goal": "Build the Consumer App Radar workflow-builder output, then validate it",
+          "graph.fallback_retry_target": "materialize_consumer_radar",
+          "internal.retry_count.define_quality_bar": 0,
+          "thread.start.current_node": "define_quality_bar",
+          "graph.rankdir": "LR",
+          "command.output": "blob://sha256/8bbfea879e993bc23b4b56612c5396a86e30224501a513ba0224279660aee978",
+          "internal.thread_id": "start",
+          "current_node": "define_quality_bar",
+          "internal.node_visit_count": 1,
+          "internal.retry_count.start": 0,
+          "outcome": "succeeded",
+          "failure_class": "",
+          "internal.work_dir": "/home/daytona/workspace",
+          "graph.outputs": "generated_workflow, generated_supporting_code, validation_report",
+          "graph.persona": "workflow-builder",
+          "internal.fidelity": "compact",
+          "graph.inputs": "target, output_root",
+          "graph.retry_target": "materialize_consumer_radar",
+          "graph.model_stylesheet": "\n            *       { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: low; }\n            .coding { provider: openrouter; model: qwen/qwen3.6-plus; reasoning_effort: high; }\n            .review { provider: openrouter; model: google/gemini-3.1-pro-preview; reasoning_effort: high; }\n        ",
+          "failure_signature": "",
+          "internal.run_id": "01KRGT2AA3HDKAF828R00GCKGX",
+          "graph.default_max_retries": "2"
+        },
+        "node_outcomes": {
+          "define_quality_bar": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/8bbfea879e993bc23b4b56612c5396a86e30224501a513ba0224279660aee978"
+            },
+            "notes": "Script completed: mkdir -p .workflow/workflow-builder; node -e \"const fs=require('fs'); const quality={ok:true,target:'consumer-app-radar', requirements:['Fabro owns the app build process','repository-relative paths','Spec Kitty recorded','Qlty gate','Promptfoo or fallback eval','OpenRouter Kimi/Qwen/DeepSeek review fanout','no hardcoded secrets']}; fs.writeFileSync('.workflow/workflow-builder/quality-bar.json', JSON.stringify(quality,null,2)+'\\n'); console.log(JSON.stringify(quality));\"",
+            "usage": null
+          },
+          "start": {
+            "status": "succeeded",
+            "usage": null
+          }
+        },
+        "next_node_id": "wait_for_builder_files",
+        "node_visits": {
+          "start": 1,
+          "define_quality_bar": 1
+        }
+      },
+      "diff": {}
+    }
+  ],
   "conclusion": null,
   "sandbox": {
     "provider": "daytona",
@@ -575,5 +679,72 @@
   "pull_request": null,
   "superseded_by": null,
   "pending_interviews": {},
-  "stages": {}
+  "stages": {
+    "start@1": {
+      "first_event_seq": 15,
+      "prompt": null,
+      "response": null,
+      "completion": {
+        "outcome": "succeeded",
+        "notes": null,
+        "failure_reason": null,
+        "timestamp": "2026-05-13T13:57:58.300792Z"
+      },
+      "provider_used": null,
+      "diff": null,
+      "script_invocation": null,
+      "script_timing": null,
+      "parallel_results": null,
+      "output": null,
+      "started_at": "2026-05-13T13:57:58.235910Z",
+      "handler": "start",
+      "duration_ms": 0,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "total_tokens": 0,
+        "reasoning_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "state": "succeeded"
+    },
+    "define_quality_bar@1": {
+      "first_event_seq": 19,
+      "prompt": null,
+      "response": null,
+      "completion": null,
+      "provider_used": null,
+      "diff": null,
+      "script_invocation": {
+        "script": "mkdir -p .workflow/workflow-builder; node -e \"const fs=require('fs'); const quality={ok:true,target:'consumer-app-radar', requirements:['Fabro owns the app build process','repository-relative paths','Spec Kitty recorded','Qlty gate','Promptfoo or fallback eval','OpenRouter Kimi/Qwen/DeepSeek review fanout','no hardcoded secrets']}; fs.writeFileSync('.workflow/workflow-builder/quality-bar.json', JSON.stringify(quality,null,2)+'\\n'); console.log(JSON.stringify(quality));\"",
+        "command": "exec 2>&1\nmkdir -p .workflow/workflow-builder; node -e \"const fs=require('fs'); const quality={ok:true,target:'consumer-app-radar', requirements:['Fabro owns the app build process','repository-relative paths','Spec Kitty recorded','Qlty gate','Promptfoo or fallback eval','OpenRouter Kimi/Qwen/DeepSeek review fanout','no hardcoded secrets']}; fs.writeFileSync('.workflow/workflow-builder/quality-bar.json', JSON.stringify(quality,null,2)+'\\n'); console.log(JSON.stringify(quality));\"",
+        "language": "shell"
+      },
+      "script_timing": {
+        "output": "blob://sha256/8bbfea879e993bc23b4b56612c5396a86e30224501a513ba0224279660aee978",
+        "exit_code": 0,
+        "duration_ms": 1469,
+        "termination": "exited",
+        "output_bytes": 254,
+        "live_streaming": true
+      },
+      "parallel_results": null,
+      "output": null,
+      "output_bytes": 254,
+      "live_streaming": true,
+      "termination": "exited",
+      "started_at": "2026-05-13T13:57:58.301196Z",
+      "handler": "command",
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "total_tokens": 0,
+        "reasoning_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "state": "running"
+    }
+  }
 }
