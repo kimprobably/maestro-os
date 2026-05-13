@@ -9,6 +9,8 @@ const outputPath = resolve(
   repoRoot,
   process.argv[2] || ".workflow/spike-workflow-registry.json",
 );
+const scratchDir = dirname(outputPath);
+const validationConfigPath = join(scratchDir, "fabro-validate-empty.toml");
 
 function listFabroFiles(dir) {
   return readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
@@ -22,6 +24,11 @@ function listFabroFiles(dir) {
 function run(command, args) {
   const result = spawnSync(command, args, {
     cwd: repoRoot,
+    env: {
+      ...process.env,
+      FABRO_CONFIG: validationConfigPath,
+      FABRO_NO_UPGRADE_CHECK: "1",
+    },
     encoding: "utf8",
     maxBuffer: 10 * 1024 * 1024,
   });
@@ -36,6 +43,9 @@ function run(command, args) {
 if (!existsSync(workflowsRoot)) {
   throw new Error(`Missing workflows directory: ${workflowsRoot}`);
 }
+
+mkdirSync(scratchDir, { recursive: true });
+writeFileSync(validationConfigPath, "");
 
 const workflows = listFabroFiles(workflowsRoot).sort();
 const results = workflows.map((path) => {
@@ -81,7 +91,6 @@ const report = {
   })),
 };
 
-mkdirSync(dirname(outputPath), { recursive: true });
 writeFileSync(outputPath, `${JSON.stringify(report, null, 2)}\n`);
 console.log(JSON.stringify(report, null, 2));
 
