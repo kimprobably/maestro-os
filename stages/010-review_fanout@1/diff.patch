@@ -1,0 +1,43 @@
+diff --git a/reports/consumer-radar/reviews/deepseek.json b/reports/consumer-radar/reviews/deepseek.json
+new file mode 100644
+index 0000000..197f1bc
+--- /dev/null
++++ b/reports/consumer-radar/reviews/deepseek.json
+@@ -0,0 +1,37 @@
++{
++  "ok": true,
++  "skipped": false,
++  "real_mode": true,
++  "model": "deepseek/deepseek-v4-flash",
++  "role": "simplification_and_ci",
++  "status": 200,
++  "parsed": {
++    "verdict": "APPROVE",
++    "score": 0.95,
++    "findings": [
++      {
++        "severity": "low",
++        "issue": "No error handling for missing fixture file in loadFixtureApps.",
++        "fix": "Wrap readFileSync in try/catch and return empty array on failure."
++      },
++      {
++        "severity": "low",
++        "issue": "POST /api/refresh does not validate request body or mode parameter.",
++        "fix": "Add validation for mode parameter to accept only 'fixture' or 'live-smoke'."
++      },
++      {
++        "severity": "info",
++        "issue": "No CORS headers on API responses; may block cross-origin requests.",
++        "fix": "Add 'Access-Control-Allow-Origin: *' header to all API responses."
++      }
++    ],
++    "suggested_next_steps": [
++      "Add error handling for fixture file loading",
++      "Add request validation for /api/refresh",
++      "Add CORS headers for broader compatibility"
++    ]
++  },
++  "raw_excerpt": "{\n  \"verdict\": \"APPROVE\",\n  \"score\": 0.95,\n  \"findings\": [\n    {\n      \"severity\": \"low\",\n      \"issue\": \"No error handling for missing fixture file in loadFixtureApps.\",\n      \"fix\": \"Wrap readFileSync in try/catch and return empty array on failure.\"\n    },\n    {\n      \"severity\": \"low\",\n      \"issue\": \"POST /api/refresh does not validate request body or mode parameter.\",\n      \"fix\": \"Add validation for mode parameter to accept only 'fixture' or 'live-smoke'.\"\n    },\n    {\n      \"severity\": \"info\",\n      \"issue\": \"No CORS headers on API responses; may block cross-origin requests.\",\n      \"fix\": \"Add 'Access-Control-Allow-Origin: *' header to all API responses.\"\n    }\n  ],\n  \"suggested_next_steps\": [\n    \"Add error handling for fixture file loading\",\n    \"Add request validation for /api/refresh\",\n    \"Add CORS headers for broader compatibility\"\n  ]\n}",
++  "error": null,
++  "payload_excerpt": null
++}
