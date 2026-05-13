@@ -85,13 +85,14 @@ const scores = parsed.map((row) => Number(row.score)).filter((score) => Number.i
 const avg = scores.length ? scores.reduce((a, b) => a + b, 0) / scores.length : null;
 const blockers = parsed.flatMap((row) => row.findings || []).filter((finding) => /blocker|critical|high/i.test(String(finding.severity)));
 const insufficientReviews = active.length < minimumActiveReviews;
+const skippedReviews = reviews.filter((row) => row.skipped).length;
 const report = {
   ok: blockers.length === 0 && !insufficientReviews,
   verdict: blockers.length === 0 && !insufficientReviews ? "APPROVE" : "REVISE",
   review_count: reviews.length,
   active_review_count: active.length,
   minimum_active_reviews: minimumActiveReviews,
-  skipped_review_count: reviews.length - active.length,
+  skipped_review_count: skippedReviews,
   failed_review_count: reviews.filter((row) => row.ok === false).length,
   review_sources: reviews.map((row) => row.source),
   average_model_score: avg == null ? null : Number(avg.toFixed(2)),

@@ -95,6 +95,9 @@ if (!dataSourceSmoke.includes("env_injected_by_fabro") || !dataSourceSmoke.inclu
 if (!openRouterReview.includes("realMode") || !openRouterReview.includes("process.exit(realMode ? 1 : 0)") || !openRouterReview.includes("OPENROUTER_API_KEY unavailable")) {
   throw new Error("OpenRouter review must support real-mode hard failure for missing credentials");
 }
+if (!openRouterReview.includes("source_excerpts") || !openRouterReview.includes("do not claim an endpoint or file is missing")) {
+  throw new Error("OpenRouter review must include generated source context for model reviewers");
+}
 if (!reviewConsensus.includes("minimumActiveReviews") || !reviewConsensus.includes("active.length < minimumActiveReviews") || !reviewConsensus.includes(".fabro/scratch") || !reviewConsensus.includes("refs/heads/fabro/run/parallel")) {
   throw new Error("review consensus must fail when all model reviews are skipped and collect parallel branch artifacts");
 }
@@ -117,6 +120,9 @@ for (const text of ["src/sources/social.js", "src/snapshots.js", "src/evidence.j
 }
 if (!artifactGate.includes("minimum_apps") || !artifactGate.includes("minimum_reports")) {
   throw new Error("artifact gate must enforce richer artifact thresholds");
+}
+if (!generateApp.includes("requestedAppDir") || generateApp.includes("app_dir: appDir")) {
+  throw new Error("generated app build manifest must avoid absolute sandbox paths");
 }
 
 console.log(JSON.stringify({

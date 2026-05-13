@@ -10,7 +10,8 @@ function argValue(name, fallback) {
   return value;
 }
 
-const appDir = resolve(argValue("--app-dir", "apps/generated-consumer-app-radar"));
+const requestedAppDir = argValue("--app-dir", "apps/generated-consumer-app-radar");
+const appDir = resolve(requestedAppDir);
 rmSync(appDir, { recursive: true, force: true });
 
 function write(relativePath, lines) {
@@ -543,8 +544,8 @@ write("README.md", [
 mkdirSync(".workflow/consumer-radar", { recursive: true });
 writeFileSync(resolve(appDir, ".workflow-build.json"), JSON.stringify({
   ok: true,
-  app_dir: appDir,
+  app_dir: requestedAppDir,
   generated_at: new Date().toISOString(),
   files: 17
 }, null, 2) + "\n");
-console.log(JSON.stringify({ ok: true, app_dir: appDir }, null, 2));
+console.log(JSON.stringify({ ok: true, app_dir: requestedAppDir }, null, 2));
