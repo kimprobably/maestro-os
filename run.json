@@ -932,7 +932,7 @@
     "kind": "running"
   },
   "status_updated_at": "2026-05-13T10:32:12.953137662Z",
-  "last_event_at": "2026-05-13T10:32:33.999485734Z",
+  "last_event_at": "2026-05-13T10:32:39.623511293Z",
   "pending_control": null,
   "checkpoints": [
     {
@@ -1415,9 +1415,9 @@
       }
     },
     {
-      "seq": 0,
+      "seq": 77,
       "checkpoint": {
-        "timestamp": "2026-05-13T10:32:37.458343189Z",
+        "timestamp": "2026-05-13T10:32:39.616953729Z",
         "current_node": "native_checks",
         "completed_nodes": [
           "start",
@@ -1430,16 +1430,142 @@
         ],
         "node_retries": {},
         "context_values": {
-          "internal.retry_count.start": 0,
+          "thread.data_source_smoke.current_node": "generate_app",
+          "internal.retry_count.wait_for_support_files": 0,
+          "internal.fidelity": "compact",
+          "thread.spec_kitty_gate.current_node": "data_source_smoke",
+          "graph.retry_target": "generate_app",
+          "internal.retry_count.bootstrap_spec": 0,
+          "graph.model_stylesheet": "\n            *          { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: low; }\n            .review    { provider: openrouter; model: google/gemini-3.1-pro-preview; reasoning_effort: high; }\n            .cheap     { provider: openrouter; model: deepseek/deepseek-v4-flash; reasoning_effort: low; }\n        ",
+          "thread.generate_app.current_node": "native_checks",
+          "internal.node_visit_count": 1,
           "command.output": "blob://sha256/3cb84a9bb9e20844631d561961b12684816930e946cc09fc74b597b239f65682",
+          "graph.default_max_retries": "2",
+          "failure_class": "",
+          "graph.inputs": "app_dir, spec_path, real_mode, allow_fixture_fallback, allow_quality_fallback, minimum_active_reviews",
+          "internal.retry_count.generate_app": 0,
+          "graph.fallback_retry_target": "generate_app",
+          "internal.retry_count.spec_kitty_gate": 0,
+          "graph.rankdir": "LR",
+          "graph.goal": "Build Consumer App Radar from spec with CI, eval, and model review",
+          "thread.bootstrap_spec.current_node": "spec_kitty_gate",
+          "thread.wait_for_support_files.current_node": "bootstrap_spec",
+          "failure_signature": "",
+          "internal.work_dir": "/home/daytona/workspace",
+          "outcome": "succeeded",
+          "current_node": "native_checks",
+          "internal.retry_count.data_source_smoke": 0,
+          "internal.thread_id": "generate_app",
+          "graph.outputs": "application, ci_report, eval_report, review_consensus, handoff",
+          "internal.retry_count.native_checks": 0,
+          "internal.run_id": "01KRGE9QQP3MQBYCR6WZPDSCXH",
+          "thread.start.current_node": "wait_for_support_files",
+          "internal.retry_count.start": 0,
+          "graph.persona": "code-factory"
+        },
+        "node_outcomes": {
+          "generate_app": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/e13919244f75906e6e71bd55689542b555b043361da8bca8c82ef7a95a136f3a"
+            },
+            "notes": "Script completed: node scripts/consumer-radar/generate-app.mjs --app-dir 'apps/generated-consumer-app-radar'",
+            "usage": null
+          },
+          "data_source_smoke": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/a8ca954fe505c8ca7b5c226df024af9918c0c366df5145c23ac164541a74abbc"
+            },
+            "notes": "Script completed: node scripts/consumer-radar/data-source-smoke.mjs --output .workflow/consumer-radar/data-source-smoke.json --real-mode 'true' --allow-fixture-fallback 'true'",
+            "usage": null
+          },
+          "wait_for_support_files": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/a993020942c3b2f319b954a99b0a9f056f2f684e6388311672cad5808190f591"
+            },
+            "notes": "Script completed: for i in $(seq 1 90); do if [ -f scripts/consumer-radar/generate-app.mjs ] && [ -f 'specs/consumer-app-radar/spec.md' ]; then echo support-files-ready; exit 0; fi; sleep 2; done; echo 'missing consumer radar support files' >&2; exit 1",
+            "usage": null
+          },
+          "native_checks": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/3cb84a9bb9e20844631d561961b12684816930e946cc09fc74b597b239f65682"
+            },
+            "notes": "Script completed: node scripts/consumer-radar/run-native-checks.mjs 'apps/generated-consumer-app-radar'",
+            "usage": null
+          },
+          "bootstrap_spec": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/69993f8688096a5a7651fa7491d7abd07112c05d590b65a6ef6add7bd9699997"
+            },
+            "notes": "Script completed: node scripts/consumer-radar/bootstrap-spec.mjs --spec 'specs/consumer-app-radar/spec.md' --app-dir 'apps/generated-consumer-app-radar'",
+            "usage": null
+          },
+          "spec_kitty_gate": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/a9b191d00675c7b8495cbeb5475762d35fbef8ab2705efb774f77919bc99b2a3"
+            },
+            "notes": "Script completed: node scripts/consumer-radar/bootstrap-spec.mjs --spec 'specs/consumer-app-radar/spec.md' --app-dir 'apps/generated-consumer-app-radar' --spec-kitty",
+            "usage": null
+          },
+          "start": {
+            "status": "succeeded",
+            "usage": null
+          }
+        },
+        "next_node_id": "qlty_gate",
+        "git_commit_sha": "30d687fb71f2781faff35bd90cbcab955410a84b",
+        "node_visits": {
+          "bootstrap_spec": 1,
+          "wait_for_support_files": 1,
+          "generate_app": 1,
+          "native_checks": 1,
+          "spec_kitty_gate": 1,
+          "start": 1,
+          "data_source_smoke": 1
+        }
+      },
+      "diff": {
+        "patch": "diff --git a/apps/generated-consumer-app-radar/.data/apps.json b/apps/generated-consumer-app-radar/.data/apps.json\nnew file mode 100644\nindex 0000000..daaa6c2\n--- /dev/null\n+++ b/apps/generated-consumer-app-radar/.data/apps.json\n@@ -0,0 +1,259 @@\n+[\n+  {\n+    \"id\": \"one-sec\",\n+    \"name\": \"one sec\",\n+    \"category\": \"Productivity\",\n+    \"country\": \"US\",\n+    \"appStoreId\": \"1532875441\",\n+    \"rankDelta4w\": 76,\n+    \"reviewDelta4w\": 138,\n+    \"rating\": 4.8,\n+    \"socialDelta4w\": 212,\n+    \"socialStrategy\": [\n+      \"Creator demos interrupting app-open autopilot\",\n+      \"Short before-after clips\",\n+      \"Academic credibility hooks\"\n+    ],\n+    \"reviewThemes\": [\n+      \"Needs better schedule exceptions\",\n+      \"Users want stronger family controls\",\n+      \"More granular app groups requested\"\n+    ],\n+    \"featureRequests\": [\n+      \"Calendar-aware focus rules\",\n+      \"Shared household accountability\",\n+      \"Weekly relapse insights\"\n+    ],\n+    \"evidence\": [\n+      \"Fixture seed until live Apify ranking feed is tuned\",\n+      \"Apple RSS reviews supported by adapter\"\n+    ],\n+    \"opportunityScore\": 75,\n+    \"radarRank\": 1,\n+    \"dataMode\": \"fixture\"\n+  },\n+  {\n+    \"id\": \"finch\",\n+    \"name\": \"Finch\",\n+    \"category\": \"Positivity\",\n+    \"country\": \"US\",\n+    \"appStoreId\": \"1528595748\",\n+    \"rankDelta4w\": 29,\n+    \"reviewDelta4w\": 151,\n+    \"rating\": 4.9,\n+    \"socialDelta4w\": 177,\n+    \"socialStrategy\": [\n+      \"Character-led UGC\",\n+      \"Mental health community clips\",\n+      \"Gift/share loops\"\n+    ],\n+    \"reviewThemes\": [\n+      \"Emotional attachment is strong\",\n+      \"Users want more personalization\",\n+      \"Subscription boundaries are sensitive\"\n+    ],\n+    \"featureRequests\": [\n+      \"Adaptive self-care journeys\",\n+      \"More low-cost social gifting\",\n+      \"Smarter mood insights\"\n+    ],\n+    \"evidence\": [\n+      \"Seed target for positivity/wellness benchmarking\"\n+    ],\n+    \"opportunityScore\": 60,\n+    \"radarRank\": 2,\n+    \"dataMode\": \"fixture\"\n+  },\n+  {\n+    \"id\": \"ladder\",\n+    \"name\": \"Ladder\",\n+    \"category\": \"Fitness\",\n+    \"country\": \"US\",\n+    \"appStoreId\": \"1502936453\",\n+    \"rankDelta4w\": 51,\n+    \"reviewDelta4w\": 68,\n+    \"rating\": 4.9,\n+    \"socialDelta4w\": 189,\n+    \"socialStrategy\": [\n+      \"Trainer-led short clips\",\n+      \"Transformation proof\",\n+      \"Community/accountability framing\"\n+    ],\n+    \"reviewThemes\": [\n+      \"Program switching requests\",\n+      \"Equipment substitutions\",\n+      \"More beginner guidance\"\n+    ],\n+    \"featureRequests\": [\n+      \"Adaptive equipment swaps\",\n+      \"Beginner ramp plans\",\n+      \"Progress story exports\"\n+    ],\n+    \"evidence\": [\n+      \"Seed target for fitness category monitoring\"\n+    ],\n+    \"opportunityScore\": 57,\n+    \"radarRank\": 3,\n+    \"dataMode\": \"fixture\"\n+  },\n+  {\n+    \"id\": \"opal\",\n+    \"name\": \"Opal\",\n+    \"category\": \"Screen Time\",\n+    \"country\": \"US\",\n+    \"appStoreId\": \"1497465230\",\n+    \"rankDelta4w\": 42,\n+    \"reviewDelta4w\": 89,\n+    \"rating\": 4.7,\n+    \"socialDelta4w\": 156,\n+    \"socialStrategy\": [\n+      \"Founder-led productivity clips\",\n+      \"Relatable addiction framing\",\n+      \"Creator routines\"\n+    ],\n+    \"reviewThemes\": [\n+      \"Lock bypass confusion\",\n+      \"Subscription objections\",\n+      \"More reporting exports\"\n+    ],\n+    \"featureRequests\": [\n+      \"Anti-bypass education\",\n+      \"Cheaper student plan\",\n+      \"CSV/report export\"\n+    ],\n+    \"evidence\": [\n+      \"Fixture seed; social adapters support Apify enrichment\"\n+    ],\n+    \"opportunityScore\": 54,\n+    \"radarRank\": 4,\n+    \"dataMode\": \"fixture\"\n+  },\n+  {\n+    \"id\": \"screenzen\",\n+    \"name\": \"ScreenZen\",\n+    \"category\": \"Screen Time\",\n+    \"country\": \"US\",\n+    \"appStoreId\": \"1541027222\",\n+    \"rankDelta4w\": 58,\n+    \"reviewDelta4w\": 73,\n+    \"rating\": 4.8,\n+    \"socialDelta4w\": 118,\n+    \"socialStrategy\": [\n+      \"Reddit-style authenticity\",\n+      \"Anti-subscription positioning\",\n+      \"Direct comparisons to expensive blockers\"\n+    ],\n+    \"reviewThemes\": [\n+      \"Users praise free controls\",\n+      \"Setup friction appears repeatedly\",\n+      \"Requests for more lockout nuance\"\n+    ],\n+    \"featureRequests\": [\n+      \"Preset lockout templates\",\n+      \"Onboarding checklist\",\n+      \"Cross-device shared rules\"\n+    ],\n+    \"evidence\": [\n+      \"Seed target for live chart/review enrichment\"\n+    ],\n+    \"opportunityScore\": 52,\n+    \"radarRank\": 5,\n+    \"dataMode\": \"fixture\"\n+  },\n+  {\n+    \"id\": \"structured\",\n+    \"name\": \"Structured\",\n+    \"category\": \"Productivity\",\n+    \"country\": \"US\",\n+    \"appStoreId\": \"1499198946\",\n+    \"rankDelta4w\": 36,\n+    \"reviewDelta4w\": 82,\n+    \"rating\": 4.8,\n+    \"socialDelta4w\": 134,\n+    \"socialStrategy\": [\n+      \"ADHD creator routines\",\n+      \"Calendar before-after clips\",\n+      \"Aesthetic planning screenshots\"\n+    ],\n+    \"reviewThemes\": [\n+      \"Sync reliability matters\",\n+      \"Users want faster capture\",\n+      \"Recurring task UX is a purchase driver\"\n+    ],\n+    \"featureRequests\": [\n+      \"Natural-language task capture\",\n+      \"More robust calendar sync\",\n+      \"Better widgets\"\n+    ],\n+    \"evidence\": [\n+      \"Seed target for productivity category monitoring\"\n+    ],\n+    \"opportunityScore\": 49,\n+    \"radarRank\": 6,\n+    \"dataMode\": \"fixture\"\n+  },\n+  {\n+    \"id\": \"stoic\",\n+    \"name\": \"stoic.\",\n+    \"category\": \"Wellness\",\n+    \"country\": \"US\",\n+    \"appStoreId\": \"1312926037\",\n+    \"rankDelta4w\": 31,\n+    \"reviewDelta4w\": 64,\n+    \"rating\": 4.8,\n+    \"socialDelta4w\": 92,\n+    \"socialStrategy\": [\n+      \"Calm aesthetic reels\",\n+      \"Journaling prompts\",\n+      \"Mental model education\"\n+    ],\n+    \"reviewThemes\": [\n+      \"Users want gentler onboarding\",\n+      \"Export/sync concerns\",\n+      \"Prompt repetition\"\n+    ],\n+    \"featureRequests\": [\n+      \"Adaptive prompts\",\n+      \"Better Apple Health context\",\n+      \"Private export\"\n+    ],\n+    \"evidence\": [\n+      \"Fixture seed for repeatable CI\"\n+    ],\n+    \"opportunityScore\": 41,\n+    \"radarRank\": 7,\n+    \"dataMode\": \"fixture\"\n+  },\n+  {\n+    \"id\": \"rise\",\n+    \"name\": \"Rise\",\n+    \"category\": \"Health\",\n+    \"country\": \"US\",\n+    \"appStoreId\": \"1453884781\",\n+    \"rankDelta4w\": 24,\n+    \"reviewDelta4w\": 57,\n+    \"rating\": 4.6,\n+    \"socialDelta4w\": 102,\n+    \"socialStrategy\": [\n+      \"Sleep debt education\",\n+      \"Science-backed creator explainers\",\n+      \"Routine optimization hooks\"\n+    ],\n+    \"reviewThemes\": [\n+      \"Accuracy questions\",\n+      \"Paywall complaints\",\n+      \"Users want wearable context\"\n+    ],\n+    \"featureRequests\": [\n+      \"Clearer accuracy explanations\",\n+      \"Better Apple Health summaries\",\n+      \"Actionable weekly plan\"\n+    ],\n+    \"evidence\": [\n+      \"Seed target for health/wellness category monitoring\"\n+    ],\n+    \"opportunityScore\": 39,\n+    \"radarRank\": 8,\n+    \"dataMode\": \"fixture\"\n+  }\n+]\n",
+        "summary": {
+          "files_changed": 20,
+          "additions": 846,
+          "deletions": 0
+        }
+      }
+    },
+    {
+      "seq": 0,
+      "checkpoint": {
+        "timestamp": "2026-05-13T10:32:41.048451643Z",
+        "current_node": "qlty_gate",
+        "completed_nodes": [
+          "start",
+          "wait_for_support_files",
+          "bootstrap_spec",
+          "spec_kitty_gate",
+          "data_source_smoke",
+          "generate_app",
+          "native_checks",
+          "qlty_gate"
+        ],
+        "node_retries": {},
+        "context_values": {
+          "internal.retry_count.start": 0,
+          "command.output": "blob://sha256/8f077198b6b6112c3602044270cf5d201a6ef9aed4eba6f770a6e4c56a4f58d7",
           "graph.outputs": "application, ci_report, eval_report, review_consensus, handoff",
           "thread.wait_for_support_files.current_node": "bootstrap_spec",
           "internal.retry_count.data_source_smoke": 0,
           "internal.fidelity": "compact",
-          "internal.thread_id": "generate_app",
+          "internal.thread_id": "native_checks",
           "failure_class": "",
           "graph.default_max_retries": "2",
           "internal.retry_count.generate_app": 0,
+          "thread.native_checks.current_node": "qlty_gate",
           "internal.retry_count.bootstrap_spec": 0,
           "internal.work_dir": "/home/daytona/workspace",
           "thread.data_source_smoke.current_node": "generate_app",
@@ -1459,11 +1585,20 @@
           "graph.rankdir": "LR",
           "graph.retry_target": "generate_app",
           "thread.spec_kitty_gate.current_node": "data_source_smoke",
-          "current_node": "native_checks",
+          "internal.retry_count.qlty_gate": 0,
+          "current_node": "qlty_gate",
           "graph.fallback_retry_target": "generate_app",
           "thread.generate_app.current_node": "native_checks"
         },
         "node_outcomes": {
+          "qlty_gate": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/8f077198b6b6112c3602044270cf5d201a6ef9aed4eba6f770a6e4c56a4f58d7"
+            },
+            "notes": "Script completed: node scripts/consumer-radar/qlty-gate.mjs 'apps/generated-consumer-app-radar' --real-mode 'true' --allow-fallback 'true'",
+            "usage": null
+          },
           "spec_kitty_gate": {
             "status": "succeeded",
             "context_updates": {
@@ -1517,15 +1652,16 @@
             "usage": null
           }
         },
-        "next_node_id": "qlty_gate",
+        "next_node_id": "promptfoo_gate",
         "node_visits": {
           "wait_for_support_files": 1,
           "spec_kitty_gate": 1,
           "start": 1,
-          "data_source_smoke": 1,
-          "bootstrap_spec": 1,
           "generate_app": 1,
-          "native_checks": 1
+          "bootstrap_spec": 1,
+          "native_checks": 1,
+          "qlty_gate": 1,
+          "data_source_smoke": 1
         }
       },
       "diff": {}
@@ -1548,49 +1684,6 @@
   "superseded_by": null,
   "pending_interviews": {},
   "stages": {
-    "bootstrap_spec@1": {
-      "first_event_seq": 30,
-      "prompt": null,
-      "response": null,
-      "completion": {
-        "outcome": "succeeded",
-        "notes": "Script completed: node scripts/consumer-radar/bootstrap-spec.mjs --spec 'specs/consumer-app-radar/spec.md' --app-dir 'apps/generated-consumer-app-radar'",
-        "failure_reason": null,
-        "timestamp": "2026-05-13T10:32:18.625697416Z"
-      },
-      "provider_used": null,
-      "diff": null,
-      "script_invocation": {
-        "script": "node scripts/consumer-radar/bootstrap-spec.mjs --spec 'specs/consumer-app-radar/spec.md' --app-dir 'apps/generated-consumer-app-radar'",
-        "command": "exec 2>&1\nnode scripts/consumer-radar/bootstrap-spec.mjs --spec 'specs/consumer-app-radar/spec.md' --app-dir 'apps/generated-consumer-app-radar'",
-        "language": "shell"
-      },
-      "script_timing": {
-        "output": "blob://sha256/69993f8688096a5a7651fa7491d7abd07112c05d590b65a6ef6add7bd9699997",
-        "exit_code": 0,
-        "duration_ms": 1359,
-        "termination": "exited",
-        "output_bytes": 285,
-        "live_streaming": true
-      },
-      "parallel_results": null,
-      "output": null,
-      "output_bytes": 285,
-      "live_streaming": true,
-      "termination": "exited",
-      "started_at": "2026-05-13T10:32:17.260094553Z",
-      "handler": "command",
-      "duration_ms": 1365,
-      "usage": {
-        "input_tokens": 0,
-        "output_tokens": 0,
-        "total_tokens": 0,
-        "reasoning_tokens": 0,
-        "cache_read_tokens": 0,
-        "cache_write_tokens": 0
-      },
-      "state": "succeeded"
-    },
     "spec_kitty_gate@1": {
       "first_event_seq": 40,
       "prompt": null,
@@ -1633,6 +1726,33 @@
         "cache_write_tokens": 0
       },
       "state": "succeeded"
+    },
+    "qlty_gate@1": {
+      "first_event_seq": 80,
+      "prompt": null,
+      "response": null,
+      "completion": null,
+      "provider_used": null,
+      "diff": null,
+      "script_invocation": {
+        "script": "node scripts/consumer-radar/qlty-gate.mjs 'apps/generated-consumer-app-radar' --real-mode 'true' --allow-fallback 'true'",
+        "command": "exec 2>&1\nnode scripts/consumer-radar/qlty-gate.mjs 'apps/generated-consumer-app-radar' --real-mode 'true' --allow-fallback 'true'",
+        "language": "shell"
+      },
+      "script_timing": null,
+      "parallel_results": null,
+      "output": null,
+      "started_at": "2026-05-13T10:32:39.622498643Z",
+      "handler": "command",
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "total_tokens": 0,
+        "reasoning_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "state": "running"
     },
     "generate_app@1": {
       "first_event_seq": 60,
@@ -1696,6 +1816,92 @@
       "started_at": "2026-05-13T10:32:13.859302706Z",
       "handler": "start",
       "duration_ms": 0,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "total_tokens": 0,
+        "reasoning_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "state": "succeeded"
+    },
+    "native_checks@1": {
+      "first_event_seq": 70,
+      "prompt": null,
+      "response": null,
+      "completion": {
+        "outcome": "succeeded",
+        "notes": "Script completed: node scripts/consumer-radar/run-native-checks.mjs 'apps/generated-consumer-app-radar'",
+        "failure_reason": null,
+        "timestamp": "2026-05-13T10:32:37.456727431Z"
+      },
+      "provider_used": null,
+      "diff": null,
+      "script_invocation": {
+        "script": "node scripts/consumer-radar/run-native-checks.mjs 'apps/generated-consumer-app-radar'",
+        "command": "exec 2>&1\nnode scripts/consumer-radar/run-native-checks.mjs 'apps/generated-consumer-app-radar'",
+        "language": "shell"
+      },
+      "script_timing": {
+        "output": "blob://sha256/3cb84a9bb9e20844631d561961b12684816930e946cc09fc74b597b239f65682",
+        "exit_code": 0,
+        "duration_ms": 3453,
+        "termination": "exited",
+        "output_bytes": 32,
+        "live_streaming": true
+      },
+      "parallel_results": null,
+      "output": null,
+      "output_bytes": 32,
+      "live_streaming": true,
+      "termination": "exited",
+      "started_at": "2026-05-13T10:32:33.998925182Z",
+      "handler": "command",
+      "duration_ms": 3457,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "total_tokens": 0,
+        "reasoning_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "state": "succeeded"
+    },
+    "bootstrap_spec@1": {
+      "first_event_seq": 30,
+      "prompt": null,
+      "response": null,
+      "completion": {
+        "outcome": "succeeded",
+        "notes": "Script completed: node scripts/consumer-radar/bootstrap-spec.mjs --spec 'specs/consumer-app-radar/spec.md' --app-dir 'apps/generated-consumer-app-radar'",
+        "failure_reason": null,
+        "timestamp": "2026-05-13T10:32:18.625697416Z"
+      },
+      "provider_used": null,
+      "diff": null,
+      "script_invocation": {
+        "script": "node scripts/consumer-radar/bootstrap-spec.mjs --spec 'specs/consumer-app-radar/spec.md' --app-dir 'apps/generated-consumer-app-radar'",
+        "command": "exec 2>&1\nnode scripts/consumer-radar/bootstrap-spec.mjs --spec 'specs/consumer-app-radar/spec.md' --app-dir 'apps/generated-consumer-app-radar'",
+        "language": "shell"
+      },
+      "script_timing": {
+        "output": "blob://sha256/69993f8688096a5a7651fa7491d7abd07112c05d590b65a6ef6add7bd9699997",
+        "exit_code": 0,
+        "duration_ms": 1359,
+        "termination": "exited",
+        "output_bytes": 285,
+        "live_streaming": true
+      },
+      "parallel_results": null,
+      "output": null,
+      "output_bytes": 285,
+      "live_streaming": true,
+      "termination": "exited",
+      "started_at": "2026-05-13T10:32:17.260094553Z",
+      "handler": "command",
+      "duration_ms": 1365,
       "usage": {
         "input_tokens": 0,
         "output_tokens": 0,
@@ -1791,33 +1997,6 @@
         "cache_write_tokens": 0
       },
       "state": "succeeded"
-    },
-    "native_checks@1": {
-      "first_event_seq": 70,
-      "prompt": null,
-      "response": null,
-      "completion": null,
-      "provider_used": null,
-      "diff": null,
-      "script_invocation": {
-        "script": "node scripts/consumer-radar/run-native-checks.mjs 'apps/generated-consumer-app-radar'",
-        "command": "exec 2>&1\nnode scripts/consumer-radar/run-native-checks.mjs 'apps/generated-consumer-app-radar'",
-        "language": "shell"
-      },
-      "script_timing": null,
-      "parallel_results": null,
-      "output": null,
-      "started_at": "2026-05-13T10:32:33.998925182Z",
-      "handler": "command",
-      "usage": {
-        "input_tokens": 0,
-        "output_tokens": 0,
-        "total_tokens": 0,
-        "reasoning_tokens": 0,
-        "cache_read_tokens": 0,
-        "cache_write_tokens": 0
-      },
-      "state": "running"
     }
   }
 }
