@@ -1061,7 +1061,7 @@
     "kind": "running"
   },
   "status_updated_at": "2026-05-13T15:17:58.261552Z",
-  "last_event_at": "2026-05-13T15:19:22.130930Z",
+  "last_event_at": "2026-05-13T15:19:39.441265Z",
   "pending_control": null,
   "checkpoints": [
     {
@@ -2270,9 +2270,9 @@
       }
     },
     {
-      "seq": 0,
+      "seq": 183,
       "checkpoint": {
-        "timestamp": "2026-05-13T15:19:22.227572Z",
+        "timestamp": "2026-05-13T15:19:26.270943Z",
         "current_node": "product_surface_gate",
         "completed_nodes": [
           "start",
@@ -2290,9 +2290,167 @@
         ],
         "node_retries": {},
         "context_values": {
+          "internal.work_dir": "/home/daytona/workspace",
+          "thread.generate_app.current_node": "native_checks",
+          "command.output": "blob://sha256/10236580d31bb7837ec1fd3bc1e6c8e4f05485ea7c46ef3f8e1af4ba69c6969b",
+          "thread.product_surface_gate.current_node": "qlty_gate",
+          "graph.fallback_retry_target": "generate_app",
+          "graph.persona": "code-factory",
+          "internal.run_id": "01KRGYMS5GZ9WF7TJJP5BSKFK5",
+          "internal.thread_id": "native_checks",
+          "thread.spec_kitty_gate.current_node": "data_source_smoke",
+          "thread.qlty_gate.current_node": "generate_app",
+          "failure_signature": "",
+          "outcome": "succeeded",
+          "graph.retry_target": "generate_app",
+          "thread.data_source_smoke.current_node": "generate_app",
+          "thread.start.current_node": "wait_for_support_files",
+          "internal.retry_count.product_surface_gate": 0,
+          "thread.native_checks.current_node": "product_surface_gate",
+          "graph.rankdir": "LR",
+          "internal.node_visit_count": 2,
+          "internal.retry_count.bootstrap_spec": 0,
+          "internal.retry_count.native_checks": 0,
+          "graph.goal": "Build Consumer App Radar from spec with CI, eval, and model review",
+          "internal.retry_count.start": 0,
+          "thread.wait_for_support_files.current_node": "bootstrap_spec",
+          "failure_class": "",
+          "graph.inputs": "app_dir, spec_path, real_mode, allow_fixture_fallback, allow_quality_fallback, minimum_active_reviews",
+          "thread.bootstrap_spec.current_node": "spec_kitty_gate",
+          "graph.default_max_retries": "2",
+          "internal.retry_count.data_source_smoke": 0,
+          "graph.model_stylesheet": "\n            *          { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: low; }\n            .review    { provider: openrouter; model: google/gemini-3.1-pro-preview; reasoning_effort: high; }\n            .cheap     { provider: openrouter; model: deepseek/deepseek-v4-flash; reasoning_effort: low; }\n        ",
+          "internal.fidelity": "compact",
+          "graph.outputs": "application, ci_report, eval_report, review_consensus, handoff",
+          "internal.retry_count.qlty_gate": 0,
+          "internal.retry_count.spec_kitty_gate": 0,
+          "internal.retry_count.wait_for_support_files": 0,
+          "internal.retry_count.generate_app": 0,
+          "current_node": "product_surface_gate"
+        },
+        "node_outcomes": {
+          "data_source_smoke": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/09bd2e95737495e3a80b17f3d96a25036eb97abb4f49a0769b9b563254248e25"
+            },
+            "notes": "Script completed: node scripts/consumer-radar/data-source-smoke.mjs --output .workflow/consumer-radar/data-source-smoke.json --real-mode 'true' --allow-fixture-fallback 'true'",
+            "usage": null
+          },
+          "qlty_gate": {
+            "status": "failed",
+            "context_updates": {
+              "command.output": "blob://sha256/b4783d108d8682c3a54504807894e4baef7551de2a39bae10a0bc43155b828de"
+            },
+            "failure": {
+              "message": "Script failed with exit code: 1\n\n## output\n{\n  \"ok\": false,\n  \"real_mode\": true,\n  \"allow_fallback\": false,\n  \"qlty_available\": true,\n  \"install_status\": null,\n  \"fmt_status\": 0,\n  \"check_status\": 1,\n  \"hard_failures\": [\n    \"Qlty check command failed in real mode\"\n  ],\n  \"stdout\": \"✔ Formatted apps/generated-consumer-app-radar/.data/apps.json (prettier)\\n✔ Formatted apps/generated-consumer-app-radar/README.md (markdownlint)\\n✔ Formatted apps/generated-consumer-app-radar/fixtures/apps.json (prettier)\\n✔ Formatted apps/generated-consumer-app-radar/public/app.js (prettier)\\n✔ Formatted apps/generated-consumer-app-radar/public/index.html (prettier)\\n✔ Formatted apps/generated-consumer-app-radar/public/styles.css (prettier)\\n✔ Formatted apps/generated-consumer-app-radar/scripts/validate-artifacts.mjs (prettier)\\n✔ Formatted apps/generated-consumer-app-radar/src/evidence.js (prettier)\\n✔ Formatted apps/generated-consumer-app-radar/src/ingest.js (prettier)\\n✔ Formatted apps/generated-consumer-app-radar/src/repository.js (prettier)\\n✔ Formatted apps/generated-consumer-app-radar/src/scoring.js (prettier)\\n✔ Formatted apps/generated-consumer-app-radar/src/server.js (prettier)\\n✔ Formatted apps/generated-consumer-app-radar/src/snapshots.js (prettier)\\n✔ Formatted apps/generated-consumer-app-radar/src/sources/apify.js (prettier)\\n✔ Formatted apps/generated-consumer-app-radar/src/sources/apple.js (prettier)\\n✔ Formatted apps/generated-consumer-app-radar/src/sources/social.js (prettier)\\n✔ Formatted apps/generated-consumer-app-radar/src/summary.js (prettier)\\n✔ Formatted apps/generated-consumer-app-radar/tests/api-fixture.test.js (prettier)\\n✔ Formatted apps/generated-consumer-app-radar/tests/scoring.test.js (prettier)\\n\",\n  \"stderr\": \"✖ 4 issues\\n✖ 2 unformatted files\\n\"\n}\n",
+              "failure_class": "deterministic"
+            },
+            "usage": null
+          },
+          "generate_app": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/67e5edc6bf894fedc2d19b61aed13adcde6de82264da817ed9b1212357748df2"
+            },
+            "notes": "Script completed: node scripts/consumer-radar/generate-app.mjs --app-dir 'apps/generated-consumer-app-radar'",
+            "usage": null
+          },
+          "product_surface_gate": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/10236580d31bb7837ec1fd3bc1e6c8e4f05485ea7c46ef3f8e1af4ba69c6969b"
+            },
+            "notes": "Script completed: node scripts/consumer-radar/assert-product-surface.mjs 'apps/generated-consumer-app-radar'",
+            "usage": null
+          },
+          "native_checks": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/3cb84a9bb9e20844631d561961b12684816930e946cc09fc74b597b239f65682"
+            },
+            "notes": "Script completed: node scripts/consumer-radar/run-native-checks.mjs 'apps/generated-consumer-app-radar'",
+            "usage": null
+          },
+          "spec_kitty_gate": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/ab92744ed754ba442cd82cc45d406fde832896d2f30798691d31f8cd3e9ce542"
+            },
+            "notes": "Script completed: node scripts/consumer-radar/bootstrap-spec.mjs --spec 'specs/consumer-app-radar/spec.md' --app-dir 'apps/generated-consumer-app-radar' --spec-kitty",
+            "usage": null
+          },
+          "wait_for_support_files": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/a993020942c3b2f319b954a99b0a9f056f2f684e6388311672cad5808190f591"
+            },
+            "notes": "Script completed: for i in $(seq 1 90); do if [ -f scripts/consumer-radar/generate-app.mjs ] && [ -f 'specs/consumer-app-radar/spec.md' ]; then echo support-files-ready; exit 0; fi; sleep 2; done; echo 'missing consumer radar support files' >&2; exit 1",
+            "usage": null
+          },
+          "bootstrap_spec": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/7aceb83d8c40c3dc0712769267c707f01861aa0ea4a3998692797fd6b90dd637"
+            },
+            "notes": "Script completed: node scripts/consumer-radar/bootstrap-spec.mjs --spec 'specs/consumer-app-radar/spec.md' --app-dir 'apps/generated-consumer-app-radar'",
+            "usage": null
+          },
+          "start": {
+            "status": "succeeded",
+            "usage": null
+          }
+        },
+        "next_node_id": "qlty_gate",
+        "git_commit_sha": "f073bd82faabe95f1cd89c203911e3acdd6de137",
+        "loop_failure_signatures": {
+          "qlty_gate|deterministic|script failed with exit code: <n> ## output { \"ok\": false,\"real_mode\": true,\"allow_fallback\": false,\"qlty_available\": true,\"install_status\": null,\"fmt_status\": <n>,\"check_status\": <n>,\"hard_failures\": [ \"qlty check command failed in real mo": 1
+        },
+        "node_visits": {
+          "native_checks": 2,
+          "product_surface_gate": 2,
+          "generate_app": 2,
+          "spec_kitty_gate": 1,
+          "bootstrap_spec": 1,
+          "start": 1,
+          "qlty_gate": 1,
+          "data_source_smoke": 1,
+          "wait_for_support_files": 1
+        }
+      },
+      "diff": {
+        "summary": {
+          "files_changed": 22,
+          "additions": 331,
+          "deletions": 826
+        }
+      }
+    },
+    {
+      "seq": 0,
+      "checkpoint": {
+        "timestamp": "2026-05-13T15:19:39.444952Z",
+        "current_node": "qlty_gate",
+        "completed_nodes": [
+          "start",
+          "wait_for_support_files",
+          "bootstrap_spec",
+          "spec_kitty_gate",
+          "data_source_smoke",
+          "generate_app",
+          "native_checks",
+          "product_surface_gate",
+          "qlty_gate",
+          "generate_app",
+          "native_checks",
+          "product_surface_gate",
+          "qlty_gate"
+        ],
+        "node_retries": {},
+        "context_values": {
           "graph.rankdir": "LR",
           "internal.run_id": "01KRGYMS5GZ9WF7TJJP5BSKFK5",
-          "outcome": "succeeded",
+          "outcome": "failed",
           "internal.node_visit_count": 2,
           "graph.fallback_retry_target": "generate_app",
           "internal.retry_count.native_checks": 0,
@@ -2307,23 +2465,23 @@
           "thread.spec_kitty_gate.current_node": "data_source_smoke",
           "internal.retry_count.data_source_smoke": 0,
           "internal.retry_count.qlty_gate": 0,
-          "command.output": "blob://sha256/10236580d31bb7837ec1fd3bc1e6c8e4f05485ea7c46ef3f8e1af4ba69c6969b",
+          "command.output": "blob://sha256/dc5dca6c02090dfe81fb84e71000a850032e313040578445aa9bcd26b4d391cf",
           "graph.model_stylesheet": "\n            *          { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: low; }\n            .review    { provider: openrouter; model: google/gemini-3.1-pro-preview; reasoning_effort: high; }\n            .cheap     { provider: openrouter; model: deepseek/deepseek-v4-flash; reasoning_effort: low; }\n        ",
           "graph.outputs": "application, ci_report, eval_report, review_consensus, handoff",
           "internal.retry_count.product_surface_gate": 0,
-          "failure_signature": "",
+          "failure_signature": "qlty_gate|deterministic|script failed with exit code: <n> ## output { \"ok\": false,\"real_mode\": true,\"allow_fallback\": false,\"qlty_available\": true,\"install_status\": null,\"fmt_status\": <n>,\"check_status\": <n>,\"hard_failures\": [ \"qlty check command failed in real mo",
           "graph.persona": "code-factory",
           "internal.fidelity": "compact",
-          "failure_class": "",
+          "failure_class": "deterministic",
           "thread.generate_app.current_node": "native_checks",
           "thread.start.current_node": "wait_for_support_files",
           "thread.wait_for_support_files.current_node": "bootstrap_spec",
           "thread.bootstrap_spec.current_node": "spec_kitty_gate",
-          "internal.thread_id": "native_checks",
+          "internal.thread_id": "product_surface_gate",
           "graph.inputs": "app_dir, spec_path, real_mode, allow_fixture_fallback, allow_quality_fallback, minimum_active_reviews",
           "thread.native_checks.current_node": "product_surface_gate",
           "graph.retry_target": "generate_app",
-          "current_node": "product_surface_gate",
+          "current_node": "qlty_gate",
           "thread.product_surface_gate.current_node": "qlty_gate",
           "thread.qlty_gate.current_node": "generate_app",
           "internal.retry_count.generate_app": 0
@@ -2392,16 +2550,16 @@
           "qlty_gate": {
             "status": "failed",
             "context_updates": {
-              "command.output": "blob://sha256/b4783d108d8682c3a54504807894e4baef7551de2a39bae10a0bc43155b828de"
+              "command.output": "blob://sha256/dc5dca6c02090dfe81fb84e71000a850032e313040578445aa9bcd26b4d391cf"
             },
             "failure": {
-              "message": "Script failed with exit code: 1\n\n## output\n{\n  \"ok\": false,\n  \"real_mode\": true,\n  \"allow_fallback\": false,\n  \"qlty_available\": true,\n  \"install_status\": null,\n  \"fmt_status\": 0,\n  \"check_status\": 1,\n  \"hard_failures\": [\n    \"Qlty check command failed in real mode\"\n  ],\n  \"stdout\": \"✔ Formatted apps/generated-consumer-app-radar/.data/apps.json (prettier)\\n✔ Formatted apps/generated-consumer-app-radar/README.md (markdownlint)\\n✔ Formatted apps/generated-consumer-app-radar/fixtures/apps.json (prettier)\\n✔ Formatted apps/generated-consumer-app-radar/public/app.js (prettier)\\n✔ Formatted apps/generated-consumer-app-radar/public/index.html (prettier)\\n✔ Formatted apps/generated-consumer-app-radar/public/styles.css (prettier)\\n✔ Formatted apps/generated-consumer-app-radar/scripts/validate-artifacts.mjs (prettier)\\n✔ Formatted apps/generated-consumer-app-radar/src/evidence.js (prettier)\\n✔ Formatted apps/generated-consumer-app-radar/src/ingest.js (prettier)\\n✔ Formatted apps/generated-consumer-app-radar/src/repository.js (prettier)\\n✔ Formatted apps/generated-consumer-app-radar/src/scoring.js (prettier)\\n✔ Formatted apps/generated-consumer-app-radar/src/server.js (prettier)\\n✔ Formatted apps/generated-consumer-app-radar/src/snapshots.js (prettier)\\n✔ Formatted apps/generated-consumer-app-radar/src/sources/apify.js (prettier)\\n✔ Formatted apps/generated-consumer-app-radar/src/sources/apple.js (prettier)\\n✔ Formatted apps/generated-consumer-app-radar/src/sources/social.js (prettier)\\n✔ Formatted apps/generated-consumer-app-radar/src/summary.js (prettier)\\n✔ Formatted apps/generated-consumer-app-radar/tests/api-fixture.test.js (prettier)\\n✔ Formatted apps/generated-consumer-app-radar/tests/scoring.test.js (prettier)\\n\",\n  \"stderr\": \"✖ 4 issues\\n✖ 2 unformatted files\\n\"\n}\n",
+              "message": "Script failed with exit code: 1\n\n## output\n{\n  \"ok\": false,\n  \"real_mode\": true,\n  \"allow_fallback\": false,\n  \"qlty_available\": true,\n  \"install_status\": null,\n  \"fmt_status\": 0,\n  \"check_status\": 1,\n  \"hard_failures\": [\n    \"Qlty check command failed in real mode\"\n  ],\n  \"stdout\": \"✔ Formatted apps/generated-consumer-app-radar/.data/apps.json (prettier)\\n✔ Formatted apps/generated-consumer-app-radar/README.md (markdownlint)\\n✔ Formatted apps/generated-consumer-app-radar/README.md (prettier)\\n✔ Formatted apps/generated-consumer-app-radar/fixtures/apps.json (prettier)\\n✔ Formatted apps/generated-consumer-app-radar/public/app.js (prettier)\\n✔ Formatted apps/generated-consumer-app-radar/public/index.html (prettier)\\n✔ Formatted apps/generated-consumer-app-radar/public/styles.css (prettier)\\n✔ Formatted apps/generated-consumer-app-radar/scripts/validate-artifacts.mjs (prettier)\\n✔ Formatted apps/generated-consumer-app-radar/src/evidence.js (prettier)\\n✔ Formatted apps/generated-consumer-app-radar/src/ingest.js (prettier)\\n✔ Formatted apps/generated-consumer-app-radar/src/repository.js (prettier)\\n✔ Formatted apps/generated-consumer-app-radar/src/scoring.js (prettier)\\n✔ Formatted apps/generated-consumer-app-radar/src/server.js (prettier)\\n✔ Formatted apps/generated-consumer-app-radar/src/snapshots.js (prettier)\\n✔ Formatted apps/generated-consumer-app-radar/src/sources/apify.js (prettier)\\n✔ Formatted apps/generated-consumer-app-radar/src/sources/apple.js (prettier)\\n✔ Formatted apps/generated-consumer-app-radar/src/sources/social.js (prettier)\\n✔ Formatted apps/generated-consumer-app-radar/src/summary.js (prettier)\\n✔ Formatted apps/generated-consumer-app-radar/tests/api-fixture.test.js (prettier)\\n✔ Formatted apps/generated-consumer-app-radar/tests/scoring.test.js (prettier)\\n\",\n  \"stderr\": \"✖ 1 issue\\n✖ 1 unformatted file\\n\"\n}\n",
               "failure_class": "deterministic"
             },
             "usage": null
           }
         },
-        "next_node_id": "qlty_gate",
+        "next_node_id": "generate_app",
         "node_visits": {
           "bootstrap_spec": 1,
           "spec_kitty_gate": 1,
@@ -2410,7 +2568,7 @@
           "wait_for_support_files": 1,
           "product_surface_gate": 2,
           "generate_app": 2,
-          "qlty_gate": 1,
+          "qlty_gate": 2,
           "start": 1
         }
       },
@@ -2635,6 +2793,43 @@
       },
       "state": "succeeded"
     },
+    "qlty_gate@2": {
+      "first_event_seq": 186,
+      "prompt": null,
+      "response": null,
+      "completion": null,
+      "provider_used": null,
+      "diff": null,
+      "script_invocation": {
+        "script": "node scripts/consumer-radar/qlty-gate.mjs 'apps/generated-consumer-app-radar' --real-mode 'true' --allow-fallback 'false'",
+        "command": "exec 2>&1\nnode scripts/consumer-radar/qlty-gate.mjs 'apps/generated-consumer-app-radar' --real-mode 'true' --allow-fallback 'false'",
+        "language": "shell"
+      },
+      "script_timing": {
+        "output": "blob://sha256/dc5dca6c02090dfe81fb84e71000a850032e313040578445aa9bcd26b4d391cf",
+        "exit_code": 1,
+        "duration_ms": 10286,
+        "termination": "exited",
+        "output_bytes": 1859,
+        "live_streaming": true
+      },
+      "parallel_results": null,
+      "output": null,
+      "output_bytes": 1859,
+      "live_streaming": true,
+      "termination": "exited",
+      "started_at": "2026-05-13T15:19:26.276774Z",
+      "handler": "command",
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "total_tokens": 0,
+        "reasoning_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "state": "running"
+    },
     "bootstrap_spec@1": {
       "first_event_seq": 29,
       "prompt": null,
@@ -2768,7 +2963,12 @@
       "first_event_seq": 176,
       "prompt": null,
       "response": null,
-      "completion": null,
+      "completion": {
+        "outcome": "succeeded",
+        "notes": "Script completed: node scripts/consumer-radar/assert-product-surface.mjs 'apps/generated-consumer-app-radar'",
+        "failure_reason": null,
+        "timestamp": "2026-05-13T15:19:22.226469Z"
+      },
       "provider_used": null,
       "diff": null,
       "script_invocation": {
@@ -2791,6 +2991,7 @@
       "termination": "exited",
       "started_at": "2026-05-13T15:19:20.144097Z",
       "handler": "command",
+      "duration_ms": 1986,
       "usage": {
         "input_tokens": 0,
         "output_tokens": 0,
@@ -2799,7 +3000,7 @@
         "cache_read_tokens": 0,
         "cache_write_tokens": 0
       },
-      "state": "running"
+      "state": "succeeded"
     },
     "spec_kitty_gate@1": {
       "first_event_seq": 40,
