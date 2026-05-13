@@ -787,11 +787,18 @@ write("src/ingest.js", [
   "import { rankApps } from './scoring.js';",
   "import { saveApps } from './repository.js';",
   "",
+  "const allowedModes = new Set(['fixture', 'live-smoke']);",
+  "",
   "export function loadFixtureApps() {",
-  "  return JSON.parse(readFileSync(new URL('../fixtures/apps.json', import.meta.url), 'utf8'));",
+  "  try {",
+  "    return JSON.parse(readFileSync(new URL('../fixtures/apps.json', import.meta.url), 'utf8'));",
+  "  } catch (error) {",
+  "    throw new Error('Fixture apps unavailable: ' + (error instanceof Error ? error.message : String(error)));",
+  "  }",
   "}",
   "",
   "export async function refreshApps({ mode = 'fixture' } = {}) {",
+  "  if (!allowedModes.has(mode)) throw new Error('Unsupported refresh mode: ' + mode);",
   "  const apps = loadFixtureApps();",
   "  const ranked = rankApps(apps).map((app, index) => ({ ...app, radarRank: index + 1, dataMode: mode }));",
   "  saveApps(ranked);",
@@ -814,9 +821,10 @@ write("src/server.js", [
   "const publicDir = resolve('public');",
   "const port = Number(process.env.PORT || 4317);",
   "const types = { '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css' };",
+  "const jsonHeaders = { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' };",
   "",
   "function sendJson(res, status, body) {",
-  "  res.writeHead(status, { 'Content-Type': 'application/json' });",
+  "  res.writeHead(status, jsonHeaders);",
   "  res.end(JSON.stringify(body));",
   "}",
   "",
@@ -832,6 +840,7 @@ write("src/server.js", [
   "const server = createServer(async (req, res) => {",
   "  const url = new URL(req.url, 'http://localhost');",
   "  try {",
+  "    if (req.method === 'OPTIONS') return sendJson(res, 204, {});",
   "    if (url.pathname === '/health') return sendJson(res, 200, { ok: true });",
   "    if (url.pathname === '/api/apps' && req.method === 'GET') return sendJson(res, 200, { apps: loadApps() });",
   "    if (url.pathname.startsWith('/api/apps/') && req.method === 'GET') {",
@@ -1067,6 +1076,8 @@ function argBool(name, fallback) {
 const appDir = process.argv[2] || "apps/generated-consumer-app-radar";
 const realMode = argBool("--real-mode", false);
 const allowFallback = argBool("--allow-fallback", true);
+const promptfooEvalTimeoutMs = process.env.PROMPTFOO_EVAL_TIMEOUT_MS || "45000";
+const promptfooMaxEvalTimeMs = process.env.PROMPTFOO_MAX_EVAL_TIME_MS || "120000";
 mkdirSync(".workflow/consumer-radar", { recursive: true });
 
 function run(cmd) {
@@ -1138,9 +1149,11 @@ if (promptfoo) {
     env: {
       ...process.env,
       OPENAI_API_KEY: process.env.OPENAI_API_KEY || process.env.OPENROUTER_API_KEY || "",
-      OPENAI_BASE_URL: process.env.OPENAI_BASE_URL || "https://openrouter.ai/api/v1"
+      OPENAI_BASE_URL: process.env.OPENAI_BASE_URL || "https://openrouter.ai/api/v1",
+      PROMPTFOO_EVAL_TIMEOUT_MS: promptfooEvalTimeoutMs,
+      PROMPTFOO_MAX_EVAL_TIME_MS: promptfooMaxEvalTimeMs
     },
-    timeout: 240000
+    timeout: Number(promptfooMaxEvalTimeMs) + 15000
   });
 }
 
@@ -1295,7 +1308,13 @@ for (const model of models) {
         max_tokens: 2200
       })
     });
-    const payload = await response.json().catch(() => ({}));
+    const payloadText = await response.text();
+    let payload = {};
+    try {
+      payload = payloadText ? JSON.parse(payloadText) : {};
+    } catch {
+      payload = {};
+    }
     const message = payload?.choices?.[0]?.message || {};
     const content = normalizeContent(message.content || message.reasoning || payload?.choices?.[0]?.text || "");
     const parsed = extractJson(content);
@@ -1309,7 +1328,8 @@ for (const model of models) {
       parsed,
       raw_excerpt: String(content).slice(0, 1200),
       error: response.ok ? null : payload?.error || payload,
-      payload_excerpt: content ? null : JSON.stringify(payload).slice(0, 1200)
+      payload_excerpt: content ? null : JSON.stringify(payload).slice(0, 1200),
+      payload_text_excerpt: payloadText.slice(0, 1200)
     };
     if (response.ok && parsed) break;
   } catch (error) {
@@ -1500,14 +1520,23 @@ providers:
       apiKeyEnvar: OPENROUTER_API_KEY
       temperature: 0
       max_tokens: 400
+      maxRetries: 0
+
+evaluateOptions:
+  maxConcurrency: 1
 
 prompts:
-  - "Evaluate whether the generated Consumer App Radar fixture identifies fast-growing consumer iPhone apps, growth signals, social strategy, review themes, and feature requests. Return a concise JSON verdict."
+  - |
+    Evaluate whether the generated Consumer App Radar fixture identifies fast-growing consumer iPhone apps, growth signals, social strategy, review themes, and feature requests.
+    Fixture JSON:
+    {{apps_fixture}}
+    Return a concise JSON verdict with the keys verdict, score, strengths, and gaps.
 
 tests:
   - description: "Fixture has complete opportunity evidence"
     vars:
       expected: "growth signals, social strategy, review themes, feature requests"
+      apps_fixture: file://../apps/generated-consumer-app-radar/fixtures/apps.json
     assert:
       - type: contains-any
         value: ["growth", "review", "social", "feature"]

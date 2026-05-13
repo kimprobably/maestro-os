@@ -118,7 +118,13 @@ for (const model of models) {
         max_tokens: 2200
       })
     });
-    const payload = await response.json().catch(() => ({}));
+    const payloadText = await response.text();
+    let payload = {};
+    try {
+      payload = payloadText ? JSON.parse(payloadText) : {};
+    } catch {
+      payload = {};
+    }
     const message = payload?.choices?.[0]?.message || {};
     const content = normalizeContent(message.content || message.reasoning || payload?.choices?.[0]?.text || "");
     const parsed = extractJson(content);
@@ -132,7 +138,8 @@ for (const model of models) {
       parsed,
       raw_excerpt: String(content).slice(0, 1200),
       error: response.ok ? null : payload?.error || payload,
-      payload_excerpt: content ? null : JSON.stringify(payload).slice(0, 1200)
+      payload_excerpt: content ? null : JSON.stringify(payload).slice(0, 1200),
+      payload_text_excerpt: payloadText.slice(0, 1200)
     };
     if (response.ok && parsed) break;
   } catch (error) {

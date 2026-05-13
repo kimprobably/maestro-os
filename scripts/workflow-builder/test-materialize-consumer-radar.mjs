@@ -58,6 +58,7 @@ const generateApp = readFileSync(resolve(outDir, "scripts/consumer-radar/generat
 const openRouterReview = readFileSync(resolve(outDir, "scripts/consumer-radar/openrouter-review.mjs"), "utf8");
 const reviewConsensus = readFileSync(resolve(outDir, "scripts/consumer-radar/review-consensus.mjs"), "utf8");
 const promptfooGate = readFileSync(resolve(outDir, "scripts/consumer-radar/promptfoo-or-fallback.mjs"), "utf8");
+const promptfooConfig = readFileSync(resolve(outDir, "evals/consumer-app-radar-quality.yaml"), "utf8");
 const qltyGate = readFileSync(resolve(outDir, "scripts/consumer-radar/qlty-gate.mjs"), "utf8");
 const artifactGate = readFileSync(resolve(outDir, "scripts/consumer-radar/validate-build-artifacts.mjs"), "utf8");
 
@@ -98,6 +99,9 @@ if (!openRouterReview.includes("realMode") || !openRouterReview.includes("proces
 if (!openRouterReview.includes("source_excerpts") || !openRouterReview.includes("do not claim an endpoint or file is missing")) {
   throw new Error("OpenRouter review must include generated source context for model reviewers");
 }
+if (!openRouterReview.includes("response.text()") || !openRouterReview.includes("payload_text_excerpt")) {
+  throw new Error("OpenRouter review must capture raw response text for empty or invalid provider payloads");
+}
 if (!reviewConsensus.includes("minimumActiveReviews") || !reviewConsensus.includes("active.length < minimumActiveReviews") || !reviewConsensus.includes(".fabro/scratch") || !reviewConsensus.includes("refs/heads/fabro/run/parallel")) {
   throw new Error("review consensus must fail when all model reviews are skipped and collect parallel branch artifacts");
 }
@@ -110,12 +114,23 @@ if (!reviewConsensus.includes("reports/consumer-radar/reviews")) {
 if (!promptfooGate.includes("allowFallback") || !promptfooGate.includes("Promptfoo failed in real mode")) {
   throw new Error("promptfoo gate must make fallback opt-in in real mode");
 }
+if (!promptfooGate.includes("PROMPTFOO_EVAL_TIMEOUT_MS") || !promptfooGate.includes("PROMPTFOO_MAX_EVAL_TIME_MS")) {
+  throw new Error("promptfoo gate must bound request and total eval runtime for CI");
+}
+if (!promptfooConfig.includes("apps_fixture") || !promptfooConfig.includes("file://../apps/generated-consumer-app-radar/fixtures/apps.json") || !promptfooConfig.includes("evaluateOptions")) {
+  throw new Error("promptfoo config must evaluate the generated fixture data with explicit CI bounds");
+}
 if (!qltyGate.includes("allowFallback") || !qltyGate.includes("Qlty unavailable in real mode")) {
   throw new Error("qlty gate must make unavailable qlty opt-in in real mode");
 }
 for (const text of ["src/sources/social.js", "src/snapshots.js", "src/evidence.js", "Growth Signals", "Review Pain", "Social Strategy"]) {
   if (!generateApp.includes(text)) {
     throw new Error(`generated app must include richer product surface marker: ${text}`);
+  }
+}
+for (const text of ["Access-Control-Allow-Origin", "allowedModes", "Fixture apps unavailable"]) {
+  if (!generateApp.includes(text)) {
+    throw new Error(`generated app must address review hardening marker: ${text}`);
   }
 }
 if (!artifactGate.includes("minimum_apps") || !artifactGate.includes("minimum_reports")) {

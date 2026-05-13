@@ -18,6 +18,8 @@ function argBool(name, fallback) {
 const appDir = process.argv[2] || "apps/generated-consumer-app-radar";
 const realMode = argBool("--real-mode", false);
 const allowFallback = argBool("--allow-fallback", true);
+const promptfooEvalTimeoutMs = process.env.PROMPTFOO_EVAL_TIMEOUT_MS || "45000";
+const promptfooMaxEvalTimeMs = process.env.PROMPTFOO_MAX_EVAL_TIME_MS || "120000";
 mkdirSync(".workflow/consumer-radar", { recursive: true });
 
 let promptfoo = spawnSync("sh", ["-lc", "command -v npx >/dev/null 2>&1"], { encoding: "utf8" }).status === 0;
@@ -28,9 +30,11 @@ if (promptfoo) {
     env: {
       ...process.env,
       OPENAI_API_KEY: process.env.OPENAI_API_KEY || process.env.OPENROUTER_API_KEY || "",
-      OPENAI_BASE_URL: process.env.OPENAI_BASE_URL || "https://openrouter.ai/api/v1"
+      OPENAI_BASE_URL: process.env.OPENAI_BASE_URL || "https://openrouter.ai/api/v1",
+      PROMPTFOO_EVAL_TIMEOUT_MS: promptfooEvalTimeoutMs,
+      PROMPTFOO_MAX_EVAL_TIME_MS: promptfooMaxEvalTimeMs
     },
-    timeout: 240000
+    timeout: Number(promptfooMaxEvalTimeMs) + 15000
   });
 }
 
