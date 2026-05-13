@@ -1,0 +1,5 @@
+{
+  "script": "node -e \"const fs=require('fs'); const report=JSON.parse(fs.readFileSync('.workflow/spike-workflow-registry.json','utf8')); if (!report.ok) throw new Error('registry report failed'); const lines=['# Spike Workflow Registry Smoke', '', 'workflow_count=' + report.workflow_count, 'failed_count=' + report.failed_count, '', ...report.workflows.map((item)=>'- ' + item.workflow + '=' + item.ok)]; fs.writeFileSync('.workflow/spike-workflow-registry-smoke.md', lines.join('\\n') + '\\n'); console.log(lines.join('\\n'));\"",
+  "command": "exec 2>&1\nnode -e \"const fs=require('fs'); const report=JSON.parse(fs.readFileSync('.workflow/spike-workflow-registry.json','utf8')); if (!report.ok) throw new Error('registry report failed'); const lines=['# Spike Workflow Registry Smoke', '', 'workflow_count=' + report.workflow_count, 'failed_count=' + report.failed_count, '', ...report.workflows.map((item)=>'- ' + item.workflow + '=' + item.ok)]; fs.writeFileSync('.workflow/spike-workflow-registry-smoke.md', lines.join('\\n') + '\\n'); console.log(lines.join('\\n'));\"",
+  "language": "shell"
+}
