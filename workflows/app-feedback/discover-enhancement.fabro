@@ -63,7 +63,13 @@ digraph EnhancementDiscovery {
     ]
     spec_join [shape=tripleoctagon, label="Spec Candidate Join", join_policy="wait_all"]
 
-    spec_eval_fanout [shape=component, label="Spec Eval Fanout"]
+    ensure_spec_candidates [
+        label="Ensure Spec Candidate Count",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="spec_fanout",
+        script="node scripts/app-feedback/ensure-enhancement-candidates.mjs --stage spec --dir .workflow/enhancement-discovery/spec-candidates --minimum '{{ inputs.minimum_spec_candidates|default('3') }}' --out .workflow/enhancement-discovery/evals/spec-candidate-ensure.json"
+    ]
     spec_eval_contract [
         label="Spec Contract Eval",
         shape=parallelogram,
@@ -76,7 +82,6 @@ digraph EnhancementDiscovery {
         class="eval",
         prompt="@../../prompts/app-feedback/eval-consensus.md"
     ]
-    spec_eval_join [shape=tripleoctagon, label="Spec Eval Join", join_policy="wait_all"]
     spec_eval_consensus [
         label="Spec Eval Consensus",
         class="eval",
@@ -97,6 +102,13 @@ digraph EnhancementDiscovery {
         prompt="@../../prompts/app-feedback/architecture-candidate-b.md"
     ]
     architecture_join [shape=tripleoctagon, label="Architecture Candidate Join", join_policy="wait_all"]
+    ensure_architecture_candidates [
+        label="Ensure Architecture Candidate Count",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="architecture_fanout",
+        script="node scripts/app-feedback/ensure-enhancement-candidates.mjs --stage architecture --dir .workflow/enhancement-discovery/architecture-candidates --minimum '{{ inputs.minimum_architecture_candidates|default('2') }}' --out .workflow/enhancement-discovery/evals/architecture-candidate-ensure.json"
+    ]
     architecture_eval_contract [
         label="Architecture Contract Eval",
         shape=parallelogram,
@@ -124,6 +136,13 @@ digraph EnhancementDiscovery {
         prompt="@../../prompts/app-feedback/workflow-candidate-b.md"
     ]
     workflow_join [shape=tripleoctagon, label="Workflow Candidate Join", join_policy="wait_all"]
+    ensure_workflow_candidates [
+        label="Ensure Workflow Candidate Count",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="workflow_fanout",
+        script="node scripts/app-feedback/ensure-enhancement-candidates.mjs --stage workflow --dir .workflow/enhancement-discovery/workflow-candidates --minimum '{{ inputs.minimum_workflow_candidates|default('2') }}' --out .workflow/enhancement-discovery/evals/workflow-candidate-ensure.json"
+    ]
     workflow_eval_contract [
         label="Workflow Contract Eval",
         shape=parallelogram,
@@ -222,28 +241,35 @@ digraph EnhancementDiscovery {
     spec_candidate_a -> spec_join
     spec_candidate_b -> spec_join
     spec_candidate_c -> spec_join
-    spec_join -> spec_eval_fanout
-    spec_eval_fanout -> spec_eval_contract
-    spec_eval_fanout -> spec_eval_model
-    spec_eval_contract -> spec_eval_join
-    spec_eval_model -> spec_eval_join
-    spec_eval_join -> spec_eval_consensus
+    spec_join -> ensure_spec_candidates
+    ensure_spec_candidates -> spec_eval_contract [condition="outcome=succeeded"]
+    ensure_spec_candidates -> spec_fanout [label="Re-spec"]
+    spec_eval_contract -> spec_eval_model [condition="outcome=succeeded"]
+    spec_eval_contract -> spec_fanout [label="Re-spec"]
+    spec_eval_model -> spec_eval_consensus [condition="outcome=succeeded"]
+    spec_eval_model -> spec_fanout [label="Re-spec"]
     spec_eval_consensus -> architecture_fanout [condition="outcome=succeeded"]
     spec_eval_consensus -> spec_fanout [label="Re-spec"]
     architecture_fanout -> architecture_candidate_a
     architecture_fanout -> architecture_candidate_b
     architecture_candidate_a -> architecture_join
     architecture_candidate_b -> architecture_join
-    architecture_join -> architecture_eval_contract
-    architecture_eval_contract -> architecture_eval_consensus
+    architecture_join -> ensure_architecture_candidates
+    ensure_architecture_candidates -> architecture_eval_contract [condition="outcome=succeeded"]
+    ensure_architecture_candidates -> architecture_fanout [label="Re-architect"]
+    architecture_eval_contract -> architecture_eval_consensus [condition="outcome=succeeded"]
+    architecture_eval_contract -> architecture_fanout [label="Re-architect"]
     architecture_eval_consensus -> workflow_fanout [condition="outcome=succeeded"]
     architecture_eval_consensus -> architecture_fanout [label="Re-architect"]
     workflow_fanout -> workflow_candidate_a
     workflow_fanout -> workflow_candidate_b
     workflow_candidate_a -> workflow_join
     workflow_candidate_b -> workflow_join
-    workflow_join -> workflow_eval_contract
-    workflow_eval_contract -> workflow_eval_consensus
+    workflow_join -> ensure_workflow_candidates
+    ensure_workflow_candidates -> workflow_eval_contract [condition="outcome=succeeded"]
+    ensure_workflow_candidates -> workflow_fanout [label="Re-workflow"]
+    workflow_eval_contract -> workflow_eval_consensus [condition="outcome=succeeded"]
+    workflow_eval_contract -> workflow_fanout [label="Re-workflow"]
     workflow_eval_consensus -> materialize_enhancement_workflow [condition="outcome=succeeded"]
     workflow_eval_consensus -> workflow_fanout [label="Re-workflow"]
     materialize_enhancement_workflow -> validate_enhancement_workflow [condition="outcome=succeeded"]

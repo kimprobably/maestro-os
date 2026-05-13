@@ -33,6 +33,7 @@ const requiredFiles = [
   "workflows/app-feedback/discover-enhancement.consumer-radar.toml",
   "scripts/app-feedback/analyze-enhancement-capabilities.mjs",
   "scripts/app-feedback/evaluate-enhancement-artifact.mjs",
+  "scripts/app-feedback/ensure-enhancement-candidates.mjs",
   "scripts/app-feedback/materialize-enhancement-workflow.mjs",
   "scripts/app-feedback/live-source-preflight.mjs",
   "scripts/app-feedback/promptfoo-workflow-quality.mjs",
@@ -102,11 +103,17 @@ for (const marker of [
   "spec_candidate_a",
   "spec_candidate_b",
   "spec_candidate_c",
-  "spec_eval_fanout",
+  "spec_eval_contract",
+  "spec_eval_model",
   "spec_eval_consensus",
+  "ensure_spec_candidates",
   "architecture_fanout",
+  "ensure_architecture_candidates",
+  "architecture_eval_contract",
   "architecture_eval_consensus",
   "workflow_fanout",
+  "ensure_workflow_candidates",
+  "workflow_eval_contract",
   "workflow_eval_consensus",
   "materialize_enhancement_workflow",
   "validate_enhancement_workflow",
@@ -117,6 +124,33 @@ for (const marker of [
   "promptfoo_workflow_quality",
 ]) {
   if (!workflow.includes(marker)) throw new Error(`workflow missing marker: ${marker}`);
+}
+
+for (const forbidden of [
+  "spec_eval_fanout -> spec_eval_contract",
+  "spec_eval_contract -> spec_eval_join",
+  "spec_eval_join -> spec_eval_consensus",
+]) {
+  if (workflow.includes(forbidden)) {
+    throw new Error(`strict eval contract gate must not be masked by fanout: ${forbidden}`);
+  }
+}
+
+for (const requiredEdge of [
+  "spec_join -> ensure_spec_candidates",
+  "ensure_spec_candidates -> spec_eval_contract",
+  "spec_eval_contract -> spec_eval_model",
+  "spec_eval_model -> spec_eval_consensus",
+  "architecture_join -> ensure_architecture_candidates",
+  "ensure_architecture_candidates -> architecture_eval_contract",
+  "architecture_eval_contract -> architecture_eval_consensus [condition=\"outcome=succeeded\"]",
+  "architecture_eval_contract -> architecture_fanout [label=\"Re-architect\"]",
+  "workflow_join -> ensure_workflow_candidates",
+  "ensure_workflow_candidates -> workflow_eval_contract",
+  "workflow_eval_contract -> workflow_eval_consensus [condition=\"outcome=succeeded\"]",
+  "workflow_eval_contract -> workflow_fanout [label=\"Re-workflow\"]",
+]) {
+  if (!workflow.includes(requiredEdge)) throw new Error(`missing strict eval edge: ${requiredEdge}`);
 }
 
 for (const marker of [

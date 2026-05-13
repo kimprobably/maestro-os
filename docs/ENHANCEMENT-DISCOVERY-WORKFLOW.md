@@ -25,7 +25,7 @@ EDD covers subjective quality: whether a spec is good enough, whether an archite
 
 ## Promptfoo Eval Contract
 
-The local EDD layer uses Promptfoo-compatible assets rather than Braintrust:
+The local EDD layer uses Promptfoo-compatible assets:
 
 - `evals/workflow-quality/datasets/enhancement-discovery-golden.jsonl` is the golden dataset.
 - `evals/workflow-quality/enhancement-discovery.yaml` is the Promptfoo workflow-quality eval.
@@ -41,6 +41,8 @@ Every deterministic contract eval writes lineage:
 - score delta and max allowed regression
 
 The workflow blocks if a stage drops below `minimum_eval_score` or regresses more than `max_eval_regression` from its baseline. Promptfoo runs as an additional workflow-quality gate, with a deterministic fallback that still requires the lineage and baseline artifacts to be present.
+
+Deterministic contract gates run sequentially before model-judge consensus. Candidate fanout may partially fail because of model availability, so `ensure-enhancement-candidates.mjs` fills missing candidate files with fallback candidates that include explicit provenance. This keeps the workflow moving while preserving auditability; the contract eval still sees the final candidate count, scores, baseline deltas, and fallback evidence.
 
 ## Consumer Radar Target
 

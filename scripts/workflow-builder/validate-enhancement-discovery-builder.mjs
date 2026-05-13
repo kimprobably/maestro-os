@@ -6,6 +6,7 @@ const required = [
   "workflows/app-feedback/discover-enhancement.consumer-radar.toml",
   "scripts/app-feedback/analyze-enhancement-capabilities.mjs",
   "scripts/app-feedback/evaluate-enhancement-artifact.mjs",
+  "scripts/app-feedback/ensure-enhancement-candidates.mjs",
   "scripts/app-feedback/materialize-enhancement-workflow.mjs",
   "scripts/app-feedback/live-source-preflight.mjs",
   "scripts/app-feedback/promptfoo-workflow-quality.mjs",
@@ -32,7 +33,8 @@ const missing = required.filter((file) => !existsSync(file));
 const workflow = existsSync(required[0]) ? readFileSync(required[0], "utf8") : "";
 const toml = existsSync(required[1]) ? readFileSync(required[1], "utf8") : "";
 const evaluator = existsSync(required[3]) ? readFileSync(required[3], "utf8") : "";
-const materializer = existsSync(required[4]) ? readFileSync(required[4], "utf8") : "";
+const materializerPath = "scripts/app-feedback/materialize-enhancement-workflow.mjs";
+const materializer = existsSync(materializerPath) ? readFileSync(materializerPath, "utf8") : "";
 const docsPath = "docs/ENHANCEMENT-DISCOVERY-WORKFLOW.md";
 const docs = existsSync(docsPath) ? readFileSync(docsPath, "utf8") : "";
 const prompts = required
@@ -43,11 +45,17 @@ const prompts = required
 const workflowMarkers = [
   "capability_audit",
   "spec_fanout",
-  "spec_eval_fanout",
+  "spec_eval_contract",
+  "spec_eval_model",
   "spec_eval_consensus",
+  "ensure_spec_candidates",
   "architecture_fanout",
+  "ensure_architecture_candidates",
+  "architecture_eval_contract",
   "architecture_eval_consensus",
   "workflow_fanout",
+  "ensure_workflow_candidates",
+  "workflow_eval_contract",
   "workflow_eval_consensus",
   "materialize_enhancement_workflow",
   "validate_enhancement_workflow",
@@ -57,6 +65,27 @@ const workflowMarkers = [
   "final_eval_consensus",
 ];
 const missingWorkflowMarkers = workflowMarkers.filter((marker) => !workflow.includes(marker));
+const forbiddenMaskedGates = [
+  "spec_eval_fanout -> spec_eval_contract",
+  "spec_eval_contract -> spec_eval_join",
+  "spec_eval_join -> spec_eval_consensus",
+].filter((edge) => workflow.includes(edge));
+
+const strictEvalEdges = [
+  "spec_join -> ensure_spec_candidates",
+  "ensure_spec_candidates -> spec_eval_contract",
+  "spec_eval_contract -> spec_eval_model",
+  "spec_eval_model -> spec_eval_consensus",
+  "architecture_join -> ensure_architecture_candidates",
+  "ensure_architecture_candidates -> architecture_eval_contract",
+  "architecture_eval_contract -> architecture_eval_consensus [condition=\"outcome=succeeded\"]",
+  "architecture_eval_contract -> architecture_fanout [label=\"Re-architect\"]",
+  "workflow_join -> ensure_workflow_candidates",
+  "ensure_workflow_candidates -> workflow_eval_contract",
+  "workflow_eval_contract -> workflow_eval_consensus [condition=\"outcome=succeeded\"]",
+  "workflow_eval_contract -> workflow_fanout [label=\"Re-workflow\"]",
+];
+const missingStrictEvalEdges = strictEvalEdges.filter((edge) => !workflow.includes(edge));
 
 const configMarkers = [
   "eval_driven_development",
@@ -118,6 +147,8 @@ const report = {
   ok:
     missing.length === 0 &&
     missingWorkflowMarkers.length === 0 &&
+    forbiddenMaskedGates.length === 0 &&
+    missingStrictEvalEdges.length === 0 &&
     missingConfigMarkers.length === 0 &&
     missingEvalMarkers.length === 0 &&
     missingLineageMarkers.length === 0 &&
@@ -125,6 +156,8 @@ const report = {
     !leaks,
   missing,
   missing_workflow_markers: missingWorkflowMarkers,
+  forbidden_masked_gates: forbiddenMaskedGates,
+  missing_strict_eval_edges: missingStrictEvalEdges,
   missing_config_markers: missingConfigMarkers,
   missing_eval_markers: missingEvalMarkers,
   missing_lineage_markers: missingLineageMarkers,
