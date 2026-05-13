@@ -3,10 +3,10 @@ digraph WorkflowBuilder {
         goal="Build or adapt a Fabro workflow from a vague product goal",
         persona="workflow-builder",
         inputs="target, output_root",
-        outputs="generated_workflow, generated_supporting_code, validation_report, feedback_enhancement_workflow",
+        outputs="generated_workflow, generated_supporting_code, validation_report, feedback_enhancement_workflow, enhancement_discovery_workflow",
         default_max_retries=2,
         retry_target="materialize_consumer_radar",
-        fallback_retry_target="materialize_app_feedback_enhancement",
+        fallback_retry_target="materialize_enhancement_discovery",
         model_stylesheet="
             *       { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: low; }
             .coding { provider: openrouter; model: qwen/qwen3.6-plus; reasoning_effort: high; }
@@ -23,7 +23,7 @@ digraph WorkflowBuilder {
         shape=parallelogram,
         goal_gate=true,
         retry_target="define_quality_bar",
-        script="mkdir -p .workflow/workflow-builder; node -e \"const fs=require('fs'); const quality={ok:true,target:'{{ inputs.target|default('consumer-app-radar') }}', requirements:['Fabro owns the app build process','repository-relative paths','Spec Kitty recorded','Product surface gate','Feedback enhancement workflow','Qlty gate','Promptfoo or fallback eval','OpenRouter Kimi/Qwen/DeepSeek review fanout','no hardcoded secrets']}; fs.writeFileSync('.workflow/workflow-builder/quality-bar.json', JSON.stringify(quality,null,2)+'\\n'); console.log(JSON.stringify(quality));\""
+        script="mkdir -p .workflow/workflow-builder; node -e \"const fs=require('fs'); const quality={ok:true,target:'{{ inputs.target|default('consumer-app-radar') }}', requirements:['Fabro owns the app build process','repository-relative paths','Spec Kitty recorded','Product surface gate','Feedback enhancement workflow','Eval-driven enhancement discovery workflow','Spec/architecture/workflow candidate fanout','Code simplification stages','Qlty gate','Promptfoo or fallback eval','OpenRouter Kimi/Qwen/DeepSeek review fanout','no hardcoded secrets']}; fs.writeFileSync('.workflow/workflow-builder/quality-bar.json', JSON.stringify(quality,null,2)+'\\n'); console.log(JSON.stringify(quality));\""
     ]
 
     materialize_consumer_radar [
@@ -42,12 +42,20 @@ digraph WorkflowBuilder {
         script="node scripts/workflow-builder/materialize-app-feedback-enhancement.mjs --output-root '{{ inputs.output_root|default('.') }}'"
     ]
 
+    materialize_enhancement_discovery [
+        label="Materialize Eval-Driven Enhancement Discovery Workflow",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="materialize_enhancement_discovery",
+        script="node scripts/workflow-builder/materialize-enhancement-discovery.mjs --output-root '{{ inputs.output_root|default('.') }}'"
+    ]
+
     wait_for_builder_files [
         label="Wait For Builder Files",
         shape=parallelogram,
         goal_gate=true,
         retry_target="wait_for_builder_files",
-        script="for i in $(seq 1 90); do if [ -f scripts/workflow-builder/materialize-consumer-radar.mjs ] && [ -f scripts/workflow-builder/materialize-app-feedback-enhancement.mjs ]; then echo builder-files-ready; exit 0; fi; sleep 2; done; echo 'missing builder support files' >&2; exit 1"
+        script="for i in $(seq 1 90); do if [ -f scripts/workflow-builder/materialize-consumer-radar.mjs ] && [ -f scripts/workflow-builder/materialize-app-feedback-enhancement.mjs ] && [ -f scripts/workflow-builder/materialize-enhancement-discovery.mjs ]; then echo builder-files-ready; exit 0; fi; sleep 2; done; echo 'missing builder support files' >&2; exit 1"
     ]
 
     validate_generated [
@@ -66,6 +74,14 @@ digraph WorkflowBuilder {
         script="node scripts/workflow-builder/validate-app-feedback-builder.mjs"
     ]
 
+    validate_enhancement_discovery [
+        label="Validate Enhancement Discovery Workflow",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="materialize_enhancement_discovery",
+        script="node scripts/workflow-builder/validate-enhancement-discovery-builder.mjs"
+    ]
+
     smoke_generate_app [
         label="Smoke Generated App Generator",
         shape=parallelogram,
@@ -79,7 +95,7 @@ digraph WorkflowBuilder {
         shape=parallelogram,
         goal_gate=true,
         retry_target="validate_generated",
-        script="node -e \"const fs=require('fs'); const out='.workflow/workflow-builder/handoff.json'; const handoff={ok:true, generated_workflow:'workflows/consumer-radar/build-consumer-app-radar.fabro', generated_run_config:'workflows/consumer-radar/build-consumer-app-radar.toml', feedback_workflow:'workflows/app-feedback/enhance-app-from-feedback.fabro', feedback_run_config:'workflows/app-feedback/enhance-app-from-feedback.consumer-radar.toml', next:'Run the generated workflow through Fabro on Railway/Daytona, then use the feedback workflow to enhance any generated app', reports:['.workflow/workflow-builder/consumer-radar-report.json','.workflow/workflow-builder/validation.json','.workflow/workflow-builder/app-feedback-enhancement-report.json','.workflow/workflow-builder/app-feedback-validation.json','.workflow/consumer-radar/native-checks.json']}; fs.writeFileSync(out, JSON.stringify(handoff,null,2)+'\\n'); console.log(JSON.stringify(handoff));\""
+        script="node -e \"const fs=require('fs'); const out='.workflow/workflow-builder/handoff.json'; const handoff={ok:true, generated_workflow:'workflows/consumer-radar/build-consumer-app-radar.fabro', generated_run_config:'workflows/consumer-radar/build-consumer-app-radar.toml', feedback_workflow:'workflows/app-feedback/enhance-app-from-feedback.fabro', feedback_run_config:'workflows/app-feedback/enhance-app-from-feedback.consumer-radar.toml', enhancement_discovery_workflow:'workflows/app-feedback/discover-enhancement.fabro', enhancement_discovery_run_config:'workflows/app-feedback/discover-enhancement.consumer-radar.toml', generated_live_enrichment_workflow:'workflows/consumer-radar/live-enrichment.fabro', next:'Run the generated app workflow through Fabro, then use the eval-driven enhancement discovery workflow for non-trivial product feedback', reports:['.workflow/workflow-builder/consumer-radar-report.json','.workflow/workflow-builder/validation.json','.workflow/workflow-builder/app-feedback-enhancement-report.json','.workflow/workflow-builder/app-feedback-validation.json','.workflow/workflow-builder/enhancement-discovery-report.json','.workflow/workflow-builder/enhancement-discovery-validation.json','.workflow/consumer-radar/native-checks.json']}; fs.writeFileSync(out, JSON.stringify(handoff,null,2)+'\\n'); console.log(JSON.stringify(handoff));\""
     ]
 
     start -> define_quality_bar
@@ -89,12 +105,16 @@ digraph WorkflowBuilder {
     wait_for_builder_files -> wait_for_builder_files [label="Retry", loop_restart=true]
     materialize_consumer_radar -> materialize_app_feedback_enhancement [condition="outcome=succeeded"]
     materialize_consumer_radar -> materialize_consumer_radar [label="Retry", loop_restart=true]
-    materialize_app_feedback_enhancement -> validate_generated [condition="outcome=succeeded"]
+    materialize_app_feedback_enhancement -> materialize_enhancement_discovery [condition="outcome=succeeded"]
     materialize_app_feedback_enhancement -> materialize_app_feedback_enhancement [label="Retry", loop_restart=true]
+    materialize_enhancement_discovery -> validate_generated [condition="outcome=succeeded"]
+    materialize_enhancement_discovery -> materialize_enhancement_discovery [label="Retry", loop_restart=true]
     validate_generated -> validate_feedback_enhancement [condition="outcome=succeeded"]
     validate_generated -> materialize_consumer_radar [label="Fix"]
-    validate_feedback_enhancement -> smoke_generate_app [condition="outcome=succeeded"]
+    validate_feedback_enhancement -> validate_enhancement_discovery [condition="outcome=succeeded"]
     validate_feedback_enhancement -> materialize_app_feedback_enhancement [label="Fix"]
+    validate_enhancement_discovery -> smoke_generate_app [condition="outcome=succeeded"]
+    validate_enhancement_discovery -> materialize_enhancement_discovery [label="Fix"]
     smoke_generate_app -> publish_builder_handoff [condition="outcome=succeeded"]
     smoke_generate_app -> materialize_consumer_radar [label="Fix"]
     publish_builder_handoff -> exit [condition="outcome=succeeded"]
