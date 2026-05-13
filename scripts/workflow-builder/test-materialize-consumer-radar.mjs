@@ -124,7 +124,7 @@ if (!promptfooGate.includes("PROMPTFOO_EVAL_TIMEOUT_MS") || !promptfooGate.inclu
 if (!promptfooGate.includes("reports/consumer-radar/quality/promptfoo-report.json")) {
   throw new Error("promptfoo gate must write a tracked quality report");
 }
-if (!promptfooConfig.includes("apps_fixture") || !promptfooConfig.includes("file://../apps/generated-consumer-app-radar/fixtures/apps.json") || !promptfooConfig.includes("evaluateOptions")) {
+if (!promptfooConfig.includes("apps_fixture") || !promptfooConfig.includes("covered_signals") || !promptfooConfig.includes("file://../apps/generated-consumer-app-radar/fixtures/apps.json") || !promptfooConfig.includes("evaluateOptions")) {
   throw new Error("promptfoo config must evaluate the generated fixture data with explicit CI bounds");
 }
 if (!qltyGate.includes("allowFallback") || !qltyGate.includes("Qlty unavailable in real mode")) {

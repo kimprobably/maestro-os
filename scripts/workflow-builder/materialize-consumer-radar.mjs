@@ -1564,7 +1564,9 @@ prompts:
     Evaluate whether the generated Consumer App Radar fixture identifies fast-growing consumer iPhone apps, growth signals, social strategy, review themes, and feature requests.
     Fixture JSON:
     {{apps_fixture}}
-    Return a concise JSON verdict with the keys verdict, score, strengths, and gaps.
+    Return valid JSON only, with no markdown fences. Use this exact shape:
+    {"verdict":"APPROVE","score":0.0,"covered_signals":["growth","review","social","feature"],"strengths":[],"gaps":[]}
+    The score must be a decimal from 0 to 1, and covered_signals must include the exact lowercase words growth, review, social, and feature when the fixture covers them.
 
 tests:
   - description: "Fixture has complete opportunity evidence"
@@ -1572,7 +1574,7 @@ tests:
       expected: "growth signals, social strategy, review themes, feature requests"
       apps_fixture: file://../apps/generated-consumer-app-radar/fixtures/apps.json
     assert:
-      - type: contains-any
+      - type: contains-all
         value: ["growth", "review", "social", "feature"]
       - type: llm-rubric
         value: "Output should be useful to a consumer app factory deciding what to investigate next."
