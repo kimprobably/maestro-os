@@ -1,0 +1,951 @@
+{
+  "title": "Build Consumer App Radar from spec with CI, eval, and model review",
+  "spec": {
+    "run_id": "01KRGFTABSM0R1X5CHQQA1Z76E",
+    "settings": {
+      "project": {
+        "name": null,
+        "description": null,
+        "metadata": {}
+      },
+      "workflow": {
+        "name": null,
+        "description": null,
+        "graph": "workflow.fabro",
+        "metadata": {}
+      },
+      "run": {
+        "goal": {
+          "type": "inline",
+          "value": "Build Consumer App Radar from spec with CI, eval, and model review"
+        },
+        "working_dir": null,
+        "metadata": {},
+        "inputs": {
+          "allow_fixture_fallback": true,
+          "minimum_active_reviews": "2",
+          "allow_quality_fallback": true,
+          "app_dir": "apps/generated-consumer-app-radar",
+          "spec_path": "specs/consumer-app-radar/spec.md",
+          "real_mode": "true"
+        },
+        "model": {
+          "provider": "anthropic",
+          "name": "claude-sonnet-4-6",
+          "fallbacks": []
+        },
+        "git": {
+          "author": null
+        },
+        "prepare": {
+          "commands": [],
+          "timeout_ms": 300000
+        },
+        "execution": {
+          "mode": "normal",
+          "approval": "prompt"
+        },
+        "checkpoint": {
+          "exclude_globs": []
+        },
+        "sandbox": {
+          "provider": "daytona",
+          "preserve": true,
+          "stop_on_terminal": true,
+          "devcontainer": false,
+          "env": {
+            "OPENROUTER_API_KEY": "{{ env.OPENROUTER_API_KEY }}",
+            "APIFY_INSTAGRAM_ACTOR": "apify/instagram-scraper",
+            "APIFY_TIKTOK_ACTOR": "clockworks/tiktok-scraper",
+            "APIFY_APPSTORE_ACTOR": "crawlerbros/appstore-scraper",
+            "PROMPTFOO_DISABLE_TELEMETRY": "1",
+            "APIFY_TOKEN": "{{ env.APIFY_TOKEN }}"
+          },
+          "docker": {
+            "image": "buildpack-deps:noble",
+            "network_mode": null,
+            "memory_limit": 4000000000,
+            "cpu_quota": 200000,
+            "env_vars": {},
+            "skip_clone": false
+          },
+          "daytona": {
+            "auto_stop_interval": 60,
+            "labels": {},
+            "snapshot": {
+              "name": "maestro-code-factory",
+              "cpu": null,
+              "memory_gb": null,
+              "disk_gb": null,
+              "dockerfile": {
+                "type": "inline",
+                "value": "FROM node:22-bookworm\nRUN apt-get update && apt-get install -y bash ca-certificates curl git jq ripgrep python3 python3-pip pipx openssh-client && rm -rf /var/lib/apt/lists/*\nRUN npm install -g promptfoo @openai/codex @anthropic-ai/claude-code\nRUN curl -fsSL https://qlty.sh | sh && ln -sf /root/.qlty/bin/qlty /usr/local/bin/qlty\n"
+              }
+            },
+            "network": null,
+            "skip_clone": false
+          }
+        },
+        "notifications": {},
+        "interviews": {
+          "provider": null,
+          "slack": null
+        },
+        "agent": {
+          "permissions": null,
+          "mcps": {}
+        },
+        "hooks": [],
+        "scm": {
+          "provider": null,
+          "owner": null,
+          "repository": null,
+          "github": null
+        },
+        "pull_request": null,
+        "artifacts": {
+          "include": []
+        },
+        "integrations": {
+          "github": {
+            "permissions": {}
+          }
+        }
+      }
+    },
+    "graph": {
+      "name": "ConsumerAppRadarBuild",
+      "nodes": {
+        "generate_app": {
+          "id": "generate_app",
+          "attrs": {
+            "provider": {
+              "String": "openrouter"
+            },
+            "goal_gate": {
+              "Boolean": true
+            },
+            "retry_target": {
+              "String": "generate_app"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "label": {
+              "String": "Generate App"
+            },
+            "model": {
+              "String": "anthropic/claude-haiku-4-5"
+            },
+            "shape": {
+              "String": "parallelogram"
+            },
+            "script": {
+              "String": "node scripts/consumer-radar/generate-app.mjs --app-dir 'apps/generated-consumer-app-radar'"
+            }
+          }
+        },
+        "exit": {
+          "id": "exit",
+          "attrs": {
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "label": {
+              "String": "Exit"
+            },
+            "shape": {
+              "String": "Msquare"
+            },
+            "model": {
+              "String": "anthropic/claude-haiku-4-5"
+            },
+            "provider": {
+              "String": "openrouter"
+            }
+          }
+        },
+        "publish_handoff": {
+          "id": "publish_handoff",
+          "attrs": {
+            "provider": {
+              "String": "openrouter"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "retry_target": {
+              "String": "review_consensus"
+            },
+            "model": {
+              "String": "anthropic/claude-haiku-4-5"
+            },
+            "script": {
+              "String": "node -e \"const fs=require('fs'); const path=require('path'); const app='apps/generated-consumer-app-radar'; const out='.workflow/consumer-radar/handoff.json'; fs.mkdirSync(path.dirname(out),{recursive:true}); fs.writeFileSync(out, JSON.stringify({ok:true, app_dir:app, run_dir:process.cwd(), reports:['.workflow/consumer-radar/native-checks.json','.workflow/consumer-radar/qlty-report.json','.workflow/consumer-radar/promptfoo-report.json','reports/consumer-radar/review-consensus.json'], next:['Run npm start inside the generated app','Use POST /api/refresh with mode=live after Apify actors are tuned']}, null, 2)+'\\n'); console.log(fs.readFileSync(out,'utf8'));\""
+            },
+            "label": {
+              "String": "Publish Handoff"
+            },
+            "shape": {
+              "String": "parallelogram"
+            },
+            "goal_gate": {
+              "Boolean": true
+            }
+          }
+        },
+        "review_qwen": {
+          "id": "review_qwen",
+          "attrs": {
+            "model": {
+              "String": "deepseek/deepseek-v4-flash"
+            },
+            "provider": {
+              "String": "openrouter"
+            },
+            "script": {
+              "String": "node scripts/consumer-radar/openrouter-review.mjs --model qwen/qwen3.6-plus --role implementation_quality --app-dir 'apps/generated-consumer-app-radar' --output reports/consumer-radar/reviews/qwen.json --real-mode 'true'"
+            },
+            "label": {
+              "String": "Qwen Review"
+            },
+            "shape": {
+              "String": "parallelogram"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "class": {
+              "String": "cheap"
+            }
+          },
+          "classes": [
+            "cheap"
+          ]
+        },
+        "review_kimi": {
+          "id": "review_kimi",
+          "attrs": {
+            "class": {
+              "String": "cheap"
+            },
+            "script": {
+              "String": "node scripts/consumer-radar/openrouter-review.mjs --model moonshotai/kimi-k2.6 --role market_strategy --app-dir 'apps/generated-consumer-app-radar' --output reports/consumer-radar/reviews/kimi.json --real-mode 'true'"
+            },
+            "model": {
+              "String": "deepseek/deepseek-v4-flash"
+            },
+            "label": {
+              "String": "Kimi Review"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "provider": {
+              "String": "openrouter"
+            },
+            "shape": {
+              "String": "parallelogram"
+            }
+          },
+          "classes": [
+            "cheap"
+          ]
+        },
+        "wait_for_support_files": {
+          "id": "wait_for_support_files",
+          "attrs": {
+            "model": {
+              "String": "anthropic/claude-haiku-4-5"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "script": {
+              "String": "for i in $(seq 1 90); do if [ -f scripts/consumer-radar/generate-app.mjs ] && [ -f 'specs/consumer-app-radar/spec.md' ]; then echo support-files-ready; exit 0; fi; sleep 2; done; echo 'missing consumer radar support files' >&2; exit 1"
+            },
+            "retry_target": {
+              "String": "wait_for_support_files"
+            },
+            "provider": {
+              "String": "openrouter"
+            },
+            "shape": {
+              "String": "parallelogram"
+            },
+            "goal_gate": {
+              "Boolean": true
+            },
+            "label": {
+              "String": "Wait For Support Files"
+            }
+          }
+        },
+        "review_consensus": {
+          "id": "review_consensus",
+          "attrs": {
+            "label": {
+              "String": "Review Consensus"
+            },
+            "script": {
+              "String": "node scripts/consumer-radar/review-consensus.mjs --reviews reports/consumer-radar/reviews --output reports/consumer-radar/review-consensus.json --minimum-active-reviews '2'"
+            },
+            "retry_target": {
+              "String": "generate_app"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "model": {
+              "String": "anthropic/claude-haiku-4-5"
+            },
+            "shape": {
+              "String": "parallelogram"
+            },
+            "goal_gate": {
+              "Boolean": true
+            },
+            "provider": {
+              "String": "openrouter"
+            }
+          }
+        },
+        "data_source_smoke": {
+          "id": "data_source_smoke",
+          "attrs": {
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "model": {
+              "String": "anthropic/claude-haiku-4-5"
+            },
+            "goal_gate": {
+              "Boolean": true
+            },
+            "script": {
+              "String": "node scripts/consumer-radar/data-source-smoke.mjs --output .workflow/consumer-radar/data-source-smoke.json --real-mode 'true' --allow-fixture-fallback 'true'"
+            },
+            "provider": {
+              "String": "openrouter"
+            },
+            "label": {
+              "String": "Data Source Smoke"
+            },
+            "shape": {
+              "String": "parallelogram"
+            },
+            "retry_target": {
+              "String": "data_source_smoke"
+            }
+          }
+        },
+        "spec_kitty_gate": {
+          "id": "spec_kitty_gate",
+          "attrs": {
+            "retry_target": {
+              "String": "bootstrap_spec"
+            },
+            "provider": {
+              "String": "openrouter"
+            },
+            "script": {
+              "String": "node scripts/consumer-radar/bootstrap-spec.mjs --spec 'specs/consumer-app-radar/spec.md' --app-dir 'apps/generated-consumer-app-radar' --spec-kitty"
+            },
+            "label": {
+              "String": "Spec Kitty Gate"
+            },
+            "goal_gate": {
+              "Boolean": true
+            },
+            "model": {
+              "String": "anthropic/claude-haiku-4-5"
+            },
+            "shape": {
+              "String": "parallelogram"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            }
+          }
+        },
+        "native_checks": {
+          "id": "native_checks",
+          "attrs": {
+            "goal_gate": {
+              "Boolean": true
+            },
+            "label": {
+              "String": "Native Checks"
+            },
+            "shape": {
+              "String": "parallelogram"
+            },
+            "provider": {
+              "String": "openrouter"
+            },
+            "model": {
+              "String": "anthropic/claude-haiku-4-5"
+            },
+            "retry_target": {
+              "String": "generate_app"
+            },
+            "script": {
+              "String": "node scripts/consumer-radar/run-native-checks.mjs 'apps/generated-consumer-app-radar'"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            }
+          }
+        },
+        "promptfoo_gate": {
+          "id": "promptfoo_gate",
+          "attrs": {
+            "script": {
+              "String": "node scripts/consumer-radar/promptfoo-or-fallback.mjs 'apps/generated-consumer-app-radar' --real-mode 'true' --allow-fallback 'true'"
+            },
+            "label": {
+              "String": "Promptfoo Gate"
+            },
+            "shape": {
+              "String": "parallelogram"
+            },
+            "model": {
+              "String": "anthropic/claude-haiku-4-5"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "provider": {
+              "String": "openrouter"
+            },
+            "goal_gate": {
+              "Boolean": true
+            },
+            "retry_target": {
+              "String": "generate_app"
+            }
+          }
+        },
+        "bootstrap_spec": {
+          "id": "bootstrap_spec",
+          "attrs": {
+            "model": {
+              "String": "anthropic/claude-haiku-4-5"
+            },
+            "goal_gate": {
+              "Boolean": true
+            },
+            "label": {
+              "String": "Bootstrap Spec"
+            },
+            "retry_target": {
+              "String": "bootstrap_spec"
+            },
+            "script": {
+              "String": "node scripts/consumer-radar/bootstrap-spec.mjs --spec 'specs/consumer-app-radar/spec.md' --app-dir 'apps/generated-consumer-app-radar'"
+            },
+            "provider": {
+              "String": "openrouter"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "shape": {
+              "String": "parallelogram"
+            }
+          }
+        },
+        "review_deepseek": {
+          "id": "review_deepseek",
+          "attrs": {
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "provider": {
+              "String": "openrouter"
+            },
+            "script": {
+              "String": "node scripts/consumer-radar/openrouter-review.mjs --model deepseek/deepseek-v4-pro,deepseek/deepseek-v4-flash --role simplification_and_ci --app-dir 'apps/generated-consumer-app-radar' --output reports/consumer-radar/reviews/deepseek.json --real-mode 'true'"
+            },
+            "class": {
+              "String": "cheap"
+            },
+            "model": {
+              "String": "deepseek/deepseek-v4-flash"
+            },
+            "label": {
+              "String": "DeepSeek Review"
+            },
+            "shape": {
+              "String": "parallelogram"
+            }
+          },
+          "classes": [
+            "cheap"
+          ]
+        },
+        "review_fanout": {
+          "id": "review_fanout",
+          "attrs": {
+            "model": {
+              "String": "anthropic/claude-haiku-4-5"
+            },
+            "shape": {
+              "String": "component"
+            },
+            "label": {
+              "String": "Parallel Review Fanout"
+            },
+            "provider": {
+              "String": "openrouter"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            }
+          }
+        },
+        "review_join": {
+          "id": "review_join",
+          "attrs": {
+            "shape": {
+              "String": "tripleoctagon"
+            },
+            "join_policy": {
+              "String": "wait_all"
+            },
+            "provider": {
+              "String": "openrouter"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "model": {
+              "String": "anthropic/claude-haiku-4-5"
+            },
+            "label": {
+              "String": "Review Join"
+            }
+          }
+        },
+        "qlty_gate": {
+          "id": "qlty_gate",
+          "attrs": {
+            "model": {
+              "String": "anthropic/claude-haiku-4-5"
+            },
+            "retry_target": {
+              "String": "generate_app"
+            },
+            "provider": {
+              "String": "openrouter"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "shape": {
+              "String": "parallelogram"
+            },
+            "label": {
+              "String": "Qlty Gate"
+            },
+            "script": {
+              "String": "node scripts/consumer-radar/qlty-gate.mjs 'apps/generated-consumer-app-radar' --real-mode 'true' --allow-fallback 'true'"
+            },
+            "goal_gate": {
+              "Boolean": true
+            }
+          }
+        },
+        "start": {
+          "id": "start",
+          "attrs": {
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "shape": {
+              "String": "Mdiamond"
+            },
+            "label": {
+              "String": "Start"
+            },
+            "model": {
+              "String": "anthropic/claude-haiku-4-5"
+            },
+            "provider": {
+              "String": "openrouter"
+            }
+          }
+        },
+        "artifact_gate": {
+          "id": "artifact_gate",
+          "attrs": {
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "provider": {
+              "String": "openrouter"
+            },
+            "model": {
+              "String": "anthropic/claude-haiku-4-5"
+            },
+            "script": {
+              "String": "node scripts/consumer-radar/validate-build-artifacts.mjs 'apps/generated-consumer-app-radar' --real-mode 'true' --minimum-apps 6 --minimum-reports 4"
+            },
+            "label": {
+              "String": "Artifact Gate"
+            },
+            "goal_gate": {
+              "Boolean": true
+            },
+            "retry_target": {
+              "String": "generate_app"
+            },
+            "shape": {
+              "String": "parallelogram"
+            }
+          }
+        }
+      },
+      "edges": [
+        {
+          "from": "start",
+          "to": "wait_for_support_files",
+          "attrs": {}
+        },
+        {
+          "from": "wait_for_support_files",
+          "to": "bootstrap_spec",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "wait_for_support_files",
+          "to": "wait_for_support_files",
+          "attrs": {
+            "loop_restart": {
+              "Boolean": true
+            },
+            "label": {
+              "String": "Retry"
+            }
+          }
+        },
+        {
+          "from": "bootstrap_spec",
+          "to": "spec_kitty_gate",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "bootstrap_spec",
+          "to": "bootstrap_spec",
+          "attrs": {
+            "label": {
+              "String": "Retry"
+            },
+            "loop_restart": {
+              "Boolean": true
+            }
+          }
+        },
+        {
+          "from": "spec_kitty_gate",
+          "to": "data_source_smoke",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "spec_kitty_gate",
+          "to": "bootstrap_spec",
+          "attrs": {
+            "label": {
+              "String": "Fix"
+            }
+          }
+        },
+        {
+          "from": "data_source_smoke",
+          "to": "generate_app",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "data_source_smoke",
+          "to": "data_source_smoke",
+          "attrs": {
+            "loop_restart": {
+              "Boolean": true
+            },
+            "label": {
+              "String": "Retry"
+            }
+          }
+        },
+        {
+          "from": "generate_app",
+          "to": "native_checks",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "generate_app",
+          "to": "generate_app",
+          "attrs": {
+            "loop_restart": {
+              "Boolean": true
+            },
+            "label": {
+              "String": "Retry"
+            }
+          }
+        },
+        {
+          "from": "native_checks",
+          "to": "qlty_gate",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "native_checks",
+          "to": "generate_app",
+          "attrs": {
+            "label": {
+              "String": "Fix"
+            }
+          }
+        },
+        {
+          "from": "qlty_gate",
+          "to": "promptfoo_gate",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "qlty_gate",
+          "to": "generate_app",
+          "attrs": {
+            "label": {
+              "String": "Fix"
+            }
+          }
+        },
+        {
+          "from": "promptfoo_gate",
+          "to": "review_fanout",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "promptfoo_gate",
+          "to": "generate_app",
+          "attrs": {
+            "label": {
+              "String": "Fix"
+            }
+          }
+        },
+        {
+          "from": "review_fanout",
+          "to": "review_kimi",
+          "attrs": {}
+        },
+        {
+          "from": "review_fanout",
+          "to": "review_qwen",
+          "attrs": {}
+        },
+        {
+          "from": "review_fanout",
+          "to": "review_deepseek",
+          "attrs": {}
+        },
+        {
+          "from": "review_kimi",
+          "to": "review_join",
+          "attrs": {}
+        },
+        {
+          "from": "review_qwen",
+          "to": "review_join",
+          "attrs": {}
+        },
+        {
+          "from": "review_deepseek",
+          "to": "review_join",
+          "attrs": {}
+        },
+        {
+          "from": "review_join",
+          "to": "review_consensus",
+          "attrs": {}
+        },
+        {
+          "from": "review_consensus",
+          "to": "artifact_gate",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "review_consensus",
+          "to": "generate_app",
+          "attrs": {
+            "label": {
+              "String": "Fix"
+            }
+          }
+        },
+        {
+          "from": "artifact_gate",
+          "to": "publish_handoff",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "artifact_gate",
+          "to": "generate_app",
+          "attrs": {
+            "label": {
+              "String": "Fix"
+            }
+          }
+        },
+        {
+          "from": "publish_handoff",
+          "to": "exit",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "publish_handoff",
+          "to": "review_consensus",
+          "attrs": {
+            "label": {
+              "String": "Fix"
+            }
+          }
+        }
+      ],
+      "attrs": {
+        "rankdir": {
+          "String": "LR"
+        },
+        "retry_target": {
+          "String": "generate_app"
+        },
+        "fallback_retry_target": {
+          "String": "generate_app"
+        },
+        "outputs": {
+          "String": "application, ci_report, eval_report, review_consensus, handoff"
+        },
+        "persona": {
+          "String": "code-factory"
+        },
+        "default_max_retries": {
+          "Integer": 2
+        },
+        "goal": {
+          "String": "Build Consumer App Radar from spec with CI, eval, and model review"
+        },
+        "inputs": {
+          "String": "app_dir, spec_path, real_mode, allow_fixture_fallback, allow_quality_fallback, minimum_active_reviews"
+        },
+        "model_stylesheet": {
+          "String": "\n            *          { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: low; }\n            .review    { provider: openrouter; model: google/gemini-3.1-pro-preview; reasoning_effort: high; }\n            .cheap     { provider: openrouter; model: deepseek/deepseek-v4-flash; reasoning_effort: low; }\n        "
+        }
+      }
+    },
+    "graph_source": "digraph ConsumerAppRadarBuild {\n    graph [\n        goal=\"Build Consumer App Radar from spec with CI, eval, and model review\",\n        persona=\"code-factory\",\n        inputs=\"app_dir, spec_path, real_mode, allow_fixture_fallback, allow_quality_fallback, minimum_active_reviews\",\n        outputs=\"application, ci_report, eval_report, review_consensus, handoff\",\n        default_max_retries=2,\n        retry_target=\"generate_app\",\n        fallback_retry_target=\"generate_app\",\n        model_stylesheet=\"\n            *          { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: low; }\n            .review    { provider: openrouter; model: google/gemini-3.1-pro-preview; reasoning_effort: high; }\n            .cheap     { provider: openrouter; model: deepseek/deepseek-v4-flash; reasoning_effort: low; }\n        \"\n    ]\n    rankdir=LR\n\n    start [shape=Mdiamond, label=\"Start\"]\n    exit  [shape=Msquare, label=\"Exit\"]\n\n    bootstrap_spec [\n        label=\"Bootstrap Spec\",\n        shape=parallelogram,\n        goal_gate=true,\n        retry_target=\"bootstrap_spec\",\n        script=\"node scripts/consumer-radar/bootstrap-spec.mjs --spec '{{ inputs.spec_path|default('specs/consumer-app-radar/spec.md') }}' --app-dir '{{ inputs.app_dir|default('apps/generated-consumer-app-radar') }}'\"\n    ]\n\n    wait_for_support_files [\n        label=\"Wait For Support Files\",\n        shape=parallelogram,\n        goal_gate=true,\n        retry_target=\"wait_for_support_files\",\n        script=\"for i in $(seq 1 90); do if [ -f scripts/consumer-radar/generate-app.mjs ] && [ -f '{{ inputs.spec_path|default('specs/consumer-app-radar/spec.md') }}' ]; then echo support-files-ready; exit 0; fi; sleep 2; done; echo 'missing consumer radar support files' >&2; exit 1\"\n    ]\n\n    spec_kitty_gate [\n        label=\"Spec Kitty Gate\",\n        shape=parallelogram,\n        goal_gate=true,\n        retry_target=\"bootstrap_spec\",\n        script=\"node scripts/consumer-radar/bootstrap-spec.mjs --spec '{{ inputs.spec_path|default('specs/consumer-app-radar/spec.md') }}' --app-dir '{{ inputs.app_dir|default('apps/generated-consumer-app-radar') }}' --spec-kitty\"\n    ]\n\n    data_source_smoke [\n        label=\"Data Source Smoke\",\n        shape=parallelogram,\n        goal_gate=true,\n        retry_target=\"data_source_smoke\",\n        script=\"node scripts/consumer-radar/data-source-smoke.mjs --output .workflow/consumer-radar/data-source-smoke.json --real-mode '{{ inputs.real_mode|default('true') }}' --allow-fixture-fallback '{{ inputs.allow_fixture_fallback|default('false') }}'\"\n    ]\n\n    generate_app [\n        label=\"Generate App\",\n        shape=parallelogram,\n        goal_gate=true,\n        retry_target=\"generate_app\",\n        script=\"node scripts/consumer-radar/generate-app.mjs --app-dir '{{ inputs.app_dir|default('apps/generated-consumer-app-radar') }}'\"\n    ]\n\n    native_checks [\n        label=\"Native Checks\",\n        shape=parallelogram,\n        goal_gate=true,\n        retry_target=\"generate_app\",\n        script=\"node scripts/consumer-radar/run-native-checks.mjs '{{ inputs.app_dir|default('apps/generated-consumer-app-radar') }}'\"\n    ]\n\n    qlty_gate [\n        label=\"Qlty Gate\",\n        shape=parallelogram,\n        goal_gate=true,\n        retry_target=\"generate_app\",\n        script=\"node scripts/consumer-radar/qlty-gate.mjs '{{ inputs.app_dir|default('apps/generated-consumer-app-radar') }}' --real-mode '{{ inputs.real_mode|default('true') }}' --allow-fallback '{{ inputs.allow_quality_fallback|default('false') }}'\"\n    ]\n\n    promptfoo_gate [\n        label=\"Promptfoo Gate\",\n        shape=parallelogram,\n        goal_gate=true,\n        retry_target=\"generate_app\",\n        script=\"node scripts/consumer-radar/promptfoo-or-fallback.mjs '{{ inputs.app_dir|default('apps/generated-consumer-app-radar') }}' --real-mode '{{ inputs.real_mode|default('true') }}' --allow-fallback '{{ inputs.allow_quality_fallback|default('false') }}'\"\n    ]\n\n    review_fanout [shape=component, label=\"Parallel Review Fanout\"]\n    review_kimi [\n        label=\"Kimi Review\",\n        class=\"cheap\",\n        shape=parallelogram,\n        script=\"node scripts/consumer-radar/openrouter-review.mjs --model moonshotai/kimi-k2.6 --role market_strategy --app-dir '{{ inputs.app_dir|default('apps/generated-consumer-app-radar') }}' --output reports/consumer-radar/reviews/kimi.json --real-mode '{{ inputs.real_mode|default('true') }}'\"\n    ]\n    review_qwen [\n        label=\"Qwen Review\",\n        class=\"cheap\",\n        shape=parallelogram,\n        script=\"node scripts/consumer-radar/openrouter-review.mjs --model qwen/qwen3.6-plus --role implementation_quality --app-dir '{{ inputs.app_dir|default('apps/generated-consumer-app-radar') }}' --output reports/consumer-radar/reviews/qwen.json --real-mode '{{ inputs.real_mode|default('true') }}'\"\n    ]\n    review_deepseek [\n        label=\"DeepSeek Review\",\n        class=\"cheap\",\n        shape=parallelogram,\n        script=\"node scripts/consumer-radar/openrouter-review.mjs --model deepseek/deepseek-v4-pro,deepseek/deepseek-v4-flash --role simplification_and_ci --app-dir '{{ inputs.app_dir|default('apps/generated-consumer-app-radar') }}' --output reports/consumer-radar/reviews/deepseek.json --real-mode '{{ inputs.real_mode|default('true') }}'\"\n    ]\n    review_join [shape=tripleoctagon, label=\"Review Join\", join_policy=\"wait_all\"]\n\n    review_consensus [\n        label=\"Review Consensus\",\n        shape=parallelogram,\n        goal_gate=true,\n        retry_target=\"generate_app\",\n        script=\"node scripts/consumer-radar/review-consensus.mjs --reviews reports/consumer-radar/reviews --output reports/consumer-radar/review-consensus.json --minimum-active-reviews '{{ inputs.minimum_active_reviews|default('2') }}'\"\n    ]\n\n    artifact_gate [\n        label=\"Artifact Gate\",\n        shape=parallelogram,\n        goal_gate=true,\n        retry_target=\"generate_app\",\n        script=\"node scripts/consumer-radar/validate-build-artifacts.mjs '{{ inputs.app_dir|default('apps/generated-consumer-app-radar') }}' --real-mode '{{ inputs.real_mode|default('true') }}' --minimum-apps 6 --minimum-reports 4\"\n    ]\n\n    publish_handoff [\n        label=\"Publish Handoff\",\n        shape=parallelogram,\n        goal_gate=true,\n        retry_target=\"review_consensus\",\n        script=\"node -e \\\"const fs=require('fs'); const path=require('path'); const app='{{ inputs.app_dir|default('apps/generated-consumer-app-radar') }}'; const out='.workflow/consumer-radar/handoff.json'; fs.mkdirSync(path.dirname(out),{recursive:true}); fs.writeFileSync(out, JSON.stringify({ok:true, app_dir:app, run_dir:process.cwd(), reports:['.workflow/consumer-radar/native-checks.json','.workflow/consumer-radar/qlty-report.json','.workflow/consumer-radar/promptfoo-report.json','reports/consumer-radar/review-consensus.json'], next:['Run npm start inside the generated app','Use POST /api/refresh with mode=live after Apify actors are tuned']}, null, 2)+'\\\\n'); console.log(fs.readFileSync(out,'utf8'));\\\"\"\n    ]\n\n    start -> wait_for_support_files\n    wait_for_support_files -> bootstrap_spec [condition=\"outcome=succeeded\"]\n    wait_for_support_files -> wait_for_support_files [label=\"Retry\", loop_restart=true]\n    bootstrap_spec -> spec_kitty_gate [condition=\"outcome=succeeded\"]\n    bootstrap_spec -> bootstrap_spec [label=\"Retry\", loop_restart=true]\n    spec_kitty_gate -> data_source_smoke [condition=\"outcome=succeeded\"]\n    spec_kitty_gate -> bootstrap_spec [label=\"Fix\"]\n    data_source_smoke -> generate_app [condition=\"outcome=succeeded\"]\n    data_source_smoke -> data_source_smoke [label=\"Retry\", loop_restart=true]\n    generate_app -> native_checks [condition=\"outcome=succeeded\"]\n    generate_app -> generate_app [label=\"Retry\", loop_restart=true]\n    native_checks -> qlty_gate [condition=\"outcome=succeeded\"]\n    native_checks -> generate_app [label=\"Fix\"]\n    qlty_gate -> promptfoo_gate [condition=\"outcome=succeeded\"]\n    qlty_gate -> generate_app [label=\"Fix\"]\n    promptfoo_gate -> review_fanout [condition=\"outcome=succeeded\"]\n    promptfoo_gate -> generate_app [label=\"Fix\"]\n    review_fanout -> review_kimi\n    review_fanout -> review_qwen\n    review_fanout -> review_deepseek\n    review_kimi -> review_join\n    review_qwen -> review_join\n    review_deepseek -> review_join\n    review_join -> review_consensus\n    review_consensus -> artifact_gate [condition=\"outcome=succeeded\"]\n    review_consensus -> generate_app [label=\"Fix\"]\n    artifact_gate -> publish_handoff [condition=\"outcome=succeeded\"]\n    artifact_gate -> generate_app [label=\"Fix\"]\n    publish_handoff -> exit [condition=\"outcome=succeeded\"]\n    publish_handoff -> review_consensus [label=\"Fix\"]\n}\n",
+    "workflow_slug": "build-consumer-app-radar",
+    "source_directory": "/Users/timlife/Documents/claude code/maestro-os",
+    "provenance": {
+      "server": {
+        "version": "0.231.0-nightly.1"
+      },
+      "client": {
+        "user_agent": "fabro-cli/0.231.0-nightly.1",
+        "name": "fabro-cli",
+        "version": "0.231.0-nightly.1"
+      },
+      "subject": {
+        "kind": "user",
+        "identity": {
+          "issuer": "fabro:dev",
+          "subject": "dev"
+        },
+        "login": "dev",
+        "auth_method": "dev_token"
+      }
+    },
+    "manifest_blob": "9cfd463bf50d24b64f135f157594e6265f93f3d516b3061881b738a5ff5d6663",
+    "definition_blob": "619aac41332dc72b25b2c642073bea238ac2660d19ca39a57bbaef3662d88ee4",
+    "git": {
+      "origin_url": "https://github.com/kimprobably/maestro-os",
+      "branch": "main",
+      "sha": "ce8dec07283879088a8375f766fa25c111de77bb",
+      "dirty": "dirty",
+      "push_outcome": {
+        "type": "not_attempted"
+      }
+    }
+  },
+  "web_url": "https://fabro-maestro-production.up.railway.app/runs/01KRGFTABSM0R1X5CHQQA1Z76E",
+  "start": null,
+  "status": {
+    "kind": "starting"
+  },
+  "status_updated_at": "2026-05-13T10:58:42.753563358Z",
+  "last_event_at": "2026-05-13T10:58:44.725120986Z",
+  "pending_control": null,
+  "checkpoints": [],
+  "conclusion": null,
+  "sandbox": {
+    "provider": "daytona",
+    "image": "buildpack-deps:noble",
+    "snapshot": "maestro-code-factory",
+    "runtime": {
+      "id": "fabro-01KRGFTABSM0R1X5CHQQA1Z76E",
+      "working_directory": "/home/daytona/workspace",
+      "repo_cloned": true,
+      "clone_origin_url": "https://github.com/kimprobably/maestro-os",
+      "clone_branch": "main"
+    }
+  },
+  "pull_request": null,
+  "superseded_by": null,
+  "pending_interviews": {},
+  "stages": {}
+}
