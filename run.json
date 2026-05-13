@@ -932,7 +932,7 @@
     "kind": "running"
   },
   "status_updated_at": "2026-05-13T10:49:58.385482735Z",
-  "last_event_at": "2026-05-13T10:55:18.922867514Z",
+  "last_event_at": "2026-05-13T10:55:25.087370073Z",
   "pending_control": null,
   "checkpoints": [
     {
@@ -4125,9 +4125,9 @@
       }
     },
     {
-      "seq": 0,
+      "seq": 261,
       "checkpoint": {
-        "timestamp": "2026-05-13T10:55:21.343643004Z",
+        "timestamp": "2026-05-13T10:55:25.079751345Z",
         "current_node": "native_checks",
         "completed_nodes": [
           "start",
@@ -4154,6 +4154,228 @@
         ],
         "node_retries": {},
         "context_values": {
+          "internal.retry_count.start": 0,
+          "parallel.branch_count": 3,
+          "thread.bootstrap_spec.current_node": "spec_kitty_gate",
+          "internal.retry_count.data_source_smoke": 0,
+          "graph.retry_target": "generate_app",
+          "command.output": "blob://sha256/3cb84a9bb9e20844631d561961b12684816930e946cc09fc74b597b239f65682",
+          "internal.retry_count.spec_kitty_gate": 0,
+          "parallel.fan_in.best_head_sha": "00d731f9230e8f148125a935c5fcbf47493d4e29",
+          "internal.retry_count.native_checks": 0,
+          "parallel.results": [
+            {
+              "id": "review_kimi",
+              "status": "failed",
+              "head_sha": "7e42c12c2ba70a185140a56338bca7c0bfb2aa29"
+            },
+            {
+              "id": "review_qwen",
+              "status": "succeeded",
+              "head_sha": "0961cd6b85a0fc1293b2e4bb9bf37ac8b24b416b"
+            },
+            {
+              "id": "review_deepseek",
+              "status": "succeeded",
+              "head_sha": "00d731f9230e8f148125a935c5fcbf47493d4e29"
+            }
+          ],
+          "internal.retry_count.review_fanout": 0,
+          "thread.generate_app.current_node": "native_checks",
+          "failure_signature": "",
+          "internal.fidelity": "compact",
+          "thread.qlty_gate.current_node": "promptfoo_gate",
+          "thread.start.current_node": "wait_for_support_files",
+          "thread.wait_for_support_files.current_node": "bootstrap_spec",
+          "internal.node_visit_count": 3,
+          "graph.persona": "code-factory",
+          "graph.goal": "Build Consumer App Radar from spec with CI, eval, and model review",
+          "graph.rankdir": "LR",
+          "thread.data_source_smoke.current_node": "generate_app",
+          "thread.review_fanout.current_node": "review_join",
+          "internal.retry_count.wait_for_support_files": 0,
+          "thread.review_join.current_node": "review_consensus",
+          "graph.model_stylesheet": "\n            *          { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: low; }\n            .review    { provider: openrouter; model: google/gemini-3.1-pro-preview; reasoning_effort: high; }\n            .cheap     { provider: openrouter; model: deepseek/deepseek-v4-flash; reasoning_effort: low; }\n        ",
+          "internal.retry_count.promptfoo_gate": 0,
+          "internal.retry_count.qlty_gate": 0,
+          "internal.run_id": "01KRGFA7BX7N7QD7RJ6WQRWVBJ",
+          "internal.thread_id": "generate_app",
+          "parallel.fan_in.best_id": "review_deepseek",
+          "graph.default_max_retries": "2",
+          "failure_class": "",
+          "thread.spec_kitty_gate.current_node": "data_source_smoke",
+          "parallel.fan_in.best_outcome": "succeeded",
+          "graph.inputs": "app_dir, spec_path, real_mode, allow_fixture_fallback, allow_quality_fallback, minimum_active_reviews",
+          "internal.retry_count.bootstrap_spec": 0,
+          "internal.retry_count.review_consensus": 0,
+          "current_node": "native_checks",
+          "graph.fallback_retry_target": "generate_app",
+          "internal.retry_count.generate_app": 0,
+          "internal.retry_count.review_join": 0,
+          "internal.work_dir": "/home/daytona/workspace",
+          "outcome": "succeeded",
+          "thread.native_checks.current_node": "qlty_gate",
+          "thread.promptfoo_gate.current_node": "review_fanout",
+          "thread.review_consensus.current_node": "generate_app",
+          "graph.outputs": "application, ci_report, eval_report, review_consensus, handoff"
+        },
+        "node_outcomes": {
+          "data_source_smoke": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/cd014efccb8ca54b120875568838f45c4b5c20683a0528d0e846394b7cba146c"
+            },
+            "notes": "Script completed: node scripts/consumer-radar/data-source-smoke.mjs --output .workflow/consumer-radar/data-source-smoke.json --real-mode 'true' --allow-fixture-fallback 'true'",
+            "usage": null
+          },
+          "review_consensus": {
+            "status": "failed",
+            "context_updates": {
+              "command.output": "blob://sha256/3c4f42ac8c6e4adbaac37edb956e738b7563e354e2e6b97aa829cf3f1d0e6e27"
+            },
+            "failure": {
+              "message": "Script failed with exit code: 1\n\n## output\n{\n  \"ok\": false,\n  \"verdict\": \"REVISE\",\n  \"review_count\": 0,\n  \"active_review_count\": 0,\n  \"minimum_active_reviews\": 2,\n  \"skipped_review_count\": 0,\n  \"failed_review_count\": 0,\n  \"review_sources\": [],\n  \"average_model_score\": null,\n  \"blockers\": [],\n  \"hard_failures\": [\n    \"Not enough active OpenRouter reviews\"\n  ],\n  \"note\": \"All model reviews skipped; deterministic gates are authoritative for this run.\"\n}\n",
+              "failure_class": "deterministic"
+            },
+            "usage": null
+          },
+          "spec_kitty_gate": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/980b8d5388f600868fd36da041823f06de13ac04b43805af5ccba7758e724058"
+            },
+            "notes": "Script completed: node scripts/consumer-radar/bootstrap-spec.mjs --spec 'specs/consumer-app-radar/spec.md' --app-dir 'apps/generated-consumer-app-radar' --spec-kitty",
+            "usage": null
+          },
+          "start": {
+            "status": "succeeded",
+            "usage": null
+          },
+          "native_checks": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/3cb84a9bb9e20844631d561961b12684816930e946cc09fc74b597b239f65682"
+            },
+            "notes": "Script completed: node scripts/consumer-radar/run-native-checks.mjs 'apps/generated-consumer-app-radar'",
+            "usage": null
+          },
+          "review_fanout": {
+            "status": "partially_succeeded",
+            "jump_to_node": "review_join",
+            "notes": "Parallel node dispatched 3 branches (2 succeeded, 1 failed)",
+            "usage": null
+          },
+          "promptfoo_gate": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/e379fbcd2c4c53c7728d94fc1f8c5f11cc51dbd68142c87ab6f55830ecd68928"
+            },
+            "notes": "Script completed: node scripts/consumer-radar/promptfoo-or-fallback.mjs 'apps/generated-consumer-app-radar' --real-mode 'true' --allow-fallback 'true'",
+            "usage": null
+          },
+          "review_join": {
+            "status": "succeeded",
+            "context_updates": {
+              "parallel.fan_in.best_outcome": "succeeded",
+              "parallel.fan_in.best_id": "review_deepseek",
+              "parallel.fan_in.best_head_sha": "00d731f9230e8f148125a935c5fcbf47493d4e29"
+            },
+            "notes": "Selected best candidate: review_deepseek",
+            "usage": null
+          },
+          "qlty_gate": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/909f30fcf892fe529fc2dab34e4262f530b6d8b65434dc51d8ca70e4f08e0b0f"
+            },
+            "notes": "Script completed: node scripts/consumer-radar/qlty-gate.mjs 'apps/generated-consumer-app-radar' --real-mode 'true' --allow-fallback 'true'",
+            "usage": null
+          },
+          "wait_for_support_files": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/a993020942c3b2f319b954a99b0a9f056f2f684e6388311672cad5808190f591"
+            },
+            "notes": "Script completed: for i in $(seq 1 90); do if [ -f scripts/consumer-radar/generate-app.mjs ] && [ -f 'specs/consumer-app-radar/spec.md' ]; then echo support-files-ready; exit 0; fi; sleep 2; done; echo 'missing consumer radar support files' >&2; exit 1",
+            "usage": null
+          },
+          "generate_app": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/e13919244f75906e6e71bd55689542b555b043361da8bca8c82ef7a95a136f3a"
+            },
+            "notes": "Script completed: node scripts/consumer-radar/generate-app.mjs --app-dir 'apps/generated-consumer-app-radar'",
+            "usage": null
+          },
+          "bootstrap_spec": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/74871a7788a1e4422fcaa0cbf7ad427846d9436944e4a86f3070224fe8e1acbd"
+            },
+            "notes": "Script completed: node scripts/consumer-radar/bootstrap-spec.mjs --spec 'specs/consumer-app-radar/spec.md' --app-dir 'apps/generated-consumer-app-radar'",
+            "usage": null
+          }
+        },
+        "next_node_id": "qlty_gate",
+        "git_commit_sha": "af16865cd32420d9622ba1cce5bf942678511dc1",
+        "loop_failure_signatures": {
+          "review_consensus|deterministic|script failed with exit code: <n> ## output { \"ok\": false,\"verdict\": \"revise\",\"review_count\": <n>,\"active_review_count\": <n>,\"minimum_active_reviews\": <n>,\"skipped_review_count\": <n>,\"failed_review_count\": <n>,\"review_sources\": [],\"average_": 2
+        },
+        "node_visits": {
+          "review_join": 2,
+          "review_consensus": 2,
+          "start": 1,
+          "qlty_gate": 2,
+          "bootstrap_spec": 1,
+          "spec_kitty_gate": 1,
+          "promptfoo_gate": 2,
+          "native_checks": 3,
+          "wait_for_support_files": 1,
+          "review_fanout": 2,
+          "data_source_smoke": 1,
+          "generate_app": 3
+        }
+      },
+      "diff": {
+        "patch": "diff --git a/apps/generated-consumer-app-radar/.data/apps.json b/apps/generated-consumer-app-radar/.data/apps.json\nnew file mode 100644\nindex 0000000..daaa6c2\n--- /dev/null\n+++ b/apps/generated-consumer-app-radar/.data/apps.json\n@@ -0,0 +1,259 @@\n+[\n+  {\n+    \"id\": \"one-sec\",\n+    \"name\": \"one sec\",\n+    \"category\": \"Productivity\",\n+    \"country\": \"US\",\n+    \"appStoreId\": \"1532875441\",\n+    \"rankDelta4w\": 76,\n+    \"reviewDelta4w\": 138,\n+    \"rating\": 4.8,\n+    \"socialDelta4w\": 212,\n+    \"socialStrategy\": [\n+      \"Creator demos interrupting app-open autopilot\",\n+      \"Short before-after clips\",\n+      \"Academic credibility hooks\"\n+    ],\n+    \"reviewThemes\": [\n+      \"Needs better schedule exceptions\",\n+      \"Users want stronger family controls\",\n+      \"More granular app groups requested\"\n+    ],\n+    \"featureRequests\": [\n+      \"Calendar-aware focus rules\",\n+      \"Shared household accountability\",\n+      \"Weekly relapse insights\"\n+    ],\n+    \"evidence\": [\n+      \"Fixture seed until live Apify ranking feed is tuned\",\n+      \"Apple RSS reviews supported by adapter\"\n+    ],\n+    \"opportunityScore\": 75,\n+    \"radarRank\": 1,\n+    \"dataMode\": \"fixture\"\n+  },\n+  {\n+    \"id\": \"finch\",\n+    \"name\": \"Finch\",\n+    \"category\": \"Positivity\",\n+    \"country\": \"US\",\n+    \"appStoreId\": \"1528595748\",\n+    \"rankDelta4w\": 29,\n+    \"reviewDelta4w\": 151,\n+    \"rating\": 4.9,\n+    \"socialDelta4w\": 177,\n+    \"socialStrategy\": [\n+      \"Character-led UGC\",\n+      \"Mental health community clips\",\n+      \"Gift/share loops\"\n+    ],\n+    \"reviewThemes\": [\n+      \"Emotional attachment is strong\",\n+      \"Users want more personalization\",\n+      \"Subscription boundaries are sensitive\"\n+    ],\n+    \"featureRequests\": [\n+      \"Adaptive self-care journeys\",\n+      \"More low-cost social gifting\",\n+      \"Smarter mood insights\"\n+    ],\n+    \"evidence\": [\n+      \"Seed target for positivity/wellness benchmarking\"\n+    ],\n+    \"opportunityScore\": 60,\n+    \"radarRank\": 2,\n+    \"dataMode\": \"fixture\"\n+  },\n+  {\n+    \"id\": \"ladder\",\n+    \"name\": \"Ladder\",\n+    \"category\": \"Fitness\",\n+    \"country\": \"US\",\n+    \"appStoreId\": \"1502936453\",\n+    \"rankDelta4w\": 51,\n+    \"reviewDelta4w\": 68,\n+    \"rating\": 4.9,\n+    \"socialDelta4w\": 189,\n+    \"socialStrategy\": [\n+      \"Trainer-led short clips\",\n+      \"Transformation proof\",\n+      \"Community/accountability framing\"\n+    ],\n+    \"reviewThemes\": [\n+      \"Program switching requests\",\n+      \"Equipment substitutions\",\n+      \"More beginner guidance\"\n+    ],\n+    \"featureRequests\": [\n+      \"Adaptive equipment swaps\",\n+      \"Beginner ramp plans\",\n+      \"Progress story exports\"\n+    ],\n+    \"evidence\": [\n+      \"Seed target for fitness category monitoring\"\n+    ],\n+    \"opportunityScore\": 57,\n+    \"radarRank\": 3,\n+    \"dataMode\": \"fixture\"\n+  },\n+  {\n+    \"id\": \"opal\",\n+    \"name\": \"Opal\",\n+    \"category\": \"Screen Time\",\n+    \"country\": \"US\",\n+    \"appStoreId\": \"1497465230\",\n+    \"rankDelta4w\": 42,\n+    \"reviewDelta4w\": 89,\n+    \"rating\": 4.7,\n+    \"socialDelta4w\": 156,\n+    \"socialStrategy\": [\n+      \"Founder-led productivity clips\",\n+      \"Relatable addiction framing\",\n+      \"Creator routines\"\n+    ],\n+    \"reviewThemes\": [\n+      \"Lock bypass confusion\",\n+      \"Subscription objections\",\n+      \"More reporting exports\"\n+    ],\n+    \"featureRequests\": [\n+      \"Anti-bypass education\",\n+      \"Cheaper student plan\",\n+      \"CSV/report export\"\n+    ],\n+    \"evidence\": [\n+      \"Fixture seed; social adapters support Apify enrichment\"\n+    ],\n+    \"opportunityScore\": 54,\n+    \"radarRank\": 4,\n+    \"dataMode\": \"fixture\"\n+  },\n+  {\n+    \"id\": \"screenzen\",\n+    \"name\": \"ScreenZen\",\n+    \"category\": \"Screen Time\",\n+    \"country\": \"US\",\n+    \"appStoreId\": \"1541027222\",\n+    \"rankDelta4w\": 58,\n+    \"reviewDelta4w\": 73,\n+    \"rating\": 4.8,\n+    \"socialDelta4w\": 118,\n+    \"socialStrategy\": [\n+      \"Reddit-style authenticity\",\n+      \"Anti-subscription positioning\",\n+      \"Direct comparisons to expensive blockers\"\n+    ],\n+    \"reviewThemes\": [\n+      \"Users praise free controls\",\n+      \"Setup friction appears repeatedly\",\n+      \"Requests for more lockout nuance\"\n+    ],\n+    \"featureRequests\": [\n+      \"Preset lockout templates\",\n+      \"Onboarding checklist\",\n+      \"Cross-device shared rules\"\n+    ],\n+    \"evidence\": [\n+      \"Seed target for live chart/review enrichment\"\n+    ],\n+    \"opportunityScore\": 52,\n+    \"radarRank\": 5,\n+    \"dataMode\": \"fixture\"\n+  },\n+  {\n+    \"id\": \"structured\",\n+    \"name\": \"Structured\",\n+    \"category\": \"Productivity\",\n+    \"country\": \"US\",\n+    \"appStoreId\": \"1499198946\",\n+    \"rankDelta4w\": 36,\n+    \"reviewDelta4w\": 82,\n+    \"rating\": 4.8,\n+    \"socialDelta4w\": 134,\n+    \"socialStrategy\": [\n+      \"ADHD creator routines\",\n+      \"Calendar before-after clips\",\n+      \"Aesthetic planning screenshots\"\n+    ],\n+    \"reviewThemes\": [\n+      \"Sync reliability matters\",\n+      \"Users want faster capture\",\n+      \"Recurring task UX is a purchase driver\"\n+    ],\n+    \"featureRequests\": [\n+      \"Natural-language task capture\",\n+      \"More robust calendar sync\",\n+      \"Better widgets\"\n+    ],\n+    \"evidence\": [\n+      \"Seed target for productivity category monitoring\"\n+    ],\n+    \"opportunityScore\": 49,\n+    \"radarRank\": 6,\n+    \"dataMode\": \"fixture\"\n+  },\n+  {\n+    \"id\": \"stoic\",\n+    \"name\": \"stoic.\",\n+    \"category\": \"Wellness\",\n+    \"country\": \"US\",\n+    \"appStoreId\": \"1312926037\",\n+    \"rankDelta4w\": 31,\n+    \"reviewDelta4w\": 64,\n+    \"rating\": 4.8,\n+    \"socialDelta4w\": 92,\n+    \"socialStrategy\": [\n+      \"Calm aesthetic reels\",\n+      \"Journaling prompts\",\n+      \"Mental model education\"\n+    ],\n+    \"reviewThemes\": [\n+      \"Users want gentler onboarding\",\n+      \"Export/sync concerns\",\n+      \"Prompt repetition\"\n+    ],\n+    \"featureRequests\": [\n+      \"Adaptive prompts\",\n+      \"Better Apple Health context\",\n+      \"Private export\"\n+    ],\n+    \"evidence\": [\n+      \"Fixture seed for repeatable CI\"\n+    ],\n+    \"opportunityScore\": 41,\n+    \"radarRank\": 7,\n+    \"dataMode\": \"fixture\"\n+  },\n+  {\n+    \"id\": \"rise\",\n+    \"name\": \"Rise\",\n+    \"category\": \"Health\",\n+    \"country\": \"US\",\n+    \"appStoreId\": \"1453884781\",\n+    \"rankDelta4w\": 24,\n+    \"reviewDelta4w\": 57,\n+    \"rating\": 4.6,\n+    \"socialDelta4w\": 102,\n+    \"socialStrategy\": [\n+      \"Sleep debt education\",\n+      \"Science-backed creator explainers\",\n+      \"Routine optimization hooks\"\n+    ],\n+    \"reviewThemes\": [\n+      \"Accuracy questions\",\n+      \"Paywall complaints\",\n+      \"Users want wearable context\"\n+    ],\n+    \"featureRequests\": [\n+      \"Clearer accuracy explanations\",\n+      \"Better Apple Health summaries\",\n+      \"Actionable weekly plan\"\n+    ],\n+    \"evidence\": [\n+      \"Seed target for health/wellness category monitoring\"\n+    ],\n+    \"opportunityScore\": 39,\n+    \"radarRank\": 8,\n+    \"dataMode\": \"fixture\"\n+  }\n+]\n",
+        "summary": {
+          "files_changed": 20,
+          "additions": 846,
+          "deletions": 0
+        }
+      }
+    },
+    {
+      "seq": 0,
+      "checkpoint": {
+        "timestamp": "2026-05-13T10:55:35.164750312Z",
+        "current_node": "qlty_gate",
+        "completed_nodes": [
+          "start",
+          "wait_for_support_files",
+          "bootstrap_spec",
+          "spec_kitty_gate",
+          "data_source_smoke",
+          "generate_app",
+          "native_checks",
+          "qlty_gate",
+          "promptfoo_gate",
+          "review_fanout",
+          "review_join",
+          "review_consensus",
+          "generate_app",
+          "native_checks",
+          "qlty_gate",
+          "promptfoo_gate",
+          "review_fanout",
+          "review_join",
+          "review_consensus",
+          "generate_app",
+          "native_checks",
+          "qlty_gate"
+        ],
+        "node_retries": {},
+        "context_values": {
           "outcome": "succeeded",
           "failure_signature": "",
           "parallel.fan_in.best_id": "review_deepseek",
@@ -4169,11 +4391,11 @@
           "graph.persona": "code-factory",
           "internal.retry_count.generate_app": 0,
           "thread.qlty_gate.current_node": "promptfoo_gate",
-          "command.output": "blob://sha256/3cb84a9bb9e20844631d561961b12684816930e946cc09fc74b597b239f65682",
+          "command.output": "blob://sha256/909f30fcf892fe529fc2dab34e4262f530b6d8b65434dc51d8ca70e4f08e0b0f",
           "thread.wait_for_support_files.current_node": "bootstrap_spec",
           "thread.bootstrap_spec.current_node": "spec_kitty_gate",
           "graph.goal": "Build Consumer App Radar from spec with CI, eval, and model review",
-          "internal.thread_id": "generate_app",
+          "internal.thread_id": "native_checks",
           "thread.promptfoo_gate.current_node": "review_fanout",
           "parallel.fan_in.best_head_sha": "00d731f9230e8f148125a935c5fcbf47493d4e29",
           "internal.retry_count.review_fanout": 0,
@@ -4184,7 +4406,7 @@
           "graph.model_stylesheet": "\n            *          { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: low; }\n            .review    { provider: openrouter; model: google/gemini-3.1-pro-preview; reasoning_effort: high; }\n            .cheap     { provider: openrouter; model: deepseek/deepseek-v4-flash; reasoning_effort: low; }\n        ",
           "internal.retry_count.spec_kitty_gate": 0,
           "internal.work_dir": "/home/daytona/workspace",
-          "current_node": "native_checks",
+          "current_node": "qlty_gate",
           "parallel.results": [
             {
               "id": "review_kimi",
@@ -4316,7 +4538,7 @@
             "usage": null
           }
         },
-        "next_node_id": "qlty_gate",
+        "next_node_id": "promptfoo_gate",
         "node_visits": {
           "wait_for_support_files": 1,
           "generate_app": 3,
@@ -4329,7 +4551,7 @@
           "spec_kitty_gate": 1,
           "promptfoo_gate": 2,
           "review_consensus": 2,
-          "qlty_gate": 2
+          "qlty_gate": 3
         }
       },
       "diff": {}
@@ -5034,7 +5256,12 @@
       "first_event_seq": 254,
       "prompt": null,
       "response": null,
-      "completion": null,
+      "completion": {
+        "outcome": "succeeded",
+        "notes": "Script completed: node scripts/consumer-radar/run-native-checks.mjs 'apps/generated-consumer-app-radar'",
+        "failure_reason": null,
+        "timestamp": "2026-05-13T10:55:21.342685874Z"
+      },
       "provider_used": null,
       "diff": null,
       "script_invocation": {
@@ -5042,11 +5269,22 @@
         "command": "exec 2>&1\nnode scripts/consumer-radar/run-native-checks.mjs 'apps/generated-consumer-app-radar'",
         "language": "shell"
       },
-      "script_timing": null,
+      "script_timing": {
+        "output": "blob://sha256/3cb84a9bb9e20844631d561961b12684816930e946cc09fc74b597b239f65682",
+        "exit_code": 0,
+        "duration_ms": 2415,
+        "termination": "exited",
+        "output_bytes": 32,
+        "live_streaming": true
+      },
       "parallel_results": null,
       "output": null,
+      "output_bytes": 32,
+      "live_streaming": true,
+      "termination": "exited",
       "started_at": "2026-05-13T10:55:18.922129157Z",
       "handler": "command",
+      "duration_ms": 2420,
       "usage": {
         "input_tokens": 0,
         "output_tokens": 0,
@@ -5055,7 +5293,7 @@
         "cache_read_tokens": 0,
         "cache_write_tokens": 0
       },
-      "state": "running"
+      "state": "succeeded"
     },
     "generate_app@1": {
       "first_event_seq": 60,
@@ -5228,6 +5466,33 @@
         "cache_write_tokens": 0
       },
       "state": "succeeded"
+    },
+    "qlty_gate@3": {
+      "first_event_seq": 264,
+      "prompt": null,
+      "response": null,
+      "completion": null,
+      "provider_used": null,
+      "diff": null,
+      "script_invocation": {
+        "script": "node scripts/consumer-radar/qlty-gate.mjs 'apps/generated-consumer-app-radar' --real-mode 'true' --allow-fallback 'true'",
+        "command": "exec 2>&1\nnode scripts/consumer-radar/qlty-gate.mjs 'apps/generated-consumer-app-radar' --real-mode 'true' --allow-fallback 'true'",
+        "language": "shell"
+      },
+      "script_timing": null,
+      "parallel_results": null,
+      "output": null,
+      "started_at": "2026-05-13T10:55:25.086694935Z",
+      "handler": "command",
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "total_tokens": 0,
+        "reasoning_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "state": "running"
     }
   }
 }
