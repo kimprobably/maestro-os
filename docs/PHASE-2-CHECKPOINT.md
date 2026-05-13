@@ -99,6 +99,10 @@ Status: in progress
   factory, phase 1, and Fabro smoke workflows. Fabro registry smoke run
   `01KRGR4HVQPF0ZZM0KADFJV3JR` validated, quality-checked, and registered all
   27 workflows with zero failures after the portability pass.
+- Added the Daytona registry smoke config at
+  `workflows/fabro/spike-workflow-registry-smoke.daytona.toml`. Remote Daytona
+  run `01KRGSV3XBHVD54Z5S7VMPQ46Q` validated, quality-checked, and registered
+  all 27 workflows with zero failures inside the v5 code-factory sandbox.
 - Added Daytona persistent volume support to the Fabro fork and rebuilt the
   local `fabro` binary. `.fabro/project.toml` now mounts the
   `maestro-agent-auth` volume at `/home/daytona/agent-state` and sets
@@ -135,6 +139,11 @@ Maestro now mirrors that shape in two workflows:
   STOP gate with revision path, deterministic file writes before reads, syntax
   validation, workflow-quality validation, standards review, and workflow
   registration.
+- The v5 Daytona snapshot currently uses the public Fabro release for nested
+  `fabro validate` calls. That release does not yet understand the fork-only
+  Daytona volume config, so the registry smoke temporarily hides
+  `.fabro/project.toml` while it validates/registers graph files and restores it
+  afterward.
 
 ## Open Gaps
 
