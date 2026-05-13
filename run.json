@@ -560,7 +560,7 @@
     "kind": "running"
   },
   "status_updated_at": "2026-05-13T13:57:56.906618Z",
-  "last_event_at": "2026-05-13T13:58:22.387206Z",
+  "last_event_at": "2026-05-13T13:58:25.050524Z",
   "pending_control": null,
   "checkpoints": [
     {
@@ -1044,9 +1044,9 @@
       }
     },
     {
-      "seq": 0,
+      "seq": 102,
       "checkpoint": {
-        "timestamp": "2026-05-13T13:58:22.511436Z",
+        "timestamp": "2026-05-13T13:58:25.050325Z",
         "current_node": "publish_builder_handoff",
         "completed_nodes": [
           "start",
@@ -1059,44 +1059,40 @@
         ],
         "node_retries": {},
         "context_values": {
-          "internal.retry_count.materialize_consumer_radar": 0,
-          "graph.rankdir": "LR",
-          "internal.thread_id": "smoke_generate_app",
           "current_node": "publish_builder_handoff",
-          "outcome": "succeeded",
-          "failure_class": "",
-          "thread.define_quality_bar.current_node": "wait_for_builder_files",
-          "thread.wait_for_builder_files.current_node": "materialize_consumer_radar",
-          "internal.work_dir": "/home/daytona/workspace",
-          "graph.outputs": "generated_workflow, generated_supporting_code, validation_report",
-          "graph.persona": "workflow-builder",
           "internal.fidelity": "compact",
-          "graph.inputs": "target, output_root",
-          "graph.model_stylesheet": "\n            *       { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: low; }\n            .coding { provider: openrouter; model: qwen/qwen3.6-plus; reasoning_effort: high; }\n            .review { provider: openrouter; model: google/gemini-3.1-pro-preview; reasoning_effort: high; }\n        ",
+          "internal.retry_count.materialize_consumer_radar": 0,
           "failure_signature": "",
-          "thread.validate_generated.current_node": "smoke_generate_app",
-          "internal.run_id": "01KRGT2AA3HDKAF828R00GCKGX",
-          "internal.retry_count.define_quality_bar": 0,
-          "graph.goal": "Build the Consumer App Radar workflow-builder output, then validate it",
-          "graph.fallback_retry_target": "materialize_consumer_radar",
-          "graph.default_max_retries": "2",
-          "internal.retry_count.publish_builder_handoff": 0,
-          "thread.start.current_node": "define_quality_bar",
-          "command.output": "blob://sha256/62b5fb1753967e2c52d3b87f0447b950df296875dec1ce39739024473e654161",
-          "internal.retry_count.wait_for_builder_files": 0,
-          "thread.smoke_generate_app.current_node": "publish_builder_handoff",
-          "internal.node_visit_count": 1,
-          "internal.retry_count.start": 0,
-          "internal.retry_count.smoke_generate_app": 0,
           "graph.retry_target": "materialize_consumer_radar",
+          "internal.retry_count.smoke_generate_app": 0,
+          "internal.retry_count.wait_for_builder_files": 0,
+          "internal.thread_id": "smoke_generate_app",
+          "command.output": "blob://sha256/62b5fb1753967e2c52d3b87f0447b950df296875dec1ce39739024473e654161",
+          "internal.node_visit_count": 1,
+          "thread.validate_generated.current_node": "smoke_generate_app",
+          "graph.model_stylesheet": "\n            *       { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: low; }\n            .coding { provider: openrouter; model: qwen/qwen3.6-plus; reasoning_effort: high; }\n            .review { provider: openrouter; model: google/gemini-3.1-pro-preview; reasoning_effort: high; }\n        ",
+          "internal.retry_count.define_quality_bar": 0,
+          "internal.retry_count.start": 0,
+          "internal.retry_count.publish_builder_handoff": 0,
+          "graph.rankdir": "LR",
+          "internal.work_dir": "/home/daytona/workspace",
+          "failure_class": "",
+          "graph.default_max_retries": "2",
           "internal.retry_count.validate_generated": 0,
-          "thread.materialize_consumer_radar.current_node": "validate_generated"
+          "internal.run_id": "01KRGT2AA3HDKAF828R00GCKGX",
+          "thread.define_quality_bar.current_node": "wait_for_builder_files",
+          "thread.materialize_consumer_radar.current_node": "validate_generated",
+          "graph.persona": "workflow-builder",
+          "thread.wait_for_builder_files.current_node": "materialize_consumer_radar",
+          "outcome": "succeeded",
+          "graph.outputs": "generated_workflow, generated_supporting_code, validation_report",
+          "thread.start.current_node": "define_quality_bar",
+          "graph.fallback_retry_target": "materialize_consumer_radar",
+          "thread.smoke_generate_app.current_node": "publish_builder_handoff",
+          "graph.goal": "Build the Consumer App Radar workflow-builder output, then validate it",
+          "graph.inputs": "target, output_root"
         },
         "node_outcomes": {
-          "start": {
-            "status": "succeeded",
-            "usage": null
-          },
           "validate_generated": {
             "status": "succeeded",
             "context_updates": {
@@ -1105,28 +1101,12 @@
             "notes": "Script completed: node scripts/workflow-builder/validate-consumer-radar-builder.mjs",
             "usage": null
           },
-          "publish_builder_handoff": {
+          "smoke_generate_app": {
             "status": "succeeded",
             "context_updates": {
-              "command.output": "blob://sha256/62b5fb1753967e2c52d3b87f0447b950df296875dec1ce39739024473e654161"
+              "command.output": "blob://sha256/5865fc0fb91fb8f0bb14b0b71761722884fde5b5ecd97e678d38a8d1d2f086db"
             },
-            "notes": "Script completed: node -e \"const fs=require('fs'); const out='.workflow/workflow-builder/handoff.json'; const handoff={ok:true, generated_workflow:'workflows/consumer-radar/build-consumer-app-radar.fabro', generated_run_config:'workflows/consumer-radar/build-consumer-app-radar.toml', next:'Run the generated workflow through Fabro on Railway/Daytona', reports:['.workflow/workflow-builder/consumer-radar-report.json','.workflow/workflow-builder/validation.json','.workflow/consumer-radar/native-checks.json']}; fs.writeFileSync(out, JSON.stringify(handoff,null,2)+'\\n'); console.log(JSON.stringify(handoff));\"",
-            "usage": null
-          },
-          "define_quality_bar": {
-            "status": "succeeded",
-            "context_updates": {
-              "command.output": "blob://sha256/8bbfea879e993bc23b4b56612c5396a86e30224501a513ba0224279660aee978"
-            },
-            "notes": "Script completed: mkdir -p .workflow/workflow-builder; node -e \"const fs=require('fs'); const quality={ok:true,target:'consumer-app-radar', requirements:['Fabro owns the app build process','repository-relative paths','Spec Kitty recorded','Qlty gate','Promptfoo or fallback eval','OpenRouter Kimi/Qwen/DeepSeek review fanout','no hardcoded secrets']}; fs.writeFileSync('.workflow/workflow-builder/quality-bar.json', JSON.stringify(quality,null,2)+'\\n'); console.log(JSON.stringify(quality));\"",
-            "usage": null
-          },
-          "wait_for_builder_files": {
-            "status": "succeeded",
-            "context_updates": {
-              "command.output": "blob://sha256/4a0b08156ae71f5c060cf4bb2fedc3574cc148be2241c1a56c605a21668034d8"
-            },
-            "notes": "Script completed: for i in $(seq 1 90); do if [ -f scripts/workflow-builder/materialize-consumer-radar.mjs ]; then echo builder-files-ready; exit 0; fi; sleep 2; done; echo 'missing builder support files' >&2; exit 1",
+            "notes": "Script completed: node scripts/consumer-radar/generate-app.mjs --app-dir .workflow/workflow-builder/smoke-app && node scripts/consumer-radar/run-native-checks.mjs .workflow/workflow-builder/smoke-app",
             "usage": null
           },
           "materialize_consumer_radar": {
@@ -1137,30 +1117,108 @@
             "notes": "Script completed: node scripts/workflow-builder/materialize-consumer-radar.mjs --output-root '.'",
             "usage": null
           },
-          "smoke_generate_app": {
+          "wait_for_builder_files": {
             "status": "succeeded",
             "context_updates": {
-              "command.output": "blob://sha256/5865fc0fb91fb8f0bb14b0b71761722884fde5b5ecd97e678d38a8d1d2f086db"
+              "command.output": "blob://sha256/4a0b08156ae71f5c060cf4bb2fedc3574cc148be2241c1a56c605a21668034d8"
             },
-            "notes": "Script completed: node scripts/consumer-radar/generate-app.mjs --app-dir .workflow/workflow-builder/smoke-app && node scripts/consumer-radar/run-native-checks.mjs .workflow/workflow-builder/smoke-app",
+            "notes": "Script completed: for i in $(seq 1 90); do if [ -f scripts/workflow-builder/materialize-consumer-radar.mjs ]; then echo builder-files-ready; exit 0; fi; sleep 2; done; echo 'missing builder support files' >&2; exit 1",
+            "usage": null
+          },
+          "define_quality_bar": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/8bbfea879e993bc23b4b56612c5396a86e30224501a513ba0224279660aee978"
+            },
+            "notes": "Script completed: mkdir -p .workflow/workflow-builder; node -e \"const fs=require('fs'); const quality={ok:true,target:'consumer-app-radar', requirements:['Fabro owns the app build process','repository-relative paths','Spec Kitty recorded','Qlty gate','Promptfoo or fallback eval','OpenRouter Kimi/Qwen/DeepSeek review fanout','no hardcoded secrets']}; fs.writeFileSync('.workflow/workflow-builder/quality-bar.json', JSON.stringify(quality,null,2)+'\\n'); console.log(JSON.stringify(quality));\"",
+            "usage": null
+          },
+          "publish_builder_handoff": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/62b5fb1753967e2c52d3b87f0447b950df296875dec1ce39739024473e654161"
+            },
+            "notes": "Script completed: node -e \"const fs=require('fs'); const out='.workflow/workflow-builder/handoff.json'; const handoff={ok:true, generated_workflow:'workflows/consumer-radar/build-consumer-app-radar.fabro', generated_run_config:'workflows/consumer-radar/build-consumer-app-radar.toml', next:'Run the generated workflow through Fabro on Railway/Daytona', reports:['.workflow/workflow-builder/consumer-radar-report.json','.workflow/workflow-builder/validation.json','.workflow/consumer-radar/native-checks.json']}; fs.writeFileSync(out, JSON.stringify(handoff,null,2)+'\\n'); console.log(JSON.stringify(handoff));\"",
+            "usage": null
+          },
+          "start": {
+            "status": "succeeded",
             "usage": null
           }
         },
         "next_node_id": "exit",
+        "git_commit_sha": "f0a18ceacf246355b6cf27899fdf50184650d96d",
         "node_visits": {
-          "smoke_generate_app": 1,
-          "define_quality_bar": 1,
           "publish_builder_handoff": 1,
-          "wait_for_builder_files": 1,
+          "smoke_generate_app": 1,
+          "materialize_consumer_radar": 1,
+          "define_quality_bar": 1,
           "start": 1,
           "validate_generated": 1,
-          "materialize_consumer_radar": 1
+          "wait_for_builder_files": 1
         }
       },
-      "diff": {}
+      "diff": {
+        "summary": {
+          "files_changed": 4,
+          "additions": 48,
+          "deletions": 96
+        }
+      }
     }
   ],
-  "conclusion": null,
+  "conclusion": {
+    "timestamp": "2026-05-13T13:58:25.083332Z",
+    "status": "succeeded",
+    "duration_ms": 28143,
+    "final_git_commit_sha": "f0a18ceacf246355b6cf27899fdf50184650d96d",
+    "stages": [
+      {
+        "stage_id": "start",
+        "stage_label": "start",
+        "duration_ms": 0,
+        "retries": 0
+      },
+      {
+        "stage_id": "define_quality_bar",
+        "stage_label": "define_quality_bar",
+        "duration_ms": 1473,
+        "retries": 0
+      },
+      {
+        "stage_id": "wait_for_builder_files",
+        "stage_label": "wait_for_builder_files",
+        "duration_ms": 1388,
+        "retries": 0
+      },
+      {
+        "stage_id": "materialize_consumer_radar",
+        "stage_label": "materialize_consumer_radar",
+        "duration_ms": 1499,
+        "retries": 0
+      },
+      {
+        "stage_id": "validate_generated",
+        "stage_label": "validate_generated",
+        "duration_ms": 1478,
+        "retries": 0
+      },
+      {
+        "stage_id": "smoke_generate_app",
+        "stage_label": "smoke_generate_app",
+        "duration_ms": 2194,
+        "retries": 0
+      },
+      {
+        "stage_id": "publish_builder_handoff",
+        "stage_label": "publish_builder_handoff",
+        "duration_ms": 1493,
+        "retries": 0
+      }
+    ],
+    "total_retries": 0,
+    "diff": {}
+  },
   "sandbox": {
     "provider": "daytona",
     "image": "buildpack-deps:noble",
@@ -1196,6 +1254,92 @@
       "started_at": "2026-05-13T13:57:58.235910Z",
       "handler": "start",
       "duration_ms": 0,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "total_tokens": 0,
+        "reasoning_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "state": "succeeded"
+    },
+    "define_quality_bar@1": {
+      "first_event_seq": 19,
+      "prompt": null,
+      "response": null,
+      "completion": {
+        "outcome": "succeeded",
+        "notes": "Script completed: mkdir -p .workflow/workflow-builder; node -e \"const fs=require('fs'); const quality={ok:true,target:'consumer-app-radar', requirements:['Fabro owns the app build process','repository-relative paths','Spec Kitty recorded','Qlty gate','Promptfoo or fallback eval','OpenRouter Kimi/Qwen/DeepSeek review fanout','no hardcoded secrets']}; fs.writeFileSync('.workflow/workflow-builder/quality-bar.json', JSON.stringify(quality,null,2)+'\\n'); console.log(JSON.stringify(quality));\"",
+        "failure_reason": null,
+        "timestamp": "2026-05-13T13:57:59.849644Z"
+      },
+      "provider_used": null,
+      "diff": null,
+      "script_invocation": {
+        "script": "mkdir -p .workflow/workflow-builder; node -e \"const fs=require('fs'); const quality={ok:true,target:'consumer-app-radar', requirements:['Fabro owns the app build process','repository-relative paths','Spec Kitty recorded','Qlty gate','Promptfoo or fallback eval','OpenRouter Kimi/Qwen/DeepSeek review fanout','no hardcoded secrets']}; fs.writeFileSync('.workflow/workflow-builder/quality-bar.json', JSON.stringify(quality,null,2)+'\\n'); console.log(JSON.stringify(quality));\"",
+        "command": "exec 2>&1\nmkdir -p .workflow/workflow-builder; node -e \"const fs=require('fs'); const quality={ok:true,target:'consumer-app-radar', requirements:['Fabro owns the app build process','repository-relative paths','Spec Kitty recorded','Qlty gate','Promptfoo or fallback eval','OpenRouter Kimi/Qwen/DeepSeek review fanout','no hardcoded secrets']}; fs.writeFileSync('.workflow/workflow-builder/quality-bar.json', JSON.stringify(quality,null,2)+'\\n'); console.log(JSON.stringify(quality));\"",
+        "language": "shell"
+      },
+      "script_timing": {
+        "output": "blob://sha256/8bbfea879e993bc23b4b56612c5396a86e30224501a513ba0224279660aee978",
+        "exit_code": 0,
+        "duration_ms": 1469,
+        "termination": "exited",
+        "output_bytes": 254,
+        "live_streaming": true
+      },
+      "parallel_results": null,
+      "output": null,
+      "output_bytes": 254,
+      "live_streaming": true,
+      "termination": "exited",
+      "started_at": "2026-05-13T13:57:58.301196Z",
+      "handler": "command",
+      "duration_ms": 1473,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "total_tokens": 0,
+        "reasoning_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "state": "succeeded"
+    },
+    "publish_builder_handoff@1": {
+      "first_event_seq": 94,
+      "prompt": null,
+      "response": null,
+      "completion": {
+        "outcome": "succeeded",
+        "notes": "Script completed: node -e \"const fs=require('fs'); const out='.workflow/workflow-builder/handoff.json'; const handoff={ok:true, generated_workflow:'workflows/consumer-radar/build-consumer-app-radar.fabro', generated_run_config:'workflows/consumer-radar/build-consumer-app-radar.toml', next:'Run the generated workflow through Fabro on Railway/Daytona', reports:['.workflow/workflow-builder/consumer-radar-report.json','.workflow/workflow-builder/validation.json','.workflow/consumer-radar/native-checks.json']}; fs.writeFileSync(out, JSON.stringify(handoff,null,2)+'\\n'); console.log(JSON.stringify(handoff));\"",
+        "failure_reason": null,
+        "timestamp": "2026-05-13T13:58:22.510492Z"
+      },
+      "provider_used": null,
+      "diff": null,
+      "script_invocation": {
+        "script": "node -e \"const fs=require('fs'); const out='.workflow/workflow-builder/handoff.json'; const handoff={ok:true, generated_workflow:'workflows/consumer-radar/build-consumer-app-radar.fabro', generated_run_config:'workflows/consumer-radar/build-consumer-app-radar.toml', next:'Run the generated workflow through Fabro on Railway/Daytona', reports:['.workflow/workflow-builder/consumer-radar-report.json','.workflow/workflow-builder/validation.json','.workflow/consumer-radar/native-checks.json']}; fs.writeFileSync(out, JSON.stringify(handoff,null,2)+'\\n'); console.log(JSON.stringify(handoff));\"",
+        "command": "exec 2>&1\nnode -e \"const fs=require('fs'); const out='.workflow/workflow-builder/handoff.json'; const handoff={ok:true, generated_workflow:'workflows/consumer-radar/build-consumer-app-radar.fabro', generated_run_config:'workflows/consumer-radar/build-consumer-app-radar.toml', next:'Run the generated workflow through Fabro on Railway/Daytona', reports:['.workflow/workflow-builder/consumer-radar-report.json','.workflow/workflow-builder/validation.json','.workflow/consumer-radar/native-checks.json']}; fs.writeFileSync(out, JSON.stringify(handoff,null,2)+'\\n'); console.log(JSON.stringify(handoff));\"",
+        "language": "shell"
+      },
+      "script_timing": {
+        "output": "blob://sha256/62b5fb1753967e2c52d3b87f0447b950df296875dec1ce39739024473e654161",
+        "exit_code": 0,
+        "duration_ms": 1488,
+        "termination": "exited",
+        "output_bytes": 399,
+        "live_streaming": true
+      },
+      "parallel_results": null,
+      "output": null,
+      "output_bytes": 399,
+      "live_streaming": true,
+      "termination": "exited",
+      "started_at": "2026-05-13T13:58:20.894122Z",
+      "handler": "command",
+      "duration_ms": 1493,
       "usage": {
         "input_tokens": 0,
         "output_tokens": 0,
@@ -1292,39 +1436,25 @@
       },
       "state": "succeeded"
     },
-    "define_quality_bar@1": {
-      "first_event_seq": 19,
+    "exit@1": {
+      "first_event_seq": 105,
       "prompt": null,
       "response": null,
       "completion": {
         "outcome": "succeeded",
-        "notes": "Script completed: mkdir -p .workflow/workflow-builder; node -e \"const fs=require('fs'); const quality={ok:true,target:'consumer-app-radar', requirements:['Fabro owns the app build process','repository-relative paths','Spec Kitty recorded','Qlty gate','Promptfoo or fallback eval','OpenRouter Kimi/Qwen/DeepSeek review fanout','no hardcoded secrets']}; fs.writeFileSync('.workflow/workflow-builder/quality-bar.json', JSON.stringify(quality,null,2)+'\\n'); console.log(JSON.stringify(quality));\"",
+        "notes": null,
         "failure_reason": null,
-        "timestamp": "2026-05-13T13:57:59.849644Z"
+        "timestamp": "2026-05-13T13:58:25.050524Z"
       },
       "provider_used": null,
       "diff": null,
-      "script_invocation": {
-        "script": "mkdir -p .workflow/workflow-builder; node -e \"const fs=require('fs'); const quality={ok:true,target:'consumer-app-radar', requirements:['Fabro owns the app build process','repository-relative paths','Spec Kitty recorded','Qlty gate','Promptfoo or fallback eval','OpenRouter Kimi/Qwen/DeepSeek review fanout','no hardcoded secrets']}; fs.writeFileSync('.workflow/workflow-builder/quality-bar.json', JSON.stringify(quality,null,2)+'\\n'); console.log(JSON.stringify(quality));\"",
-        "command": "exec 2>&1\nmkdir -p .workflow/workflow-builder; node -e \"const fs=require('fs'); const quality={ok:true,target:'consumer-app-radar', requirements:['Fabro owns the app build process','repository-relative paths','Spec Kitty recorded','Qlty gate','Promptfoo or fallback eval','OpenRouter Kimi/Qwen/DeepSeek review fanout','no hardcoded secrets']}; fs.writeFileSync('.workflow/workflow-builder/quality-bar.json', JSON.stringify(quality,null,2)+'\\n'); console.log(JSON.stringify(quality));\"",
-        "language": "shell"
-      },
-      "script_timing": {
-        "output": "blob://sha256/8bbfea879e993bc23b4b56612c5396a86e30224501a513ba0224279660aee978",
-        "exit_code": 0,
-        "duration_ms": 1469,
-        "termination": "exited",
-        "output_bytes": 254,
-        "live_streaming": true
-      },
+      "script_invocation": null,
+      "script_timing": null,
       "parallel_results": null,
       "output": null,
-      "output_bytes": 254,
-      "live_streaming": true,
-      "termination": "exited",
-      "started_at": "2026-05-13T13:57:58.301196Z",
-      "handler": "command",
-      "duration_ms": 1473,
+      "started_at": "2026-05-13T13:58:25.050498Z",
+      "handler": "exit",
+      "duration_ms": 0,
       "usage": {
         "input_tokens": 0,
         "output_tokens": 0,
@@ -1334,43 +1464,6 @@
         "cache_write_tokens": 0
       },
       "state": "succeeded"
-    },
-    "publish_builder_handoff@1": {
-      "first_event_seq": 94,
-      "prompt": null,
-      "response": null,
-      "completion": null,
-      "provider_used": null,
-      "diff": null,
-      "script_invocation": {
-        "script": "node -e \"const fs=require('fs'); const out='.workflow/workflow-builder/handoff.json'; const handoff={ok:true, generated_workflow:'workflows/consumer-radar/build-consumer-app-radar.fabro', generated_run_config:'workflows/consumer-radar/build-consumer-app-radar.toml', next:'Run the generated workflow through Fabro on Railway/Daytona', reports:['.workflow/workflow-builder/consumer-radar-report.json','.workflow/workflow-builder/validation.json','.workflow/consumer-radar/native-checks.json']}; fs.writeFileSync(out, JSON.stringify(handoff,null,2)+'\\n'); console.log(JSON.stringify(handoff));\"",
-        "command": "exec 2>&1\nnode -e \"const fs=require('fs'); const out='.workflow/workflow-builder/handoff.json'; const handoff={ok:true, generated_workflow:'workflows/consumer-radar/build-consumer-app-radar.fabro', generated_run_config:'workflows/consumer-radar/build-consumer-app-radar.toml', next:'Run the generated workflow through Fabro on Railway/Daytona', reports:['.workflow/workflow-builder/consumer-radar-report.json','.workflow/workflow-builder/validation.json','.workflow/consumer-radar/native-checks.json']}; fs.writeFileSync(out, JSON.stringify(handoff,null,2)+'\\n'); console.log(JSON.stringify(handoff));\"",
-        "language": "shell"
-      },
-      "script_timing": {
-        "output": "blob://sha256/62b5fb1753967e2c52d3b87f0447b950df296875dec1ce39739024473e654161",
-        "exit_code": 0,
-        "duration_ms": 1488,
-        "termination": "exited",
-        "output_bytes": 399,
-        "live_streaming": true
-      },
-      "parallel_results": null,
-      "output": null,
-      "output_bytes": 399,
-      "live_streaming": true,
-      "termination": "exited",
-      "started_at": "2026-05-13T13:58:20.894122Z",
-      "handler": "command",
-      "usage": {
-        "input_tokens": 0,
-        "output_tokens": 0,
-        "total_tokens": 0,
-        "reasoning_tokens": 0,
-        "cache_read_tokens": 0,
-        "cache_write_tokens": 0
-      },
-      "state": "running"
     },
     "materialize_consumer_radar@1": {
       "first_event_seq": 40,
