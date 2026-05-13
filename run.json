@@ -979,7 +979,7 @@
     "kind": "running"
   },
   "status_updated_at": "2026-05-13T11:47:13.329968610Z",
-  "last_event_at": "2026-05-13T11:50:29.268283311Z",
+  "last_event_at": "2026-05-13T11:50:31.327439010Z",
   "pending_control": null,
   "checkpoints": [
     {
@@ -2030,9 +2030,9 @@
       }
     },
     {
-      "seq": 0,
+      "seq": 141,
       "checkpoint": {
-        "timestamp": "2026-05-13T11:50:29.336302416Z",
+        "timestamp": "2026-05-13T11:50:31.319151874Z",
         "current_node": "review_fanout",
         "completed_nodes": [
           "start",
@@ -2049,6 +2049,195 @@
         ],
         "node_retries": {},
         "context_values": {
+          "command.output": "blob://sha256/12ae32cb1ec02d01eda3581b127c1fee3b0dc53572ed6baf239721a03d82e126",
+          "internal.retry_count.promptfoo_gate": 0,
+          "graph.rankdir": "LR",
+          "thread.qlty_gate.current_node": "promptfoo_gate",
+          "graph.goal": "Build Consumer App Radar from spec with CI, eval, and model review",
+          "current_node": "review_fanout",
+          "internal.retry_count.spec_kitty_gate": 0,
+          "internal.retry_count.bootstrap_spec": 0,
+          "internal.retry_count.qlty_gate": 0,
+          "graph.retry_target": "generate_app",
+          "internal.retry_count.wait_for_support_files": 0,
+          "internal.retry_count.review_fanout": 0,
+          "internal.retry_count.start": 0,
+          "parallel.branch_count": 3,
+          "parallel.results": [
+            {
+              "id": "review_kimi",
+              "status": "failed",
+              "head_sha": "ba685a7aca1a004d19fdfcfd756fc87aff2de1d7"
+            },
+            {
+              "id": "review_qwen",
+              "status": "succeeded",
+              "head_sha": "aa57d217680d971c0eae8ee75a75c61b710a835f"
+            },
+            {
+              "id": "review_deepseek",
+              "status": "succeeded",
+              "head_sha": "baafd45e6d2e8e8025c176b1baf90b7b8cb6b20a"
+            }
+          ],
+          "internal.retry_count.data_source_smoke": 0,
+          "internal.work_dir": "/home/daytona/workspace",
+          "thread.data_source_smoke.current_node": "generate_app",
+          "thread.wait_for_support_files.current_node": "bootstrap_spec",
+          "internal.thread_id": "prepare_review_reports",
+          "graph.fallback_retry_target": "generate_app",
+          "graph.inputs": "app_dir, spec_path, real_mode, allow_fixture_fallback, allow_quality_fallback, minimum_active_reviews",
+          "thread.generate_app.current_node": "native_checks",
+          "thread.promptfoo_gate.current_node": "prepare_review_reports",
+          "thread.spec_kitty_gate.current_node": "data_source_smoke",
+          "internal.retry_count.prepare_review_reports": 0,
+          "internal.node_visit_count": 1,
+          "graph.persona": "code-factory",
+          "thread.start.current_node": "wait_for_support_files",
+          "internal.run_id": "01KRGJK3KV2SZ17ZHT7WM92M5M",
+          "thread.bootstrap_spec.current_node": "spec_kitty_gate",
+          "failure_signature": "",
+          "failure_class": "",
+          "thread.native_checks.current_node": "qlty_gate",
+          "graph.outputs": "application, ci_report, eval_report, review_consensus, handoff",
+          "internal.fidelity": "compact",
+          "thread.prepare_review_reports.current_node": "review_fanout",
+          "internal.retry_count.native_checks": 0,
+          "graph.model_stylesheet": "\n            *          { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: low; }\n            .review    { provider: openrouter; model: google/gemini-3.1-pro-preview; reasoning_effort: high; }\n            .cheap     { provider: openrouter; model: deepseek/deepseek-v4-flash; reasoning_effort: low; }\n        ",
+          "outcome": "partially_succeeded",
+          "graph.default_max_retries": "2",
+          "internal.retry_count.generate_app": 0
+        },
+        "node_outcomes": {
+          "native_checks": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/3cb84a9bb9e20844631d561961b12684816930e946cc09fc74b597b239f65682"
+            },
+            "notes": "Script completed: node scripts/consumer-radar/run-native-checks.mjs 'apps/generated-consumer-app-radar'",
+            "usage": null
+          },
+          "promptfoo_gate": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/f4d558eb2c587e8d5df6ac75b8176bb2a1e4233857882ce307ec955216c74bad"
+            },
+            "notes": "Script completed: node scripts/consumer-radar/promptfoo-or-fallback.mjs 'apps/generated-consumer-app-radar' --real-mode 'true' --allow-fallback 'true'",
+            "usage": null
+          },
+          "wait_for_support_files": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/a993020942c3b2f319b954a99b0a9f056f2f684e6388311672cad5808190f591"
+            },
+            "notes": "Script completed: for i in $(seq 1 90); do if [ -f scripts/consumer-radar/generate-app.mjs ] && [ -f 'specs/consumer-app-radar/spec.md' ]; then echo support-files-ready; exit 0; fi; sleep 2; done; echo 'missing consumer radar support files' >&2; exit 1",
+            "usage": null
+          },
+          "bootstrap_spec": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/c4b258bbee169834f31d4f0e12e0bf3a4d696d1358b6a8b983f8114dc4a6259b"
+            },
+            "notes": "Script completed: node scripts/consumer-radar/bootstrap-spec.mjs --spec 'specs/consumer-app-radar/spec.md' --app-dir 'apps/generated-consumer-app-radar'",
+            "usage": null
+          },
+          "generate_app": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/67e5edc6bf894fedc2d19b61aed13adcde6de82264da817ed9b1212357748df2"
+            },
+            "notes": "Script completed: node scripts/consumer-radar/generate-app.mjs --app-dir 'apps/generated-consumer-app-radar'",
+            "usage": null
+          },
+          "start": {
+            "status": "succeeded",
+            "usage": null
+          },
+          "qlty_gate": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/909f30fcf892fe529fc2dab34e4262f530b6d8b65434dc51d8ca70e4f08e0b0f"
+            },
+            "notes": "Script completed: node scripts/consumer-radar/qlty-gate.mjs 'apps/generated-consumer-app-radar' --real-mode 'true' --allow-fallback 'true'",
+            "usage": null
+          },
+          "prepare_review_reports": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/12ae32cb1ec02d01eda3581b127c1fee3b0dc53572ed6baf239721a03d82e126"
+            },
+            "notes": "Script completed: rm -rf reports/consumer-radar/reviews reports/consumer-radar/review-consensus.json && mkdir -p reports/consumer-radar/reviews",
+            "usage": null
+          },
+          "review_fanout": {
+            "status": "partially_succeeded",
+            "jump_to_node": "review_join",
+            "notes": "Parallel node dispatched 3 branches (2 succeeded, 1 failed)",
+            "usage": null
+          },
+          "spec_kitty_gate": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/f9d21dee4947513a62f4daae934bbb8a53b312178b489ebd5227038c2b0e3eff"
+            },
+            "notes": "Script completed: node scripts/consumer-radar/bootstrap-spec.mjs --spec 'specs/consumer-app-radar/spec.md' --app-dir 'apps/generated-consumer-app-radar' --spec-kitty",
+            "usage": null
+          },
+          "data_source_smoke": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/df3a1924c553549b1d74794aeb99088531bd81d68baaced7cada4a2a4c03ea45"
+            },
+            "notes": "Script completed: node scripts/consumer-radar/data-source-smoke.mjs --output .workflow/consumer-radar/data-source-smoke.json --real-mode 'true' --allow-fixture-fallback 'true'",
+            "usage": null
+          }
+        },
+        "next_node_id": "review_join",
+        "git_commit_sha": "b144018cd558a585ab689b20a06fb719fb26c812",
+        "node_visits": {
+          "wait_for_support_files": 1,
+          "prepare_review_reports": 1,
+          "promptfoo_gate": 1,
+          "generate_app": 1,
+          "qlty_gate": 1,
+          "spec_kitty_gate": 1,
+          "data_source_smoke": 1,
+          "review_fanout": 1,
+          "start": 1,
+          "bootstrap_spec": 1,
+          "native_checks": 1
+        }
+      },
+      "diff": {
+        "patch": "diff --git a/reports/consumer-radar/reviews/deepseek.json b/reports/consumer-radar/reviews/deepseek.json\nnew file mode 100644\nindex 0000000..7348151\n--- /dev/null\n+++ b/reports/consumer-radar/reviews/deepseek.json\n@@ -0,0 +1,38 @@\n+{\n+  \"ok\": true,\n+  \"skipped\": false,\n+  \"real_mode\": true,\n+  \"model\": \"deepseek/deepseek-v4-flash\",\n+  \"role\": \"simplification_and_ci\",\n+  \"status\": 200,\n+  \"parsed\": {\n+    \"verdict\": \"APPROVE\",\n+    \"score\": 0.95,\n+    \"findings\": [\n+      {\n+        \"severity\": \"low\",\n+        \"issue\": \"No error handling for missing fixture file in refreshApps; loadFixtureApps throws but caller in server.js does not catch.\",\n+        \"fix\": \"Wrap refreshApps call in server.js with try/catch and return 500 on failure.\"\n+      },\n+      {\n+        \"severity\": \"low\",\n+        \"issue\": \"POST /api/refresh does not validate mode parameter beyond allowedModes set; unsupported mode returns 500 with generic error.\",\n+        \"fix\": \"Return 400 with descriptive error for unsupported mode before calling refreshApps.\"\n+      },\n+      {\n+        \"severity\": \"info\",\n+        \"issue\": \"No test for /api/apps/:id returning 404; only happy path tested in api-fixture.test.js.\",\n+        \"fix\": \"Add a test case for non-existent app ID returning 404 status.\"\n+      }\n+    ],\n+    \"suggested_next_steps\": [\n+      \"Add error boundary in server.js for fixture load failures\",\n+      \"Add input validation for POST /api/refresh mode parameter\",\n+      \"Add 404 test case for single app endpoint\"\n+    ]\n+  },\n+  \"raw_excerpt\": \"{\\n  \\\"verdict\\\": \\\"APPROVE\\\",\\n  \\\"score\\\": 0.95,\\n  \\\"findings\\\": [\\n    {\\n      \\\"severity\\\": \\\"low\\\",\\n      \\\"issue\\\": \\\"No error handling for missing fixture file in refreshApps; loadFixtureApps throws but caller in server.js does not catch.\\\",\\n      \\\"fix\\\": \\\"Wrap refreshApps call in server.js with try/catch and return 500 on failure.\\\"\\n    },\\n    {\\n      \\\"severity\\\": \\\"low\\\",\\n      \\\"issue\\\": \\\"POST /api/refresh does not validate mode parameter beyond allowedModes set; unsupported mode returns 500 with generic error.\\\",\\n      \\\"fix\\\": \\\"Return 400 with descriptive error for unsupported mode before calling refreshApps.\\\"\\n    },\\n    {\\n      \\\"severity\\\": \\\"info\\\",\\n      \\\"issue\\\": \\\"No test for /api/apps/:id returning 404; only happy path tested in api-fixture.test.js.\\\",\\n      \\\"fix\\\": \\\"Add a test case for non-existent app ID returning 404 status.\\\"\\n    }\\n  ],\\n  \\\"suggested_next_steps\\\": [\\n    \\\"Add error boundary in server.js for fixture load failures\\\",\\n    \\\"Add input validation for POST /api/refresh mode parameter\\\",\\n    \\\"Add 404 test case for single app endpoint\\\"\\n  ]\\n}\",\n+  \"error\": null,\n+  \"payload_excerpt\": null,\n+  \"payload_text_excerpt\": \"\\n         \\n\\n         \\n\\n         \\n\\n         \\n\\n         \\n\\n         \\n\\n         \\n\\n         \\n\\n         \\n\\n         \\n\\n         \\n\\n         \\n\\n         \\n\\n         \\n\\n         \\n\\n         \\n\\n         \\n\\n         \\n{\\\"id\\\":\\\"gen-1778673020-k3hEuXcUyyugZPFzzcq9\\\",\\\"object\\\":\\\"chat.completion\\\",\\\"created\\\":1778673020,\\\"model\\\":\\\"deepseek/deepseek-v4-flash-20260423\\\",\\\"provider\\\":\\\"DeepInfra\\\",\\\"system_fingerprint\\\":null,\\\"choices\\\":[{\\\"index\\\":0,\\\"logprobs\\\":null,\\\"finish_reason\\\":\\\"stop\\\",\\\"native_finish_reason\\\":\\\"stop\\\",\\\"message\\\":{\\\"role\\\":\\\"assistant\\\",\\\"content\\\":\\\"{\\\\n  \\\\\\\"verdict\\\\\\\": \\\\\\\"APPROVE\\\\\\\",\\\\n  \\\\\\\"score\\\\\\\": 0.95,\\\\n  \\\\\\\"findings\\\\\\\": [\\\\n    {\\\\n      \\\\\\\"severity\\\\\\\": \\\\\\\"low\\\\\\\",\\\\n      \\\\\\\"issue\\\\\\\": \\\\\\\"No error handling for missing fixture file in refreshApps; loadFixtureApps throws but caller in server.js does not catch.\\\\\\\",\\\\n      \\\\\\\"fix\\\\\\\": \\\\\\\"Wrap refreshApps call in server.js with try/catch and return 500 on failure.\\\\\\\"\\\\n    },\\\\n    {\\\\n      \\\\\\\"severity\\\\\\\": \\\\\\\"low\\\\\\\",\\\\n      \\\\\\\"issue\\\\\\\": \\\\\\\"POST /api/refresh does not validate mode parameter beyond allowedModes set; unsupported mode returns 500 with generic error.\\\\\\\",\\\\n      \\\\\\\"fix\\\\\\\": \\\\\\\"Return 400 with descriptive error for unsupported mode before calling refreshApps.\\\\\\\"\\\\n    },\\\\n    {\\\\n      \\\\\\\"severity\\\\\\\": \\\\\\\"\"\n+}\n",
+        "summary": {
+          "files_changed": 6,
+          "additions": 76,
+          "deletions": 30
+        }
+      }
+    },
+    {
+      "seq": 0,
+      "checkpoint": {
+        "timestamp": "2026-05-13T11:50:31.349279504Z",
+        "current_node": "review_join",
+        "completed_nodes": [
+          "start",
+          "wait_for_support_files",
+          "bootstrap_spec",
+          "spec_kitty_gate",
+          "data_source_smoke",
+          "generate_app",
+          "native_checks",
+          "qlty_gate",
+          "promptfoo_gate",
+          "prepare_review_reports",
+          "review_fanout",
+          "review_join"
+        ],
+        "node_retries": {},
+        "context_values": {
           "thread.bootstrap_spec.current_node": "spec_kitty_gate",
           "command.output": "blob://sha256/12ae32cb1ec02d01eda3581b127c1fee3b0dc53572ed6baf239721a03d82e126",
           "thread.qlty_gate.current_node": "promptfoo_gate",
@@ -2056,6 +2245,8 @@
           "internal.run_id": "01KRGJK3KV2SZ17ZHT7WM92M5M",
           "graph.fallback_retry_target": "generate_app",
           "internal.fidelity": "compact",
+          "thread.review_fanout.current_node": "review_join",
+          "parallel.fan_in.best_outcome": "succeeded",
           "internal.retry_count.bootstrap_spec": 0,
           "internal.retry_count.spec_kitty_gate": 0,
           "internal.retry_count.data_source_smoke": 0,
@@ -2094,18 +2285,21 @@
           "parallel.branch_count": 3,
           "internal.work_dir": "/home/daytona/workspace",
           "internal.retry_count.generate_app": 0,
+          "parallel.fan_in.best_id": "review_deepseek",
+          "internal.retry_count.review_join": 0,
           "graph.default_max_retries": "2",
-          "current_node": "review_fanout",
+          "current_node": "review_join",
           "internal.node_visit_count": 1,
-          "outcome": "partially_succeeded",
+          "outcome": "succeeded",
           "thread.generate_app.current_node": "native_checks",
-          "internal.thread_id": "prepare_review_reports",
+          "internal.thread_id": "review_fanout",
           "thread.data_source_smoke.current_node": "generate_app",
           "internal.retry_count.native_checks": 0,
           "thread.native_checks.current_node": "qlty_gate",
           "internal.retry_count.promptfoo_gate": 0,
           "internal.retry_count.review_fanout": 0,
           "failure_signature": "",
+          "parallel.fan_in.best_head_sha": "baafd45e6d2e8e8025c176b1baf90b7b8cb6b20a",
           "internal.retry_count.qlty_gate": 0
         },
         "node_outcomes": {
@@ -2155,6 +2349,16 @@
             "notes": "Parallel node dispatched 3 branches (2 succeeded, 1 failed)",
             "usage": null
           },
+          "review_join": {
+            "status": "succeeded",
+            "context_updates": {
+              "parallel.fan_in.best_head_sha": "baafd45e6d2e8e8025c176b1baf90b7b8cb6b20a",
+              "parallel.fan_in.best_outcome": "succeeded",
+              "parallel.fan_in.best_id": "review_deepseek"
+            },
+            "notes": "Selected best candidate: review_deepseek",
+            "usage": null
+          },
           "bootstrap_spec": {
             "status": "succeeded",
             "context_updates": {
@@ -2192,10 +2396,11 @@
             "usage": null
           }
         },
-        "next_node_id": "review_join",
+        "next_node_id": "review_consensus",
         "node_visits": {
           "bootstrap_spec": 1,
           "start": 1,
+          "review_join": 1,
           "spec_kitty_gate": 1,
           "generate_app": 1,
           "review_fanout": 1,
@@ -2227,6 +2432,29 @@
   "superseded_by": null,
   "pending_interviews": {},
   "stages": {
+    "review_join@1": {
+      "first_event_seq": 144,
+      "prompt": null,
+      "response": null,
+      "completion": null,
+      "provider_used": null,
+      "diff": null,
+      "script_invocation": null,
+      "script_timing": null,
+      "parallel_results": null,
+      "output": null,
+      "started_at": "2026-05-13T11:50:31.327439010Z",
+      "handler": "parallel.fan_in",
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "total_tokens": 0,
+        "reasoning_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "state": "running"
+    },
     "native_checks@1": {
       "first_event_seq": 70,
       "prompt": null,
@@ -2647,7 +2875,12 @@
       "first_event_seq": 110,
       "prompt": null,
       "response": null,
-      "completion": null,
+      "completion": {
+        "outcome": "partially_succeeded",
+        "notes": "Parallel node dispatched 3 branches (2 succeeded, 1 failed)",
+        "failure_reason": null,
+        "timestamp": "2026-05-13T11:50:29.336093779Z"
+      },
       "provider_used": null,
       "diff": null,
       "script_invocation": {
@@ -2663,13 +2896,30 @@
         "output_bytes": 4226,
         "live_streaming": true
       },
-      "parallel_results": null,
+      "parallel_results": [
+        {
+          "id": "review_kimi",
+          "status": "failed",
+          "head_sha": "ba685a7aca1a004d19fdfcfd756fc87aff2de1d7"
+        },
+        {
+          "id": "review_qwen",
+          "status": "succeeded",
+          "head_sha": "aa57d217680d971c0eae8ee75a75c61b710a835f"
+        },
+        {
+          "id": "review_deepseek",
+          "status": "succeeded",
+          "head_sha": "baafd45e6d2e8e8025c176b1baf90b7b8cb6b20a"
+        }
+      ],
       "output": null,
       "output_bytes": 4226,
       "live_streaming": true,
       "termination": "exited",
       "started_at": "2026-05-13T11:49:19.295201007Z",
       "handler": "parallel",
+      "duration_ms": 70040,
       "usage": {
         "input_tokens": 0,
         "output_tokens": 0,
@@ -2678,7 +2928,7 @@
         "cache_read_tokens": 0,
         "cache_write_tokens": 0
       },
-      "state": "running"
+      "state": "partially_succeeded"
     }
   }
 }
