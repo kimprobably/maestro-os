@@ -1,0 +1,23 @@
+_version = 1
+
+[workflow]
+graph = "enhance-app-from-feedback.fabro"
+
+[run]
+goal = "Enhance Consumer App Radar from product feedback using the generic app feedback workflow"
+
+[run.inputs]
+app_dir = "apps/generated-consumer-app-radar"
+feedback_path = "feedback/consumer-radar-product-feedback.md"
+target_adapter = "consumer-radar"
+real_mode = true
+allow_quality_fallback = true
+minimum_active_reviews = 2
+
+[run.sandbox]
+provider = "daytona"
+preserve = true
+stop_on_terminal = true
+
+[run.sandbox.daytona]
+auto_stop_interval = 60

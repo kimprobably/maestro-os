@@ -17,43 +17,42 @@ export function buildSummary(apps) {
       .sort(
         (a, b) => Number(b.rankDelta4w || 0) - Number(a.rankDelta4w || 0),
       )[0] || null;
-  const strongestSocial =
-    rows
-      .slice()
-      .sort(
-        (a, b) => Number(b.socialDelta4w || 0) - Number(a.socialDelta4w || 0),
-      )[0] || null;
+  const emerging = rows.filter(
+    (app) => !app.isCategoryLeader && Number(app.currentRank || 999) > 15,
+  ).length;
+  const liveScraped = rows.filter(
+    (app) => app.growthHypothesis?.liveScraped,
+  ).length;
   return {
     trackedApps: rows.length,
+    emergingApps: emerging,
+    liveScrapedApps: liveScraped,
     topCategory: { name: topCategory[0], count: topCategory[1] },
     fastestMover: fastestMover
       ? { name: fastestMover.name, rankDelta4w: fastestMover.rankDelta4w }
-      : null,
-    strongestSocial: strongestSocial
-      ? {
-          name: strongestSocial.name,
-          socialDelta4w: strongestSocial.socialDelta4w,
-        }
       : null,
     totalFeatureRequests,
     sourceStatus: [
       {
         name: "Apple App Store RSS",
         status: "adapter-ready",
-        detail: "Review and search adapters are included.",
+        detail:
+          "Review adapter exists; visible samples are fixture-backed unless a live run replaces them.",
       },
       {
         name: "Apify TikTok/Instagram",
         status:
           process.env.APIFY_TOKEN && !process.env.APIFY_TOKEN.includes("{{")
-            ? "token-present"
+            ? "token-present-not-run"
             : "needs-token",
-        detail: "Social scraping runs through configurable Apify actors.",
+        detail:
+          "Growth hypotheses disclose whether content was actually scraped.",
       },
       {
-        name: "Fixture seed",
+        name: "Emerging app filter",
         status: "active",
-        detail: "Used for deterministic CI and demos.",
+        detail:
+          "Default ranking penalizes category leaders and favors rank 20-150 movers.",
       },
     ],
   };

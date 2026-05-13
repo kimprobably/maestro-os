@@ -2,7 +2,7 @@ import { createServer } from "node:http";
 import { existsSync, createReadStream } from "node:fs";
 import { extname, join, resolve } from "node:path";
 import { loadApps } from "./repository.js";
-import { refreshApps } from "./ingest.js";
+import { addCustomApp, refreshApps } from "./ingest.js";
 import { buildSummary } from "./summary.js";
 
 const publicDir = resolve("public");
@@ -20,6 +20,13 @@ const jsonHeaders = {
 function sendJson(res, status, body) {
   res.writeHead(status, jsonHeaders);
   res.end(JSON.stringify(body));
+}
+
+async function readJson(req) {
+  let body = "";
+  for await (const chunk of req) body += chunk;
+  if (!body.trim()) return {};
+  return JSON.parse(body);
 }
 
 function serveStatic(req, res) {
@@ -45,6 +52,11 @@ const server = createServer(async (req, res) => {
       return sendJson(res, 200, buildSummary(loadApps()));
     if (url.pathname === "/api/apps" && req.method === "GET")
       return sendJson(res, 200, { apps: loadApps() });
+    if (url.pathname === "/api/apps" && req.method === "POST")
+      return sendJson(res, 201, {
+        ok: true,
+        app: await addCustomApp(await readJson(req)),
+      });
     if (url.pathname.startsWith("/api/apps/") && req.method === "GET") {
       const id = decodeURIComponent(url.pathname.split("/").pop());
       const app = loadApps().find((item) => item.id === id);

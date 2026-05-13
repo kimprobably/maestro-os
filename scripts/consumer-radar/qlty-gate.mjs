@@ -68,11 +68,9 @@ let retryFmt = null;
 let retryCheck = null;
 if (available) {
   const strictMode = realMode && !allowFallback;
-  if (strictMode) {
-    fmt = run(
-      "export PATH=$HOME/.qlty/bin:$PATH; qlty fmt --all --no-progress --no-upgrade-check",
-    );
-  }
+  fmt = run(
+    "export PATH=$HOME/.qlty/bin:$PATH; qlty fmt --all --no-progress --no-upgrade-check",
+  );
   const checkCommand = strictMode
     ? "export PATH=$HOME/.qlty/bin:$PATH; qlty check --all --no-progress --summary --no-upgrade-check"
     : "export PATH=$HOME/.qlty/bin:$PATH; qlty check --all --no-progress --no-fail --summary --no-upgrade-check";

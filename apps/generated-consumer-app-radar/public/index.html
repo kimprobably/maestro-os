@@ -13,11 +13,17 @@
           <p class="eyebrow">Consumer app factory intelligence</p>
           <h1>Consumer App Radar</h1>
           <p>
-            Find fast-growing iPhone apps, understand their growth loops, and
-            spot product gaps worth building.
+            Find emerging iPhone apps with accelerating growth, inspect the
+            evidence quality, and collect product gaps worth building.
           </p>
         </div>
-        <button id="refresh" type="button">Refresh data</button>
+        <div class="refresh-controls">
+          <select id="refresh-mode" aria-label="Refresh mode">
+            <option value="fixture">Fixture refresh</option>
+            <option value="live-smoke">Live smoke refresh</option>
+          </select>
+          <button id="refresh" type="button">Refresh data</button>
+        </div>
       </header>
 
       <section
@@ -48,9 +54,29 @@
             <option value="rankDelta4w">Rank velocity</option>
             <option value="reviewDelta4w">Review growth</option>
             <option value="socialDelta4w">Social growth</option>
-            <option value="rating">Rating</option>
+            <option value="currentRank">Emerging rank</option>
           </select>
         </label>
+        <label class="checkbox-label">
+          <input id="hide-leaders" type="checkbox" checked />
+          Hide category leaders
+        </label>
+      </section>
+
+      <section class="add-panel panel" aria-label="Add app research seed">
+        <form id="add-app-form" class="add-app-form">
+          <label
+            >App name
+            <input name="name" required placeholder="Jomo, Roots, Clearspace"
+          /></label>
+          <label
+            >Category <input name="category" placeholder="Productivity"
+          /></label>
+          <label
+            >App Store ID <input name="appStoreId" placeholder="optional"
+          /></label>
+          <button type="submit">Add app</button>
+        </form>
       </section>
 
       <section class="layout">
