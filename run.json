@@ -1082,14 +1082,118 @@
     }
   },
   "web_url": "https://fabro-maestro-production.up.railway.app/runs/01KRHM7G28MDA9X8JFGP04ERQC",
-  "start": null,
-  "status": {
-    "kind": "starting"
+  "start": {
+    "start_time": "2026-05-13T21:35:09.354396101Z",
+    "run_branch": "fabro/run/01KRHM7G28MDA9X8JFGP04ERQC",
+    "base_sha": "c596f49168a27bedc7b4b8fb86c977d299851709"
   },
-  "status_updated_at": "2026-05-13T21:35:03.407158871Z",
-  "last_event_at": "2026-05-13T21:35:09.201478713Z",
+  "status": {
+    "kind": "running"
+  },
+  "status_updated_at": "2026-05-13T21:35:09.354425356Z",
+  "last_event_at": "2026-05-13T21:35:11.412516437Z",
   "pending_control": null,
-  "checkpoints": [],
+  "checkpoints": [
+    {
+      "seq": 18,
+      "checkpoint": {
+        "timestamp": "2026-05-13T21:35:10.185935909Z",
+        "current_node": "start",
+        "completed_nodes": [
+          "start"
+        ],
+        "node_retries": {},
+        "context_values": {
+          "graph.rankdir": "LR",
+          "internal.work_dir": "/home/daytona/workspace",
+          "graph.fallback_retry_target": "implementation_plan_fanout",
+          "current_node": "start",
+          "graph.outputs": "live_enriched_app, live_data_report, review_consensus, handoff",
+          "graph.model_stylesheet": "\n            *          { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: low; }\n            .coding    { provider: openrouter; model: qwen/qwen3.6-plus; reasoning_effort: high; }\n            .review    { provider: openrouter; model: google/gemini-3.1-pro-preview; reasoning_effort: high; }\n            .cheap     { provider: openrouter; model: deepseek/deepseek-v4-flash; reasoning_effort: low; }\n        ",
+          "graph.goal": "Implement Consumer Radar live discovery and enrichment with strict real-data gates",
+          "internal.thread_id": null,
+          "graph.retry_target": "implement_live_enrichment",
+          "graph.default_max_retries": "2",
+          "internal.fidelity": "compact",
+          "outcome": "succeeded",
+          "internal.node_visit_count": 1,
+          "failure_signature": "",
+          "graph.inputs": "app_dir, real_mode, allow_fixture_fallback, minimum_live_apps, minimum_review_samples, minimum_social_examples, minimum_active_reviews",
+          "graph.persona": "consumer-radar-live-enrichment-builder",
+          "failure_class": "",
+          "internal.retry_count.start": 0,
+          "internal.run_id": "01KRHM7G28MDA9X8JFGP04ERQC"
+        },
+        "node_outcomes": {
+          "start": {
+            "status": "succeeded",
+            "usage": null
+          }
+        },
+        "next_node_id": "live_source_preflight",
+        "node_visits": {
+          "start": 1
+        }
+      },
+      "diff": {}
+    },
+    {
+      "seq": 0,
+      "checkpoint": {
+        "timestamp": "2026-05-13T21:35:11.467127764Z",
+        "current_node": "live_source_preflight",
+        "completed_nodes": [
+          "start",
+          "live_source_preflight"
+        ],
+        "node_retries": {},
+        "context_values": {
+          "outcome": "succeeded",
+          "graph.retry_target": "implement_live_enrichment",
+          "internal.retry_count.start": 0,
+          "graph.outputs": "live_enriched_app, live_data_report, review_consensus, handoff",
+          "graph.inputs": "app_dir, real_mode, allow_fixture_fallback, minimum_live_apps, minimum_review_samples, minimum_social_examples, minimum_active_reviews",
+          "internal.fidelity": "compact",
+          "internal.retry_count.live_source_preflight": 0,
+          "internal.work_dir": "/home/daytona/workspace",
+          "graph.rankdir": "LR",
+          "graph.default_max_retries": "2",
+          "graph.fallback_retry_target": "implementation_plan_fanout",
+          "graph.persona": "consumer-radar-live-enrichment-builder",
+          "internal.node_visit_count": 1,
+          "failure_signature": "",
+          "thread.start.current_node": "live_source_preflight",
+          "graph.goal": "Implement Consumer Radar live discovery and enrichment with strict real-data gates",
+          "internal.run_id": "01KRHM7G28MDA9X8JFGP04ERQC",
+          "failure_class": "",
+          "internal.thread_id": "start",
+          "current_node": "live_source_preflight",
+          "graph.model_stylesheet": "\n            *          { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: low; }\n            .coding    { provider: openrouter; model: qwen/qwen3.6-plus; reasoning_effort: high; }\n            .review    { provider: openrouter; model: google/gemini-3.1-pro-preview; reasoning_effort: high; }\n            .cheap     { provider: openrouter; model: deepseek/deepseek-v4-flash; reasoning_effort: low; }\n        ",
+          "command.output": "blob://sha256/5e35254a5e6757cfd34a36d5bcb6dd4e7878884b76ab0a6ce38c03c9c4364ef4"
+        },
+        "node_outcomes": {
+          "start": {
+            "status": "succeeded",
+            "usage": null
+          },
+          "live_source_preflight": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/5e35254a5e6757cfd34a36d5bcb6dd4e7878884b76ab0a6ce38c03c9c4364ef4"
+            },
+            "notes": "Script completed: echo APIFY_TOKEN live source preflight; node scripts/app-feedback/live-source-preflight.mjs --app-dir 'apps/generated-consumer-app-radar' --real-mode 'true' --allow-fixture-fallback 'false' --out .workflow/consumer-radar-live-enrichment/source-preflight.json",
+            "usage": null
+          }
+        },
+        "next_node_id": "implementation_plan_fanout",
+        "node_visits": {
+          "live_source_preflight": 1,
+          "start": 1
+        }
+      },
+      "diff": {}
+    }
+  ],
   "conclusion": null,
   "sandbox": {
     "provider": "daytona",
@@ -1106,5 +1210,72 @@
   "pull_request": null,
   "superseded_by": null,
   "pending_interviews": {},
-  "stages": {}
+  "stages": {
+    "live_source_preflight@1": {
+      "first_event_seq": 19,
+      "prompt": null,
+      "response": null,
+      "completion": null,
+      "provider_used": null,
+      "diff": null,
+      "script_invocation": {
+        "script": "echo APIFY_TOKEN live source preflight; node scripts/app-feedback/live-source-preflight.mjs --app-dir 'apps/generated-consumer-app-radar' --real-mode 'true' --allow-fixture-fallback 'false' --out .workflow/consumer-radar-live-enrichment/source-preflight.json",
+        "command": "exec 2>&1\necho APIFY_TOKEN live source preflight; node scripts/app-feedback/live-source-preflight.mjs --app-dir 'apps/generated-consumer-app-radar' --real-mode 'true' --allow-fixture-fallback 'false' --out .workflow/consumer-radar-live-enrichment/source-preflight.json",
+        "language": "shell"
+      },
+      "script_timing": {
+        "output": "blob://sha256/5e35254a5e6757cfd34a36d5bcb6dd4e7878884b76ab0a6ce38c03c9c4364ef4",
+        "exit_code": 0,
+        "duration_ms": 1221,
+        "termination": "exited",
+        "output_bytes": 226,
+        "live_streaming": true
+      },
+      "parallel_results": null,
+      "output": null,
+      "output_bytes": 226,
+      "live_streaming": true,
+      "termination": "exited",
+      "started_at": "2026-05-13T21:35:10.186190077Z",
+      "handler": "command",
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "total_tokens": 0,
+        "reasoning_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "state": "running"
+    },
+    "start@1": {
+      "first_event_seq": 15,
+      "prompt": null,
+      "response": null,
+      "completion": {
+        "outcome": "succeeded",
+        "notes": null,
+        "failure_reason": null,
+        "timestamp": "2026-05-13T21:35:10.185544212Z"
+      },
+      "provider_used": null,
+      "diff": null,
+      "script_invocation": null,
+      "script_timing": null,
+      "parallel_results": null,
+      "output": null,
+      "started_at": "2026-05-13T21:35:10.144951559Z",
+      "handler": "start",
+      "duration_ms": 0,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "total_tokens": 0,
+        "reasoning_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "state": "succeeded"
+    }
+  }
 }
