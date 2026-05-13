@@ -1061,7 +1061,7 @@
     "kind": "running"
   },
   "status_updated_at": "2026-05-13T15:13:01.783598Z",
-  "last_event_at": "2026-05-13T15:13:42.101246Z",
+  "last_event_at": "2026-05-13T15:13:45.556066Z",
   "pending_control": null,
   "checkpoints": [
     {
@@ -2098,9 +2098,9 @@
       }
     },
     {
-      "seq": 0,
+      "seq": 154,
       "checkpoint": {
-        "timestamp": "2026-05-13T15:13:42.135474Z",
+        "timestamp": "2026-05-13T15:13:44.233147Z",
         "current_node": "product_surface_gate",
         "completed_nodes": [
           "start",
@@ -2117,6 +2117,152 @@
         ],
         "node_retries": {},
         "context_values": {
+          "graph.fallback_retry_target": "generate_app",
+          "graph.persona": "code-factory",
+          "internal.retry_count.data_source_smoke": 0,
+          "internal.run_id": "01KRGYBSDWBTNFJCZ3JRNDJ57R",
+          "failure_class": "deterministic",
+          "thread.generate_app.current_node": "native_checks",
+          "internal.retry_count.start": 0,
+          "current_node": "product_surface_gate",
+          "thread.native_checks.current_node": "product_surface_gate",
+          "outcome": "failed",
+          "internal.retry_count.spec_kitty_gate": 0,
+          "graph.default_max_retries": "2",
+          "thread.start.current_node": "wait_for_support_files",
+          "internal.retry_count.generate_app": 0,
+          "internal.fidelity": "compact",
+          "graph.outputs": "application, ci_report, eval_report, review_consensus, handoff",
+          "graph.retry_target": "generate_app",
+          "internal.retry_count.wait_for_support_files": 0,
+          "thread.bootstrap_spec.current_node": "spec_kitty_gate",
+          "internal.retry_count.product_surface_gate": 0,
+          "graph.model_stylesheet": "\n            *          { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: low; }\n            .review    { provider: openrouter; model: google/gemini-3.1-pro-preview; reasoning_effort: high; }\n            .cheap     { provider: openrouter; model: deepseek/deepseek-v4-flash; reasoning_effort: low; }\n        ",
+          "internal.thread_id": "native_checks",
+          "thread.wait_for_support_files.current_node": "bootstrap_spec",
+          "internal.retry_count.native_checks": 0,
+          "thread.data_source_smoke.current_node": "generate_app",
+          "internal.retry_count.bootstrap_spec": 0,
+          "graph.goal": "Build Consumer App Radar from spec with CI, eval, and model review",
+          "graph.rankdir": "LR",
+          "internal.work_dir": "/home/daytona/workspace",
+          "thread.spec_kitty_gate.current_node": "data_source_smoke",
+          "internal.node_visit_count": 2,
+          "thread.product_surface_gate.current_node": "generate_app",
+          "command.output": "blob://sha256/945979c36fc13aa135a94c55ba37f6aa89cc97dfe12a98e3f321c0b0c487be05",
+          "graph.inputs": "app_dir, spec_path, real_mode, allow_fixture_fallback, allow_quality_fallback, minimum_active_reviews",
+          "failure_signature": "product_surface_gate|deterministic|script failed with exit code: <n> ## output node:internal/modules/cjs/loader:<n> throw err; ^ error: cannot find module '/home/daytona/workspace/scripts/consumer-radar/assert-product-surface.mjs' at function._resolvefilename (node:internal/"
+        },
+        "node_outcomes": {
+          "native_checks": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/3cb84a9bb9e20844631d561961b12684816930e946cc09fc74b597b239f65682"
+            },
+            "notes": "Script completed: node scripts/consumer-radar/run-native-checks.mjs 'apps/generated-consumer-app-radar'",
+            "usage": null
+          },
+          "start": {
+            "status": "succeeded",
+            "usage": null
+          },
+          "spec_kitty_gate": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/19c99fc33691c13b630321789318e126d83d5122751ebdafeff2aea6c44aeb7a"
+            },
+            "notes": "Script completed: node scripts/consumer-radar/bootstrap-spec.mjs --spec 'specs/consumer-app-radar/spec.md' --app-dir 'apps/generated-consumer-app-radar' --spec-kitty",
+            "usage": null
+          },
+          "bootstrap_spec": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/29b3c4fdfea045bb6d6d0662a0e2a2f9ddb6948ffe2f328f46b021247325c8ae"
+            },
+            "notes": "Script completed: node scripts/consumer-radar/bootstrap-spec.mjs --spec 'specs/consumer-app-radar/spec.md' --app-dir 'apps/generated-consumer-app-radar'",
+            "usage": null
+          },
+          "generate_app": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/67e5edc6bf894fedc2d19b61aed13adcde6de82264da817ed9b1212357748df2"
+            },
+            "notes": "Script completed: node scripts/consumer-radar/generate-app.mjs --app-dir 'apps/generated-consumer-app-radar'",
+            "usage": null
+          },
+          "wait_for_support_files": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/a993020942c3b2f319b954a99b0a9f056f2f684e6388311672cad5808190f591"
+            },
+            "notes": "Script completed: for i in $(seq 1 90); do if [ -f scripts/consumer-radar/generate-app.mjs ] && [ -f 'specs/consumer-app-radar/spec.md' ]; then echo support-files-ready; exit 0; fi; sleep 2; done; echo 'missing consumer radar support files' >&2; exit 1",
+            "usage": null
+          },
+          "data_source_smoke": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/c772cf4b93fa909b614e7f2f3206c45ddb7cab5a56991020ba758eb4601187ec"
+            },
+            "notes": "Script completed: node scripts/consumer-radar/data-source-smoke.mjs --output .workflow/consumer-radar/data-source-smoke.json --real-mode 'true' --allow-fixture-fallback 'true'",
+            "usage": null
+          },
+          "product_surface_gate": {
+            "status": "failed",
+            "context_updates": {
+              "command.output": "blob://sha256/945979c36fc13aa135a94c55ba37f6aa89cc97dfe12a98e3f321c0b0c487be05"
+            },
+            "failure": {
+              "message": "Script failed with exit code: 1\n\n## output\nnode:internal/modules/cjs/loader:1386\n  throw err;\n  ^\n\nError: Cannot find module '/home/daytona/workspace/scripts/consumer-radar/assert-product-surface.mjs'\n    at Function._resolveFilename (node:internal/modules/cjs/loader:1383:15)\n    at defaultResolveImpl (node:internal/modules/cjs/loader:1025:19)\n    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1030:22)\n    at Function._load (node:internal/modules/cjs/loader:1192:37)\n    at TracingChannel.traceSync (node:diagnostics_channel:328:14)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)\n    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)\n    at node:internal/main/run_main_module:36:49 {\n  code: 'MODULE_NOT_FOUND',\n  requireStack: []\n}\n\nNode.js v22.22.2\n",
+              "failure_class": "deterministic"
+            },
+            "usage": null
+          }
+        },
+        "next_node_id": "generate_app",
+        "git_commit_sha": "3ace0b905c7a3c9c8eb1a4917c08759842e3446a",
+        "loop_failure_signatures": {
+          "product_surface_gate|deterministic|script failed with exit code: <n> ## output node:internal/modules/cjs/loader:<n> throw err; ^ error: cannot find module '/home/daytona/workspace/scripts/consumer-radar/assert-product-surface.mjs' at function._resolvefilename (node:internal/": 2
+        },
+        "node_visits": {
+          "data_source_smoke": 1,
+          "native_checks": 2,
+          "generate_app": 2,
+          "spec_kitty_gate": 1,
+          "wait_for_support_files": 1,
+          "product_surface_gate": 2,
+          "bootstrap_spec": 1,
+          "start": 1
+        }
+      },
+      "diff": {
+        "summary": {
+          "files_changed": 20,
+          "additions": 215,
+          "deletions": 550
+        }
+      }
+    },
+    {
+      "seq": 0,
+      "checkpoint": {
+        "timestamp": "2026-05-13T15:13:46.029729Z",
+        "current_node": "generate_app",
+        "completed_nodes": [
+          "start",
+          "wait_for_support_files",
+          "bootstrap_spec",
+          "spec_kitty_gate",
+          "data_source_smoke",
+          "generate_app",
+          "native_checks",
+          "product_surface_gate",
+          "generate_app",
+          "native_checks",
+          "product_surface_gate",
+          "generate_app"
+        ],
+        "node_retries": {},
+        "context_values": {
           "thread.product_surface_gate.current_node": "generate_app",
           "graph.rankdir": "LR",
           "internal.retry_count.bootstrap_spec": 0,
@@ -2130,23 +2276,23 @@
           "thread.native_checks.current_node": "product_surface_gate",
           "thread.bootstrap_spec.current_node": "spec_kitty_gate",
           "internal.retry_count.start": 0,
-          "failure_class": "deterministic",
-          "internal.node_visit_count": 2,
-          "command.output": "blob://sha256/945979c36fc13aa135a94c55ba37f6aa89cc97dfe12a98e3f321c0b0c487be05",
+          "failure_class": "",
+          "internal.node_visit_count": 3,
+          "command.output": "blob://sha256/67e5edc6bf894fedc2d19b61aed13adcde6de82264da817ed9b1212357748df2",
           "graph.inputs": "app_dir, spec_path, real_mode, allow_fixture_fallback, allow_quality_fallback, minimum_active_reviews",
-          "internal.thread_id": "native_checks",
+          "internal.thread_id": "product_surface_gate",
           "graph.retry_target": "generate_app",
           "graph.outputs": "application, ci_report, eval_report, review_consensus, handoff",
           "internal.work_dir": "/home/daytona/workspace",
           "internal.retry_count.generate_app": 0,
           "internal.retry_count.native_checks": 0,
-          "outcome": "failed",
+          "outcome": "succeeded",
           "thread.start.current_node": "wait_for_support_files",
           "graph.persona": "code-factory",
           "internal.retry_count.product_surface_gate": 0,
-          "current_node": "product_surface_gate",
+          "current_node": "generate_app",
           "internal.fidelity": "compact",
-          "failure_signature": "product_surface_gate|deterministic|script failed with exit code: <n> ## output node:internal/modules/cjs/loader:<n> throw err; ^ error: cannot find module '/home/daytona/workspace/scripts/consumer-radar/assert-product-surface.mjs' at function._resolvefilename (node:internal/",
+          "failure_signature": "",
           "thread.data_source_smoke.current_node": "generate_app",
           "graph.fallback_retry_target": "generate_app",
           "thread.generate_app.current_node": "native_checks",
@@ -2218,11 +2364,11 @@
             "usage": null
           }
         },
-        "next_node_id": "generate_app",
+        "next_node_id": "native_checks",
         "node_visits": {
           "data_source_smoke": 1,
           "bootstrap_spec": 1,
-          "generate_app": 2,
+          "generate_app": 3,
           "product_surface_gate": 2,
           "wait_for_support_files": 1,
           "native_checks": 2,
@@ -2469,7 +2615,12 @@
       "first_event_seq": 147,
       "prompt": null,
       "response": null,
-      "completion": null,
+      "completion": {
+        "outcome": "failed",
+        "notes": null,
+        "failure_reason": "Script failed with exit code: 1\n\n## output\nnode:internal/modules/cjs/loader:1386\n  throw err;\n  ^\n\nError: Cannot find module '/home/daytona/workspace/scripts/consumer-radar/assert-product-surface.mjs'\n    at Function._resolveFilename (node:internal/modules/cjs/loader:1383:15)\n    at defaultResolveImpl (node:internal/modules/cjs/loader:1025:19)\n    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1030:22)\n    at Function._load (node:internal/modules/cjs/loader:1192:37)\n    at TracingChannel.traceSync (node:diagnostics_channel:328:14)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)\n    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)\n    at node:internal/main/run_main_module:36:49 {\n  code: 'MODULE_NOT_FOUND',\n  requireStack: []\n}\n\nNode.js v22.22.2\n",
+        "timestamp": "2026-05-13T15:13:42.134661Z"
+      },
       "provider_used": null,
       "diff": null,
       "script_invocation": {
@@ -2492,6 +2643,7 @@
       "termination": "exited",
       "started_at": "2026-05-13T15:13:40.675932Z",
       "handler": "command",
+      "duration_ms": 1425,
       "usage": {
         "input_tokens": 0,
         "output_tokens": 0,
@@ -2500,7 +2652,7 @@
         "cache_read_tokens": 0,
         "cache_write_tokens": 0
       },
-      "state": "running"
+      "state": "failed"
     },
     "native_checks@1": {
       "first_event_seq": 88,
@@ -2544,6 +2696,43 @@
         "cache_write_tokens": 0
       },
       "state": "succeeded"
+    },
+    "generate_app@3": {
+      "first_event_seq": 157,
+      "prompt": null,
+      "response": null,
+      "completion": null,
+      "provider_used": null,
+      "diff": null,
+      "script_invocation": {
+        "script": "node scripts/consumer-radar/generate-app.mjs --app-dir 'apps/generated-consumer-app-radar'",
+        "command": "exec 2>&1\nnode scripts/consumer-radar/generate-app.mjs --app-dir 'apps/generated-consumer-app-radar'",
+        "language": "shell"
+      },
+      "script_timing": {
+        "output": "blob://sha256/67e5edc6bf894fedc2d19b61aed13adcde6de82264da817ed9b1212357748df2",
+        "exit_code": 0,
+        "duration_ms": 1314,
+        "termination": "exited",
+        "output_bytes": 67,
+        "live_streaming": true
+      },
+      "parallel_results": null,
+      "output": null,
+      "output_bytes": 67,
+      "live_streaming": true,
+      "termination": "exited",
+      "started_at": "2026-05-13T15:13:44.236327Z",
+      "handler": "command",
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "total_tokens": 0,
+        "reasoning_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "state": "running"
     },
     "start@1": {
       "first_event_seq": 16,
