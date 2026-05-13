@@ -767,7 +767,7 @@
     "kind": "running"
   },
   "status_updated_at": "2026-05-13T12:38:58.819297Z",
-  "last_event_at": "2026-05-13T12:39:00.208030Z",
+  "last_event_at": "2026-05-13T12:39:02.726918Z",
   "pending_control": null,
   "checkpoints": [
     {
@@ -811,9 +811,9 @@
       "diff": {}
     },
     {
-      "seq": 0,
+      "seq": 28,
       "checkpoint": {
-        "timestamp": "2026-05-13T12:39:00.262961Z",
+        "timestamp": "2026-05-13T12:39:02.504003Z",
         "current_node": "load_const",
         "completed_nodes": [
           "start",
@@ -821,31 +821,27 @@
         ],
         "node_retries": {},
         "context_values": {
-          "internal.work_dir": "/workspace",
-          "internal.run_id": "01KRGNH6QYC6XMWDQRS3Q5E0KW",
+          "graph.model_stylesheet": "\n            *          { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: low; }\n            .reasoning { backend: cli; provider: anthropic; model: claude-sonnet-4-5; reasoning_effort: high; }\n            .coding    { backend: cli; provider: anthropic; model: claude-sonnet-4-5; reasoning_effort: high; }\n            .review    { backend: cli; provider: anthropic; model: claude-sonnet-4-5; reasoning_effort: high; }\n        ",
           "internal.fidelity": "compact",
           "internal.node_visit_count": 1,
-          "failure_class": "",
+          "thread.start.current_node": "load_const",
           "graph.inputs": "spec, workflow_path, const_path",
+          "internal.retry_count.start": 0,
+          "graph.persona": "workflow-architect",
           "internal.retry_count.load_const": 0,
-          "graph.goal": "Generate a toy Slack hello Fabro workflow from the scaffold spec",
           "command.output": "blob://sha256/24bd977dde4173a15144f0bf15c6fe8f701ee24ceb8a3c9ef72c49c708aebcfa",
-          "graph.rankdir": "LR",
-          "graph.outputs": "validated_workflow, registration_record",
           "outcome": "succeeded",
-          "graph.model_stylesheet": "\n            *          { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: low; }\n            .reasoning { backend: cli; provider: anthropic; model: claude-sonnet-4-5; reasoning_effort: high; }\n            .coding    { backend: cli; provider: anthropic; model: claude-sonnet-4-5; reasoning_effort: high; }\n            .review    { backend: cli; provider: anthropic; model: claude-sonnet-4-5; reasoning_effort: high; }\n        ",
           "current_node": "load_const",
           "internal.thread_id": "start",
-          "internal.retry_count.start": 0,
+          "graph.rankdir": "LR",
           "failure_signature": "",
-          "graph.persona": "workflow-architect",
-          "thread.start.current_node": "load_const"
+          "graph.goal": "Generate a toy Slack hello Fabro workflow from the scaffold spec",
+          "internal.work_dir": "/workspace",
+          "failure_class": "",
+          "graph.outputs": "validated_workflow, registration_record",
+          "internal.run_id": "01KRGNH6QYC6XMWDQRS3Q5E0KW"
         },
         "node_outcomes": {
-          "start": {
-            "status": "succeeded",
-            "usage": null
-          },
           "load_const": {
             "status": "succeeded",
             "context_updates": {
@@ -853,18 +849,51 @@
             },
             "notes": "Script completed: cd '/Users/timlife/Documents/claude code/maestro-os'; mkdir -p .maestro/scaffold; ./bin/maestro knowledge get architecture-principles workflow-standards cli-conventions known-gotchas validator-library personas --format text > ${CONST:-.maestro/scaffold/constitution.md}; echo constitution-loaded",
             "usage": null
+          },
+          "start": {
+            "status": "succeeded",
+            "usage": null
           }
         },
         "next_node_id": "parse_spec",
+        "git_commit_sha": "fbfa9820bc126ada8ec643c9df6037ec3a86502a",
         "node_visits": {
-          "load_const": 1,
-          "start": 1
+          "start": 1,
+          "load_const": 1
         }
       },
-      "diff": {}
+      "diff": {
+        "summary": {
+          "files_changed": 0,
+          "additions": 0,
+          "deletions": 0
+        }
+      }
     }
   ],
-  "conclusion": null,
+  "conclusion": {
+    "timestamp": "2026-05-13T12:39:02.745862Z",
+    "status": "failed",
+    "duration_ms": 3908,
+    "failure_reason": "Engine error: loop_restart blocked: failure_class=deterministic (requires transient_infra), failure_reason=Handler error: CLI backend requires 'claude' to be installed in the sandbox PATH. Install it in the sandbox image or setup steps before running backend=\"cli\".",
+    "final_git_commit_sha": "fbfa9820bc126ada8ec643c9df6037ec3a86502a",
+    "stages": [
+      {
+        "stage_id": "start",
+        "stage_label": "start",
+        "duration_ms": 0,
+        "retries": 0
+      },
+      {
+        "stage_id": "load_const",
+        "stage_label": "load_const",
+        "duration_ms": 157,
+        "retries": 0
+      }
+    ],
+    "total_retries": 0,
+    "diff": {}
+  },
   "sandbox": {
     "provider": "docker",
     "image": "buildpack-deps:noble",
@@ -881,6 +910,39 @@
   "superseded_by": null,
   "pending_interviews": {},
   "stages": {
+    "parse_spec@1": {
+      "first_event_seq": 31,
+      "prompt": null,
+      "response": null,
+      "completion": {
+        "outcome": "failed",
+        "notes": null,
+        "failure_reason": "Handler error: CLI backend requires 'claude' to be installed in the sandbox PATH. Install it in the sandbox image or setup steps before running backend=\"cli\".",
+        "timestamp": "2026-05-13T12:39:02.723982Z"
+      },
+      "provider_used": {
+        "mode": "agent",
+        "provider": "anthropic",
+        "model": "claude-sonnet-4-5"
+      },
+      "diff": null,
+      "script_invocation": null,
+      "script_timing": null,
+      "parallel_results": null,
+      "output": null,
+      "started_at": "2026-05-13T12:39:02.506178Z",
+      "handler": "agent",
+      "duration_ms": 157,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "total_tokens": 0,
+        "reasoning_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "state": "failed"
+    },
     "start@1": {
       "first_event_seq": 17,
       "prompt": null,
@@ -914,7 +976,12 @@
       "first_event_seq": 21,
       "prompt": null,
       "response": null,
-      "completion": null,
+      "completion": {
+        "outcome": "succeeded",
+        "notes": "Script completed: cd '/Users/timlife/Documents/claude code/maestro-os'; mkdir -p .maestro/scaffold; ./bin/maestro knowledge get architecture-principles workflow-standards cli-conventions known-gotchas validator-library personas --format text > ${CONST:-.maestro/scaffold/constitution.md}; echo constitution-loaded",
+        "failure_reason": null,
+        "timestamp": "2026-05-13T12:39:00.261295Z"
+      },
       "provider_used": null,
       "diff": null,
       "script_invocation": {
@@ -937,6 +1004,7 @@
       "termination": "exited",
       "started_at": "2026-05-13T12:39:00.050655Z",
       "handler": "command",
+      "duration_ms": 157,
       "usage": {
         "input_tokens": 0,
         "output_tokens": 0,
@@ -945,7 +1013,7 @@
         "cache_read_tokens": 0,
         "cache_write_tokens": 0
       },
-      "state": "running"
+      "state": "succeeded"
     }
   }
 }
