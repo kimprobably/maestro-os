@@ -11,8 +11,8 @@ function argValue(name, fallback) {
   return value;
 }
 
-const reviewDir = argValue("--reviews", ".workflow/consumer-radar/reviews");
-const output = argValue("--output", ".workflow/consumer-radar/review-consensus.json");
+const reviewDir = argValue("--reviews", "reports/consumer-radar/reviews");
+const output = argValue("--output", "reports/consumer-radar/review-consensus.json");
 const minimumActiveReviews = Number(argValue("--minimum-active-reviews", "1"));
 
 function directReviewFiles(dir) {
@@ -27,7 +27,7 @@ function walkReviewFiles(dir, found = []) {
     const fullPath = join(dir, entry.name);
     if (entry.isDirectory()) {
       walkReviewFiles(fullPath, found);
-    } else if (entry.isFile() && /\/\.workflow\/consumer-radar\/reviews\/[^/]+\.json$/.test(fullPath)) {
+    } else if (entry.isFile() && /\/(?:reports|\.workflow)\/consumer-radar\/reviews\/[^/]+\.json$/.test(fullPath)) {
       found.push(fullPath);
     }
   }
@@ -49,7 +49,10 @@ function gitReviewObjects() {
   const refs = gitLines(["for-each-ref", "--format=%(refname:short)", "refs/heads/fabro/run/parallel"]);
   const reviews = [];
   for (const ref of refs.filter((item) => item.includes("review-fanout"))) {
-    const files = gitLines(["ls-tree", "-r", "--name-only", ref, "--", ".workflow/consumer-radar/reviews"]);
+    const files = [
+      ...gitLines(["ls-tree", "-r", "--name-only", ref, "--", "reports/consumer-radar/reviews"]),
+      ...gitLines(["ls-tree", "-r", "--name-only", ref, "--", ".workflow/consumer-radar/reviews"])
+    ];
     for (const file of files.filter((item) => item.endsWith(".json"))) {
       const result = spawnSync("git", ["show", ref + ":" + file], { encoding: "utf8" });
       if (result.status !== 0) continue;

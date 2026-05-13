@@ -33,7 +33,7 @@ const reports = [
   ".workflow/consumer-radar/native-checks.json",
   ".workflow/consumer-radar/qlty-report.json",
   ".workflow/consumer-radar/promptfoo-report.json",
-  ".workflow/consumer-radar/review-consensus.json"
+  "reports/consumer-radar/review-consensus.json"
 ];
 const missingReports = reports.filter((file) => !existsSync(file));
 const presentReports = reports.length - missingReports.length;

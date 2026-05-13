@@ -98,6 +98,12 @@ if (!openRouterReview.includes("realMode") || !openRouterReview.includes("proces
 if (!reviewConsensus.includes("minimumActiveReviews") || !reviewConsensus.includes("active.length < minimumActiveReviews") || !reviewConsensus.includes(".fabro/scratch") || !reviewConsensus.includes("refs/heads/fabro/run/parallel")) {
   throw new Error("review consensus must fail when all model reviews are skipped and collect parallel branch artifacts");
 }
+if (!workflow.includes("reports/consumer-radar/reviews") || workflow.includes("--reviews .workflow/consumer-radar/reviews")) {
+  throw new Error("parallel review artifacts must be written to a tracked reports path, not ignored .workflow");
+}
+if (!reviewConsensus.includes("reports/consumer-radar/reviews")) {
+  throw new Error("review consensus must read tracked review artifacts from reports/consumer-radar/reviews");
+}
 if (!promptfooGate.includes("allowFallback") || !promptfooGate.includes("Promptfoo failed in real mode")) {
   throw new Error("promptfoo gate must make fallback opt-in in real mode");
 }

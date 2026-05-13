@@ -27,7 +27,7 @@ function argBool(name, fallback) {
 const models = argValue("--model", "deepseek/deepseek-v4-flash").split(",").map((item) => item.trim()).filter(Boolean);
 const role = argValue("--role", "review");
 const appDir = argValue("--app-dir", "apps/generated-consumer-app-radar");
-const output = argValue("--output", ".workflow/consumer-radar/reviews/review.json");
+const output = argValue("--output", "reports/consumer-radar/reviews/review.json");
 const realMode = argBool("--real-mode", false);
 const token = process.env.OPENROUTER_API_KEY;
 mkdirSync(dirname(output), { recursive: true });

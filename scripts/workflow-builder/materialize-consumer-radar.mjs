@@ -216,19 +216,19 @@ function buildWorkflow() {
         label="Kimi Review",
         class="cheap",
         shape=parallelogram,
-        script="node scripts/consumer-radar/openrouter-review.mjs --model moonshotai/kimi-k2.6 --role market_strategy --app-dir '{{ inputs.app_dir|default('apps/generated-consumer-app-radar') }}' --output .workflow/consumer-radar/reviews/kimi.json --real-mode '{{ inputs.real_mode|default('true') }}'"
+        script="node scripts/consumer-radar/openrouter-review.mjs --model moonshotai/kimi-k2.6 --role market_strategy --app-dir '{{ inputs.app_dir|default('apps/generated-consumer-app-radar') }}' --output reports/consumer-radar/reviews/kimi.json --real-mode '{{ inputs.real_mode|default('true') }}'"
     ]
     review_qwen [
         label="Qwen Review",
         class="cheap",
         shape=parallelogram,
-        script="node scripts/consumer-radar/openrouter-review.mjs --model qwen/qwen3.6-plus --role implementation_quality --app-dir '{{ inputs.app_dir|default('apps/generated-consumer-app-radar') }}' --output .workflow/consumer-radar/reviews/qwen.json --real-mode '{{ inputs.real_mode|default('true') }}'"
+        script="node scripts/consumer-radar/openrouter-review.mjs --model qwen/qwen3.6-plus --role implementation_quality --app-dir '{{ inputs.app_dir|default('apps/generated-consumer-app-radar') }}' --output reports/consumer-radar/reviews/qwen.json --real-mode '{{ inputs.real_mode|default('true') }}'"
     ]
     review_deepseek [
         label="DeepSeek Review",
         class="cheap",
         shape=parallelogram,
-        script="node scripts/consumer-radar/openrouter-review.mjs --model deepseek/deepseek-v4-pro,deepseek/deepseek-v4-flash --role simplification_and_ci --app-dir '{{ inputs.app_dir|default('apps/generated-consumer-app-radar') }}' --output .workflow/consumer-radar/reviews/deepseek.json --real-mode '{{ inputs.real_mode|default('true') }}'"
+        script="node scripts/consumer-radar/openrouter-review.mjs --model deepseek/deepseek-v4-pro,deepseek/deepseek-v4-flash --role simplification_and_ci --app-dir '{{ inputs.app_dir|default('apps/generated-consumer-app-radar') }}' --output reports/consumer-radar/reviews/deepseek.json --real-mode '{{ inputs.real_mode|default('true') }}'"
     ]
     review_join [shape=tripleoctagon, label="Review Join", join_policy="wait_all"]
 
@@ -237,7 +237,7 @@ function buildWorkflow() {
         shape=parallelogram,
         goal_gate=true,
         retry_target="generate_app",
-        script="node scripts/consumer-radar/review-consensus.mjs --reviews .workflow/consumer-radar/reviews --output .workflow/consumer-radar/review-consensus.json --minimum-active-reviews '{{ inputs.minimum_active_reviews|default('2') }}'"
+        script="node scripts/consumer-radar/review-consensus.mjs --reviews reports/consumer-radar/reviews --output reports/consumer-radar/review-consensus.json --minimum-active-reviews '{{ inputs.minimum_active_reviews|default('2') }}'"
     ]
 
     artifact_gate [
@@ -253,7 +253,7 @@ function buildWorkflow() {
         shape=parallelogram,
         goal_gate=true,
         retry_target="review_consensus",
-        script="node -e \\"const fs=require('fs'); const path=require('path'); const app='{{ inputs.app_dir|default('apps/generated-consumer-app-radar') }}'; const out='.workflow/consumer-radar/handoff.json'; fs.mkdirSync(path.dirname(out),{recursive:true}); fs.writeFileSync(out, JSON.stringify({ok:true, app_dir:app, run_dir:process.cwd(), reports:['.workflow/consumer-radar/native-checks.json','.workflow/consumer-radar/qlty-report.json','.workflow/consumer-radar/promptfoo-report.json','.workflow/consumer-radar/review-consensus.json'], next:['Run npm start inside the generated app','Use POST /api/refresh with mode=live after Apify actors are tuned']}, null, 2)+'\\\\n'); console.log(fs.readFileSync(out,'utf8'));\\""
+        script="node -e \\"const fs=require('fs'); const path=require('path'); const app='{{ inputs.app_dir|default('apps/generated-consumer-app-radar') }}'; const out='.workflow/consumer-radar/handoff.json'; fs.mkdirSync(path.dirname(out),{recursive:true}); fs.writeFileSync(out, JSON.stringify({ok:true, app_dir:app, run_dir:process.cwd(), reports:['.workflow/consumer-radar/native-checks.json','.workflow/consumer-radar/qlty-report.json','.workflow/consumer-radar/promptfoo-report.json','reports/consumer-radar/review-consensus.json'], next:['Run npm start inside the generated app','Use POST /api/refresh with mode=live after Apify actors are tuned']}, null, 2)+'\\\\n'); console.log(fs.readFileSync(out,'utf8'));\\""
     ]
 
     start -> wait_for_support_files
@@ -1203,7 +1203,7 @@ function argBool(name, fallback) {
 const models = argValue("--model", "deepseek/deepseek-v4-flash").split(",").map((item) => item.trim()).filter(Boolean);
 const role = argValue("--role", "review");
 const appDir = argValue("--app-dir", "apps/generated-consumer-app-radar");
-const output = argValue("--output", ".workflow/consumer-radar/reviews/review.json");
+const output = argValue("--output", "reports/consumer-radar/reviews/review.json");
 const realMode = argBool("--real-mode", false);
 const token = process.env.OPENROUTER_API_KEY;
 mkdirSync(dirname(output), { recursive: true });
@@ -1277,8 +1277,8 @@ function argValue(name, fallback) {
   return value;
 }
 
-const reviewDir = argValue("--reviews", ".workflow/consumer-radar/reviews");
-const output = argValue("--output", ".workflow/consumer-radar/review-consensus.json");
+const reviewDir = argValue("--reviews", "reports/consumer-radar/reviews");
+const output = argValue("--output", "reports/consumer-radar/review-consensus.json");
 const minimumActiveReviews = Number(argValue("--minimum-active-reviews", "1"));
 
 function directReviewFiles(dir) {
@@ -1293,7 +1293,7 @@ function walkReviewFiles(dir, found = []) {
     const fullPath = join(dir, entry.name);
     if (entry.isDirectory()) {
       walkReviewFiles(fullPath, found);
-    } else if (entry.isFile() && /\\/\\.workflow\\/consumer-radar\\/reviews\\/[^/]+\\.json$/.test(fullPath)) {
+    } else if (entry.isFile() && /\\/(?:reports|\\.workflow)\\/consumer-radar\\/reviews\\/[^/]+\\.json$/.test(fullPath)) {
       found.push(fullPath);
     }
   }
@@ -1315,7 +1315,10 @@ function gitReviewObjects() {
   const refs = gitLines(["for-each-ref", "--format=%(refname:short)", "refs/heads/fabro/run/parallel"]);
   const reviews = [];
   for (const ref of refs.filter((item) => item.includes("review-fanout"))) {
-    const files = gitLines(["ls-tree", "-r", "--name-only", ref, "--", ".workflow/consumer-radar/reviews"]);
+    const files = [
+      ...gitLines(["ls-tree", "-r", "--name-only", ref, "--", "reports/consumer-radar/reviews"]),
+      ...gitLines(["ls-tree", "-r", "--name-only", ref, "--", ".workflow/consumer-radar/reviews"])
+    ];
     for (const file of files.filter((item) => item.endsWith(".json"))) {
       const result = spawnSync("git", ["show", ref + ":" + file], { encoding: "utf8" });
       if (result.status !== 0) continue;
@@ -1405,7 +1408,7 @@ const reports = [
   ".workflow/consumer-radar/native-checks.json",
   ".workflow/consumer-radar/qlty-report.json",
   ".workflow/consumer-radar/promptfoo-report.json",
-  ".workflow/consumer-radar/review-consensus.json"
+  "reports/consumer-radar/review-consensus.json"
 ];
 const missingReports = reports.filter((file) => !existsSync(file));
 const presentReports = reports.length - missingReports.length;
@@ -1466,7 +1469,7 @@ Run the generated workflow through the Railway Fabro server:
 fabro run workflows/consumer-radar/build-consumer-app-radar.toml --server https://fabro-maestro-production.up.railway.app/api/v1 --preserve-sandbox
 \`\`\`
 
-The workflow builds \`apps/generated-consumer-app-radar\` inside the Daytona sandbox, runs native checks, attempts Qlty, attempts Promptfoo, and fans out OpenRouter reviews across Kimi, Qwen, and DeepSeek. It records all reports under \`.workflow/consumer-radar\`.
+The workflow builds \`apps/generated-consumer-app-radar\` inside the Daytona sandbox, runs native checks, attempts Qlty, attempts Promptfoo, and fans out OpenRouter reviews across Kimi, Qwen, and DeepSeek. It records transient gate logs under \`.workflow/consumer-radar\` and commit-visible review artifacts under \`reports/consumer-radar\`.
 
 Because this spike repo currently has no Git remote for Daytona to clone, remote runs include a short support-file wait stage. Start the run detached, then copy \`scripts/consumer-radar\`, \`specs/consumer-app-radar\`, and \`evals/consumer-app-radar-quality.yaml\` into the run sandbox with \`fabro sandbox cp\`.
 
