@@ -1,0 +1,44 @@
+diff --git a/reports/consumer-radar/reviews/deepseek.json b/reports/consumer-radar/reviews/deepseek.json
+new file mode 100644
+index 0000000..dd47422
+--- /dev/null
++++ b/reports/consumer-radar/reviews/deepseek.json
+@@ -0,0 +1,38 @@
++{
++  "ok": true,
++  "skipped": false,
++  "real_mode": true,
++  "model": "deepseek/deepseek-v4-flash",
++  "role": "simplification_and_ci",
++  "status": 200,
++  "parsed": {
++    "verdict": "APPROVE",
++    "score": 0.95,
++    "findings": [
++      {
++        "severity": "low",
++        "issue": "Frontend fetch errors not handled; silent failure on network issue.",
++        "fix": "Wrap fetch in try-catch and show user message in UI."
++      },
++      {
++        "severity": "low",
++        "issue": "Scoring assumes fixture fields exactly match; missing fields may produce NaN scores.",
++        "fix": "Add defaults for missing numeric fields in scoring function."
++      },
++      {
++        "severity": "low",
++        "issue": "Server startup crashes if fixture file missing; no graceful fallback.",
++        "fix": "Wrap initial refreshApps in try-catch and log warning, serve empty state."
++      }
++    ],
++    "suggested_next_steps": [
++      "Add error boundaries in frontend for API calls.",
++      "Add input validation in scoring for missing or null fields.",
++      "Consider graceful startup with fixture or memory fallback."
++    ]
++  },
++  "raw_excerpt": "{\n  \"verdict\": \"APPROVE\",\n  \"score\": 0.95,\n  \"findings\": [\n    {\n      \"severity\": \"low\",\n      \"issue\": \"Frontend fetch errors not handled; silent failure on network issue.\",\n      \"fix\": \"Wrap fetch in try-catch and show user message in UI.\"\n    },\n    {\n      \"severity\": \"low\",\n      \"issue\": \"Scoring assumes fixture fields exactly match; missing fields may produce NaN scores.\",\n      \"fix\": \"Add defaults for missing numeric fields in scoring function.\"\n    },\n    {\n      \"severity\": \"low\",\n      \"issue\": \"Server startup crashes if fixture file missing; no graceful fallback.\",\n      \"fix\": \"Wrap initial refreshApps in try-catch and log warning, serve empty state.\"\n    }\n  ],\n  \"suggested_next_steps\": [\n    \"Add error boundaries in frontend for API calls.\",\n    \"Add input validation in scoring for missing or null fields.\",\n    \"Consider graceful startup with fixture or memory fallback.\"\n  ]\n}",
++  "error": null,
++  "payload_excerpt": null,
++  "payload_text_excerpt": "\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n{\"id\":\"gen-1778673400-khJZ9GEVfTnl8OXvv6E3\",\"object\":\"chat.completion\",\"created\":1778673400,\"model\":\"deepseek/deepseek-v4-flash-20260423\",\"provider\":\"SiliconFlow\",\"system_fingerprint\":\"fp_8b330d02d0_prod0820_fp8_kvcache_20260402\",\"choices\":[{\"index\":0,\"logprobs\":null,\"finish_reason\":\"stop\",\"native_finish_reason\":\"stop\",\"message\":{\"role\":\"assistant\",\"content\":\"{\\n  \\\"verdict\\\": \\\"APPROVE\\\",\\n  \\\"score\\\": 0.95,\\n  \\\"findings\\\": [\\n    {\\n      \\\"severity\\\": \\\"low\\\",\\n      \\\"issue\\\": \\\"Frontend fetch errors not handled; silent failure on network issue.\\\",\\n      \\\"fix\\\": \\\"Wrap fetch in try-catch and show user message in UI.\\\"\\n    },\\n    {\\n      \\\"severity\\\": \\\"low\\\",\\n      \\\"issue\\\": \\\"Scoring assumes fixture fields exactly match; missing fields may produce "
++}

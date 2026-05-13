@@ -979,7 +979,7 @@
     "kind": "running"
   },
   "status_updated_at": "2026-05-13T11:53:32.567561321Z",
-  "last_event_at": "2026-05-13T11:56:59.232942849Z",
+  "last_event_at": "2026-05-13T11:57:01.206796002Z",
   "pending_control": null,
   "checkpoints": [
     {
@@ -2030,9 +2030,9 @@
       }
     },
     {
-      "seq": 0,
+      "seq": 141,
       "checkpoint": {
-        "timestamp": "2026-05-13T11:56:59.256719815Z",
+        "timestamp": "2026-05-13T11:57:01.199584858Z",
         "current_node": "review_fanout",
         "completed_nodes": [
           "start",
@@ -2049,6 +2049,195 @@
         ],
         "node_retries": {},
         "context_values": {
+          "failure_class": "",
+          "internal.thread_id": "prepare_review_reports",
+          "internal.fidelity": "compact",
+          "thread.bootstrap_spec.current_node": "spec_kitty_gate",
+          "current_node": "review_fanout",
+          "thread.generate_app.current_node": "native_checks",
+          "internal.work_dir": "/home/daytona/workspace",
+          "thread.data_source_smoke.current_node": "generate_app",
+          "command.output": "blob://sha256/12ae32cb1ec02d01eda3581b127c1fee3b0dc53572ed6baf239721a03d82e126",
+          "thread.native_checks.current_node": "qlty_gate",
+          "internal.retry_count.qlty_gate": 0,
+          "thread.promptfoo_gate.current_node": "prepare_review_reports",
+          "internal.retry_count.bootstrap_spec": 0,
+          "graph.fallback_retry_target": "generate_app",
+          "failure_signature": "",
+          "graph.outputs": "application, ci_report, eval_report, review_consensus, handoff",
+          "internal.retry_count.generate_app": 0,
+          "graph.goal": "Build Consumer App Radar from spec with CI, eval, and model review",
+          "graph.inputs": "app_dir, spec_path, real_mode, allow_fixture_fallback, allow_quality_fallback, minimum_active_reviews",
+          "graph.default_max_retries": "2",
+          "internal.retry_count.promptfoo_gate": 0,
+          "graph.rankdir": "LR",
+          "outcome": "partially_succeeded",
+          "internal.retry_count.review_fanout": 0,
+          "thread.spec_kitty_gate.current_node": "data_source_smoke",
+          "graph.persona": "code-factory",
+          "parallel.results": [
+            {
+              "id": "review_kimi",
+              "status": "failed",
+              "head_sha": "f11d556beb3046b939f3d8c8b34e7b2174d30e72"
+            },
+            {
+              "id": "review_qwen",
+              "status": "succeeded",
+              "head_sha": "e59a97db38a053b35f3a81d743ab3f814d9b65aa"
+            },
+            {
+              "id": "review_deepseek",
+              "status": "succeeded",
+              "head_sha": "ee2d9586adaf51a3415fdd4fdf22d5e7d4f1012f"
+            }
+          ],
+          "internal.retry_count.spec_kitty_gate": 0,
+          "thread.prepare_review_reports.current_node": "review_fanout",
+          "parallel.branch_count": 3,
+          "thread.start.current_node": "wait_for_support_files",
+          "internal.retry_count.data_source_smoke": 0,
+          "internal.node_visit_count": 1,
+          "thread.qlty_gate.current_node": "promptfoo_gate",
+          "graph.model_stylesheet": "\n            *          { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: low; }\n            .review    { provider: openrouter; model: google/gemini-3.1-pro-preview; reasoning_effort: high; }\n            .cheap     { provider: openrouter; model: deepseek/deepseek-v4-flash; reasoning_effort: low; }\n        ",
+          "internal.run_id": "01KRGJYNY04NSJXWAJ5GMAMWD7",
+          "graph.retry_target": "generate_app",
+          "internal.retry_count.start": 0,
+          "internal.retry_count.native_checks": 0,
+          "internal.retry_count.prepare_review_reports": 0,
+          "internal.retry_count.wait_for_support_files": 0,
+          "thread.wait_for_support_files.current_node": "bootstrap_spec"
+        },
+        "node_outcomes": {
+          "wait_for_support_files": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/a993020942c3b2f319b954a99b0a9f056f2f684e6388311672cad5808190f591"
+            },
+            "notes": "Script completed: for i in $(seq 1 90); do if [ -f scripts/consumer-radar/generate-app.mjs ] && [ -f 'specs/consumer-app-radar/spec.md' ]; then echo support-files-ready; exit 0; fi; sleep 2; done; echo 'missing consumer radar support files' >&2; exit 1",
+            "usage": null
+          },
+          "bootstrap_spec": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/f305c59841607c6b59b42f60bc9a28cf47bb0c7722b984bd309b4352ddf52804"
+            },
+            "notes": "Script completed: node scripts/consumer-radar/bootstrap-spec.mjs --spec 'specs/consumer-app-radar/spec.md' --app-dir 'apps/generated-consumer-app-radar'",
+            "usage": null
+          },
+          "review_fanout": {
+            "status": "partially_succeeded",
+            "jump_to_node": "review_join",
+            "notes": "Parallel node dispatched 3 branches (2 succeeded, 1 failed)",
+            "usage": null
+          },
+          "qlty_gate": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/909f30fcf892fe529fc2dab34e4262f530b6d8b65434dc51d8ca70e4f08e0b0f"
+            },
+            "notes": "Script completed: node scripts/consumer-radar/qlty-gate.mjs 'apps/generated-consumer-app-radar' --real-mode 'true' --allow-fallback 'true'",
+            "usage": null
+          },
+          "start": {
+            "status": "succeeded",
+            "usage": null
+          },
+          "generate_app": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/67e5edc6bf894fedc2d19b61aed13adcde6de82264da817ed9b1212357748df2"
+            },
+            "notes": "Script completed: node scripts/consumer-radar/generate-app.mjs --app-dir 'apps/generated-consumer-app-radar'",
+            "usage": null
+          },
+          "native_checks": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/3cb84a9bb9e20844631d561961b12684816930e946cc09fc74b597b239f65682"
+            },
+            "notes": "Script completed: node scripts/consumer-radar/run-native-checks.mjs 'apps/generated-consumer-app-radar'",
+            "usage": null
+          },
+          "data_source_smoke": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/e0f3c40338da578f37a7fa6fb1a770e0b1ab186d56180a7eb6272bd4a1ff4b14"
+            },
+            "notes": "Script completed: node scripts/consumer-radar/data-source-smoke.mjs --output .workflow/consumer-radar/data-source-smoke.json --real-mode 'true' --allow-fixture-fallback 'true'",
+            "usage": null
+          },
+          "prepare_review_reports": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/12ae32cb1ec02d01eda3581b127c1fee3b0dc53572ed6baf239721a03d82e126"
+            },
+            "notes": "Script completed: rm -rf reports/consumer-radar/reviews reports/consumer-radar/review-consensus.json && mkdir -p reports/consumer-radar/reviews",
+            "usage": null
+          },
+          "promptfoo_gate": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/f9ef8d13393d2db2373610fa54b6af83a17737185222eb2e08f7758ccfbaafb0"
+            },
+            "notes": "Script completed: node scripts/consumer-radar/promptfoo-or-fallback.mjs 'apps/generated-consumer-app-radar' --real-mode 'true' --allow-fallback 'true'",
+            "usage": null
+          },
+          "spec_kitty_gate": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/c20e6ef34b6d096bfab28159399ce6a53a0abb23a096df116978745d43c3c3f4"
+            },
+            "notes": "Script completed: node scripts/consumer-radar/bootstrap-spec.mjs --spec 'specs/consumer-app-radar/spec.md' --app-dir 'apps/generated-consumer-app-radar' --spec-kitty",
+            "usage": null
+          }
+        },
+        "next_node_id": "review_join",
+        "git_commit_sha": "33db3cd64f8faba22b6f833c39e91247e00e8109",
+        "node_visits": {
+          "start": 1,
+          "review_fanout": 1,
+          "generate_app": 1,
+          "promptfoo_gate": 1,
+          "bootstrap_spec": 1,
+          "wait_for_support_files": 1,
+          "native_checks": 1,
+          "data_source_smoke": 1,
+          "spec_kitty_gate": 1,
+          "prepare_review_reports": 1,
+          "qlty_gate": 1
+        }
+      },
+      "diff": {
+        "patch": "diff --git a/reports/consumer-radar/reviews/deepseek.json b/reports/consumer-radar/reviews/deepseek.json\nnew file mode 100644\nindex 0000000..dd47422\n--- /dev/null\n+++ b/reports/consumer-radar/reviews/deepseek.json\n@@ -0,0 +1,38 @@\n+{\n+  \"ok\": true,\n+  \"skipped\": false,\n+  \"real_mode\": true,\n+  \"model\": \"deepseek/deepseek-v4-flash\",\n+  \"role\": \"simplification_and_ci\",\n+  \"status\": 200,\n+  \"parsed\": {\n+    \"verdict\": \"APPROVE\",\n+    \"score\": 0.95,\n+    \"findings\": [\n+      {\n+        \"severity\": \"low\",\n+        \"issue\": \"Frontend fetch errors not handled; silent failure on network issue.\",\n+        \"fix\": \"Wrap fetch in try-catch and show user message in UI.\"\n+      },\n+      {\n+        \"severity\": \"low\",\n+        \"issue\": \"Scoring assumes fixture fields exactly match; missing fields may produce NaN scores.\",\n+        \"fix\": \"Add defaults for missing numeric fields in scoring function.\"\n+      },\n+      {\n+        \"severity\": \"low\",\n+        \"issue\": \"Server startup crashes if fixture file missing; no graceful fallback.\",\n+        \"fix\": \"Wrap initial refreshApps in try-catch and log warning, serve empty state.\"\n+      }\n+    ],\n+    \"suggested_next_steps\": [\n+      \"Add error boundaries in frontend for API calls.\",\n+      \"Add input validation in scoring for missing or null fields.\",\n+      \"Consider graceful startup with fixture or memory fallback.\"\n+    ]\n+  },\n+  \"raw_excerpt\": \"{\\n  \\\"verdict\\\": \\\"APPROVE\\\",\\n  \\\"score\\\": 0.95,\\n  \\\"findings\\\": [\\n    {\\n      \\\"severity\\\": \\\"low\\\",\\n      \\\"issue\\\": \\\"Frontend fetch errors not handled; silent failure on network issue.\\\",\\n      \\\"fix\\\": \\\"Wrap fetch in try-catch and show user message in UI.\\\"\\n    },\\n    {\\n      \\\"severity\\\": \\\"low\\\",\\n      \\\"issue\\\": \\\"Scoring assumes fixture fields exactly match; missing fields may produce NaN scores.\\\",\\n      \\\"fix\\\": \\\"Add defaults for missing numeric fields in scoring function.\\\"\\n    },\\n    {\\n      \\\"severity\\\": \\\"low\\\",\\n      \\\"issue\\\": \\\"Server startup crashes if fixture file missing; no graceful fallback.\\\",\\n      \\\"fix\\\": \\\"Wrap initial refreshApps in try-catch and log warning, serve empty state.\\\"\\n    }\\n  ],\\n  \\\"suggested_next_steps\\\": [\\n    \\\"Add error boundaries in frontend for API calls.\\\",\\n    \\\"Add input validation in scoring for missing or null fields.\\\",\\n    \\\"Consider graceful startup with fixture or memory fallback.\\\"\\n  ]\\n}\",\n+  \"error\": null,\n+  \"payload_excerpt\": null,\n+  \"payload_text_excerpt\": \"\\n         \\n\\n         \\n\\n         \\n\\n         \\n\\n         \\n\\n         \\n\\n         \\n\\n         \\n\\n         \\n\\n         \\n\\n         \\n\\n         \\n\\n         \\n\\n         \\n\\n         \\n\\n         \\n\\n         \\n\\n         \\n\\n         \\n\\n         \\n\\n         \\n\\n         \\n\\n         \\n\\n         \\n\\n         \\n\\n         \\n\\n         \\n\\n         \\n\\n         \\n\\n         \\n\\n         \\n\\n         \\n\\n         \\n\\n         \\n\\n         \\n\\n         \\n\\n         \\n\\n         \\n\\n         \\n{\\\"id\\\":\\\"gen-1778673400-khJZ9GEVfTnl8OXvv6E3\\\",\\\"object\\\":\\\"chat.completion\\\",\\\"created\\\":1778673400,\\\"model\\\":\\\"deepseek/deepseek-v4-flash-20260423\\\",\\\"provider\\\":\\\"SiliconFlow\\\",\\\"system_fingerprint\\\":\\\"fp_8b330d02d0_prod0820_fp8_kvcache_20260402\\\",\\\"choices\\\":[{\\\"index\\\":0,\\\"logprobs\\\":null,\\\"finish_reason\\\":\\\"stop\\\",\\\"native_finish_reason\\\":\\\"stop\\\",\\\"message\\\":{\\\"role\\\":\\\"assistant\\\",\\\"content\\\":\\\"{\\\\n  \\\\\\\"verdict\\\\\\\": \\\\\\\"APPROVE\\\\\\\",\\\\n  \\\\\\\"score\\\\\\\": 0.95,\\\\n  \\\\\\\"findings\\\\\\\": [\\\\n    {\\\\n      \\\\\\\"severity\\\\\\\": \\\\\\\"low\\\\\\\",\\\\n      \\\\\\\"issue\\\\\\\": \\\\\\\"Frontend fetch errors not handled; silent failure on network issue.\\\\\\\",\\\\n      \\\\\\\"fix\\\\\\\": \\\\\\\"Wrap fetch in try-catch and show user message in UI.\\\\\\\"\\\\n    },\\\\n    {\\\\n      \\\\\\\"severity\\\\\\\": \\\\\\\"low\\\\\\\",\\\\n      \\\\\\\"issue\\\\\\\": \\\\\\\"Scoring assumes fixture fields exactly match; missing fields may produce \"\n+}\n",
+        "summary": {
+          "files_changed": 6,
+          "additions": 77,
+          "deletions": 31
+        }
+      }
+    },
+    {
+      "seq": 0,
+      "checkpoint": {
+        "timestamp": "2026-05-13T11:57:01.226734936Z",
+        "current_node": "review_join",
+        "completed_nodes": [
+          "start",
+          "wait_for_support_files",
+          "bootstrap_spec",
+          "spec_kitty_gate",
+          "data_source_smoke",
+          "generate_app",
+          "native_checks",
+          "qlty_gate",
+          "promptfoo_gate",
+          "prepare_review_reports",
+          "review_fanout",
+          "review_join"
+        ],
+        "node_retries": {},
+        "context_values": {
           "internal.retry_count.qlty_gate": 0,
           "internal.retry_count.wait_for_support_files": 0,
           "graph.fallback_retry_target": "generate_app",
@@ -2060,15 +2249,17 @@
           "thread.start.current_node": "wait_for_support_files",
           "failure_class": "",
           "parallel.branch_count": 3,
+          "thread.review_fanout.current_node": "review_join",
           "graph.model_stylesheet": "\n            *          { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: low; }\n            .review    { provider: openrouter; model: google/gemini-3.1-pro-preview; reasoning_effort: high; }\n            .cheap     { provider: openrouter; model: deepseek/deepseek-v4-flash; reasoning_effort: low; }\n        ",
+          "parallel.fan_in.best_id": "review_deepseek",
           "internal.retry_count.bootstrap_spec": 0,
           "internal.retry_count.review_fanout": 0,
           "failure_signature": "",
-          "outcome": "partially_succeeded",
+          "outcome": "succeeded",
           "thread.wait_for_support_files.current_node": "bootstrap_spec",
           "internal.retry_count.data_source_smoke": 0,
           "thread.prepare_review_reports.current_node": "review_fanout",
-          "current_node": "review_fanout",
+          "current_node": "review_join",
           "internal.run_id": "01KRGJYNY04NSJXWAJ5GMAMWD7",
           "command.output": "blob://sha256/12ae32cb1ec02d01eda3581b127c1fee3b0dc53572ed6baf239721a03d82e126",
           "internal.node_visit_count": 1,
@@ -2097,12 +2288,15 @@
           ],
           "graph.inputs": "app_dir, spec_path, real_mode, allow_fixture_fallback, allow_quality_fallback, minimum_active_reviews",
           "internal.work_dir": "/home/daytona/workspace",
+          "parallel.fan_in.best_head_sha": "ee2d9586adaf51a3415fdd4fdf22d5e7d4f1012f",
           "graph.persona": "code-factory",
           "graph.rankdir": "LR",
+          "internal.retry_count.review_join": 0,
           "thread.data_source_smoke.current_node": "generate_app",
           "internal.fidelity": "compact",
           "thread.generate_app.current_node": "native_checks",
-          "internal.thread_id": "prepare_review_reports",
+          "internal.thread_id": "review_fanout",
+          "parallel.fan_in.best_outcome": "succeeded",
           "thread.native_checks.current_node": "qlty_gate",
           "thread.bootstrap_spec.current_node": "spec_kitty_gate",
           "graph.outputs": "application, ci_report, eval_report, review_consensus, handoff",
@@ -2177,6 +2371,16 @@
             "notes": "Script completed: node scripts/consumer-radar/data-source-smoke.mjs --output .workflow/consumer-radar/data-source-smoke.json --real-mode 'true' --allow-fixture-fallback 'true'",
             "usage": null
           },
+          "review_join": {
+            "status": "succeeded",
+            "context_updates": {
+              "parallel.fan_in.best_outcome": "succeeded",
+              "parallel.fan_in.best_id": "review_deepseek",
+              "parallel.fan_in.best_head_sha": "ee2d9586adaf51a3415fdd4fdf22d5e7d4f1012f"
+            },
+            "notes": "Selected best candidate: review_deepseek",
+            "usage": null
+          },
           "review_fanout": {
             "status": "partially_succeeded",
             "jump_to_node": "review_join",
@@ -2192,7 +2396,7 @@
             "usage": null
           }
         },
-        "next_node_id": "review_join",
+        "next_node_id": "review_consensus",
         "node_visits": {
           "bootstrap_spec": 1,
           "start": 1,
@@ -2201,6 +2405,7 @@
           "review_fanout": 1,
           "prepare_review_reports": 1,
           "native_checks": 1,
+          "review_join": 1,
           "data_source_smoke": 1,
           "generate_app": 1,
           "qlty_gate": 1,
@@ -2227,6 +2432,29 @@
   "superseded_by": null,
   "pending_interviews": {},
   "stages": {
+    "review_join@1": {
+      "first_event_seq": 144,
+      "prompt": null,
+      "response": null,
+      "completion": null,
+      "provider_used": null,
+      "diff": null,
+      "script_invocation": null,
+      "script_timing": null,
+      "parallel_results": null,
+      "output": null,
+      "started_at": "2026-05-13T11:57:01.206796002Z",
+      "handler": "parallel.fan_in",
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "total_tokens": 0,
+        "reasoning_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "state": "running"
+    },
     "start@1": {
       "first_event_seq": 16,
       "prompt": null,
@@ -2561,7 +2789,12 @@
       "first_event_seq": 110,
       "prompt": null,
       "response": null,
-      "completion": null,
+      "completion": {
+        "outcome": "partially_succeeded",
+        "notes": "Parallel node dispatched 3 branches (2 succeeded, 1 failed)",
+        "failure_reason": null,
+        "timestamp": "2026-05-13T11:56:59.256483081Z"
+      },
       "provider_used": null,
       "diff": null,
       "script_invocation": {
@@ -2577,13 +2810,30 @@
         "output_bytes": 3589,
         "live_streaming": true
       },
-      "parallel_results": null,
+      "parallel_results": [
+        {
+          "id": "review_kimi",
+          "status": "failed",
+          "head_sha": "f11d556beb3046b939f3d8c8b34e7b2174d30e72"
+        },
+        {
+          "id": "review_qwen",
+          "status": "succeeded",
+          "head_sha": "e59a97db38a053b35f3a81d743ab3f814d9b65aa"
+        },
+        {
+          "id": "review_deepseek",
+          "status": "succeeded",
+          "head_sha": "ee2d9586adaf51a3415fdd4fdf22d5e7d4f1012f"
+        }
+      ],
       "output": null,
       "output_bytes": 3589,
       "live_streaming": true,
       "termination": "exited",
       "started_at": "2026-05-13T11:55:39.705411973Z",
       "handler": "parallel",
+      "duration_ms": 79551,
       "usage": {
         "input_tokens": 0,
         "output_tokens": 0,
@@ -2592,7 +2842,7 @@
         "cache_read_tokens": 0,
         "cache_write_tokens": 0
       },
-      "state": "running"
+      "state": "partially_succeeded"
     },
     "promptfoo_gate@1": {
       "first_event_seq": 90,
