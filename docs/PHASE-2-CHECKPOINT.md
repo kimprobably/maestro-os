@@ -22,6 +22,9 @@ Status: in progress
 - Installed and initialized Spec Kitty (`3.1.8`) for Codex and Claude Code. Spec Kitty-managed agent folders are ignored; project metadata and manifests live under `.kittify/`.
 - Added `maestro doctor quality-stack` as the single local readiness check for Fabro, GitHub integration, OpenRouter model routing, Qlty, Spec Kitty, Daytona, GitHub CLI auth, Claude, Codex, and required env presence.
 - Added `workflows/fabro/quality-stack-smoke.fabro`; run `01KRFMFEMA5XN85BXJQVPZNPN1` completed successfully through Fabro.
+- Fresh quality stack smoke run `01KRGVNYDN94C447JK81PHAEEZ` completed
+  successfully through Fabro with 14 passing checks, including Fabro server,
+  GitHub, OpenRouter, Qlty, Spec Kitty, Daytona, GitHub CLI auth, and Linear.
 - Added GitHub Actions quality automation in `.github/workflows/quality.yml`: Bun tests, Bun build check, Qlty config/tool install/report, and Spec Kitty setup verification. Added `workflows/fabro/github-ci-smoke.fabro`; run `01KRFMYQB7607TKRRE6J1G420F` completed successfully through Fabro.
 - Wired Spec Kitty into `workflows/scaffold/spec-lift-workflow.fabro`: the workflow now records Spec Kitty setup by default, can create a mission when `spec_kitty_feature` is supplied, and publishes the completed spec back to the mission's `spec.md`.
 - Added `workflows/fabro/spec-kitty-contract-smoke.fabro`; run `01KRFN3092VJVWVBGFHSZRRJKP` verified Spec Kitty `init`, `specify`, and `verify-setup` contracts in an isolated temp repo.
@@ -50,6 +53,10 @@ Status: in progress
   `workflows/fabro/linear-integration-smoke.fabro`. The Linear API bridge is
   installed locally and can read the Modern Agency Sales workspace/team. Fabro
   smoke run `01KRFR8HR7E3Y0DY28RMKGG53G` completed successfully.
+- Tightened the Linear smoke so missing `LINEAR_API_KEY` is a failed gate, not
+  a warning-path success. Fabro run `01KRGW5FWADB6EK4CS3T2QC7JA` proved the
+  Linear secret is injected into local command stages and can query the
+  workspace without writing viewer email into artifacts.
 - Added shared Fabro project defaults in `.fabro/project.toml` for Daytona
   code-factory runs: v5 snapshot, full agent permissions, GitHub write
   permissions, artifact capture, allow-all network, and secret-vault sandbox
@@ -127,6 +134,13 @@ Status: in progress
   reachable. The workflow now fails on missing/unresolved secrets, records the
   blocked live-source smoke, and continues with fixture data plus live adapters
   for the first-pass internal app.
+- Ran the live OpenRouter coding eval through Fabro. After disabling provider
+  reasoning output and increasing the model-eval timeout to 120 seconds, run
+  `01KRGX9Y366DGP2W33XQ28Z1PQ` passed all four target open-source models on
+  three shared coding/review tasks: Kimi K2.6, Qwen3.6 Plus, DeepSeek V4 Pro,
+  and DeepSeek V4 Flash. Qwen and DeepSeek Pro are the best initial review and
+  architecture candidates by score/latency; DeepSeek Flash is the cheapest
+  generation candidate from this pass.
 
 ## Clone Substack Pattern Incorporated
 
@@ -165,6 +179,10 @@ Maestro now mirrors that shape in two workflows:
   package/Git services, and deterministic fixtures inside Daytona, but direct
   Apple/Apify live scraping needs a Daytona tier/whitelist change or a separate
   data-ingest environment.
+- Local Fabro command stages need explicitly configured sandbox env to bypass
+  the ambient secret filter; the Fabro fork now forwards server-vault
+  `run.sandbox.env` values to local command stages while still filtering
+  ambient process secrets.
 
 ## Open Gaps
 

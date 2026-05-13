@@ -139,9 +139,8 @@ function scoreResult(task, parsed, content) {
   return Math.max(0, Math.min(1, Number(score.toFixed(2))));
 }
 
-async function callOpenRouter({ model, task, apiKey, endpoint }) {
+async function callOpenRouter({ model, task, apiKey, endpoint, timeoutMs }) {
   const started = performance.now();
-  const timeoutMs = Number(process.env.MAESTRO_MODEL_EVAL_TIMEOUT_MS ?? "45000");
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), timeoutMs);
   const body = {
@@ -152,7 +151,10 @@ async function callOpenRouter({ model, task, apiKey, endpoint }) {
     ],
     temperature: 0,
     max_tokens: task.maxTokens,
-    response_format: { type: "json_object" }
+    reasoning: {
+      effort: "none",
+      exclude: true
+    }
   };
   let response;
   let payload;
@@ -178,6 +180,7 @@ async function callOpenRouter({ model, task, apiKey, endpoint }) {
       ok: false,
       status: 0,
       elapsed_ms: elapsedMs,
+      timeout_ms: timeoutMs,
       input_tokens: estimateTokens(task.system + task.user),
       output_tokens: 0,
       estimated_cost_usd: 0,
@@ -189,7 +192,9 @@ async function callOpenRouter({ model, task, apiKey, endpoint }) {
     clearTimeout(timeout);
   }
   const elapsedMs = Math.round(performance.now() - started);
-  const content = payload?.choices?.[0]?.message?.content ?? "";
+  const choice = payload?.choices?.[0] ?? {};
+  const message = choice?.message ?? {};
+  const content = message?.content ?? "";
   const parsed = typeof content === "string" ? extractJson(content) : null;
   const inputTokens = payload?.usage?.prompt_tokens ?? estimateTokens(task.system + task.user);
   const outputTokens = payload?.usage?.completion_tokens ?? estimateTokens(String(content));
@@ -205,12 +210,15 @@ async function callOpenRouter({ model, task, apiKey, endpoint }) {
     ok: response.ok && Boolean(parsed),
     status: response.status,
     elapsed_ms: elapsedMs,
+    timeout_ms: timeoutMs,
     input_tokens: inputTokens,
     output_tokens: outputTokens,
     estimated_cost_usd: estimatedCostUsd,
     score: scoreResult(task, parsed, String(content)),
     parsed,
     error: response.ok ? null : payload?.error ?? payload,
+    finish_reason: choice?.finish_reason ?? null,
+    message_keys: message && typeof message === "object" ? Object.keys(message).sort() : [],
     content_excerpt: typeof content === "string" ? content.slice(0, 500) : ""
   };
 }
@@ -224,6 +232,7 @@ async function main() {
     .filter(Boolean);
   const outputPath = resolve(repoRoot, argValue("--output", ".workflow/model-evals/openrouter-coding-eval.json"));
   const endpoint = process.env.OPENROUTER_CHAT_URL ?? "https://openrouter.ai/api/v1/chat/completions";
+  const timeoutMs = Number(process.env.MAESTRO_MODEL_EVAL_TIMEOUT_MS ?? "45000");
   const tasks = buildTasks();
 
   if (!live) {
@@ -237,6 +246,7 @@ async function main() {
         max_tokens: task.maxTokens,
         required_keys: task.requiredKeys
       })),
+      timeout_ms: timeoutMs,
       output: outputPath
     };
     mkdirSync(dirname(outputPath), { recursive: true });
@@ -251,7 +261,7 @@ async function main() {
   const results = [];
   for (const model of models) {
     for (const task of tasks) {
-      results.push(await callOpenRouter({ model, task, apiKey, endpoint }));
+      results.push(await callOpenRouter({ model, task, apiKey, endpoint, timeoutMs }));
     }
   }
 
@@ -273,6 +283,8 @@ async function main() {
 
   const report = {
     ok: results.every((row) => row.ok),
+    mode: "live",
+    timeout_ms: timeoutMs,
     generated_at: new Date().toISOString(),
     models,
     tasks: tasks.map((task) => ({ id: task.id, role: task.role })),

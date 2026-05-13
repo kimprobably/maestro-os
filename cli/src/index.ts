@@ -1448,6 +1448,7 @@ async function linearApiProbe() {
   }
 
   const data = payload.data as JsonObject | undefined;
+  const viewer = data?.viewer as JsonObject | undefined;
   const organization = data?.organization as JsonObject | undefined;
   const teams = ((data?.teams as JsonObject | undefined)?.nodes as JsonObject[] | undefined) ?? [];
   return {
@@ -1455,7 +1456,12 @@ async function linearApiProbe() {
     missing: false,
     detail: `${teams.length} team(s)`,
     data: {
-      viewer: data?.viewer ?? null,
+      viewer: viewer
+        ? {
+            id: viewer.id,
+            name: viewer.name
+          }
+        : null,
       organization: organization
         ? {
             id: organization.id,

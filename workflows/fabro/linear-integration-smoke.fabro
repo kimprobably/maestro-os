@@ -23,7 +23,7 @@ digraph LinearIntegrationSmoke {
         shape=parallelogram,
         goal_gate=true,
         retry_target="probe_linear",
-        script="mkdir -p .workflow; test -f docs/LINEAR-INTEGRATION.md; test -n \"${LINEAR_API_KEY:-}\" || { printf '{\"status\":\"warn\",\"detail\":\"missing LINEAR_API_KEY\"}\\n' > .workflow/linear-integration-smoke.json; cat .workflow/linear-integration-smoke.json; exit 0; }; ./bin/maestro linear smoke > .workflow/linear-integration-smoke.json; cat .workflow/linear-integration-smoke.json"
+        script="mkdir -p .workflow; test -f docs/LINEAR-INTEGRATION.md; test -n \"${LINEAR_API_KEY:-}\" || { printf '{\"ok\":false,\"error\":{\"code\":\"missing_linear_api_key\",\"message\":\"missing LINEAR_API_KEY\"}}\\n' > .workflow/linear-integration-smoke.json; cat .workflow/linear-integration-smoke.json; exit 1; }; ./bin/maestro linear smoke > .workflow/linear-integration-smoke.json; cat .workflow/linear-integration-smoke.json"
     ]
 
     write_report [
