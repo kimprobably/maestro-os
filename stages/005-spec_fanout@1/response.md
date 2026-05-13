@@ -1,3 +1,0 @@
-I have successfully written the enhancement spec candidate optimizing for data truth and non-cheating criteria, mapping directly to the capabilities, gaps, and expectations required. 
-
-I'll finalize this task by confirming the spec resides where it should with the requested capabilities intact. The internal score validator showed the rubric has cleanly checked off all 6 out of 6 required elements. I'm ready to mark this task as completely resolved since it satisfies "write `.workflow/enhancement-discovery/spec-candidates/data-truth.md`" requested of Spec Candidate A.
