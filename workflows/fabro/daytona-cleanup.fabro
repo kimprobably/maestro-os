@@ -1,0 +1,39 @@
+digraph DaytonaCleanup {
+    graph [
+        goal="Archive old stopped Daytona sandboxes for Maestro Fabro runs",
+        persona="fabro-ops",
+        inputs="project, purpose, max_stopped, dry_run",
+        outputs="daytona_cleanup_report",
+        default_max_retries=1,
+        retry_target="cleanup_stopped_sandboxes",
+        model_stylesheet="
+            * { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: low; }
+        "
+    ]
+    rankdir=LR
+
+    start [shape=Mdiamond, label="Start"]
+    exit [shape=Msquare, label="Exit"]
+
+    cleanup_stopped_sandboxes [
+        label="Cleanup Stopped Sandboxes",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="cleanup_stopped_sandboxes",
+        script="node scripts/fabro/cleanup-daytona-sandboxes.mjs --project '{{ inputs.project|default('maestro-os') }}' --purpose '{{ inputs.purpose|default('code-factory') }}' --max-stopped '{{ inputs.max_stopped|default('1') }}' --out .workflow/fabro/daytona-cleanup.json {{ inputs.dry_run|default('') }}"
+    ]
+
+    verify_cleanup_report [
+        label="Verify Cleanup Report",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="cleanup_stopped_sandboxes",
+        script="node -e \"const fs=require('fs'); const report=JSON.parse(fs.readFileSync('.workflow/fabro/daytona-cleanup.json','utf8')); if(!report.ok) process.exit(1); console.log(JSON.stringify({ok:true, archived:report.archived.length, dry_run:report.dry_run}, null, 2));\""
+    ]
+
+    start -> cleanup_stopped_sandboxes
+    cleanup_stopped_sandboxes -> verify_cleanup_report [condition="outcome=succeeded"]
+    cleanup_stopped_sandboxes -> cleanup_stopped_sandboxes [label="Retry", loop_restart=true]
+    verify_cleanup_report -> exit [condition="outcome=succeeded"]
+    verify_cleanup_report -> cleanup_stopped_sandboxes [label="Fix"]
+}

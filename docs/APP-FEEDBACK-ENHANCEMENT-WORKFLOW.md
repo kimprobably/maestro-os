@@ -30,3 +30,11 @@ Run through Fabro:
 ```bash
 fabro run workflows/app-feedback/enhance-app-from-feedback.consumer-radar.toml
 ```
+
+Before starting Daytona-backed runs in a low-disk account, run:
+
+```bash
+fabro run workflows/fabro/daytona-cleanup.toml --sandbox local
+```
+
+That workflow archives old stopped Maestro/code-factory Daytona sandboxes while keeping the newest stopped sandbox by default. It avoids the common 30 GiB Daytona disk-limit failure before new Fabro sandboxes start.
