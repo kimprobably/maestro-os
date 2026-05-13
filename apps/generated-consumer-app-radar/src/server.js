@@ -52,6 +52,41 @@ const server = createServer(async (req, res) => {
       return sendJson(res, 200, buildSummary(loadApps()));
     if (url.pathname === "/api/apps" && req.method === "GET")
       return sendJson(res, 200, { apps: loadApps() });
+    if (url.pathname === "/api/fetch-more" && req.method === "GET") {
+      const category = url.searchParams.get("category") || "";
+      const limit = Number(url.searchParams.get("limit") || 5);
+      const offset = Number(url.searchParams.get("offset") || 0);
+      const seed = url.searchParams.get("seed") || "";
+      const mode = url.searchParams.get("mode") || "live";
+      const allowFixtureFallback =
+        url.searchParams.get("allow_fixture_fallback") === "true";
+      const { fetchMoreApps } = await import("./ingest.js");
+      const result = await fetchMoreApps({
+        category,
+        limit,
+        offset,
+        seed,
+        mode,
+        allowFixtureFallback,
+      });
+      return sendJson(res, 200, {
+        apps: result.apps || [],
+        next_offset: result.nextOffset || 0,
+        has_more: result.hasMore || false,
+      });
+    }
+    if (url.pathname === "/api/enrich-app" && req.method === "POST") {
+      const body = await readJson(req);
+      const mode = url.searchParams.get("mode") || "live";
+      const allowFixtureFallback =
+        url.searchParams.get("allow_fixture_fallback") === "true";
+      const { enrichAppWithLiveSources } = await import("./ingest.js");
+      const enriched = await enrichAppWithLiveSources(body, {
+        mode,
+        allowFixtureFallback,
+      });
+      return sendJson(res, 200, { ok: true, app: enriched });
+    }
     if (url.pathname === "/api/apps" && req.method === "POST")
       return sendJson(res, 201, {
         ok: true,

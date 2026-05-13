@@ -13,6 +13,46 @@ function slug(value) {
     .slice(0, 64);
 }
 
+// ── provenance ────────────────────────────────────────────────────
+
+function withProvenance(app, source) {
+  return {
+    ...app,
+    provenance: {
+      source,
+      fetchedAt: new Date().toISOString(),
+      rawId: String(app.appStoreId || app.id || ""),
+    },
+  };
+}
+
+// ── retry helper ──────────────────────────────────────────────────
+
+async function retryWithBackoff(fn, { maxRetries = 3, baseDelay = 1_000, maxDelay = 8_000 } = {}) {
+  const nonRetryable = new Set([400, 401, 403, 404]);
+  let lastError;
+  for (let attempt = 0; attempt <= maxRetries; attempt++) {
+    try {
+      return await fn();
+    } catch (err) {
+      lastError = err;
+      const code = err?.statusCode || err?.response?.status;
+      if (code && nonRetryable.has(code)) {
+        const e = new Error(err.message);
+        e.error_type = "non-retryable";
+        e.retryable = false;
+        throw e;
+      }
+      if (attempt >= maxRetries) break;
+      const delay = Math.min(baseDelay * 2 ** attempt + Math.random() * baseDelay, maxDelay);
+      await new Promise((r) => setTimeout(r, delay));
+    }
+  }
+  throw lastError;
+}
+
+// ── fixture / rank mode helpers ───────────────────────────────────
+
 export function loadFixtureApps() {
   try {
     return JSON.parse(
@@ -28,21 +68,24 @@ export function loadFixtureApps() {
 
 function withRunMode(app, mode) {
   const liveScraped = false;
-  return {
-    ...app,
-    dataMode: mode,
-    growthHypothesis: {
-      ...(app.growthHypothesis || {}),
-      liveScraped,
-      sourceMode: mode,
-      basis: liveScraped
-        ? "Live social and review adapters populated this hypothesis."
-        : "Fixture-backed hypothesis. No live Apify social scrape was completed in this run.",
-      confidence: liveScraped
-        ? 0.82
-        : Number(app.growthHypothesis?.confidence || 0.58),
+  return withProvenance(
+    {
+      ...app,
+      dataMode: mode,
+      growthHypothesis: {
+        ...(app.growthHypothesis || {}),
+        liveScraped,
+        sourceMode: mode,
+        basis: liveScraped
+          ? "Live social and review adapters populated this hypothesis."
+          : "Fixture-backed hypothesis. No live Apify social scrape was completed in this run.",
+        confidence: liveScraped
+          ? 0.82
+          : Number(app.growthHypothesis?.confidence || 0.58),
+      },
     },
-  };
+    "fixture",
+  );
 }
 
 function persistRanked(apps, mode) {
@@ -55,6 +98,8 @@ function persistRanked(apps, mode) {
   saveApps(ranked);
   return ranked;
 }
+
+// ── legacy exports ────────────────────────────────────────────────
 
 export async function refreshApps({ mode = "fixture" } = {}) {
   if (!allowedModes.has(mode))
@@ -154,6 +199,268 @@ export async function addCustomApp(input = {}) {
   const ranked = persistRanked([...withoutDuplicate, seed], "manual-seed");
   return ranked.find((app) => app.id === id);
 }
+
+// ── Live discovery: fetchMoreApps ────────────────────────────────
+
+function normalizeFromAppleSearch(item, fallbackCategory) {
+  const name = String(
+    item.trackName || item.trackCensoredName || "unknown",
+  ).trim();
+  const id = name
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "")
+    .slice(0, 64);
+  return {
+    id,
+    name,
+    category: String(item.genres?.[0] || fallbackCategory || "Other").trim(),
+    country: "US",
+    appStoreId: String(item.trackId || id),
+    currentRank: 999,
+    isCategoryLeader: false,
+    categoryLeader: false,
+    sizeBand: "discovered",
+    rankDelta4w: 0,
+    reviewDelta4w: Number(item.userRatingCount || 0),
+    rating: Number(item.averageUserRating || 0),
+    socialDelta4w: 0,
+    socialStrategy: ["Discovery pending social enrichment"],
+    reviewThemes: [],
+    featureRequests: ["Run live review scrape"],
+    evidence: ["Discovered via Apple search"],
+    weeklySnapshots: [
+      {
+        week: "current",
+        rank: 999,
+        reviewCount: Number(item.userRatingCount || 0),
+        socialMentions: 0,
+      },
+    ],
+    investigationAngles: [
+      "Validate whether this app shows genuine opportunity signals.",
+      "Run Apify enrichment for real review and social data.",
+    ],
+    growthHypothesis: {
+      text: "Newly discovered; awaiting enrichment.",
+      confidence: 0.3,
+      basis: "Apple search discovery; no Apify enrichment yet.",
+      liveScraped: false,
+      sourceMode: "discovery",
+    },
+    reviewSamples: [],
+    exampleContent: [],
+    dataSources: [
+      {
+        name: "Apple App Store search",
+        status: "active",
+        note: "Discovered via search",
+      },
+    ],
+  };
+}
+
+function parseTikTokContent(items) {
+  return (Array.isArray(items) ? items : []).slice(0, 5).map((item) => ({
+    platform: "TikTok",
+    creator: String(
+      item.authorUniqueName || item.authorNickname || "unknown",
+    ).trim(),
+    format: "video",
+    hook: String(item.text || item.description || item.title || "").slice(
+      0,
+      150,
+    ),
+    caption: String(item.text || item.description || "").slice(0, 250),
+    engagement: Number(
+      item.likes ||
+        item.likeCount ||
+        item.playCount ||
+        item.diggCount ||
+        0,
+    ),
+    source: "apify-tiktok",
+    verifiedLiveScrape: true,
+  }));
+}
+
+export async function fetchMoreApps({
+  category,
+  limit = 5,
+  offset = 0,
+  seed = "",
+  mode = "live",
+  allowFixtureFallback = false,
+} = {}) {
+  const search = seed || category || "top apps";
+  const existingIds = new Set(loadApps().map((a) => a.id));
+
+  // Real-mode gate: fail when credentials are missing and no fallback allowed
+  if (mode === "live" && !allowFixtureFallback) {
+    const hasToken =
+      process.env.APIFY_TOKEN &&
+      !process.env.APIFY_TOKEN.includes("{{");
+    if (!hasToken) {
+      const err = new Error("Live mode requires APIFY_TOKEN");
+      err.error_type = "missing-credential";
+      err.retryable = false;
+      throw err;
+    }
+  }
+
+  // Step 1: Discover apps via Apple iTunes Search
+  const { searchAppleApps } = await import("./sources/apple.js");
+  const appleResults = await retryWithBackoff(() => searchAppleApps(search));
+
+  const liveApps = [];
+  for (const appleItem of appleResults) {
+    if (liveApps.length >= limit) break;
+
+    const app = normalizeFromAppleSearch(appleItem, search);
+    if (existingIds.has(app.id)) continue;
+
+    // Step 2: Enrich with Apple review samples
+    try {
+      const { fetchAppleReviews } = await import("./sources/apple.js");
+      const reviews = await retryWithBackoff(() =>
+        fetchAppleReviews(app.appStoreId, "us", 10),
+      );
+      app.reviewSamples = reviews.map((r) => ({ ...r, source: "apple-rss" }));
+    } catch {
+      app.reviewSamples = [
+        {
+          rating: 0,
+          title: "Review fetch failed",
+          body: "Could not retrieve reviews for this app.",
+          source: "review-unavailable",
+        },
+      ];
+    }
+
+    // Step 3: Enrich with Apify social content if token available
+    const hasToken =
+      process.env.APIFY_TOKEN &&
+      !process.env.APIFY_TOKEN.includes("{{");
+    if (hasToken) {
+      try {
+        const { runApifyActor } = await import("./sources/apify.js");
+        const socialItems = await retryWithBackoff(() =>
+          runApifyActor("clockworks/tiktok-scraper", {
+            searchTerms: [app.name],
+            maxItems: 5,
+          }),
+        );
+        app.exampleContent = parseTikTokContent(socialItems);
+        app.growthHypothesis = {
+          ...app.growthHypothesis,
+          liveScraped: true,
+          confidence: 0.82,
+          basis: "Live TikTok scrape via Apify populated this hypothesis.",
+        };
+      } catch {
+        app.exampleContent = [];
+        app.growthHypothesis.liveScraped = false;
+      }
+    } else if (!allowFixtureFallback) {
+      app.exampleContent = [];
+    }
+
+    liveApps.push(app);
+  }
+
+  // Deduplicate against in-memory repository
+  const uniqueApps = liveApps.filter((a) => !existingIds.has(a.id));
+
+  // Add provenance and scoring
+  const enriched = uniqueApps.map((app, index) => {
+    const withProv = withProvenance(
+      app,
+      app.growthHypothesis?.liveScraped ? "apify" : "apple-rss",
+    );
+    const scored = rankApps([withProv]).find((a) => a.id === app.id);
+    return scored ? scored : withProv;
+  });
+
+  // Merge into repository
+  if (enriched.length > 0) {
+    const allApps = [...loadApps(), ...enriched];
+    saveApps(
+      rankApps(allApps).map((a, i) => ({ ...a, radarRank: i + 1 })),
+    );
+  }
+
+  return {
+    apps: enriched,
+    hasMore: appleResults.length > limit && enriched.length > 0,
+    nextOffset: offset + enriched.length,
+  };
+}
+
+// ── Per-app live enrichment ──────────────────────────────────────
+
+export async function enrichAppWithLiveSources(app = {}, options = {}) {
+  const { mode = "live", allowFixtureFallback = false } = options;
+  const enriched = { ...app };
+
+  if (!enriched.appStoreId) {
+    enriched.error = "App must have an appStoreId for live enrichment";
+    return enriched;
+  }
+
+  // Apple review ingestion
+  try {
+    const { fetchAppleReviews } = await import("./sources/apple.js");
+    const reviews = await retryWithBackoff(() =>
+      fetchAppleReviews(enriched.appStoreId, "us", 25),
+    );
+    enriched.reviewSamples = reviews.map((r) => ({ ...r, source: "apple-rss" }));
+  } catch (err) {
+    enriched.reviewSamples = [
+      {
+        rating: 0,
+        title: "Review unavailable",
+        body: String(err?.message || "unknown error"),
+        source: "review-unavailable",
+      },
+    ];
+  }
+
+  // Apify social scrape if token available
+  const hasToken =
+    process.env.APIFY_TOKEN &&
+    !process.env.APIFY_TOKEN.includes("{{");
+  if (hasToken) {
+    try {
+      const { runApifyActor } = await import("./sources/apify.js");
+      const socialItems = await retryWithBackoff(() =>
+        runApifyActor("clockworks/tiktok-scraper", {
+          searchTerms: [enriched.name || enriched.id],
+          maxItems: 10,
+        }),
+      );
+      enriched.exampleContent = parseTikTokContent(socialItems);
+      enriched.growthHypothesis = {
+        ...(enriched.growthHypothesis || {}),
+        liveScraped: true,
+        confidence: 0.82,
+        basis: "Live social scrape via Apify populated this hypothesis.",
+      };
+    } catch (socialErr) {
+      if (!allowFixtureFallback) {
+        enriched.dataSources = enriched.dataSources || [];
+        enriched.dataSources.push({
+          name: "Apify TikTok",
+          status: "failed",
+          note: String(socialErr?.message || "unknown"),
+        });
+      }
+    }
+  }
+
+  return withProvenance(enriched, "live-enrichment");
+}
+
+// ── CLI entry ─────────────────────────────────────────────────────
 
 if (process.argv[1] && process.argv[1].endsWith("ingest.js")) {
   const apps = await refreshApps({

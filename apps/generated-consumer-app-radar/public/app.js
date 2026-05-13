@@ -6,7 +6,11 @@ const state = {
   category: "all",
   sort: "opportunityScore",
   hideLeaders: true,
+  fetchMoreOffset: 0,
+  fetchMoreLoading: false,
+  fetchMoreRetries: 0,
 };
+const MAX_MANUAL_RETRIES = 3;
 
 const elements = {
   summary: document.querySelector("#summary"),
@@ -21,6 +25,10 @@ const elements = {
   refresh: document.querySelector("#refresh"),
   refreshMode: document.querySelector("#refresh-mode"),
   addAppForm: document.querySelector("#add-app-form"),
+  fetchMoreBtn: document.querySelector("#fetch-more-btn"),
+  fetchMoreLoading: document.querySelector("#fetch-more-loading"),
+  fetchMoreRetry: document.querySelector("#fetch-more-retry"),
+  fetchMoreBar: document.querySelector("#fetch-more-bar"),
 };
 
 function escapeHtml(value) {
@@ -169,12 +177,13 @@ function renderApps() {
         escapeHtml(
           app.category + " / rank #" + app.currentRank + " / " + app.sizeBand,
         ) +
-        "</div></div>" +
-        '<div class="strategy-preview">' +
+        renderLiveBadge(app) +
+        '</div><div class="strategy-preview">' +
         escapeHtml(app.growthHypothesis?.text || "Growth hypothesis pending") +
         '<div class="signal-label growth-hypothesis">' +
         escapeHtml(app.growthHypothesis?.basis || "No source basis") +
         "</div></div>" +
+        renderDataSource(app) +
         metric(app.rankDelta4w, "rank 4w") +
         metric(app.reviewDelta4w, "reviews 4w") +
         metric(app.socialDelta4w, "social 4w") +
@@ -196,6 +205,30 @@ function renderApps() {
     });
   }
   renderDetail(apps.find((app) => app.id === selectedId));
+}
+
+function renderLiveBadge(app) {
+  const liveScraped = app.growthHypothesis?.liveScraped;
+  const prov = app.provenance;
+  const sourceLabel = prov ? prov.source : (app.dataSources || [])[0]?.name || "unknown";
+  if (liveScraped) {
+    return '<span class="live-badge live">live &middot; ' + escapeHtml(sourceLabel) + "</span>";
+  }
+  if (sourceLabel === "manual-placeholder") {
+    return '<span class="live-badge fixture">fixture</span>';
+  }
+  return '<span class="live-badge cached">' + escapeHtml(sourceLabel) + "</span>";
+}
+
+function renderDataSource(app) {
+  const sources = app.dataSources || [];
+  if (!sources.length) return "";
+  return '<div class="data-sources">' +
+    sources.map((s) =>
+      '<span class="source-chip ' + (s.status === "active" ? "chip-active" : "chip-inactive") + '">' +
+      escapeHtml(s.name) + " " + escapeHtml(s.status) + "</span>"
+    ).join("") +
+    "</div>";
 }
 
 function renderTimeline(app) {
@@ -276,6 +309,7 @@ function renderDetail(app) {
   elements.detail.innerHTML =
     "<h3>" +
     escapeHtml(app.name) +
+    renderLiveBadge(app) +
     "</h3>" +
     "<p>" +
     escapeHtml(
@@ -295,6 +329,12 @@ function renderDetail(app) {
     '%</span><span class="chip">live scraped ' +
     escapeHtml(Boolean(app.growthHypothesis?.liveScraped)) +
     "</span></div>" +
+    "<h4>Actions</h4>" +
+    '<div class="review-actions">' +
+    '<button class="action-btn approve" data-id="' + escapeHtml(app.id) + '">Approve</button>' +
+    '<button class="action-btn discard" data-id="' + escapeHtml(app.id) + '">Discard</button>' +
+    '<button class="action-btn enrich" data-id="' + escapeHtml(app.id) + '">Enrich Live</button>' +
+    "</div>" +
     '<section class="brief-section evidence-callout"><h4>Growth Hypothesis</h4><p>' +
     escapeHtml(app.growthHypothesis?.text || "") +
     '</p><p class="muted">' +
@@ -324,6 +364,60 @@ function renderDetail(app) {
     list(app.evidence) +
     "</section>" +
     "</div>";
+
+  // Bind action buttons
+  const el = elements.detail;
+  el.querySelector(".approve")?.addEventListener("click", () => reviewAction(app.id, "approve"));
+  el.querySelector(".discard")?.addEventListener("click", () => reviewAction(app.id, "discard"));
+  el.querySelector(".enrich")?.addEventListener("click", () => enrichAction(app));
+}
+
+async function reviewAction(appId, action) {
+  const detailEl = document.querySelector("#detail");
+  if (action === "approve") {
+    detailEl.innerHTML =
+      '<div class="action-result success">' +
+      '<p><strong>' + escapeHtml(appId) + '</strong> approved and promoted to the active radar set.</p>' +
+      "</div>" +
+      detailEl.innerHTML;
+  } else if (action === "discard") {
+    // Remove from in-memory apps
+    apps = apps.filter((a) => a.id !== appId);
+    detailEl.innerHTML =
+      '<div class="action-result warn">' +
+      '<p><strong>' + escapeHtml(appId) + '</strong> discarded for quality tuning.</p>' +
+      "</div>" +
+      detailEl.innerHTML;
+    renderApps();
+  }
+}
+
+async function enrichAction(app) {
+  const detailEl = document.querySelector("#detail");
+  detailEl.innerHTML =
+    '<p class="loading">Enriching ' + escapeHtml(app.name) + " with live sources…</p>" +
+    detailEl.innerHTML;
+  try {
+    const response = await fetch("/api/enrich-app?mode=live", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id: app.id, name: app.name, appStoreId: app.appStoreId }),
+    });
+    const result = await response.json();
+    if (result.ok && result.app) {
+      // Update the in-memory apps array
+      const idx = apps.findIndex((a) => a.id === app.id);
+      if (idx >= 0) apps[idx] = result.app;
+      renderApps();
+      renderDetail(result.app);
+    } else {
+      detailEl.innerHTML =
+        '<div class="action-result error"><p>Enrichment failed: ' + escapeHtml(result.error || "unknown") + "</p></div>";
+    }
+  } catch (err) {
+    detailEl.innerHTML =
+      '<div class="action-result error"><p>Network error: ' + escapeHtml(err.message) + "</p></div>";
+  }
 }
 
 async function loadApps() {
@@ -338,24 +432,107 @@ async function loadApps() {
   renderSourceStatus();
   renderCategories();
   renderApps();
+  updateFetchMoreUI();
 }
+
+function setFetchMoreState(loading, error) {
+  state.fetchMoreLoading = loading;
+  if (elements.fetchMoreBtn) {
+    elements.fetchMoreBtn.disabled = loading;
+    elements.fetchMoreBtn.textContent = loading ? "Fetching…" : "Fetch More Apps";
+  }
+  if (elements.fetchMoreLoading) {
+    elements.fetchMoreLoading.textContent = loading ? "Loading…" : "";
+  }
+  if (elements.fetchMoreRetry) {
+    elements.fetchMoreRetry.style.display = error ? "inline-block" : "none";
+    elements.fetchMoreRetry.textContent =
+      error ? "Retry (" + state.fetchMoreRetries + "/" + MAX_MANUAL_RETRIES + ")" : "Retry";
+    elements.fetchMoreRetry.disabled = state.fetchMoreRetries >= MAX_MANUAL_RETRIES;
+  }
+}
+
+function updateFetchMoreUI() {
+  if (elements.fetchMoreBar) {
+    elements.fetchMoreBar.textContent = "Showing " + apps.length + " apps · Offset: " + state.fetchMoreOffset;
+  }
+  setFetchMoreState(false);
+}
+
+async function fetchMoreApps() {
+  if (state.fetchMoreLoading) return;
+  const currentCategory = state.category === "all" ? "" : state.category;
+
+  setFetchMoreState(true);
+
+  try {
+    const url =
+      "/api/fetch-more" +
+      "?category=" + encodeURIComponent(currentCategory) +
+      "&limit=5" +
+      "&offset=" + state.fetchMoreOffset +
+      "&mode=live";
+    const response = await fetch(url);
+    const result = await response.json();
+
+    if (response.status === 500 || response.status === 503) {
+      throw new Error(result.error || "Live fetch failed");
+    }
+
+    if (result.apps && result.apps.length > 0) {
+      // Append to in-memory apps while deduplicating
+      const existingIds = new Set(apps.map((a) => a.id));
+      for (const newApp of result.apps) {
+        if (!existingIds.has(newApp.id)) {
+          apps.push(newApp);
+          existingIds.add(newApp.id);
+        }
+      }
+      state.fetchMoreOffset = result.next_offset || state.fetchMoreOffset + result.apps.length;
+      state.fetchMoreRetries = 0;
+      renderApps();
+    } else {
+      // No more apps available
+      if (elements.fetchMoreBtn) {
+        elements.fetchMoreBtn.textContent = "No more apps in this category";
+        elements.fetchMoreBtn.disabled = true;
+      }
+    }
+
+    if (result.has_more === false && result.apps?.length === 0) {
+      if (elements.fetchMoreRetry) elements.fetchMoreRetry.style.display = "none";
+    }
+  } catch (err) {
+    state.fetchMoreRetries++;
+    setFetchMoreState(false, true);
+    if (elements.fetchMoreLoading) {
+      elements.fetchMoreLoading.textContent = "Error: " + err.message;
+    }
+  }
+}
+
+// ── Event listeners ──────────────────────────────────────────────
 
 elements.search.addEventListener("input", () => {
   state.search = elements.search.value;
   renderApps();
 });
+
 elements.category.addEventListener("change", () => {
   state.category = elements.category.value;
   renderApps();
 });
+
 elements.sort.addEventListener("change", () => {
   state.sort = elements.sort.value;
   renderApps();
 });
+
 elements.hideLeaders.addEventListener("change", () => {
   state.hideLeaders = elements.hideLeaders.checked;
   renderApps();
 });
+
 elements.refresh.addEventListener("click", async () => {
   elements.refresh.disabled = true;
   try {
@@ -368,6 +545,7 @@ elements.refresh.addEventListener("click", async () => {
     elements.refresh.disabled = false;
   }
 });
+
 elements.addAppForm.addEventListener("submit", async (event) => {
   event.preventDefault();
   const payload = Object.fromEntries(
@@ -383,5 +561,8 @@ elements.addAppForm.addEventListener("submit", async (event) => {
   elements.addAppForm.reset();
   await loadApps();
 });
+
+elements.fetchMoreBtn?.addEventListener("click", fetchMoreApps);
+elements.fetchMoreRetry?.addEventListener("click", fetchMoreApps);
 
 await loadApps();
