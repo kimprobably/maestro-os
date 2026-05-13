@@ -30,9 +30,9 @@ const required = [
 ];
 const missing = required.filter((file) => !existsSync(resolve(appDir, file)));
 const reports = [
-  ".workflow/consumer-radar/native-checks.json",
-  ".workflow/consumer-radar/qlty-report.json",
-  ".workflow/consumer-radar/promptfoo-report.json",
+  "reports/consumer-radar/quality/native-checks.json",
+  "reports/consumer-radar/quality/qlty-report.json",
+  "reports/consumer-radar/quality/promptfoo-report.json",
   "reports/consumer-radar/review-consensus.json"
 ];
 const missingReports = reports.filter((file) => !existsSync(file));

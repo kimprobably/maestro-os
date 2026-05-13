@@ -64,6 +64,7 @@ const artifactGate = readFileSync(resolve(outDir, "scripts/consumer-radar/valida
 
 for (const text of [
   "Spec Kitty",
+  "prepare_review_reports",
   "review_fanout",
   "qlty_gate",
   "promptfoo_gate",
@@ -108,6 +109,9 @@ if (!reviewConsensus.includes("minimumActiveReviews") || !reviewConsensus.includ
 if (!workflow.includes("reports/consumer-radar/reviews") || workflow.includes("--reviews .workflow/consumer-radar/reviews")) {
   throw new Error("parallel review artifacts must be written to a tracked reports path, not ignored .workflow");
 }
+if (!workflow.includes("rm -rf reports/consumer-radar/reviews reports/consumer-radar/review-consensus.json")) {
+  throw new Error("workflow must clear inherited review reports before parallel review fanout");
+}
 if (!reviewConsensus.includes("reports/consumer-radar/reviews")) {
   throw new Error("review consensus must read tracked review artifacts from reports/consumer-radar/reviews");
 }
@@ -117,11 +121,20 @@ if (!promptfooGate.includes("allowFallback") || !promptfooGate.includes("Promptf
 if (!promptfooGate.includes("PROMPTFOO_EVAL_TIMEOUT_MS") || !promptfooGate.includes("PROMPTFOO_MAX_EVAL_TIME_MS")) {
   throw new Error("promptfoo gate must bound request and total eval runtime for CI");
 }
+if (!promptfooGate.includes("reports/consumer-radar/quality/promptfoo-report.json")) {
+  throw new Error("promptfoo gate must write a tracked quality report");
+}
 if (!promptfooConfig.includes("apps_fixture") || !promptfooConfig.includes("file://../apps/generated-consumer-app-radar/fixtures/apps.json") || !promptfooConfig.includes("evaluateOptions")) {
   throw new Error("promptfoo config must evaluate the generated fixture data with explicit CI bounds");
 }
 if (!qltyGate.includes("allowFallback") || !qltyGate.includes("Qlty unavailable in real mode")) {
   throw new Error("qlty gate must make unavailable qlty opt-in in real mode");
+}
+if (!qltyGate.includes("reports/consumer-radar/quality/qlty-report.json")) {
+  throw new Error("qlty gate must write a tracked quality report");
+}
+if (!artifactGate.includes("reports/consumer-radar/quality/native-checks.json") || !artifactGate.includes("reports/consumer-radar/quality/promptfoo-report.json")) {
+  throw new Error("artifact gate must require tracked quality reports");
 }
 for (const text of ["src/sources/social.js", "src/snapshots.js", "src/evidence.js", "Growth Signals", "Review Pain", "Social Strategy"]) {
   if (!generateApp.includes(text)) {

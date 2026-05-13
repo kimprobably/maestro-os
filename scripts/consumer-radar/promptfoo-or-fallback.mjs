@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { spawnSync } from "node:child_process";
+import { dirname } from "node:path";
 
 function argValue(name, fallback) {
   const index = process.argv.indexOf(name);
@@ -21,6 +22,13 @@ const allowFallback = argBool("--allow-fallback", true);
 const promptfooEvalTimeoutMs = process.env.PROMPTFOO_EVAL_TIMEOUT_MS || "45000";
 const promptfooMaxEvalTimeMs = process.env.PROMPTFOO_MAX_EVAL_TIME_MS || "120000";
 mkdirSync(".workflow/consumer-radar", { recursive: true });
+
+function writeReport(report) {
+  for (const file of [".workflow/consumer-radar/promptfoo-report.json", "reports/consumer-radar/quality/promptfoo-report.json"]) {
+    mkdirSync(dirname(file), { recursive: true });
+    writeFileSync(file, JSON.stringify(report, null, 2) + "\n");
+  }
+}
 
 let promptfoo = spawnSync("sh", ["-lc", "command -v npx >/dev/null 2>&1"], { encoding: "utf8" }).status === 0;
 let promptfooResult = null;
@@ -62,6 +70,6 @@ const report = {
   hard_failures: hardFailures,
   fallback_assertions: fallbackAssertions
 };
-writeFileSync(".workflow/consumer-radar/promptfoo-report.json", JSON.stringify(report, null, 2) + "\n");
+writeReport(report);
 console.log(JSON.stringify(report, null, 2));
 if (!report.ok) process.exit(1);

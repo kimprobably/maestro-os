@@ -9,17 +9,25 @@ const commands = [
   ["npm", ["test"]],
   ["npm", ["run", "build"]]
 ];
+const workflowReport = ".workflow/consumer-radar/native-checks.json";
+const trackedReport = "reports/consumer-radar/quality/native-checks.json";
+
+function writeReport(report) {
+  for (const file of [workflowReport, trackedReport]) {
+    mkdirSync(dirname(file), { recursive: true });
+    writeFileSync(file, JSON.stringify(report, null, 2) + "\n");
+  }
+}
+
 const results = [];
 for (const [cmd, args] of commands) {
   const result = spawnSync(cmd, args, { cwd: appDir, encoding: "utf8", timeout: 120000 });
   results.push({ command: [cmd, ...args].join(" "), status: result.status, stdout: result.stdout.slice(-3000), stderr: result.stderr.slice(-3000) });
   if (result.status !== 0) {
-    mkdirSync(".workflow/consumer-radar", { recursive: true });
-    writeFileSync(".workflow/consumer-radar/native-checks.json", JSON.stringify({ ok: false, results }, null, 2) + "\n");
+    writeReport({ ok: false, app_dir: resolve(appDir), results });
     process.stderr.write(result.stderr);
     process.exit(result.status ?? 1);
   }
 }
-mkdirSync(".workflow/consumer-radar", { recursive: true });
-writeFileSync(".workflow/consumer-radar/native-checks.json", JSON.stringify({ ok: true, app_dir: resolve(appDir), results }, null, 2) + "\n");
+writeReport({ ok: true, app_dir: resolve(appDir), results });
 console.log(JSON.stringify({ ok: true, checks: results.length }, null, 2));

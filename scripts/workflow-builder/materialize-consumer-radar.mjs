@@ -211,6 +211,14 @@ function buildWorkflow() {
         script="node scripts/consumer-radar/promptfoo-or-fallback.mjs '{{ inputs.app_dir|default('apps/generated-consumer-app-radar') }}' --real-mode '{{ inputs.real_mode|default('true') }}' --allow-fallback '{{ inputs.allow_quality_fallback|default('false') }}'"
     ]
 
+    prepare_review_reports [
+        label="Prepare Review Reports",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="promptfoo_gate",
+        script="rm -rf reports/consumer-radar/reviews reports/consumer-radar/review-consensus.json && mkdir -p reports/consumer-radar/reviews"
+    ]
+
     review_fanout [shape=component, label="Parallel Review Fanout"]
     review_kimi [
         label="Kimi Review",
@@ -253,7 +261,7 @@ function buildWorkflow() {
         shape=parallelogram,
         goal_gate=true,
         retry_target="review_consensus",
-        script="node -e \\"const fs=require('fs'); const path=require('path'); const app='{{ inputs.app_dir|default('apps/generated-consumer-app-radar') }}'; const out='.workflow/consumer-radar/handoff.json'; fs.mkdirSync(path.dirname(out),{recursive:true}); fs.writeFileSync(out, JSON.stringify({ok:true, app_dir:app, run_dir:process.cwd(), reports:['.workflow/consumer-radar/native-checks.json','.workflow/consumer-radar/qlty-report.json','.workflow/consumer-radar/promptfoo-report.json','reports/consumer-radar/review-consensus.json'], next:['Run npm start inside the generated app','Use POST /api/refresh with mode=live after Apify actors are tuned']}, null, 2)+'\\\\n'); console.log(fs.readFileSync(out,'utf8'));\\""
+        script="node -e \\"const fs=require('fs'); const path=require('path'); const app='{{ inputs.app_dir|default('apps/generated-consumer-app-radar') }}'; const out='.workflow/consumer-radar/handoff.json'; fs.mkdirSync(path.dirname(out),{recursive:true}); fs.writeFileSync(out, JSON.stringify({ok:true, app_dir:app, run_dir:process.cwd(), reports:['reports/consumer-radar/quality/native-checks.json','reports/consumer-radar/quality/qlty-report.json','reports/consumer-radar/quality/promptfoo-report.json','reports/consumer-radar/review-consensus.json'], next:['Run npm start inside the generated app','Use POST /api/refresh with mode=live after Apify actors are tuned']}, null, 2)+'\\\\n'); console.log(fs.readFileSync(out,'utf8'));\\""
     ]
 
     start -> wait_for_support_files
@@ -271,8 +279,10 @@ function buildWorkflow() {
     native_checks -> generate_app [label="Fix"]
     qlty_gate -> promptfoo_gate [condition="outcome=succeeded"]
     qlty_gate -> generate_app [label="Fix"]
-    promptfoo_gate -> review_fanout [condition="outcome=succeeded"]
+    promptfoo_gate -> prepare_review_reports [condition="outcome=succeeded"]
     promptfoo_gate -> generate_app [label="Fix"]
+    prepare_review_reports -> review_fanout [condition="outcome=succeeded"]
+    prepare_review_reports -> promptfoo_gate [label="Fix"]
     review_fanout -> review_kimi
     review_fanout -> review_qwen
     review_fanout -> review_deepseek
@@ -1038,19 +1048,27 @@ const commands = [
   ["npm", ["test"]],
   ["npm", ["run", "build"]]
 ];
+const workflowReport = ".workflow/consumer-radar/native-checks.json";
+const trackedReport = "reports/consumer-radar/quality/native-checks.json";
+
+function writeReport(report) {
+  for (const file of [workflowReport, trackedReport]) {
+    mkdirSync(dirname(file), { recursive: true });
+    writeFileSync(file, JSON.stringify(report, null, 2) + "\\n");
+  }
+}
+
 const results = [];
 for (const [cmd, args] of commands) {
   const result = spawnSync(cmd, args, { cwd: appDir, encoding: "utf8", timeout: 120000 });
   results.push({ command: [cmd, ...args].join(" "), status: result.status, stdout: result.stdout.slice(-3000), stderr: result.stderr.slice(-3000) });
   if (result.status !== 0) {
-    mkdirSync(".workflow/consumer-radar", { recursive: true });
-    writeFileSync(".workflow/consumer-radar/native-checks.json", JSON.stringify({ ok: false, results }, null, 2) + "\\n");
+    writeReport({ ok: false, app_dir: resolve(appDir), results });
     process.stderr.write(result.stderr);
     process.exit(result.status ?? 1);
   }
 }
-mkdirSync(".workflow/consumer-radar", { recursive: true });
-writeFileSync(".workflow/consumer-radar/native-checks.json", JSON.stringify({ ok: true, app_dir: resolve(appDir), results }, null, 2) + "\\n");
+writeReport({ ok: true, app_dir: resolve(appDir), results });
 console.log(JSON.stringify({ ok: true, checks: results.length }, null, 2));
 `;
 }
@@ -1059,6 +1077,7 @@ function qltyGateScript() {
   return `#!/usr/bin/env node
 import { mkdirSync, writeFileSync } from "node:fs";
 import { spawnSync } from "node:child_process";
+import { dirname } from "node:path";
 
 function argValue(name, fallback) {
   const index = process.argv.indexOf(name);
@@ -1076,9 +1095,14 @@ function argBool(name, fallback) {
 const appDir = process.argv[2] || "apps/generated-consumer-app-radar";
 const realMode = argBool("--real-mode", false);
 const allowFallback = argBool("--allow-fallback", true);
-const promptfooEvalTimeoutMs = process.env.PROMPTFOO_EVAL_TIMEOUT_MS || "45000";
-const promptfooMaxEvalTimeMs = process.env.PROMPTFOO_MAX_EVAL_TIME_MS || "120000";
 mkdirSync(".workflow/consumer-radar", { recursive: true });
+
+function writeReport(report) {
+  for (const file of [".workflow/consumer-radar/qlty-report.json", "reports/consumer-radar/quality/qlty-report.json"]) {
+    mkdirSync(dirname(file), { recursive: true });
+    writeFileSync(file, JSON.stringify(report, null, 2) + "\\n");
+  }
+}
 
 function run(cmd) {
   return spawnSync("sh", ["-lc", cmd], { cwd: appDir, encoding: "utf8", timeout: 180000 });
@@ -1112,7 +1136,7 @@ const report = {
   stdout: check ? check.stdout.slice(-5000) : "",
   stderr: check ? check.stderr.slice(-5000) : "qlty unavailable; native checks remain the blocking gate"
 };
-writeFileSync(".workflow/consumer-radar/qlty-report.json", JSON.stringify(report, null, 2) + "\\n");
+writeReport(report);
 console.log(JSON.stringify(report, null, 2));
 if (!report.ok) process.exit(1);
 `;
@@ -1122,6 +1146,7 @@ function promptfooFallbackScript() {
   return `#!/usr/bin/env node
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { spawnSync } from "node:child_process";
+import { dirname } from "node:path";
 
 function argValue(name, fallback) {
   const index = process.argv.indexOf(name);
@@ -1139,7 +1164,16 @@ function argBool(name, fallback) {
 const appDir = process.argv[2] || "apps/generated-consumer-app-radar";
 const realMode = argBool("--real-mode", false);
 const allowFallback = argBool("--allow-fallback", true);
+const promptfooEvalTimeoutMs = process.env.PROMPTFOO_EVAL_TIMEOUT_MS || "45000";
+const promptfooMaxEvalTimeMs = process.env.PROMPTFOO_MAX_EVAL_TIME_MS || "120000";
 mkdirSync(".workflow/consumer-radar", { recursive: true });
+
+function writeReport(report) {
+  for (const file of [".workflow/consumer-radar/promptfoo-report.json", "reports/consumer-radar/quality/promptfoo-report.json"]) {
+    mkdirSync(dirname(file), { recursive: true });
+    writeFileSync(file, JSON.stringify(report, null, 2) + "\\n");
+  }
+}
 
 let promptfoo = spawnSync("sh", ["-lc", "command -v npx >/dev/null 2>&1"], { encoding: "utf8" }).status === 0;
 let promptfooResult = null;
@@ -1181,7 +1215,7 @@ const report = {
   hard_failures: hardFailures,
   fallback_assertions: fallbackAssertions
 };
-writeFileSync(".workflow/consumer-radar/promptfoo-report.json", JSON.stringify(report, null, 2) + "\\n");
+writeReport(report);
 console.log(JSON.stringify(report, null, 2));
 if (!report.ok) process.exit(1);
 `;
@@ -1486,9 +1520,9 @@ const required = [
 ];
 const missing = required.filter((file) => !existsSync(resolve(appDir, file)));
 const reports = [
-  ".workflow/consumer-radar/native-checks.json",
-  ".workflow/consumer-radar/qlty-report.json",
-  ".workflow/consumer-radar/promptfoo-report.json",
+  "reports/consumer-radar/quality/native-checks.json",
+  "reports/consumer-radar/quality/qlty-report.json",
+  "reports/consumer-radar/quality/promptfoo-report.json",
   "reports/consumer-radar/review-consensus.json"
 ];
 const missingReports = reports.filter((file) => !existsSync(file));

@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 import { mkdirSync, writeFileSync } from "node:fs";
 import { spawnSync } from "node:child_process";
+import { dirname } from "node:path";
 
 function argValue(name, fallback) {
   const index = process.argv.indexOf(name);
@@ -19,6 +20,13 @@ const appDir = process.argv[2] || "apps/generated-consumer-app-radar";
 const realMode = argBool("--real-mode", false);
 const allowFallback = argBool("--allow-fallback", true);
 mkdirSync(".workflow/consumer-radar", { recursive: true });
+
+function writeReport(report) {
+  for (const file of [".workflow/consumer-radar/qlty-report.json", "reports/consumer-radar/quality/qlty-report.json"]) {
+    mkdirSync(dirname(file), { recursive: true });
+    writeFileSync(file, JSON.stringify(report, null, 2) + "\n");
+  }
+}
 
 function run(cmd) {
   return spawnSync("sh", ["-lc", cmd], { cwd: appDir, encoding: "utf8", timeout: 180000 });
@@ -52,6 +60,6 @@ const report = {
   stdout: check ? check.stdout.slice(-5000) : "",
   stderr: check ? check.stderr.slice(-5000) : "qlty unavailable; native checks remain the blocking gate"
 };
-writeFileSync(".workflow/consumer-radar/qlty-report.json", JSON.stringify(report, null, 2) + "\n");
+writeReport(report);
 console.log(JSON.stringify(report, null, 2));
 if (!report.ok) process.exit(1);
