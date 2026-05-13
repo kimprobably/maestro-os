@@ -260,7 +260,7 @@
     "kind": "running"
   },
   "status_updated_at": "2026-05-13T12:12:32.654033Z",
-  "last_event_at": "2026-05-13T12:12:39.222399Z",
+  "last_event_at": "2026-05-13T12:12:46.361794Z",
   "pending_control": null,
   "checkpoints": [
     {
@@ -301,9 +301,9 @@
       "diff": {}
     },
     {
-      "seq": 0,
+      "seq": 28,
       "checkpoint": {
-        "timestamp": "2026-05-13T12:12:39.754268Z",
+        "timestamp": "2026-05-13T12:12:43.963517Z",
         "current_node": "check_environment",
         "completed_nodes": [
           "start",
@@ -311,22 +311,22 @@
         ],
         "node_retries": {},
         "context_values": {
-          "internal.run_id": "01KRGM1D2CG67J7ERES36CRYVQ",
-          "graph.persona": "workflow-registry",
-          "internal.node_visit_count": 1,
-          "failure_class": "deterministic",
-          "thread.start.current_node": "check_environment",
-          "failure_signature": "check_environment|deterministic|script failed with exit code: <n> ## output { \"ok\": false,\"failed\": [ { \"cmd\": \"bun --version\",\"status\": null,\"stdout\": \"\",\"stderr\": \"\" } ],\"checks\": [ { \"cmd\": \"node --version\",\"status\": <n>,\"stdout\": \"v22.<n>.<n>\",\"stderr\": \"\" },{ \"cmd\": ",
-          "command.output": "blob://sha256/8abfc95549b0e58bd3de9ec3bdff9a030877f1bd3305d35f8a1657f4190c16d7",
-          "internal.retry_count.check_environment": 0,
-          "graph.goal": "Verify the shared Daytona code-factory environment boots with the expected tools",
-          "internal.thread_id": "start",
-          "internal.fidelity": "compact",
-          "internal.retry_count.start": 0,
+          "graph.outputs": "environment_report",
           "current_node": "check_environment",
+          "failure_class": "deterministic",
+          "internal.node_visit_count": 1,
+          "internal.run_id": "01KRGM1D2CG67J7ERES36CRYVQ",
+          "graph.goal": "Verify the shared Daytona code-factory environment boots with the expected tools",
+          "command.output": "blob://sha256/8abfc95549b0e58bd3de9ec3bdff9a030877f1bd3305d35f8a1657f4190c16d7",
+          "internal.fidelity": "compact",
+          "internal.retry_count.check_environment": 0,
+          "failure_signature": "check_environment|deterministic|script failed with exit code: <n> ## output { \"ok\": false,\"failed\": [ { \"cmd\": \"bun --version\",\"status\": null,\"stdout\": \"\",\"stderr\": \"\" } ],\"checks\": [ { \"cmd\": \"node --version\",\"status\": <n>,\"stdout\": \"v22.<n>.<n>\",\"stderr\": \"\" },{ \"cmd\": ",
           "internal.work_dir": "/home/daytona/workspace",
           "outcome": "failed",
-          "graph.outputs": "environment_report"
+          "internal.thread_id": "start",
+          "graph.persona": "workflow-registry",
+          "thread.start.current_node": "check_environment",
+          "internal.retry_count.start": 0
         },
         "node_outcomes": {
           "check_environment": {
@@ -346,7 +346,82 @@
           }
         },
         "next_node_id": "write_report",
+        "git_commit_sha": "faab637db98d33c396d47e10699956dd567a3497",
+        "loop_failure_signatures": {
+          "check_environment|deterministic|script failed with exit code: <n> ## output { \"ok\": false,\"failed\": [ { \"cmd\": \"bun --version\",\"status\": null,\"stdout\": \"\",\"stderr\": \"\" } ],\"checks\": [ { \"cmd\": \"node --version\",\"status\": <n>,\"stdout\": \"v22.<n>.<n>\",\"stderr\": \"\" },{ \"cmd\": ": 1
+        },
         "node_visits": {
+          "check_environment": 1,
+          "start": 1
+        }
+      },
+      "diff": {
+        "summary": {
+          "files_changed": 0,
+          "additions": 0,
+          "deletions": 0
+        }
+      }
+    },
+    {
+      "seq": 0,
+      "checkpoint": {
+        "timestamp": "2026-05-13T12:12:46.775457Z",
+        "current_node": "write_report",
+        "completed_nodes": [
+          "start",
+          "check_environment",
+          "write_report"
+        ],
+        "node_retries": {},
+        "context_values": {
+          "internal.run_id": "01KRGM1D2CG67J7ERES36CRYVQ",
+          "graph.persona": "workflow-registry",
+          "internal.node_visit_count": 1,
+          "failure_class": "",
+          "internal.retry_count.write_report": 0,
+          "thread.start.current_node": "check_environment",
+          "failure_signature": "",
+          "command.output": "blob://sha256/dc50686d3216b42ecab0c736d25ec532b4049a5389a45b09df846f31ebce65ad",
+          "internal.retry_count.check_environment": 0,
+          "graph.goal": "Verify the shared Daytona code-factory environment boots with the expected tools",
+          "internal.thread_id": "check_environment",
+          "internal.fidelity": "compact",
+          "internal.retry_count.start": 0,
+          "current_node": "write_report",
+          "internal.work_dir": "/home/daytona/workspace",
+          "outcome": "succeeded",
+          "thread.check_environment.current_node": "write_report",
+          "graph.outputs": "environment_report"
+        },
+        "node_outcomes": {
+          "write_report": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/dc50686d3216b42ecab0c736d25ec532b4049a5389a45b09df846f31ebce65ad"
+            },
+            "notes": "Script completed: node -e \"const fs=require('fs'); const report=JSON.parse(fs.readFileSync('.workflow/fabro/daytona-environment-smoke.json','utf8')); const lines=['# Daytona Environment Smoke','', 'ok=' + report.ok, '', '## Tools', ...report.checks.map((check)=>'- ' + check.cmd + ' status=' + check.status + (check.stdout ? ' output=' + check.stdout.split('\\n')[0] : '')), '', '## Env', ...Object.entries(report.env).map(([key,value])=>'- ' + key + '=' + value)]; fs.writeFileSync('.workflow/fabro/daytona-environment-smoke.md', lines.join('\\n')+'\\n'); console.log(lines.join('\\n'));\"",
+            "usage": null
+          },
+          "check_environment": {
+            "status": "failed",
+            "context_updates": {
+              "command.output": "blob://sha256/8abfc95549b0e58bd3de9ec3bdff9a030877f1bd3305d35f8a1657f4190c16d7"
+            },
+            "failure": {
+              "message": "Script failed with exit code: 1\n\n## output\n{\n  \"ok\": false,\n  \"failed\": [\n    {\n      \"cmd\": \"bun --version\",\n      \"status\": null,\n      \"stdout\": \"\",\n      \"stderr\": \"\"\n    }\n  ],\n  \"checks\": [\n    {\n      \"cmd\": \"node --version\",\n      \"status\": 0,\n      \"stdout\": \"v22.22.2\",\n      \"stderr\": \"\"\n    },\n    {\n      \"cmd\": \"npm --version\",\n      \"status\": 0,\n      \"stdout\": \"10.9.7\",\n      \"stderr\": \"\"\n    },\n    {\n      \"cmd\": \"bun --version\",\n      \"status\": null,\n      \"stdout\": \"\",\n      \"stderr\": \"\"\n    },\n    {\n      \"cmd\": \"qlty --version\",\n      \"status\": 0,\n      \"stdout\": \"qlty 0.630.0 linux-x64 (ddc59e7 2026-05-08)\",\n      \"stderr\": \"\"\n    },\n    {\n      \"cmd\": \"spec-kitty --version\",\n      \"status\": 0,\n      \"stdout\": \"`````````````````````````````````````````````````````````            \\n                                                                                \\n                      ▄█▄_                            ╓▄█_                      \\n                     ▐█ └▀█▄_                      ▄█▀▀ ╙█                      \\n                     █\\\"    `▀█▄                  ▄█▀     █▌                     \\n      \",\n      \"stderr\": \"\"\n    },\n    {\n      \"cmd\": \"promptfoo --version\",\n      \"status\": 0,\n      \"stdout\": \"0.121.11\",\n      \"stderr\": \"\"\n    },\n    {\n      \"cmd\": \"claude --version\",\n      \"status\": 0,\n      \"stdout\": \"2.1.140 (Claude Code)\",\n      \"stderr\": \"\"\n    },\n    {\n      \"cmd\": \"codex --version\",\n      \"status\": 0,\n      \"stdout\": \"codex-cli 0.130.0\",\n      \"stderr\": \"\"\n    },\n    {\n      \"cmd\": \"curl -fsS --max-time 20 https://api.github.com/rate_limit\",\n      \"status\": 0,\n      \"stdout\": \"{\\n  \\\"resources\\\": {\\n    \\\"code_search\\\": {\\n      \\\"limit\\\": 60,\\n      \\\"remaining\\\": 60,\\n      \\\"reset\\\": 1778677957,\\n      \\\"used\\\": 0,\\n      \\\"resource\\\": \\\"code_search\\\"\\n    },\\n    \\\"core\\\": {\\n      \\\"limit\\\": 60,\\n      \\\"remaining\\\": 60,\\n      \\\"reset\\\": 1778677957,\\n      \\\"used\\\": 0,\\n      \\\"resource\\\": \\\"core\\\"\\n    },\\n    \\\"graphql\\\": {\\n      \\\"limit\\\": 0,\\n      \\\"remaining\\\": 0,\\n      \\\"reset\\\": 1778677957,\\n      \\\"used\\\": 0,\\n  \",\n      \"stderr\": \"\"\n    }\n  ],\n  \"env\": {\n    \"OPENROUTER_API_KEY\": false,\n    \"DAYTONA_API_KEY\": false,\n    \"LINEAR_API_KEY\": false,\n    \"FABRO_SLACK_BOT_TOKEN\": false,\n    \"FABRO_SLACK_CHANNEL_ID\": false,\n    \"APIFY_TOKEN\": false\n  }\n}\n",
+              "failure_class": "deterministic"
+            },
+            "usage": null
+          },
+          "start": {
+            "status": "succeeded",
+            "usage": null
+          }
+        },
+        "next_node_id": "exit",
+        "node_visits": {
+          "write_report": 1,
           "start": 1,
           "check_environment": 1
         }
@@ -404,7 +479,12 @@
       "first_event_seq": 20,
       "prompt": null,
       "response": null,
-      "completion": null,
+      "completion": {
+        "outcome": "failed",
+        "notes": null,
+        "failure_reason": "Script failed with exit code: 1\n\n## output\n{\n  \"ok\": false,\n  \"failed\": [\n    {\n      \"cmd\": \"bun --version\",\n      \"status\": null,\n      \"stdout\": \"\",\n      \"stderr\": \"\"\n    }\n  ],\n  \"checks\": [\n    {\n      \"cmd\": \"node --version\",\n      \"status\": 0,\n      \"stdout\": \"v22.22.2\",\n      \"stderr\": \"\"\n    },\n    {\n      \"cmd\": \"npm --version\",\n      \"status\": 0,\n      \"stdout\": \"10.9.7\",\n      \"stderr\": \"\"\n    },\n    {\n      \"cmd\": \"bun --version\",\n      \"status\": null,\n      \"stdout\": \"\",\n      \"stderr\": \"\"\n    },\n    {\n      \"cmd\": \"qlty --version\",\n      \"status\": 0,\n      \"stdout\": \"qlty 0.630.0 linux-x64 (ddc59e7 2026-05-08)\",\n      \"stderr\": \"\"\n    },\n    {\n      \"cmd\": \"spec-kitty --version\",\n      \"status\": 0,\n      \"stdout\": \"`````````````````````````````````````````````````````````            \\n                                                                                \\n                      ▄█▄_                            ╓▄█_                      \\n                     ▐█ └▀█▄_                      ▄█▀▀ ╙█                      \\n                     █\\\"    `▀█▄                  ▄█▀     █▌                     \\n      \",\n      \"stderr\": \"\"\n    },\n    {\n      \"cmd\": \"promptfoo --version\",\n      \"status\": 0,\n      \"stdout\": \"0.121.11\",\n      \"stderr\": \"\"\n    },\n    {\n      \"cmd\": \"claude --version\",\n      \"status\": 0,\n      \"stdout\": \"2.1.140 (Claude Code)\",\n      \"stderr\": \"\"\n    },\n    {\n      \"cmd\": \"codex --version\",\n      \"status\": 0,\n      \"stdout\": \"codex-cli 0.130.0\",\n      \"stderr\": \"\"\n    },\n    {\n      \"cmd\": \"curl -fsS --max-time 20 https://api.github.com/rate_limit\",\n      \"status\": 0,\n      \"stdout\": \"{\\n  \\\"resources\\\": {\\n    \\\"code_search\\\": {\\n      \\\"limit\\\": 60,\\n      \\\"remaining\\\": 60,\\n      \\\"reset\\\": 1778677957,\\n      \\\"used\\\": 0,\\n      \\\"resource\\\": \\\"code_search\\\"\\n    },\\n    \\\"core\\\": {\\n      \\\"limit\\\": 60,\\n      \\\"remaining\\\": 60,\\n      \\\"reset\\\": 1778677957,\\n      \\\"used\\\": 0,\\n      \\\"resource\\\": \\\"core\\\"\\n    },\\n    \\\"graphql\\\": {\\n      \\\"limit\\\": 0,\\n      \\\"remaining\\\": 0,\\n      \\\"reset\\\": 1778677957,\\n      \\\"used\\\": 0,\\n  \",\n      \"stderr\": \"\"\n    }\n  ],\n  \"env\": {\n    \"OPENROUTER_API_KEY\": false,\n    \"DAYTONA_API_KEY\": false,\n    \"LINEAR_API_KEY\": false,\n    \"FABRO_SLACK_BOT_TOKEN\": false,\n    \"FABRO_SLACK_CHANNEL_ID\": false,\n    \"APIFY_TOKEN\": false\n  }\n}\n",
+        "timestamp": "2026-05-13T12:12:39.753223Z"
+      },
       "provider_used": null,
       "diff": null,
       "script_invocation": {
@@ -426,6 +506,44 @@
       "live_streaming": true,
       "termination": "exited",
       "started_at": "2026-05-13T12:12:34.298331Z",
+      "handler": "command",
+      "duration_ms": 4925,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "total_tokens": 0,
+        "reasoning_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "state": "failed"
+    },
+    "write_report@1": {
+      "first_event_seq": 31,
+      "prompt": null,
+      "response": null,
+      "completion": null,
+      "provider_used": null,
+      "diff": null,
+      "script_invocation": {
+        "script": "node -e \"const fs=require('fs'); const report=JSON.parse(fs.readFileSync('.workflow/fabro/daytona-environment-smoke.json','utf8')); const lines=['# Daytona Environment Smoke','', 'ok=' + report.ok, '', '## Tools', ...report.checks.map((check)=>'- ' + check.cmd + ' status=' + check.status + (check.stdout ? ' output=' + check.stdout.split('\\n')[0] : '')), '', '## Env', ...Object.entries(report.env).map(([key,value])=>'- ' + key + '=' + value)]; fs.writeFileSync('.workflow/fabro/daytona-environment-smoke.md', lines.join('\\n')+'\\n'); console.log(lines.join('\\n'));\"",
+        "command": "exec 2>&1\nnode -e \"const fs=require('fs'); const report=JSON.parse(fs.readFileSync('.workflow/fabro/daytona-environment-smoke.json','utf8')); const lines=['# Daytona Environment Smoke','', 'ok=' + report.ok, '', '## Tools', ...report.checks.map((check)=>'- ' + check.cmd + ' status=' + check.status + (check.stdout ? ' output=' + check.stdout.split('\\n')[0] : '')), '', '## Env', ...Object.entries(report.env).map(([key,value])=>'- ' + key + '=' + value)]; fs.writeFileSync('.workflow/fabro/daytona-environment-smoke.md', lines.join('\\n')+'\\n'); console.log(lines.join('\\n'));\"",
+        "language": "shell"
+      },
+      "script_timing": {
+        "output": "blob://sha256/dc50686d3216b42ecab0c736d25ec532b4049a5389a45b09df846f31ebce65ad",
+        "exit_code": 0,
+        "duration_ms": 2391,
+        "termination": "exited",
+        "output_bytes": 740,
+        "live_streaming": true
+      },
+      "parallel_results": null,
+      "output": null,
+      "output_bytes": 740,
+      "live_streaming": true,
+      "termination": "exited",
+      "started_at": "2026-05-13T12:12:43.965240Z",
       "handler": "command",
       "usage": {
         "input_tokens": 0,
