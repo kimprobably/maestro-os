@@ -271,9 +271,13 @@ if (
 }
 if (
   !qltyGate.includes("qlty fmt --all --no-progress --no-upgrade-check") ||
-  !qltyGate.includes("strictMode")
+  !qltyGate.includes("strictMode") ||
+  !qltyGate.includes("retryFmt") ||
+  !qltyGate.includes("retry_check_status")
 ) {
-  throw new Error("qlty gate must format before strict real-mode checks");
+  throw new Error(
+    "qlty gate must format before strict real-mode checks and retry Qlty's unstable first formatting pass",
+  );
 }
 if (!qltyGate.includes("reports/consumer-radar/quality/qlty-report.json")) {
   throw new Error("qlty gate must write a tracked quality report");

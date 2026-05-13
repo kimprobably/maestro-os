@@ -64,6 +64,8 @@ if (!available) {
 
 let check = null;
 let fmt = null;
+let retryFmt = null;
+let retryCheck = null;
 if (available) {
   const strictMode = realMode && !allowFallback;
   if (strictMode) {
@@ -75,6 +77,15 @@ if (available) {
     ? "export PATH=$HOME/.qlty/bin:$PATH; qlty check --all --no-progress --summary --no-upgrade-check"
     : "export PATH=$HOME/.qlty/bin:$PATH; qlty check --all --no-progress --no-fail --summary --no-upgrade-check";
   check = run(checkCommand);
+  if (strictMode && fmt?.status === 0 && check?.status !== 0) {
+    retryFmt = run(
+      "export PATH=$HOME/.qlty/bin:$PATH; qlty fmt --all --no-progress --no-upgrade-check",
+    );
+    if (retryFmt.status === 0) {
+      retryCheck = run(checkCommand);
+      check = retryCheck;
+    }
+  }
 }
 
 const hardFailures = [];
@@ -82,6 +93,8 @@ if (realMode && !allowFallback) {
   if (!available) hardFailures.push("Qlty unavailable in real mode");
   if (fmt && fmt.status !== 0)
     hardFailures.push("Qlty formatter failed in real mode");
+  if (retryFmt && retryFmt.status !== 0)
+    hardFailures.push("Qlty formatter retry failed in real mode");
   if (check && check.status !== 0)
     hardFailures.push("Qlty check command failed in real mode");
 }
@@ -92,11 +105,19 @@ const report = {
   qlty_available: available,
   install_status: install ? install.status : null,
   fmt_status: fmt ? fmt.status : null,
+  retry_fmt_status: retryFmt ? retryFmt.status : null,
   check_status: check ? check.status : null,
+  retry_check_status: retryCheck ? retryCheck.status : null,
   hard_failures: hardFailures,
-  stdout: [fmt?.stdout, check?.stdout].filter(Boolean).join("\n").slice(-5000),
+  stdout: [fmt?.stdout, check?.stdout, retryFmt?.stdout, retryCheck?.stdout]
+    .filter(Boolean)
+    .join("\n")
+    .slice(-5000),
   stderr:
-    [fmt?.stderr, check?.stderr].filter(Boolean).join("\n").slice(-5000) ||
+    [fmt?.stderr, check?.stderr, retryFmt?.stderr, retryCheck?.stderr]
+      .filter(Boolean)
+      .join("\n")
+      .slice(-5000) ||
     "qlty unavailable; native checks remain the blocking gate",
 };
 writeReport(report);
