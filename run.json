@@ -1,0 +1,1642 @@
+{
+  "title": "Use eval-driven development to discover the real Consumer Radar enhancement workflow required by ...",
+  "spec": {
+    "run_id": "01KRH6VF5XE92R7GZP1TTGNEED",
+    "settings": {
+      "project": {
+        "name": "maestro-os",
+        "description": null,
+        "metadata": {}
+      },
+      "workflow": {
+        "name": null,
+        "description": null,
+        "graph": "workflow.fabro",
+        "metadata": {}
+      },
+      "run": {
+        "goal": {
+          "type": "inline",
+          "value": "Use eval-driven development to discover the real Consumer Radar enhancement workflow required by product feedback"
+        },
+        "working_dir": null,
+        "metadata": {},
+        "inputs": {
+          "target_adapter": "consumer-radar",
+          "generated_run_config": "workflows/consumer-radar/live-enrichment.toml",
+          "app_dir": "apps/generated-consumer-app-radar",
+          "max_eval_regression": 0.05,
+          "generated_workflow": "workflows/consumer-radar/live-enrichment.fabro",
+          "eval_driven_development": true,
+          "minimum_eval_score": 0.78,
+          "require_simplification": true,
+          "feedback_path": "feedback/consumer-radar-product-feedback.md",
+          "test_driven_development": true,
+          "minimum_active_reviews": 2,
+          "minimum_architecture_candidates": 2,
+          "execute_generated_workflow": false,
+          "real_mode": true,
+          "minimum_spec_candidates": 3,
+          "allow_fixture_fallback": false,
+          "minimum_workflow_candidates": 2
+        },
+        "model": {
+          "provider": "anthropic",
+          "name": "claude-sonnet-4-6",
+          "fallbacks": []
+        },
+        "git": {
+          "author": null
+        },
+        "prepare": {
+          "commands": [],
+          "timeout_ms": 300000
+        },
+        "execution": {
+          "mode": "normal",
+          "approval": "auto"
+        },
+        "checkpoint": {
+          "exclude_globs": []
+        },
+        "sandbox": {
+          "provider": "daytona",
+          "preserve": true,
+          "stop_on_terminal": true,
+          "devcontainer": false,
+          "env": {
+            "FABRO_SLACK_CHANNEL_ID": "${{ secrets.FABRO_SLACK_CHANNEL_ID }}",
+            "OPENROUTER_API_KEY": "${{ secrets.OPENROUTER_API_KEY }}",
+            "FABRO_SERVER": "${{ secrets.FABRO_SERVER }}",
+            "APIFY_TIKTOK_ACTOR": "clockworks/tiktok-scraper",
+            "APIFY_INSTAGRAM_ACTOR": "apify/instagram-scraper",
+            "DAYTONA_API_KEY": "${{ secrets.DAYTONA_API_KEY }}",
+            "DAYTONA_API_URL": "${{ secrets.DAYTONA_API_URL }}",
+            "LINEAR_API_KEY": "${{ secrets.LINEAR_API_KEY }}",
+            "LINEAR_API_URL": "${{ secrets.LINEAR_API_URL }}",
+            "PROMPTFOO_DISABLE_TELEMETRY": "1",
+            "APIFY_APPSTORE_ACTOR": "crawlerbros/appstore-scraper",
+            "FABRO_SLACK_BOT_TOKEN": "${{ secrets.FABRO_SLACK_BOT_TOKEN }}",
+            "FABRO_DEV_TOKEN": "${{ secrets.FABRO_DEV_TOKEN }}",
+            "MAESTRO_AGENT_STATE_DIR": "/home/daytona/agent-state",
+            "APIFY_TOKEN": "${{ secrets.APIFY_TOKEN }}"
+          },
+          "docker": {
+            "image": "buildpack-deps:noble",
+            "network_mode": null,
+            "memory_limit": 4000000000,
+            "cpu_quota": 200000,
+            "env_vars": {},
+            "skip_clone": false
+          },
+          "daytona": {
+            "auto_stop_interval": 60,
+            "labels": {
+              "project": "maestro-os",
+              "purpose": "code-factory"
+            },
+            "volumes": [
+              {
+                "volume_id": "beefe1da-59a0-48f6-9e19-a513d1790ce3",
+                "mount_path": "/home/daytona/agent-state",
+                "subpath": "agent-auth"
+              }
+            ],
+            "snapshot": {
+              "name": "maestro-code-factory-v5",
+              "cpu": 2,
+              "memory_gb": 4,
+              "disk_gb": 10,
+              "dockerfile": {
+                "type": "inline",
+                "value": "FROM ubuntu:24.04\n\nENV DEBIAN_FRONTEND=noninteractive\nENV BUN_INSTALL=/root/.bun\nENV PATH=\"/root/.fabro/bin:/root/.bun/bin:/root/.local/bin:/root/.qlty/bin:${PATH}\"\nWORKDIR /home/daytona\n\nRUN apt-get update && apt-get install -y --no-install-recommends bash ca-certificates curl git jq openssh-client python3 python3-pip pipx ripgrep shellcheck unzip xz-utils && rm -rf /var/lib/apt/lists/*\n\nRUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash - && apt-get update && apt-get install -y --no-install-recommends nodejs && npm install -g @anthropic-ai/claude-code @openai/codex promptfoo && npm cache clean --force && rm -rf /var/lib/apt/lists/*\n\nRUN curl -fsSL https://bun.sh/install | bash -s \"bun-v1.2.22\" && ln -sf /root/.bun/bin/bun /usr/local/bin/bun\n\nRUN pipx install spec-kitty-cli==3.1.8 && curl -fsSL https://qlty.sh | sh && ln -sf /root/.qlty/bin/qlty /usr/local/bin/qlty\n\nRUN set -eux; target=\"x86_64-unknown-linux-gnu\"; asset=\"fabro-${target}.tar.gz\"; url=\"$(curl -fsSL https://api.github.com/repos/fabro-sh/fabro/releases/latest | jq -r --arg asset \"$asset\" '.assets[] | select(.name == $asset) | .browser_download_url')\"; test -n \"$url\"; curl -fsSL \"$url\" -o /tmp/fabro.tar.gz; tar -xzf /tmp/fabro.tar.gz -C /tmp; install -m 0755 \"/tmp/fabro-${target}/fabro\" /usr/local/bin/fabro; rm -rf /tmp/fabro.tar.gz \"/tmp/fabro-${target}\"; fabro --version\n\nCMD [\"/bin/bash\"]\n"
+              }
+            },
+            "network": "allow_all",
+            "skip_clone": false
+          }
+        },
+        "notifications": {},
+        "interviews": {
+          "provider": null,
+          "slack": null
+        },
+        "agent": {
+          "permissions": "full",
+          "mcps": {}
+        },
+        "hooks": [],
+        "scm": {
+          "provider": null,
+          "owner": null,
+          "repository": null,
+          "github": null
+        },
+        "pull_request": null,
+        "artifacts": {
+          "include": [
+            ".workflow/**",
+            "reports/**",
+            "evals/output/**",
+            "apps/generated-*/README.md",
+            "apps/generated-*/.workflow-build.json",
+            "apps/generated-*/fixtures/**",
+            "apps/generated-*/public/**",
+            "apps/generated-*/src/**",
+            "apps/generated-*/tests/**"
+          ]
+        },
+        "integrations": {
+          "github": {
+            "permissions": {
+              "issues": "write",
+              "pull_requests": "write",
+              "contents": "write",
+              "metadata": "read",
+              "actions": "read"
+            }
+          }
+        }
+      }
+    },
+    "graph": {
+      "name": "EnhancementDiscovery",
+      "nodes": {
+        "capability_audit": {
+          "id": "capability_audit",
+          "attrs": {
+            "retry_target": {
+              "String": "parse_requests"
+            },
+            "shape": {
+              "String": "parallelogram"
+            },
+            "model": {
+              "String": "anthropic/claude-haiku-4-5"
+            },
+            "script": {
+              "String": "node scripts/app-feedback/analyze-enhancement-capabilities.mjs --app-dir 'apps/generated-consumer-app-radar' --analysis .workflow/enhancement-discovery/request-analysis.json --target 'consumer-radar' --out .workflow/enhancement-discovery/capability-audit.json"
+            },
+            "label": {
+              "String": "Capability Audit"
+            },
+            "provider": {
+              "String": "openrouter"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "goal_gate": {
+              "Boolean": true
+            }
+          }
+        },
+        "run_generated_enhancement_workflow": {
+          "id": "run_generated_enhancement_workflow",
+          "attrs": {
+            "model": {
+              "String": "anthropic/claude-haiku-4-5"
+            },
+            "label": {
+              "String": "Run Generated Enhancement Workflow"
+            },
+            "retry_target": {
+              "String": "materialize_enhancement_workflow"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "goal_gate": {
+              "Boolean": true
+            },
+            "script": {
+              "String": "if [ 'false' = 'true' ]; then fabro run 'workflows/consumer-radar/live-enrichment.toml' --no-upgrade-check; else fabro validate 'workflows/consumer-radar/live-enrichment.fabro' --no-upgrade-check; fi"
+            },
+            "provider": {
+              "String": "openrouter"
+            },
+            "shape": {
+              "String": "parallelogram"
+            }
+          }
+        },
+        "validate_enhancement_workflow": {
+          "id": "validate_enhancement_workflow",
+          "attrs": {
+            "provider": {
+              "String": "openrouter"
+            },
+            "goal_gate": {
+              "Boolean": true
+            },
+            "model": {
+              "String": "anthropic/claude-haiku-4-5"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "retry_target": {
+              "String": "materialize_enhancement_workflow"
+            },
+            "script": {
+              "String": "node scripts/app-feedback/validate-enhancement-discovery.mjs --workflow workflows/app-feedback/discover-enhancement.fabro --generated-workflow 'workflows/consumer-radar/live-enrichment.fabro' --out .workflow/enhancement-discovery/generated-workflow-validation.json"
+            },
+            "shape": {
+              "String": "parallelogram"
+            },
+            "label": {
+              "String": "Validate Generated Enhancement Workflow"
+            }
+          }
+        },
+        "spec_eval_model": {
+          "id": "spec_eval_model",
+          "attrs": {
+            "prompt": {
+              "String": "# Enhancement Eval Consensus\n\nYou are an eval judge for the enhancement-discovery workflow.\n\nRead all available artifacts under `.workflow/enhancement-discovery/`, especially candidate files and contract eval JSON files.\n\nUse this rubric:\n\n- Intent fidelity: does the artifact solve the user's actual request?\n- Non-cheating behavior: does it reject fixture-only, note-only, or placeholder implementations when real behavior is required?\n- Test-driven development: are objective behaviors covered by deterministic tests and gates?\n- Eval-driven development: are subjective outputs scored by rubric, pairwise comparison, and consensus?\n- Architecture quality: are boundaries clear and maintainable?\n- Workflow quality: are retry paths, fanout, gates, artifacts, and handoffs explicit?\n- Simplification: does it require a real code simplification pass without deleting acceptance coverage?\n\nWrite the appropriate selected artifact:\n\n- For spec consensus, write `.workflow/enhancement-discovery/selected-spec.md`.\n- For architecture consensus, write `.workflow/enhancement-discovery/selected-architecture.md`.\n- For workflow consensus, write `.workflow/enhancement-discovery/selected-workflow-design.md`.\n- For final consensus, write `.workflow/enhancement-discovery/final-eval-consensus.md`.\n\nEnd with one of:\n\n- `VERDICT: APPROVED`\n- `VERDICT: REJECTED`\n\nIf rejected, include exact changes required before retry.\n"
+            },
+            "class": {
+              "String": "eval"
+            },
+            "model": {
+              "String": "deepseek/deepseek-v4-pro"
+            },
+            "reasoning_effort": {
+              "String": "high"
+            },
+            "label": {
+              "String": "Spec Rubric Eval"
+            },
+            "provider": {
+              "String": "openrouter"
+            }
+          },
+          "classes": [
+            "eval"
+          ]
+        },
+        "final_eval_simplification": {
+          "id": "final_eval_simplification",
+          "attrs": {
+            "retry_target": {
+              "String": "simplification_plan"
+            },
+            "model": {
+              "String": "anthropic/claude-haiku-4-5"
+            },
+            "script": {
+              "String": "test 'true' != 'true' || test -s .workflow/enhancement-discovery/simplification-plan.md"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "provider": {
+              "String": "openrouter"
+            },
+            "goal_gate": {
+              "Boolean": true
+            },
+            "label": {
+              "String": "Final Simplification Eval"
+            },
+            "shape": {
+              "String": "parallelogram"
+            }
+          }
+        },
+        "spec_eval_join": {
+          "id": "spec_eval_join",
+          "attrs": {
+            "label": {
+              "String": "Spec Eval Join"
+            },
+            "join_policy": {
+              "String": "wait_all"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "provider": {
+              "String": "openrouter"
+            },
+            "model": {
+              "String": "anthropic/claude-haiku-4-5"
+            },
+            "shape": {
+              "String": "tripleoctagon"
+            }
+          }
+        },
+        "workflow_candidate_a": {
+          "id": "workflow_candidate_a",
+          "attrs": {
+            "model": {
+              "String": "moonshotai/kimi-k2.6"
+            },
+            "prompt": {
+              "String": "# Workflow Candidate A: Direct Enhancement\n\nDesign a Fabro workflow that directly enhances the target app from the selected spec and architecture.\n\nRead:\n\n- `.workflow/enhancement-discovery/spec-candidates/`\n- `.workflow/enhancement-discovery/architecture-candidates/`\n- Existing app workflow files under `workflows/`\n\nWrite `.workflow/enhancement-discovery/workflow-candidates/direct-enhancement.md`.\n\nRequired rubric coverage:\n\n- DOT graph stages\n- Test-driven deterministic gates\n- Eval-driven rubric gates\n- Candidate fanout for spec/plan/review stages\n- Non-cheating live behavior gates\n- Code simplification stage before final review\n- Pairwise comparison against a generated-subworkflow design\n- CI/CD and handoff artifacts\n\nThe workflow must fail when a request requires real behavior but the implementation only adds explanatory copy.\n"
+            },
+            "reasoning_effort": {
+              "String": "high"
+            },
+            "label": {
+              "String": "Workflow Candidate A - Direct Enhancement"
+            },
+            "provider": {
+              "String": "openrouter"
+            },
+            "class": {
+              "String": "workflow"
+            }
+          },
+          "classes": [
+            "workflow"
+          ]
+        },
+        "workflow_eval_contract": {
+          "id": "workflow_eval_contract",
+          "attrs": {
+            "model": {
+              "String": "anthropic/claude-haiku-4-5"
+            },
+            "provider": {
+              "String": "openrouter"
+            },
+            "shape": {
+              "String": "parallelogram"
+            },
+            "goal_gate": {
+              "Boolean": true
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "label": {
+              "String": "Workflow Contract Eval"
+            },
+            "script": {
+              "String": "node scripts/app-feedback/evaluate-enhancement-artifact.mjs --stage workflow --candidates .workflow/enhancement-discovery/workflow-candidates --out .workflow/enhancement-discovery/evals/workflow-contract.json --minimum-candidates '2' --minimum-eval-score '0.78' --dataset evals/workflow-quality/datasets/enhancement-discovery-golden.jsonl --dataset-version workflow-quality-v1 --prompt-version app-feedback-workflow-candidates-v1 --rubric-version enhancement-discovery-workflow-rubric-v1 --judge-model deterministic-marker-v1 --baseline evals/workflow-quality/baselines/enhancement-discovery-workflow.json --max-regression '0.05'"
+            },
+            "retry_target": {
+              "String": "workflow_fanout"
+            }
+          }
+        },
+        "simplification_plan": {
+          "id": "simplification_plan",
+          "attrs": {
+            "class": {
+              "String": "eval"
+            },
+            "provider": {
+              "String": "openrouter"
+            },
+            "retry_target": {
+              "String": "materialize_enhancement_workflow"
+            },
+            "label": {
+              "String": "Simplification Plan"
+            },
+            "model": {
+              "String": "deepseek/deepseek-v4-pro"
+            },
+            "reasoning_effort": {
+              "String": "high"
+            },
+            "goal_gate": {
+              "Boolean": true
+            },
+            "prompt": {
+              "String": "# Enhancement Simplification Plan\n\nYou are the simplification reviewer for the enhancement-discovery workflow.\n\nRead:\n\n- Generated enhancement workflow: `workflows/consumer-radar/live-enrichment.fabro`\n- Selected spec: `.workflow/enhancement-discovery/selected-spec.md`\n- Selected architecture: `.workflow/enhancement-discovery/selected-architecture.md`\n- Validation report: `.workflow/enhancement-discovery/generated-workflow-validation.json`\n\nWrite `.workflow/enhancement-discovery/simplification-plan.md`.\n\nRequired sections:\n\n- Behavior that must remain unchanged\n- Redundant stages, prompts, scripts, or data paths to remove\n- Acceptance gates that must not be weakened\n- Test-driven checks to rerun after simplification\n- Eval-driven checks to rerun after simplification\n- Pairwise comparison of pre-simplification vs post-simplification workflow quality\n- Final recommendation\n\nEnd with `VERDICT: APPROVED` only if simplification improves clarity without reducing behavior or evidence."
+            }
+          },
+          "classes": [
+            "eval"
+          ]
+        },
+        "architecture_candidate_a": {
+          "id": "architecture_candidate_a",
+          "attrs": {
+            "prompt": {
+              "String": "# Architecture Candidate A: Smallest Surface\n\nDesign the smallest architecture that satisfies the selected enhancement spec without hiding missing behavior.\n\nRead:\n\n- Spec candidates in `.workflow/enhancement-discovery/spec-candidates/`\n- Spec eval report in `.workflow/enhancement-discovery/evals/spec-contract.json`\n- Capability audit in `.workflow/enhancement-discovery/capability-audit.json`\n\nWrite `.workflow/enhancement-discovery/architecture-candidates/smallest-surface.md`.\n\nRequired rubric coverage:\n\n- Files and modules to change\n- Interfaces and data flow\n- Test-driven development gates\n- Eval-driven development gates\n- Non-cheating source/data checks\n- Failure modes and retry paths\n- Pairwise comparison against a more extensible architecture\n- Simplification pass criteria\n\nPrefer minimal surface area, but do not remove acceptance coverage.\n"
+            },
+            "reasoning_effort": {
+              "String": "high"
+            },
+            "label": {
+              "String": "Architecture Candidate A - Smallest Surface"
+            },
+            "class": {
+              "String": "architecture"
+            },
+            "provider": {
+              "String": "openrouter"
+            },
+            "model": {
+              "String": "qwen/qwen3.6-plus"
+            }
+          },
+          "classes": [
+            "architecture"
+          ]
+        },
+        "architecture_join": {
+          "id": "architecture_join",
+          "attrs": {
+            "model": {
+              "String": "anthropic/claude-haiku-4-5"
+            },
+            "shape": {
+              "String": "tripleoctagon"
+            },
+            "join_policy": {
+              "String": "wait_all"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "label": {
+              "String": "Architecture Candidate Join"
+            },
+            "provider": {
+              "String": "openrouter"
+            }
+          }
+        },
+        "materialize_enhancement_workflow": {
+          "id": "materialize_enhancement_workflow",
+          "attrs": {
+            "model": {
+              "String": "anthropic/claude-haiku-4-5"
+            },
+            "label": {
+              "String": "Materialize Enhancement Workflow"
+            },
+            "provider": {
+              "String": "openrouter"
+            },
+            "goal_gate": {
+              "Boolean": true
+            },
+            "shape": {
+              "String": "parallelogram"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "script": {
+              "String": "node scripts/app-feedback/materialize-enhancement-workflow.mjs --target 'consumer-radar' --app-dir 'apps/generated-consumer-app-radar' --workflow 'workflows/consumer-radar/live-enrichment.fabro' --run-config 'workflows/consumer-radar/live-enrichment.toml' --real-mode 'true' --allow-fixture-fallback 'false'"
+            },
+            "retry_target": {
+              "String": "workflow_fanout"
+            }
+          }
+        },
+        "final_eval_consensus": {
+          "id": "final_eval_consensus",
+          "attrs": {
+            "provider": {
+              "String": "openrouter"
+            },
+            "retry_target": {
+              "String": "simplification_plan"
+            },
+            "goal_gate": {
+              "Boolean": true
+            },
+            "class": {
+              "String": "eval"
+            },
+            "prompt": {
+              "String": "# Enhancement Eval Consensus\n\nYou are an eval judge for the enhancement-discovery workflow.\n\nRead all available artifacts under `.workflow/enhancement-discovery/`, especially candidate files and contract eval JSON files.\n\nUse this rubric:\n\n- Intent fidelity: does the artifact solve the user's actual request?\n- Non-cheating behavior: does it reject fixture-only, note-only, or placeholder implementations when real behavior is required?\n- Test-driven development: are objective behaviors covered by deterministic tests and gates?\n- Eval-driven development: are subjective outputs scored by rubric, pairwise comparison, and consensus?\n- Architecture quality: are boundaries clear and maintainable?\n- Workflow quality: are retry paths, fanout, gates, artifacts, and handoffs explicit?\n- Simplification: does it require a real code simplification pass without deleting acceptance coverage?\n\nWrite the appropriate selected artifact:\n\n- For spec consensus, write `.workflow/enhancement-discovery/selected-spec.md`.\n- For architecture consensus, write `.workflow/enhancement-discovery/selected-architecture.md`.\n- For workflow consensus, write `.workflow/enhancement-discovery/selected-workflow-design.md`.\n- For final consensus, write `.workflow/enhancement-discovery/final-eval-consensus.md`.\n\nEnd with one of:\n\n- `VERDICT: APPROVED`\n- `VERDICT: REJECTED`\n\nIf rejected, include exact changes required before retry.\n"
+            },
+            "label": {
+              "String": "Final Eval Consensus"
+            },
+            "reasoning_effort": {
+              "String": "high"
+            },
+            "model": {
+              "String": "deepseek/deepseek-v4-pro"
+            }
+          },
+          "classes": [
+            "eval"
+          ]
+        },
+        "exit": {
+          "id": "exit",
+          "attrs": {
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "shape": {
+              "String": "Msquare"
+            },
+            "provider": {
+              "String": "openrouter"
+            },
+            "model": {
+              "String": "anthropic/claude-haiku-4-5"
+            },
+            "label": {
+              "String": "Exit"
+            }
+          }
+        },
+        "spec_candidate_a": {
+          "id": "spec_candidate_a",
+          "attrs": {
+            "provider": {
+              "String": "openrouter"
+            },
+            "class": {
+              "String": "spec"
+            },
+            "reasoning_effort": {
+              "String": "high"
+            },
+            "prompt": {
+              "String": "# Enhancement Spec Candidate A: Data Truth\n\nYou are writing one candidate spec for an app enhancement request. Optimize for data honesty and non-cheating acceptance criteria.\n\nRead:\n\n- Request analysis: `.workflow/enhancement-discovery/request-analysis.json`\n- Capability audit: `.workflow/enhancement-discovery/capability-audit.json`\n- Existing app directory: `apps/generated-consumer-app-radar`\n\nWrite `.workflow/enhancement-discovery/spec-candidates/data-truth.md`.\n\nRequired rubric coverage:\n\n- User intent in plain language\n- Existing capability vs missing capability\n- Non-cheating criteria that fail fixture-only or note-only implementations\n- Data source requirements and credential assumptions\n- Test-driven acceptance gates\n- Eval-driven acceptance gates\n- Pairwise comparison notes against alternate specs\n- Definition of done\n- Explicit simplification requirement\n\nThe spec must require concrete product behavior, not just disclosure text."
+            },
+            "model": {
+              "String": "google/gemini-3.1-pro-preview"
+            },
+            "label": {
+              "String": "Spec Candidate A - Data Truth"
+            }
+          },
+          "classes": [
+            "spec"
+          ]
+        },
+        "publish_handoff": {
+          "id": "publish_handoff",
+          "attrs": {
+            "provider": {
+              "String": "openrouter"
+            },
+            "script": {
+              "String": "node scripts/app-feedback/publish-enhancement-discovery-handoff.mjs --app-dir 'apps/generated-consumer-app-radar' --generated-workflow 'workflows/consumer-radar/live-enrichment.fabro' --out .workflow/enhancement-discovery/handoff.json"
+            },
+            "retry_target": {
+              "String": "final_eval_consensus"
+            },
+            "shape": {
+              "String": "parallelogram"
+            },
+            "goal_gate": {
+              "Boolean": true
+            },
+            "label": {
+              "String": "Publish Enhancement Discovery Handoff"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "model": {
+              "String": "anthropic/claude-haiku-4-5"
+            }
+          }
+        },
+        "workflow_eval_consensus": {
+          "id": "workflow_eval_consensus",
+          "attrs": {
+            "goal_gate": {
+              "Boolean": true
+            },
+            "retry_target": {
+              "String": "workflow_fanout"
+            },
+            "prompt": {
+              "String": "# Enhancement Eval Consensus\n\nYou are an eval judge for the enhancement-discovery workflow.\n\nRead all available artifacts under `.workflow/enhancement-discovery/`, especially candidate files and contract eval JSON files.\n\nUse this rubric:\n\n- Intent fidelity: does the artifact solve the user's actual request?\n- Non-cheating behavior: does it reject fixture-only, note-only, or placeholder implementations when real behavior is required?\n- Test-driven development: are objective behaviors covered by deterministic tests and gates?\n- Eval-driven development: are subjective outputs scored by rubric, pairwise comparison, and consensus?\n- Architecture quality: are boundaries clear and maintainable?\n- Workflow quality: are retry paths, fanout, gates, artifacts, and handoffs explicit?\n- Simplification: does it require a real code simplification pass without deleting acceptance coverage?\n\nWrite the appropriate selected artifact:\n\n- For spec consensus, write `.workflow/enhancement-discovery/selected-spec.md`.\n- For architecture consensus, write `.workflow/enhancement-discovery/selected-architecture.md`.\n- For workflow consensus, write `.workflow/enhancement-discovery/selected-workflow-design.md`.\n- For final consensus, write `.workflow/enhancement-discovery/final-eval-consensus.md`.\n\nEnd with one of:\n\n- `VERDICT: APPROVED`\n- `VERDICT: REJECTED`\n\nIf rejected, include exact changes required before retry.\n"
+            },
+            "class": {
+              "String": "eval"
+            },
+            "provider": {
+              "String": "openrouter"
+            },
+            "reasoning_effort": {
+              "String": "high"
+            },
+            "model": {
+              "String": "deepseek/deepseek-v4-pro"
+            },
+            "label": {
+              "String": "Workflow Eval Consensus"
+            }
+          },
+          "classes": [
+            "eval"
+          ]
+        },
+        "architecture_eval_consensus": {
+          "id": "architecture_eval_consensus",
+          "attrs": {
+            "prompt": {
+              "String": "# Enhancement Eval Consensus\n\nYou are an eval judge for the enhancement-discovery workflow.\n\nRead all available artifacts under `.workflow/enhancement-discovery/`, especially candidate files and contract eval JSON files.\n\nUse this rubric:\n\n- Intent fidelity: does the artifact solve the user's actual request?\n- Non-cheating behavior: does it reject fixture-only, note-only, or placeholder implementations when real behavior is required?\n- Test-driven development: are objective behaviors covered by deterministic tests and gates?\n- Eval-driven development: are subjective outputs scored by rubric, pairwise comparison, and consensus?\n- Architecture quality: are boundaries clear and maintainable?\n- Workflow quality: are retry paths, fanout, gates, artifacts, and handoffs explicit?\n- Simplification: does it require a real code simplification pass without deleting acceptance coverage?\n\nWrite the appropriate selected artifact:\n\n- For spec consensus, write `.workflow/enhancement-discovery/selected-spec.md`.\n- For architecture consensus, write `.workflow/enhancement-discovery/selected-architecture.md`.\n- For workflow consensus, write `.workflow/enhancement-discovery/selected-workflow-design.md`.\n- For final consensus, write `.workflow/enhancement-discovery/final-eval-consensus.md`.\n\nEnd with one of:\n\n- `VERDICT: APPROVED`\n- `VERDICT: REJECTED`\n\nIf rejected, include exact changes required before retry.\n"
+            },
+            "retry_target": {
+              "String": "architecture_fanout"
+            },
+            "goal_gate": {
+              "Boolean": true
+            },
+            "label": {
+              "String": "Architecture Eval Consensus"
+            },
+            "model": {
+              "String": "deepseek/deepseek-v4-pro"
+            },
+            "class": {
+              "String": "eval"
+            },
+            "reasoning_effort": {
+              "String": "high"
+            },
+            "provider": {
+              "String": "openrouter"
+            }
+          },
+          "classes": [
+            "eval"
+          ]
+        },
+        "spec_fanout": {
+          "id": "spec_fanout",
+          "attrs": {
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "shape": {
+              "String": "component"
+            },
+            "model": {
+              "String": "anthropic/claude-haiku-4-5"
+            },
+            "provider": {
+              "String": "openrouter"
+            },
+            "label": {
+              "String": "Spec Candidate Fanout"
+            }
+          }
+        },
+        "bootstrap": {
+          "id": "bootstrap",
+          "attrs": {
+            "shape": {
+              "String": "parallelogram"
+            },
+            "goal_gate": {
+              "Boolean": true
+            },
+            "label": {
+              "String": "Bootstrap Enhancement Discovery"
+            },
+            "retry_target": {
+              "String": "bootstrap"
+            },
+            "script": {
+              "String": "mkdir -p .workflow/enhancement-discovery/spec-candidates .workflow/enhancement-discovery/architecture-candidates .workflow/enhancement-discovery/workflow-candidates .workflow/enhancement-discovery/evals; test -f 'feedback/consumer-radar-product-feedback.md'; test -d 'apps/generated-consumer-app-radar'; echo eval_driven_development test_driven_development"
+            },
+            "model": {
+              "String": "anthropic/claude-haiku-4-5"
+            },
+            "provider": {
+              "String": "openrouter"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            }
+          }
+        },
+        "promptfoo_workflow_quality": {
+          "id": "promptfoo_workflow_quality",
+          "attrs": {
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "shape": {
+              "String": "parallelogram"
+            },
+            "label": {
+              "String": "Promptfoo Workflow Quality Gate"
+            },
+            "retry_target": {
+              "String": "simplification_plan"
+            },
+            "script": {
+              "String": "node scripts/app-feedback/promptfoo-workflow-quality.mjs --config evals/workflow-quality/enhancement-discovery.yaml --out .workflow/enhancement-discovery/evals/promptfoo-workflow-quality.json --allow-fallback true"
+            },
+            "model": {
+              "String": "anthropic/claude-haiku-4-5"
+            },
+            "provider": {
+              "String": "openrouter"
+            },
+            "goal_gate": {
+              "Boolean": true
+            }
+          }
+        },
+        "start": {
+          "id": "start",
+          "attrs": {
+            "model": {
+              "String": "anthropic/claude-haiku-4-5"
+            },
+            "label": {
+              "String": "Start"
+            },
+            "shape": {
+              "String": "Mdiamond"
+            },
+            "provider": {
+              "String": "openrouter"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            }
+          }
+        },
+        "spec_join": {
+          "id": "spec_join",
+          "attrs": {
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "join_policy": {
+              "String": "wait_all"
+            },
+            "shape": {
+              "String": "tripleoctagon"
+            },
+            "provider": {
+              "String": "openrouter"
+            },
+            "label": {
+              "String": "Spec Candidate Join"
+            },
+            "model": {
+              "String": "anthropic/claude-haiku-4-5"
+            }
+          }
+        },
+        "spec_eval_fanout": {
+          "id": "spec_eval_fanout",
+          "attrs": {
+            "label": {
+              "String": "Spec Eval Fanout"
+            },
+            "provider": {
+              "String": "openrouter"
+            },
+            "model": {
+              "String": "anthropic/claude-haiku-4-5"
+            },
+            "shape": {
+              "String": "component"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            }
+          }
+        },
+        "spec_eval_consensus": {
+          "id": "spec_eval_consensus",
+          "attrs": {
+            "provider": {
+              "String": "openrouter"
+            },
+            "goal_gate": {
+              "Boolean": true
+            },
+            "class": {
+              "String": "eval"
+            },
+            "prompt": {
+              "String": "# Enhancement Eval Consensus\n\nYou are an eval judge for the enhancement-discovery workflow.\n\nRead all available artifacts under `.workflow/enhancement-discovery/`, especially candidate files and contract eval JSON files.\n\nUse this rubric:\n\n- Intent fidelity: does the artifact solve the user's actual request?\n- Non-cheating behavior: does it reject fixture-only, note-only, or placeholder implementations when real behavior is required?\n- Test-driven development: are objective behaviors covered by deterministic tests and gates?\n- Eval-driven development: are subjective outputs scored by rubric, pairwise comparison, and consensus?\n- Architecture quality: are boundaries clear and maintainable?\n- Workflow quality: are retry paths, fanout, gates, artifacts, and handoffs explicit?\n- Simplification: does it require a real code simplification pass without deleting acceptance coverage?\n\nWrite the appropriate selected artifact:\n\n- For spec consensus, write `.workflow/enhancement-discovery/selected-spec.md`.\n- For architecture consensus, write `.workflow/enhancement-discovery/selected-architecture.md`.\n- For workflow consensus, write `.workflow/enhancement-discovery/selected-workflow-design.md`.\n- For final consensus, write `.workflow/enhancement-discovery/final-eval-consensus.md`.\n\nEnd with one of:\n\n- `VERDICT: APPROVED`\n- `VERDICT: REJECTED`\n\nIf rejected, include exact changes required before retry.\n"
+            },
+            "label": {
+              "String": "Spec Eval Consensus"
+            },
+            "model": {
+              "String": "deepseek/deepseek-v4-pro"
+            },
+            "retry_target": {
+              "String": "spec_fanout"
+            },
+            "reasoning_effort": {
+              "String": "high"
+            }
+          },
+          "classes": [
+            "eval"
+          ]
+        },
+        "workflow_fanout": {
+          "id": "workflow_fanout",
+          "attrs": {
+            "shape": {
+              "String": "component"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "model": {
+              "String": "anthropic/claude-haiku-4-5"
+            },
+            "provider": {
+              "String": "openrouter"
+            },
+            "label": {
+              "String": "Workflow Candidate Fanout"
+            }
+          }
+        },
+        "final_eval_join": {
+          "id": "final_eval_join",
+          "attrs": {
+            "shape": {
+              "String": "tripleoctagon"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "model": {
+              "String": "anthropic/claude-haiku-4-5"
+            },
+            "join_policy": {
+              "String": "wait_all"
+            },
+            "provider": {
+              "String": "openrouter"
+            },
+            "label": {
+              "String": "Final Eval Join"
+            }
+          }
+        },
+        "final_eval_fanout": {
+          "id": "final_eval_fanout",
+          "attrs": {
+            "shape": {
+              "String": "component"
+            },
+            "model": {
+              "String": "anthropic/claude-haiku-4-5"
+            },
+            "provider": {
+              "String": "openrouter"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "label": {
+              "String": "Final Eval Fanout"
+            }
+          }
+        },
+        "parse_requests": {
+          "id": "parse_requests",
+          "attrs": {
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "provider": {
+              "String": "openrouter"
+            },
+            "retry_target": {
+              "String": "bootstrap"
+            },
+            "shape": {
+              "String": "parallelogram"
+            },
+            "label": {
+              "String": "Parse Enhancement Requests"
+            },
+            "goal_gate": {
+              "Boolean": true
+            },
+            "model": {
+              "String": "anthropic/claude-haiku-4-5"
+            },
+            "script": {
+              "String": "node scripts/app-feedback/parse-feedback.mjs --feedback 'feedback/consumer-radar-product-feedback.md' --out .workflow/enhancement-discovery/request-analysis.json"
+            }
+          }
+        },
+        "workflow_candidate_b": {
+          "id": "workflow_candidate_b",
+          "attrs": {
+            "model": {
+              "String": "moonshotai/kimi-k2.6"
+            },
+            "label": {
+              "String": "Workflow Candidate B - Generated Subworkflow"
+            },
+            "prompt": {
+              "String": "# Workflow Candidate B: Generated Subworkflow\n\nDesign a Fabro workflow that first generates an app-specific enhancement workflow, then validates or runs it.\n\nRead:\n\n- `.workflow/enhancement-discovery/spec-candidates/`\n- `.workflow/enhancement-discovery/architecture-candidates/`\n- Existing app workflow files under `workflows/`\n\nWrite `.workflow/enhancement-discovery/workflow-candidates/generated-subworkflow.md`.\n\nRequired rubric coverage:\n\n- Parent workflow stages\n- Generated child workflow stages\n- Test-driven deterministic gates\n- Eval-driven rubric gates and pairwise comparison\n- Non-cheating live data gates\n- Code simplification stages in both parent and child workflows\n- Retry targets and handoff artifacts\n- CI/CD and model-review fanout\n\nThe workflow should be reusable for future apps, not only Consumer Radar.\n"
+            },
+            "reasoning_effort": {
+              "String": "high"
+            },
+            "provider": {
+              "String": "openrouter"
+            },
+            "class": {
+              "String": "workflow"
+            }
+          },
+          "classes": [
+            "workflow"
+          ]
+        },
+        "architecture_fanout": {
+          "id": "architecture_fanout",
+          "attrs": {
+            "shape": {
+              "String": "component"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "model": {
+              "String": "anthropic/claude-haiku-4-5"
+            },
+            "provider": {
+              "String": "openrouter"
+            },
+            "label": {
+              "String": "Architecture Candidate Fanout"
+            }
+          }
+        },
+        "spec_eval_contract": {
+          "id": "spec_eval_contract",
+          "attrs": {
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "shape": {
+              "String": "parallelogram"
+            },
+            "goal_gate": {
+              "Boolean": true
+            },
+            "retry_target": {
+              "String": "spec_fanout"
+            },
+            "model": {
+              "String": "anthropic/claude-haiku-4-5"
+            },
+            "label": {
+              "String": "Spec Contract Eval"
+            },
+            "script": {
+              "String": "node scripts/app-feedback/evaluate-enhancement-artifact.mjs --stage spec --candidates .workflow/enhancement-discovery/spec-candidates --out .workflow/enhancement-discovery/evals/spec-contract.json --minimum-candidates '3' --minimum-eval-score '0.78' --dataset evals/workflow-quality/datasets/enhancement-discovery-golden.jsonl --dataset-version workflow-quality-v1 --prompt-version app-feedback-spec-candidates-v1 --rubric-version enhancement-discovery-spec-rubric-v1 --judge-model deterministic-marker-v1 --baseline evals/workflow-quality/baselines/enhancement-discovery-spec.json --max-regression '0.05'"
+            },
+            "provider": {
+              "String": "openrouter"
+            }
+          }
+        },
+        "architecture_candidate_b": {
+          "id": "architecture_candidate_b",
+          "attrs": {
+            "prompt": {
+              "String": "# Architecture Candidate B: Extensible Source Pipeline\n\nDesign an extensible architecture for the selected enhancement spec, with reusable source adapters and workflow gates.\n\nRead:\n\n- Spec candidates in `.workflow/enhancement-discovery/spec-candidates/`\n- Spec eval report in `.workflow/enhancement-discovery/evals/spec-contract.json`\n- Capability audit in `.workflow/enhancement-discovery/capability-audit.json`\n\nWrite `.workflow/enhancement-discovery/architecture-candidates/extensible-source-pipeline.md`.\n\nRequired rubric coverage:\n\n- Files and modules to create\n- Source adapter boundaries\n- API and persistence boundaries\n- Observability and evidence artifacts\n- Test-driven development gates\n- Eval-driven development gates\n- Pairwise tradeoffs against the smallest-surface architecture\n- Simplification pass criteria\n\nPrefer reuse across future app-enhancement workflows.\n"
+            },
+            "reasoning_effort": {
+              "String": "high"
+            },
+            "provider": {
+              "String": "openrouter"
+            },
+            "label": {
+              "String": "Architecture Candidate B - Extensible Source Pipeline"
+            },
+            "model": {
+              "String": "qwen/qwen3.6-plus"
+            },
+            "class": {
+              "String": "architecture"
+            }
+          },
+          "classes": [
+            "architecture"
+          ]
+        },
+        "final_eval_workflow_quality": {
+          "id": "final_eval_workflow_quality",
+          "attrs": {
+            "prompt": {
+              "String": "# Enhancement Eval Consensus\n\nYou are an eval judge for the enhancement-discovery workflow.\n\nRead all available artifacts under `.workflow/enhancement-discovery/`, especially candidate files and contract eval JSON files.\n\nUse this rubric:\n\n- Intent fidelity: does the artifact solve the user's actual request?\n- Non-cheating behavior: does it reject fixture-only, note-only, or placeholder implementations when real behavior is required?\n- Test-driven development: are objective behaviors covered by deterministic tests and gates?\n- Eval-driven development: are subjective outputs scored by rubric, pairwise comparison, and consensus?\n- Architecture quality: are boundaries clear and maintainable?\n- Workflow quality: are retry paths, fanout, gates, artifacts, and handoffs explicit?\n- Simplification: does it require a real code simplification pass without deleting acceptance coverage?\n\nWrite the appropriate selected artifact:\n\n- For spec consensus, write `.workflow/enhancement-discovery/selected-spec.md`.\n- For architecture consensus, write `.workflow/enhancement-discovery/selected-architecture.md`.\n- For workflow consensus, write `.workflow/enhancement-discovery/selected-workflow-design.md`.\n- For final consensus, write `.workflow/enhancement-discovery/final-eval-consensus.md`.\n\nEnd with one of:\n\n- `VERDICT: APPROVED`\n- `VERDICT: REJECTED`\n\nIf rejected, include exact changes required before retry.\n"
+            },
+            "provider": {
+              "String": "openrouter"
+            },
+            "reasoning_effort": {
+              "String": "high"
+            },
+            "model": {
+              "String": "deepseek/deepseek-v4-pro"
+            },
+            "label": {
+              "String": "Final Workflow Quality Eval"
+            },
+            "class": {
+              "String": "eval"
+            }
+          },
+          "classes": [
+            "eval"
+          ]
+        },
+        "spec_candidate_b": {
+          "id": "spec_candidate_b",
+          "attrs": {
+            "provider": {
+              "String": "openrouter"
+            },
+            "model": {
+              "String": "google/gemini-3.1-pro-preview"
+            },
+            "reasoning_effort": {
+              "String": "high"
+            },
+            "class": {
+              "String": "spec"
+            },
+            "prompt": {
+              "String": "# Enhancement Spec Candidate B: UX Outcome\n\nYou are writing one candidate spec for an app enhancement request. Optimize for the user-facing outcome and product workflow.\n\nRead:\n\n- Request analysis: `.workflow/enhancement-discovery/request-analysis.json`\n- Capability audit: `.workflow/enhancement-discovery/capability-audit.json`\n- Existing app directory: `apps/generated-consumer-app-radar`\n\nWrite `.workflow/enhancement-discovery/spec-candidates/ux-outcome.md`.\n\nRequired rubric coverage:\n\n- User workflows before and after the enhancement\n- Visible product surfaces and API endpoints\n- Acceptance gates for actual behavior\n- Non-cheating checks for placeholder UI, fake data, and fixture-only paths\n- Test-driven development plan\n- Eval-driven development plan\n- Pairwise tradeoffs against data-first and workflow-first specs\n- Simplification stage criteria\n\nPrefer narrow, shippable behavior that proves the enhancement works end to end."
+            },
+            "label": {
+              "String": "Spec Candidate B - UX Outcome"
+            }
+          },
+          "classes": [
+            "spec"
+          ]
+        },
+        "spec_candidate_c": {
+          "id": "spec_candidate_c",
+          "attrs": {
+            "provider": {
+              "String": "openrouter"
+            },
+            "model": {
+              "String": "google/gemini-3.1-pro-preview"
+            },
+            "class": {
+              "String": "spec"
+            },
+            "prompt": {
+              "String": "# Enhancement Spec Candidate C: Workflow First\n\nYou are writing one candidate spec for an app enhancement request. Optimize for the Fabro workflow needed to build the enhancement reliably.\n\nRead:\n\n- Request analysis: `.workflow/enhancement-discovery/request-analysis.json`\n- Capability audit: `.workflow/enhancement-discovery/capability-audit.json`\n- Existing workflow patterns in `workflows/`\n\nWrite `.workflow/enhancement-discovery/spec-candidates/workflow-first.md`.\n\nRequired rubric coverage:\n\n- Workflow stages from request to release handoff\n- Candidate fanout and pairwise evaluation for subjective stages\n- Deterministic contract tests for objective behavior\n- Promptfoo/OpenRouter rubric evals for subjective quality\n- Architecture, implementation, simplification, review, and CI/CD gates\n- Non-cheating gates that fail if the implementation only adds notes\n- Evidence artifacts that every stage must publish\n\nThe spec should make Fabro own the enhancement process, not a one-off human patch.\n"
+            },
+            "label": {
+              "String": "Spec Candidate C - Workflow First"
+            },
+            "reasoning_effort": {
+              "String": "high"
+            }
+          },
+          "classes": [
+            "spec"
+          ]
+        },
+        "architecture_eval_contract": {
+          "id": "architecture_eval_contract",
+          "attrs": {
+            "retry_target": {
+              "String": "architecture_fanout"
+            },
+            "script": {
+              "String": "node scripts/app-feedback/evaluate-enhancement-artifact.mjs --stage architecture --candidates .workflow/enhancement-discovery/architecture-candidates --out .workflow/enhancement-discovery/evals/architecture-contract.json --minimum-candidates '2' --minimum-eval-score '0.78' --dataset evals/workflow-quality/datasets/enhancement-discovery-golden.jsonl --dataset-version workflow-quality-v1 --prompt-version app-feedback-architecture-candidates-v1 --rubric-version enhancement-discovery-architecture-rubric-v1 --judge-model deterministic-marker-v1 --baseline evals/workflow-quality/baselines/enhancement-discovery-architecture.json --max-regression '0.05'"
+            },
+            "shape": {
+              "String": "parallelogram"
+            },
+            "provider": {
+              "String": "openrouter"
+            },
+            "model": {
+              "String": "anthropic/claude-haiku-4-5"
+            },
+            "goal_gate": {
+              "Boolean": true
+            },
+            "label": {
+              "String": "Architecture Contract Eval"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            }
+          }
+        },
+        "workflow_join": {
+          "id": "workflow_join",
+          "attrs": {
+            "join_policy": {
+              "String": "wait_all"
+            },
+            "provider": {
+              "String": "openrouter"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "label": {
+              "String": "Workflow Candidate Join"
+            },
+            "model": {
+              "String": "anthropic/claude-haiku-4-5"
+            },
+            "shape": {
+              "String": "tripleoctagon"
+            }
+          }
+        }
+      },
+      "edges": [
+        {
+          "from": "start",
+          "to": "bootstrap",
+          "attrs": {}
+        },
+        {
+          "from": "bootstrap",
+          "to": "parse_requests",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "bootstrap",
+          "to": "bootstrap",
+          "attrs": {
+            "loop_restart": {
+              "Boolean": true
+            },
+            "label": {
+              "String": "Retry"
+            }
+          }
+        },
+        {
+          "from": "parse_requests",
+          "to": "capability_audit",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "parse_requests",
+          "to": "bootstrap",
+          "attrs": {
+            "label": {
+              "String": "Fix"
+            }
+          }
+        },
+        {
+          "from": "capability_audit",
+          "to": "spec_fanout",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "capability_audit",
+          "to": "parse_requests",
+          "attrs": {
+            "label": {
+              "String": "Fix"
+            }
+          }
+        },
+        {
+          "from": "spec_fanout",
+          "to": "spec_candidate_a",
+          "attrs": {}
+        },
+        {
+          "from": "spec_fanout",
+          "to": "spec_candidate_b",
+          "attrs": {}
+        },
+        {
+          "from": "spec_fanout",
+          "to": "spec_candidate_c",
+          "attrs": {}
+        },
+        {
+          "from": "spec_candidate_a",
+          "to": "spec_join",
+          "attrs": {}
+        },
+        {
+          "from": "spec_candidate_b",
+          "to": "spec_join",
+          "attrs": {}
+        },
+        {
+          "from": "spec_candidate_c",
+          "to": "spec_join",
+          "attrs": {}
+        },
+        {
+          "from": "spec_join",
+          "to": "spec_eval_fanout",
+          "attrs": {}
+        },
+        {
+          "from": "spec_eval_fanout",
+          "to": "spec_eval_contract",
+          "attrs": {}
+        },
+        {
+          "from": "spec_eval_fanout",
+          "to": "spec_eval_model",
+          "attrs": {}
+        },
+        {
+          "from": "spec_eval_contract",
+          "to": "spec_eval_join",
+          "attrs": {}
+        },
+        {
+          "from": "spec_eval_model",
+          "to": "spec_eval_join",
+          "attrs": {}
+        },
+        {
+          "from": "spec_eval_join",
+          "to": "spec_eval_consensus",
+          "attrs": {}
+        },
+        {
+          "from": "spec_eval_consensus",
+          "to": "architecture_fanout",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "spec_eval_consensus",
+          "to": "spec_fanout",
+          "attrs": {
+            "label": {
+              "String": "Re-spec"
+            }
+          }
+        },
+        {
+          "from": "architecture_fanout",
+          "to": "architecture_candidate_a",
+          "attrs": {}
+        },
+        {
+          "from": "architecture_fanout",
+          "to": "architecture_candidate_b",
+          "attrs": {}
+        },
+        {
+          "from": "architecture_candidate_a",
+          "to": "architecture_join",
+          "attrs": {}
+        },
+        {
+          "from": "architecture_candidate_b",
+          "to": "architecture_join",
+          "attrs": {}
+        },
+        {
+          "from": "architecture_join",
+          "to": "architecture_eval_contract",
+          "attrs": {}
+        },
+        {
+          "from": "architecture_eval_contract",
+          "to": "architecture_eval_consensus",
+          "attrs": {}
+        },
+        {
+          "from": "architecture_eval_consensus",
+          "to": "workflow_fanout",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "architecture_eval_consensus",
+          "to": "architecture_fanout",
+          "attrs": {
+            "label": {
+              "String": "Re-architect"
+            }
+          }
+        },
+        {
+          "from": "workflow_fanout",
+          "to": "workflow_candidate_a",
+          "attrs": {}
+        },
+        {
+          "from": "workflow_fanout",
+          "to": "workflow_candidate_b",
+          "attrs": {}
+        },
+        {
+          "from": "workflow_candidate_a",
+          "to": "workflow_join",
+          "attrs": {}
+        },
+        {
+          "from": "workflow_candidate_b",
+          "to": "workflow_join",
+          "attrs": {}
+        },
+        {
+          "from": "workflow_join",
+          "to": "workflow_eval_contract",
+          "attrs": {}
+        },
+        {
+          "from": "workflow_eval_contract",
+          "to": "workflow_eval_consensus",
+          "attrs": {}
+        },
+        {
+          "from": "workflow_eval_consensus",
+          "to": "materialize_enhancement_workflow",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "workflow_eval_consensus",
+          "to": "workflow_fanout",
+          "attrs": {
+            "label": {
+              "String": "Re-workflow"
+            }
+          }
+        },
+        {
+          "from": "materialize_enhancement_workflow",
+          "to": "validate_enhancement_workflow",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "materialize_enhancement_workflow",
+          "to": "workflow_fanout",
+          "attrs": {
+            "label": {
+              "String": "Fix"
+            }
+          }
+        },
+        {
+          "from": "validate_enhancement_workflow",
+          "to": "run_generated_enhancement_workflow",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "validate_enhancement_workflow",
+          "to": "materialize_enhancement_workflow",
+          "attrs": {
+            "label": {
+              "String": "Fix"
+            }
+          }
+        },
+        {
+          "from": "run_generated_enhancement_workflow",
+          "to": "simplification_plan",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "run_generated_enhancement_workflow",
+          "to": "materialize_enhancement_workflow",
+          "attrs": {
+            "label": {
+              "String": "Fix"
+            }
+          }
+        },
+        {
+          "from": "simplification_plan",
+          "to": "final_eval_fanout",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "simplification_plan",
+          "to": "materialize_enhancement_workflow",
+          "attrs": {
+            "label": {
+              "String": "Fix"
+            }
+          }
+        },
+        {
+          "from": "final_eval_fanout",
+          "to": "final_eval_workflow_quality",
+          "attrs": {}
+        },
+        {
+          "from": "final_eval_fanout",
+          "to": "final_eval_simplification",
+          "attrs": {}
+        },
+        {
+          "from": "final_eval_workflow_quality",
+          "to": "final_eval_join",
+          "attrs": {}
+        },
+        {
+          "from": "final_eval_simplification",
+          "to": "final_eval_join",
+          "attrs": {}
+        },
+        {
+          "from": "final_eval_join",
+          "to": "final_eval_consensus",
+          "attrs": {}
+        },
+        {
+          "from": "final_eval_consensus",
+          "to": "promptfoo_workflow_quality",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "final_eval_consensus",
+          "to": "simplification_plan",
+          "attrs": {
+            "label": {
+              "String": "Fix"
+            }
+          }
+        },
+        {
+          "from": "promptfoo_workflow_quality",
+          "to": "publish_handoff",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "promptfoo_workflow_quality",
+          "to": "simplification_plan",
+          "attrs": {
+            "label": {
+              "String": "Fix"
+            }
+          }
+        },
+        {
+          "from": "publish_handoff",
+          "to": "exit",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "publish_handoff",
+          "to": "final_eval_consensus",
+          "attrs": {
+            "label": {
+              "String": "Fix"
+            }
+          }
+        }
+      ],
+      "attrs": {
+        "retry_target": {
+          "String": "spec_fanout"
+        },
+        "rankdir": {
+          "String": "LR"
+        },
+        "persona": {
+          "String": "eval-driven-workflow-builder"
+        },
+        "model_stylesheet": {
+          "String": "\n            *             { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: low; }\n            .spec          { provider: openrouter; model: google/gemini-3.1-pro-preview; reasoning_effort: high; }\n            .architecture  { provider: openrouter; model: qwen/qwen3.6-plus; reasoning_effort: high; }\n            .workflow      { provider: openrouter; model: moonshotai/kimi-k2.6; reasoning_effort: high; }\n            .eval          { provider: openrouter; model: deepseek/deepseek-v4-pro; reasoning_effort: high; }\n            .cheap         { provider: openrouter; model: deepseek/deepseek-v4-flash; reasoning_effort: low; }\n        "
+        },
+        "outputs": {
+          "String": "capability_audit, selected_spec, selected_architecture, generated_enhancement_workflow, eval_reports, simplification_plan, final_handoff"
+        },
+        "default_max_retries": {
+          "Integer": 2
+        },
+        "fallback_retry_target": {
+          "String": "workflow_fanout"
+        },
+        "goal": {
+          "String": "Use eval-driven development to discover the real Consumer Radar enhancement workflow required by product feedback"
+        },
+        "inputs": {
+          "String": "app_dir, feedback_path, target_adapter, generated_workflow, generated_run_config, real_mode, allow_fixture_fallback, execute_generated_workflow, minimum_spec_candidates, minimum_architecture_candidates, minimum_workflow_candidates, minimum_eval_score, max_eval_regression, minimum_active_reviews, require_simplification"
+        }
+      }
+    },
+    "graph_source": "digraph EnhancementDiscovery {\n    graph [\n        goal=\"Turn app enhancement requests into an evaluated spec, architecture, generated enhancement workflow, simplification pass, and release handoff\",\n        persona=\"eval-driven-workflow-builder\",\n        inputs=\"app_dir, feedback_path, target_adapter, generated_workflow, generated_run_config, real_mode, allow_fixture_fallback, execute_generated_workflow, minimum_spec_candidates, minimum_architecture_candidates, minimum_workflow_candidates, minimum_eval_score, max_eval_regression, minimum_active_reviews, require_simplification\",\n        outputs=\"capability_audit, selected_spec, selected_architecture, generated_enhancement_workflow, eval_reports, simplification_plan, final_handoff\",\n        default_max_retries=2,\n        retry_target=\"spec_fanout\",\n        fallback_retry_target=\"workflow_fanout\",\n        model_stylesheet=\"\n            *             { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: low; }\n            .spec          { provider: openrouter; model: google/gemini-3.1-pro-preview; reasoning_effort: high; }\n            .architecture  { provider: openrouter; model: qwen/qwen3.6-plus; reasoning_effort: high; }\n            .workflow      { provider: openrouter; model: moonshotai/kimi-k2.6; reasoning_effort: high; }\n            .eval          { provider: openrouter; model: deepseek/deepseek-v4-pro; reasoning_effort: high; }\n            .cheap         { provider: openrouter; model: deepseek/deepseek-v4-flash; reasoning_effort: low; }\n        \"\n    ]\n    rankdir=LR\n\n    start [shape=Mdiamond, label=\"Start\"]\n    exit  [shape=Msquare, label=\"Exit\"]\n\n    bootstrap [\n        label=\"Bootstrap Enhancement Discovery\",\n        shape=parallelogram,\n        goal_gate=true,\n        retry_target=\"bootstrap\",\n        script=\"mkdir -p .workflow/enhancement-discovery/spec-candidates .workflow/enhancement-discovery/architecture-candidates .workflow/enhancement-discovery/workflow-candidates .workflow/enhancement-discovery/evals; test -f '{{ inputs.feedback_path|default('feedback/consumer-radar-product-feedback.md') }}'; test -d '{{ inputs.app_dir|default('apps/generated-consumer-app-radar') }}'; echo eval_driven_development test_driven_development\"\n    ]\n\n    parse_requests [\n        label=\"Parse Enhancement Requests\",\n        shape=parallelogram,\n        goal_gate=true,\n        retry_target=\"bootstrap\",\n        script=\"node scripts/app-feedback/parse-feedback.mjs --feedback '{{ inputs.feedback_path|default('feedback/consumer-radar-product-feedback.md') }}' --out .workflow/enhancement-discovery/request-analysis.json\"\n    ]\n\n    capability_audit [\n        label=\"Capability Audit\",\n        shape=parallelogram,\n        goal_gate=true,\n        retry_target=\"parse_requests\",\n        script=\"node scripts/app-feedback/analyze-enhancement-capabilities.mjs --app-dir '{{ inputs.app_dir|default('apps/generated-consumer-app-radar') }}' --analysis .workflow/enhancement-discovery/request-analysis.json --target '{{ inputs.target_adapter|default('consumer-radar') }}' --out .workflow/enhancement-discovery/capability-audit.json\"\n    ]\n\n    spec_fanout [shape=component, label=\"Spec Candidate Fanout\"]\n    spec_candidate_a [\n        label=\"Spec Candidate A - Data Truth\",\n        class=\"spec\",\n        prompt=\"@../../prompts/app-feedback/spec-candidate-a.md\"\n    ]\n    spec_candidate_b [\n        label=\"Spec Candidate B - UX Outcome\",\n        class=\"spec\",\n        prompt=\"@../../prompts/app-feedback/spec-candidate-b.md\"\n    ]\n    spec_candidate_c [\n        label=\"Spec Candidate C - Workflow First\",\n        class=\"spec\",\n        prompt=\"@../../prompts/app-feedback/spec-candidate-c.md\"\n    ]\n    spec_join [shape=tripleoctagon, label=\"Spec Candidate Join\", join_policy=\"wait_all\"]\n\n    spec_eval_fanout [shape=component, label=\"Spec Eval Fanout\"]\n    spec_eval_contract [\n        label=\"Spec Contract Eval\",\n        shape=parallelogram,\n        goal_gate=true,\n        retry_target=\"spec_fanout\",\n        script=\"node scripts/app-feedback/evaluate-enhancement-artifact.mjs --stage spec --candidates .workflow/enhancement-discovery/spec-candidates --out .workflow/enhancement-discovery/evals/spec-contract.json --minimum-candidates '{{ inputs.minimum_spec_candidates|default('3') }}' --minimum-eval-score '{{ inputs.minimum_eval_score|default('0.78') }}' --dataset evals/workflow-quality/datasets/enhancement-discovery-golden.jsonl --dataset-version workflow-quality-v1 --prompt-version app-feedback-spec-candidates-v1 --rubric-version enhancement-discovery-spec-rubric-v1 --judge-model deterministic-marker-v1 --baseline evals/workflow-quality/baselines/enhancement-discovery-spec.json --max-regression '{{ inputs.max_eval_regression|default('0.05') }}'\"\n    ]\n    spec_eval_model [\n        label=\"Spec Rubric Eval\",\n        class=\"eval\",\n        prompt=\"@../../prompts/app-feedback/eval-consensus.md\"\n    ]\n    spec_eval_join [shape=tripleoctagon, label=\"Spec Eval Join\", join_policy=\"wait_all\"]\n    spec_eval_consensus [\n        label=\"Spec Eval Consensus\",\n        class=\"eval\",\n        goal_gate=true,\n        retry_target=\"spec_fanout\",\n        prompt=\"@../../prompts/app-feedback/eval-consensus.md\"\n    ]\n\n    architecture_fanout [shape=component, label=\"Architecture Candidate Fanout\"]\n    architecture_candidate_a [\n        label=\"Architecture Candidate A - Smallest Surface\",\n        class=\"architecture\",\n        prompt=\"@../../prompts/app-feedback/architecture-candidate-a.md\"\n    ]\n    architecture_candidate_b [\n        label=\"Architecture Candidate B - Extensible Source Pipeline\",\n        class=\"architecture\",\n        prompt=\"@../../prompts/app-feedback/architecture-candidate-b.md\"\n    ]\n    architecture_join [shape=tripleoctagon, label=\"Architecture Candidate Join\", join_policy=\"wait_all\"]\n    architecture_eval_contract [\n        label=\"Architecture Contract Eval\",\n        shape=parallelogram,\n        goal_gate=true,\n        retry_target=\"architecture_fanout\",\n        script=\"node scripts/app-feedback/evaluate-enhancement-artifact.mjs --stage architecture --candidates .workflow/enhancement-discovery/architecture-candidates --out .workflow/enhancement-discovery/evals/architecture-contract.json --minimum-candidates '{{ inputs.minimum_architecture_candidates|default('2') }}' --minimum-eval-score '{{ inputs.minimum_eval_score|default('0.78') }}' --dataset evals/workflow-quality/datasets/enhancement-discovery-golden.jsonl --dataset-version workflow-quality-v1 --prompt-version app-feedback-architecture-candidates-v1 --rubric-version enhancement-discovery-architecture-rubric-v1 --judge-model deterministic-marker-v1 --baseline evals/workflow-quality/baselines/enhancement-discovery-architecture.json --max-regression '{{ inputs.max_eval_regression|default('0.05') }}'\"\n    ]\n    architecture_eval_consensus [\n        label=\"Architecture Eval Consensus\",\n        class=\"eval\",\n        goal_gate=true,\n        retry_target=\"architecture_fanout\",\n        prompt=\"@../../prompts/app-feedback/eval-consensus.md\"\n    ]\n\n    workflow_fanout [shape=component, label=\"Workflow Candidate Fanout\"]\n    workflow_candidate_a [\n        label=\"Workflow Candidate A - Direct Enhancement\",\n        class=\"workflow\",\n        prompt=\"@../../prompts/app-feedback/workflow-candidate-a.md\"\n    ]\n    workflow_candidate_b [\n        label=\"Workflow Candidate B - Generated Subworkflow\",\n        class=\"workflow\",\n        prompt=\"@../../prompts/app-feedback/workflow-candidate-b.md\"\n    ]\n    workflow_join [shape=tripleoctagon, label=\"Workflow Candidate Join\", join_policy=\"wait_all\"]\n    workflow_eval_contract [\n        label=\"Workflow Contract Eval\",\n        shape=parallelogram,\n        goal_gate=true,\n        retry_target=\"workflow_fanout\",\n        script=\"node scripts/app-feedback/evaluate-enhancement-artifact.mjs --stage workflow --candidates .workflow/enhancement-discovery/workflow-candidates --out .workflow/enhancement-discovery/evals/workflow-contract.json --minimum-candidates '{{ inputs.minimum_workflow_candidates|default('2') }}' --minimum-eval-score '{{ inputs.minimum_eval_score|default('0.78') }}' --dataset evals/workflow-quality/datasets/enhancement-discovery-golden.jsonl --dataset-version workflow-quality-v1 --prompt-version app-feedback-workflow-candidates-v1 --rubric-version enhancement-discovery-workflow-rubric-v1 --judge-model deterministic-marker-v1 --baseline evals/workflow-quality/baselines/enhancement-discovery-workflow.json --max-regression '{{ inputs.max_eval_regression|default('0.05') }}'\"\n    ]\n    workflow_eval_consensus [\n        label=\"Workflow Eval Consensus\",\n        class=\"eval\",\n        goal_gate=true,\n        retry_target=\"workflow_fanout\",\n        prompt=\"@../../prompts/app-feedback/eval-consensus.md\"\n    ]\n\n    materialize_enhancement_workflow [\n        label=\"Materialize Enhancement Workflow\",\n        shape=parallelogram,\n        goal_gate=true,\n        retry_target=\"workflow_fanout\",\n        script=\"node scripts/app-feedback/materialize-enhancement-workflow.mjs --target '{{ inputs.target_adapter|default('consumer-radar') }}' --app-dir '{{ inputs.app_dir|default('apps/generated-consumer-app-radar') }}' --workflow '{{ inputs.generated_workflow|default('workflows/consumer-radar/live-enrichment.fabro') }}' --run-config '{{ inputs.generated_run_config|default('workflows/consumer-radar/live-enrichment.toml') }}' --real-mode '{{ inputs.real_mode|default('true') }}' --allow-fixture-fallback '{{ inputs.allow_fixture_fallback|default('false') }}'\"\n    ]\n\n    validate_enhancement_workflow [\n        label=\"Validate Generated Enhancement Workflow\",\n        shape=parallelogram,\n        goal_gate=true,\n        retry_target=\"materialize_enhancement_workflow\",\n        script=\"node scripts/app-feedback/validate-enhancement-discovery.mjs --workflow workflows/app-feedback/discover-enhancement.fabro --generated-workflow '{{ inputs.generated_workflow|default('workflows/consumer-radar/live-enrichment.fabro') }}' --out .workflow/enhancement-discovery/generated-workflow-validation.json\"\n    ]\n\n    run_generated_enhancement_workflow [\n        label=\"Run Generated Enhancement Workflow\",\n        shape=parallelogram,\n        goal_gate=true,\n        retry_target=\"materialize_enhancement_workflow\",\n        script=\"if [ '{{ inputs.execute_generated_workflow|default('false') }}' = 'true' ]; then fabro run '{{ inputs.generated_run_config|default('workflows/consumer-radar/live-enrichment.toml') }}' --no-upgrade-check; else fabro validate '{{ inputs.generated_workflow|default('workflows/consumer-radar/live-enrichment.fabro') }}' --no-upgrade-check; fi\"\n    ]\n\n    simplification_plan [\n        label=\"Simplification Plan\",\n        class=\"eval\",\n        goal_gate=true,\n        retry_target=\"materialize_enhancement_workflow\",\n        prompt=\"@../../prompts/app-feedback/simplification-plan.md\"\n    ]\n\n    final_eval_fanout [shape=component, label=\"Final Eval Fanout\"]\n    final_eval_workflow_quality [\n        label=\"Final Workflow Quality Eval\",\n        class=\"eval\",\n        prompt=\"@../../prompts/app-feedback/eval-consensus.md\"\n    ]\n    final_eval_simplification [\n        label=\"Final Simplification Eval\",\n        shape=parallelogram,\n        goal_gate=true,\n        retry_target=\"simplification_plan\",\n        script=\"test '{{ inputs.require_simplification|default('true') }}' != 'true' || test -s .workflow/enhancement-discovery/simplification-plan.md\"\n    ]\n    final_eval_join [shape=tripleoctagon, label=\"Final Eval Join\", join_policy=\"wait_all\"]\n    final_eval_consensus [\n        label=\"Final Eval Consensus\",\n        class=\"eval\",\n        goal_gate=true,\n        retry_target=\"simplification_plan\",\n        prompt=\"@../../prompts/app-feedback/eval-consensus.md\"\n    ]\n\n    promptfoo_workflow_quality [\n        label=\"Promptfoo Workflow Quality Gate\",\n        shape=parallelogram,\n        goal_gate=true,\n        retry_target=\"simplification_plan\",\n        script=\"node scripts/app-feedback/promptfoo-workflow-quality.mjs --config evals/workflow-quality/enhancement-discovery.yaml --out .workflow/enhancement-discovery/evals/promptfoo-workflow-quality.json --allow-fallback true\"\n    ]\n\n    publish_handoff [\n        label=\"Publish Enhancement Discovery Handoff\",\n        shape=parallelogram,\n        goal_gate=true,\n        retry_target=\"final_eval_consensus\",\n        script=\"node scripts/app-feedback/publish-enhancement-discovery-handoff.mjs --app-dir '{{ inputs.app_dir|default('apps/generated-consumer-app-radar') }}' --generated-workflow '{{ inputs.generated_workflow|default('workflows/consumer-radar/live-enrichment.fabro') }}' --out .workflow/enhancement-discovery/handoff.json\"\n    ]\n\n    start -> bootstrap\n    bootstrap -> parse_requests [condition=\"outcome=succeeded\"]\n    bootstrap -> bootstrap [label=\"Retry\", loop_restart=true]\n    parse_requests -> capability_audit [condition=\"outcome=succeeded\"]\n    parse_requests -> bootstrap [label=\"Fix\"]\n    capability_audit -> spec_fanout [condition=\"outcome=succeeded\"]\n    capability_audit -> parse_requests [label=\"Fix\"]\n    spec_fanout -> spec_candidate_a\n    spec_fanout -> spec_candidate_b\n    spec_fanout -> spec_candidate_c\n    spec_candidate_a -> spec_join\n    spec_candidate_b -> spec_join\n    spec_candidate_c -> spec_join\n    spec_join -> spec_eval_fanout\n    spec_eval_fanout -> spec_eval_contract\n    spec_eval_fanout -> spec_eval_model\n    spec_eval_contract -> spec_eval_join\n    spec_eval_model -> spec_eval_join\n    spec_eval_join -> spec_eval_consensus\n    spec_eval_consensus -> architecture_fanout [condition=\"outcome=succeeded\"]\n    spec_eval_consensus -> spec_fanout [label=\"Re-spec\"]\n    architecture_fanout -> architecture_candidate_a\n    architecture_fanout -> architecture_candidate_b\n    architecture_candidate_a -> architecture_join\n    architecture_candidate_b -> architecture_join\n    architecture_join -> architecture_eval_contract\n    architecture_eval_contract -> architecture_eval_consensus\n    architecture_eval_consensus -> workflow_fanout [condition=\"outcome=succeeded\"]\n    architecture_eval_consensus -> architecture_fanout [label=\"Re-architect\"]\n    workflow_fanout -> workflow_candidate_a\n    workflow_fanout -> workflow_candidate_b\n    workflow_candidate_a -> workflow_join\n    workflow_candidate_b -> workflow_join\n    workflow_join -> workflow_eval_contract\n    workflow_eval_contract -> workflow_eval_consensus\n    workflow_eval_consensus -> materialize_enhancement_workflow [condition=\"outcome=succeeded\"]\n    workflow_eval_consensus -> workflow_fanout [label=\"Re-workflow\"]\n    materialize_enhancement_workflow -> validate_enhancement_workflow [condition=\"outcome=succeeded\"]\n    materialize_enhancement_workflow -> workflow_fanout [label=\"Fix\"]\n    validate_enhancement_workflow -> run_generated_enhancement_workflow [condition=\"outcome=succeeded\"]\n    validate_enhancement_workflow -> materialize_enhancement_workflow [label=\"Fix\"]\n    run_generated_enhancement_workflow -> simplification_plan [condition=\"outcome=succeeded\"]\n    run_generated_enhancement_workflow -> materialize_enhancement_workflow [label=\"Fix\"]\n    simplification_plan -> final_eval_fanout [condition=\"outcome=succeeded\"]\n    simplification_plan -> materialize_enhancement_workflow [label=\"Fix\"]\n    final_eval_fanout -> final_eval_workflow_quality\n    final_eval_fanout -> final_eval_simplification\n    final_eval_workflow_quality -> final_eval_join\n    final_eval_simplification -> final_eval_join\n    final_eval_join -> final_eval_consensus\n    final_eval_consensus -> promptfoo_workflow_quality [condition=\"outcome=succeeded\"]\n    final_eval_consensus -> simplification_plan [label=\"Fix\"]\n    promptfoo_workflow_quality -> publish_handoff [condition=\"outcome=succeeded\"]\n    promptfoo_workflow_quality -> simplification_plan [label=\"Fix\"]\n    publish_handoff -> exit [condition=\"outcome=succeeded\"]\n    publish_handoff -> final_eval_consensus [label=\"Fix\"]\n}\n",
+    "workflow_slug": "discover-enhancement",
+    "source_directory": "/Users/timlife/Documents/claude code/maestro-os",
+    "provenance": {
+      "server": {
+        "version": "0.231.0-nightly.1"
+      },
+      "client": {
+        "user_agent": "fabro-cli/0.231.0-nightly.1",
+        "name": "fabro-cli",
+        "version": "0.231.0-nightly.1"
+      },
+      "subject": {
+        "kind": "user",
+        "identity": {
+          "issuer": "fabro:dev",
+          "subject": "dev"
+        },
+        "login": "dev",
+        "auth_method": "dev_token"
+      }
+    },
+    "manifest_blob": "46a56bf8d5d821b7c50135be1b6bc2c0d6a307e8492e3d88038cdd679bbc206a",
+    "definition_blob": "8b570cb14845eb2641c49ad9d5c9f3d468b09195eff2fe9b7727900e536fa07f",
+    "git": {
+      "origin_url": "https://github.com/kimprobably/maestro-os",
+      "branch": "spike/fabro-code-factory-v5",
+      "sha": "ebe5f1daefd773eebedb723bbd35849cb4facd87",
+      "dirty": "clean",
+      "push_outcome": {
+        "type": "not_attempted"
+      }
+    }
+  },
+  "web_url": "https://fabro-maestro-production.up.railway.app/runs/01KRH6VF5XE92R7GZP1TTGNEED",
+  "start": null,
+  "status": {
+    "kind": "starting"
+  },
+  "status_updated_at": "2026-05-13T17:41:17.716136693Z",
+  "last_event_at": "2026-05-13T17:41:19.895181211Z",
+  "pending_control": null,
+  "checkpoints": [],
+  "conclusion": null,
+  "sandbox": {
+    "provider": "daytona",
+    "image": "buildpack-deps:noble",
+    "snapshot": "maestro-code-factory-v5",
+    "runtime": {
+      "id": "fabro-01KRH6VF5XE92R7GZP1TTGNEED",
+      "working_directory": "/home/daytona/workspace",
+      "repo_cloned": true,
+      "clone_origin_url": "https://github.com/kimprobably/maestro-os",
+      "clone_branch": "spike/fabro-code-factory-v5"
+    }
+  },
+  "pull_request": null,
+  "superseded_by": null,
+  "pending_interviews": {},
+  "stages": {}
+}
