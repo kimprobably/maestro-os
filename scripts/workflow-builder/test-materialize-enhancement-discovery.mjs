@@ -194,6 +194,24 @@ for (const marker of [
   }
 }
 
+if (validator.includes("\"spec_eval_fanout\"")) {
+  throw new Error("generated workflow validator must not require removed spec_eval_fanout marker");
+}
+
+for (const marker of [
+  "ensure_spec_candidates",
+  "spec_eval_contract",
+  "spec_eval_model",
+  "ensure_architecture_candidates",
+  "architecture_eval_contract",
+  "ensure_workflow_candidates",
+  "workflow_eval_contract",
+]) {
+  if (!validator.includes(marker)) {
+    throw new Error(`generated workflow validator missing strict eval marker: ${marker}`);
+  }
+}
+
 for (const marker of [
   "workflows/consumer-radar/live-enrichment.fabro",
   "live_data_gate",

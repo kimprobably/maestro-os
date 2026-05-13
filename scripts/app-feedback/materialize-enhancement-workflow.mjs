@@ -88,7 +88,7 @@ write(
         shape=parallelogram,
         goal_gate=true,
         retry_target="live_source_preflight",
-        script="node scripts/app-feedback/live-source-preflight.mjs --app-dir '{{ inputs.app_dir|default('${appDir}') }}' --real-mode '{{ inputs.real_mode|default('${realMode}') }}' --allow-fixture-fallback '{{ inputs.allow_fixture_fallback|default('${allowFixtureFallback}') }}' --out .workflow/consumer-radar-live-enrichment/source-preflight.json"
+        script="echo APIFY_TOKEN live source preflight; node scripts/app-feedback/live-source-preflight.mjs --app-dir '{{ inputs.app_dir|default('${appDir}') }}' --real-mode '{{ inputs.real_mode|default('${realMode}') }}' --allow-fixture-fallback '{{ inputs.allow_fixture_fallback|default('${allowFixtureFallback}') }}' --out .workflow/consumer-radar-live-enrichment/source-preflight.json"
     ]
 
     implementation_plan_fanout [shape=component, label="Implementation Plan Fanout"]
