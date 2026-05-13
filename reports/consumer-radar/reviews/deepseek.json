@@ -1,0 +1,38 @@
+{
+  "ok": true,
+  "skipped": false,
+  "real_mode": true,
+  "model": "deepseek/deepseek-v4-flash",
+  "role": "simplification_and_ci",
+  "status": 200,
+  "parsed": {
+    "verdict": "APPROVE",
+    "score": 0.95,
+    "findings": [
+      {
+        "severity": "low",
+        "issue": "No error handling for missing fixture file in refreshApps; loadFixtureApps throws but caller in server.js does not catch.",
+        "fix": "Wrap refreshApps call in server.js with try/catch and return 500 on failure."
+      },
+      {
+        "severity": "low",
+        "issue": "POST /api/refresh does not validate mode parameter beyond allowedModes set; unsupported mode returns 500 with generic error.",
+        "fix": "Return 400 with descriptive error for unsupported mode before calling refreshApps."
+      },
+      {
+        "severity": "info",
+        "issue": "No test for /api/apps/:id returning 404; only happy path tested in api-fixture.test.js.",
+        "fix": "Add a test case for non-existent app ID returning 404 status."
+      }
+    ],
+    "suggested_next_steps": [
+      "Add error boundary in server.js for fixture load failures",
+      "Add input validation for POST /api/refresh mode parameter",
+      "Add 404 test case for single app endpoint"
+    ]
+  },
+  "raw_excerpt": "{\n  \"verdict\": \"APPROVE\",\n  \"score\": 0.95,\n  \"findings\": [\n    {\n      \"severity\": \"low\",\n      \"issue\": \"No error handling for missing fixture file in refreshApps; loadFixtureApps throws but caller in server.js does not catch.\",\n      \"fix\": \"Wrap refreshApps call in server.js with try/catch and return 500 on failure.\"\n    },\n    {\n      \"severity\": \"low\",\n      \"issue\": \"POST /api/refresh does not validate mode parameter beyond allowedModes set; unsupported mode returns 500 with generic error.\",\n      \"fix\": \"Return 400 with descriptive error for unsupported mode before calling refreshApps.\"\n    },\n    {\n      \"severity\": \"info\",\n      \"issue\": \"No test for /api/apps/:id returning 404; only happy path tested in api-fixture.test.js.\",\n      \"fix\": \"Add a test case for non-existent app ID returning 404 status.\"\n    }\n  ],\n  \"suggested_next_steps\": [\n    \"Add error boundary in server.js for fixture load failures\",\n    \"Add input validation for POST /api/refresh mode parameter\",\n    \"Add 404 test case for single app endpoint\"\n  ]\n}",
+  "error": null,
+  "payload_excerpt": null,
+  "payload_text_excerpt": "\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n{\"id\":\"gen-1778673020-k3hEuXcUyyugZPFzzcq9\",\"object\":\"chat.completion\",\"created\":1778673020,\"model\":\"deepseek/deepseek-v4-flash-20260423\",\"provider\":\"DeepInfra\",\"system_fingerprint\":null,\"choices\":[{\"index\":0,\"logprobs\":null,\"finish_reason\":\"stop\",\"native_finish_reason\":\"stop\",\"message\":{\"role\":\"assistant\",\"content\":\"{\\n  \\\"verdict\\\": \\\"APPROVE\\\",\\n  \\\"score\\\": 0.95,\\n  \\\"findings\\\": [\\n    {\\n      \\\"severity\\\": \\\"low\\\",\\n      \\\"issue\\\": \\\"No error handling for missing fixture file in refreshApps; loadFixtureApps throws but caller in server.js does not catch.\\\",\\n      \\\"fix\\\": \\\"Wrap refreshApps call in server.js with try/catch and return 500 on failure.\\\"\\n    },\\n    {\\n      \\\"severity\\\": \\\"low\\\",\\n      \\\"issue\\\": \\\"POST /api/refresh does not validate mode parameter beyond allowedModes set; unsupported mode returns 500 with generic error.\\\",\\n      \\\"fix\\\": \\\"Return 400 with descriptive error for unsupported mode before calling refreshApps.\\\"\\n    },\\n    {\\n      \\\"severity\\\": \\\""
+}
