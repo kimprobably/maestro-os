@@ -1061,7 +1061,7 @@
     "kind": "running"
   },
   "status_updated_at": "2026-05-13T15:37:30.009760803Z",
-  "last_event_at": "2026-05-13T15:37:35.505380551Z",
+  "last_event_at": "2026-05-13T15:37:39.667296444Z",
   "pending_control": null,
   "checkpoints": [
     {
@@ -1171,9 +1171,9 @@
       }
     },
     {
-      "seq": 0,
+      "seq": 37,
       "checkpoint": {
-        "timestamp": "2026-05-13T15:37:35.553276419Z",
+        "timestamp": "2026-05-13T15:37:37.457956202Z",
         "current_node": "bootstrap_spec",
         "completed_nodes": [
           "start",
@@ -1182,7 +1182,84 @@
         ],
         "node_retries": {},
         "context_values": {
+          "internal.run_id": "01KRGZRKSQP9YXMMVGN00D74F1",
+          "graph.fallback_retry_target": "generate_app",
+          "command.output": "blob://sha256/39ee7759bce6c868c1e09ad33d681a85c7274a14f90bac470012e82574e02daf",
+          "graph.outputs": "application, ci_report, eval_report, review_consensus, handoff",
+          "internal.work_dir": "/home/daytona/workspace",
+          "failure_signature": "",
+          "failure_class": "",
+          "graph.default_max_retries": "2",
+          "internal.retry_count.bootstrap_spec": 0,
+          "outcome": "succeeded",
+          "thread.start.current_node": "wait_for_support_files",
+          "graph.inputs": "app_dir, spec_path, real_mode, allow_fixture_fallback, allow_quality_fallback, minimum_active_reviews",
+          "graph.rankdir": "LR",
+          "graph.retry_target": "generate_app",
+          "graph.persona": "code-factory",
+          "thread.wait_for_support_files.current_node": "bootstrap_spec",
+          "graph.goal": "Build Consumer App Radar from spec with CI, eval, and model review",
+          "current_node": "bootstrap_spec",
+          "internal.fidelity": "compact",
+          "internal.node_visit_count": 1,
+          "graph.model_stylesheet": "\n            *          { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: low; }\n            .review    { provider: openrouter; model: google/gemini-3.1-pro-preview; reasoning_effort: high; }\n            .cheap     { provider: openrouter; model: deepseek/deepseek-v4-flash; reasoning_effort: low; }\n        ",
+          "internal.retry_count.start": 0,
+          "internal.thread_id": "wait_for_support_files",
+          "internal.retry_count.wait_for_support_files": 0
+        },
+        "node_outcomes": {
+          "start": {
+            "status": "succeeded",
+            "usage": null
+          },
+          "wait_for_support_files": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/a993020942c3b2f319b954a99b0a9f056f2f684e6388311672cad5808190f591"
+            },
+            "notes": "Script completed: for i in $(seq 1 90); do if [ -f scripts/consumer-radar/generate-app.mjs ] && [ -f 'specs/consumer-app-radar/spec.md' ]; then echo support-files-ready; exit 0; fi; sleep 2; done; echo 'missing consumer radar support files' >&2; exit 1",
+            "usage": null
+          },
+          "bootstrap_spec": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/39ee7759bce6c868c1e09ad33d681a85c7274a14f90bac470012e82574e02daf"
+            },
+            "notes": "Script completed: node scripts/consumer-radar/bootstrap-spec.mjs --spec 'specs/consumer-app-radar/spec.md' --app-dir 'apps/generated-consumer-app-radar'",
+            "usage": null
+          }
+        },
+        "next_node_id": "spec_kitty_gate",
+        "git_commit_sha": "31e5e6f1ce10a05b8d995e3918fa9f0d33d90652",
+        "node_visits": {
+          "bootstrap_spec": 1,
+          "start": 1,
+          "wait_for_support_files": 1
+        }
+      },
+      "diff": {
+        "summary": {
+          "files_changed": 0,
+          "additions": 0,
+          "deletions": 0
+        }
+      }
+    },
+    {
+      "seq": 0,
+      "checkpoint": {
+        "timestamp": "2026-05-13T15:37:39.715769818Z",
+        "current_node": "spec_kitty_gate",
+        "completed_nodes": [
+          "start",
+          "wait_for_support_files",
+          "bootstrap_spec",
+          "spec_kitty_gate"
+        ],
+        "node_retries": {},
+        "context_values": {
           "internal.retry_count.wait_for_support_files": 0,
+          "internal.retry_count.spec_kitty_gate": 0,
           "graph.model_stylesheet": "\n            *          { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: low; }\n            .review    { provider: openrouter; model: google/gemini-3.1-pro-preview; reasoning_effort: high; }\n            .cheap     { provider: openrouter; model: deepseek/deepseek-v4-flash; reasoning_effort: low; }\n        ",
           "graph.default_max_retries": "2",
           "graph.goal": "Build Consumer App Radar from spec with CI, eval, and model review",
@@ -1190,18 +1267,19 @@
           "internal.node_visit_count": 1,
           "failure_class": "",
           "internal.retry_count.start": 0,
+          "thread.bootstrap_spec.current_node": "spec_kitty_gate",
           "graph.outputs": "application, ci_report, eval_report, review_consensus, handoff",
           "internal.run_id": "01KRGZRKSQP9YXMMVGN00D74F1",
           "graph.rankdir": "LR",
           "graph.inputs": "app_dir, spec_path, real_mode, allow_fixture_fallback, allow_quality_fallback, minimum_active_reviews",
-          "current_node": "bootstrap_spec",
+          "current_node": "spec_kitty_gate",
           "graph.fallback_retry_target": "generate_app",
           "internal.fidelity": "compact",
           "outcome": "succeeded",
           "failure_signature": "",
-          "command.output": "blob://sha256/39ee7759bce6c868c1e09ad33d681a85c7274a14f90bac470012e82574e02daf",
+          "command.output": "blob://sha256/6c2606da9dc631c32596718215b2ff929b56a5f24e1aabcb2b835bac3b6e7cce",
           "graph.retry_target": "generate_app",
-          "internal.thread_id": "wait_for_support_files",
+          "internal.thread_id": "bootstrap_spec",
           "thread.start.current_node": "wait_for_support_files",
           "thread.wait_for_support_files.current_node": "bootstrap_spec",
           "internal.retry_count.bootstrap_spec": 0,
@@ -1227,11 +1305,20 @@
           "start": {
             "status": "succeeded",
             "usage": null
+          },
+          "spec_kitty_gate": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/6c2606da9dc631c32596718215b2ff929b56a5f24e1aabcb2b835bac3b6e7cce"
+            },
+            "notes": "Script completed: node scripts/consumer-radar/bootstrap-spec.mjs --spec 'specs/consumer-app-radar/spec.md' --app-dir 'apps/generated-consumer-app-radar' --spec-kitty",
+            "usage": null
           }
         },
-        "next_node_id": "spec_kitty_gate",
+        "next_node_id": "data_source_smoke",
         "node_visits": {
           "start": 1,
+          "spec_kitty_gate": 1,
           "wait_for_support_files": 1,
           "bootstrap_spec": 1
         }
@@ -1299,11 +1386,53 @@
       },
       "state": "succeeded"
     },
+    "spec_kitty_gate@1": {
+      "first_event_seq": 40,
+      "prompt": null,
+      "response": null,
+      "completion": null,
+      "provider_used": null,
+      "diff": null,
+      "script_invocation": {
+        "script": "node scripts/consumer-radar/bootstrap-spec.mjs --spec 'specs/consumer-app-radar/spec.md' --app-dir 'apps/generated-consumer-app-radar' --spec-kitty",
+        "command": "exec 2>&1\nnode scripts/consumer-radar/bootstrap-spec.mjs --spec 'specs/consumer-app-radar/spec.md' --app-dir 'apps/generated-consumer-app-radar' --spec-kitty",
+        "language": "shell"
+      },
+      "script_timing": {
+        "output": "blob://sha256/6c2606da9dc631c32596718215b2ff929b56a5f24e1aabcb2b835bac3b6e7cce",
+        "exit_code": 0,
+        "duration_ms": 2202,
+        "termination": "exited",
+        "output_bytes": 1658,
+        "live_streaming": true
+      },
+      "parallel_results": null,
+      "output": null,
+      "output_bytes": 1658,
+      "live_streaming": true,
+      "termination": "exited",
+      "started_at": "2026-05-13T15:37:37.460338389Z",
+      "handler": "command",
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "total_tokens": 0,
+        "reasoning_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "state": "running"
+    },
     "bootstrap_spec@1": {
       "first_event_seq": 29,
       "prompt": null,
       "response": null,
-      "completion": null,
+      "completion": {
+        "outcome": "succeeded",
+        "notes": "Script completed: node scripts/consumer-radar/bootstrap-spec.mjs --spec 'specs/consumer-app-radar/spec.md' --app-dir 'apps/generated-consumer-app-radar'",
+        "failure_reason": null,
+        "timestamp": "2026-05-13T15:37:35.552173218Z"
+      },
       "provider_used": null,
       "diff": null,
       "script_invocation": {
@@ -1326,6 +1455,7 @@
       "termination": "exited",
       "started_at": "2026-05-13T15:37:34.255969052Z",
       "handler": "command",
+      "duration_ms": 1249,
       "usage": {
         "input_tokens": 0,
         "output_tokens": 0,
@@ -1334,7 +1464,7 @@
         "cache_read_tokens": 0,
         "cache_write_tokens": 0
       },
-      "state": "running"
+      "state": "succeeded"
     },
     "start@1": {
       "first_event_seq": 15,
