@@ -1,4 +1,4 @@
-import { existsSync, mkdirSync, readdirSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, readdirSync, renameSync, writeFileSync } from "node:fs";
 import { dirname, join, relative, resolve } from "node:path";
 import { spawnSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
@@ -11,6 +11,8 @@ const outputPath = resolve(
 );
 const scratchDir = dirname(outputPath);
 const validationConfigPath = join(scratchDir, "fabro-validate-empty.toml");
+const projectConfigPath = join(repoRoot, ".fabro", "project.toml");
+const disabledProjectConfigPath = join(scratchDir, "project.toml.disabled-for-registry-smoke");
 
 function listFabroFiles(dir) {
   return readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
@@ -40,6 +42,21 @@ function run(command, args) {
   };
 }
 
+function withProjectConfigHidden(callback) {
+  const shouldHideProjectConfig = existsSync(projectConfigPath);
+  if (!shouldHideProjectConfig) return callback();
+  if (existsSync(disabledProjectConfigPath)) {
+    throw new Error(`Refusing to overwrite existing temporary config: ${disabledProjectConfigPath}`);
+  }
+
+  renameSync(projectConfigPath, disabledProjectConfigPath);
+  try {
+    return callback();
+  } finally {
+    renameSync(disabledProjectConfigPath, projectConfigPath);
+  }
+}
+
 if (!existsSync(workflowsRoot)) {
   throw new Error(`Missing workflows directory: ${workflowsRoot}`);
 }
@@ -48,7 +65,7 @@ mkdirSync(scratchDir, { recursive: true });
 writeFileSync(validationConfigPath, "");
 
 const workflows = listFabroFiles(workflowsRoot).sort();
-const results = workflows.map((path) => {
+const results = withProjectConfigHidden(() => workflows.map((path) => {
   const workflow = relative(repoRoot, path);
   const validation = run("fabro", ["validate", workflow]);
   const quality = validation.ok
@@ -75,7 +92,7 @@ const results = workflows.map((path) => {
     registration,
     ok: validation.ok && quality.ok && registration.ok,
   };
-});
+}));
 
 const failed = results.filter((result) => !result.ok);
 const report = {
