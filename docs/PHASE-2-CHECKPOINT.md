@@ -111,6 +111,22 @@ Status: in progress
   created sandbox reported the mounted volume. The run also wrote
   `volume-ready` into the mounted agent-state directory, proving the volume is
   writable from Fabro-created Daytona sandboxes.
+- Ran the full Consumer App Radar build through Fabro in Daytona. Run
+  `01KRGV5B0Q9FPY3QECK79DJ7X0` completed end-to-end from spec bootstrap through
+  Spec Kitty verification, live-source smoke, app generation, native checks,
+  strict Qlty, Promptfoo eval, parallel OpenRouter review fanout, consensus,
+  artifact validation, and handoff publication. Fabro pushed run branch
+  `fabro/run/01KRGV5B0Q9FPY3QECK79DJ7X0`; its successful reports were squashed
+  back into the spike branch.
+- Added Fabro server-vault secret interpolation for Daytona sandbox env values
+  in the Fabro fork. The Consumer Radar run proved `APIFY_TOKEN` and
+  `OPENROUTER_API_KEY` are resolved inside Fabro-created Daytona command
+  stages without raw secret values in repo config.
+- The Consumer Radar data-source smoke found Daytona runtime egress to Apple RSS
+  and Apify returning `ECONNRESET` while essential dev services remained
+  reachable. The workflow now fails on missing/unresolved secrets, records the
+  blocked live-source smoke, and continues with fixture data plus live adapters
+  for the first-pass internal app.
 
 ## Clone Substack Pattern Incorporated
 
@@ -144,11 +160,17 @@ Maestro now mirrors that shape in two workflows:
   Daytona volume config, so the registry smoke temporarily hides
   `.fabro/project.toml` while it validates/registers graph files and restores it
   afterward.
+- Daytona network limits can override sandbox-level `network = "allow_all"` at
+  the organization tier. Current Consumer Radar runs can use OpenRouter,
+  package/Git services, and deterministic fixtures inside Daytona, but direct
+  Apple/Apify live scraping needs a Daytona tier/whitelist change or a separate
+  data-ingest environment.
 
 ## Open Gaps
 
-- Run selected repo-relative code/GTM/factory workflows in Daytona now that the
-  workflow library is portable enough for remote execution.
+- Run the next selected repo-relative code/GTM/factory workflows in Daytona now
+  that the registry smoke, workflow-builder, and Consumer Radar paths have
+  passing remote evidence.
 - Daytona code-factory toolchain, secret injection, and persistent auth volume
   mounting now have passing fresh sandbox smokes. The remaining manual step is
   to enter one mounted sandbox, run `sandbox/bootstrap-agent-auth.sh check`,
