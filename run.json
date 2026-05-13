@@ -1064,7 +1064,7 @@
     "kind": "running"
   },
   "status_updated_at": "2026-05-13T16:52:28.919834646Z",
-  "last_event_at": "2026-05-13T16:52:52.164395675Z",
+  "last_event_at": "2026-05-13T16:52:57.154110973Z",
   "pending_control": null,
   "checkpoints": [
     {
@@ -1436,9 +1436,9 @@
       }
     },
     {
-      "seq": 0,
+      "seq": 81,
       "checkpoint": {
-        "timestamp": "2026-05-13T16:52:52.394987675Z",
+        "timestamp": "2026-05-13T16:52:55.499299884Z",
         "current_node": "native_checks",
         "completed_nodes": [
           "start",
@@ -1450,38 +1450,66 @@
         ],
         "node_retries": {},
         "context_values": {
-          "thread.start.current_node": "wait_for_support_files",
+          "internal.node_visit_count": 1,
           "command.output": "blob://sha256/3cb84a9bb9e20844631d561961b12684816930e946cc09fc74b597b239f65682",
-          "internal.work_dir": "/home/daytona/workspace",
-          "current_node": "native_checks",
-          "internal.retry_count.wait_for_support_files": 0,
-          "internal.retry_count.spec_kitty_feedback_gate": 0,
-          "failure_class": "",
-          "graph.outputs": "feedback_analysis, enhanced_app, quality_reports, review_consensus, handoff",
-          "graph.inputs": "app_dir, feedback_path, target_adapter, real_mode, allow_quality_fallback, minimum_active_reviews",
-          "internal.thread_id": "apply_enhancement",
           "graph.model_stylesheet": "\n            *       { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: low; }\n            .review { provider: openrouter; model: google/gemini-3.1-pro-preview; reasoning_effort: high; }\n            .cheap  { provider: openrouter; model: deepseek/deepseek-v4-flash; reasoning_effort: low; }\n        ",
-          "internal.retry_count.start": 0,
-          "internal.retry_count.parse_feedback": 0,
-          "thread.cheap.current_node": "apply_enhancement",
-          "thread.apply_enhancement.current_node": "native_checks",
-          "thread.wait_for_support_files.current_node": "parse_feedback",
-          "internal.run_id": "01KRH41V4MPCQXV5V7Z0795E2T",
-          "graph.retry_target": "apply_enhancement",
-          "graph.goal": "Enhance Consumer App Radar from product feedback using the generic app feedback workflow",
-          "graph.persona": "app-feedback-workflow-builder",
-          "graph.rankdir": "LR",
-          "failure_signature": "",
-          "internal.retry_count.apply_enhancement": 0,
-          "graph.default_max_retries": "2",
           "internal.fidelity": "compact",
           "thread.parse_feedback.current_node": "spec_kitty_feedback_gate",
-          "graph.fallback_retry_target": "apply_enhancement",
-          "internal.retry_count.native_checks": 0,
+          "thread.start.current_node": "wait_for_support_files",
+          "graph.goal": "Enhance Consumer App Radar from product feedback using the generic app feedback workflow",
           "outcome": "succeeded",
-          "internal.node_visit_count": 1
+          "internal.work_dir": "/home/daytona/workspace",
+          "internal.run_id": "01KRH41V4MPCQXV5V7Z0795E2T",
+          "thread.apply_enhancement.current_node": "native_checks",
+          "internal.retry_count.wait_for_support_files": 0,
+          "current_node": "native_checks",
+          "graph.rankdir": "LR",
+          "internal.retry_count.parse_feedback": 0,
+          "graph.outputs": "feedback_analysis, enhanced_app, quality_reports, review_consensus, handoff",
+          "graph.persona": "app-feedback-workflow-builder",
+          "failure_signature": "",
+          "graph.fallback_retry_target": "apply_enhancement",
+          "thread.wait_for_support_files.current_node": "parse_feedback",
+          "graph.default_max_retries": "2",
+          "internal.retry_count.spec_kitty_feedback_gate": 0,
+          "graph.inputs": "app_dir, feedback_path, target_adapter, real_mode, allow_quality_fallback, minimum_active_reviews",
+          "internal.retry_count.apply_enhancement": 0,
+          "internal.retry_count.native_checks": 0,
+          "failure_class": "",
+          "internal.thread_id": "apply_enhancement",
+          "graph.retry_target": "apply_enhancement",
+          "internal.retry_count.start": 0,
+          "thread.cheap.current_node": "apply_enhancement"
         },
         "node_outcomes": {
+          "start": {
+            "status": "succeeded",
+            "usage": null
+          },
+          "wait_for_support_files": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/b5a3a27785c10a6fc1f5a02472c6297fcb9708eaa1c0cfbdc52dacf40288112b"
+            },
+            "notes": "Script completed: for i in $(seq 1 90); do if [ -f scripts/app-feedback/parse-feedback.mjs ] && [ -f scripts/app-feedback/apply-feedback-enhancement.mjs ] && [ -f 'feedback/consumer-radar-product-feedback.md' ]; then echo feedback-support-ready; exit 0; fi; sleep 2; done; echo 'missing feedback enhancement support files' >&2; exit 1",
+            "usage": null
+          },
+          "parse_feedback": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/b8ad9745eb032e1529021db56fb0316d1bbac9211156d215e74bdc779585d3f0"
+            },
+            "notes": "Script completed: node scripts/app-feedback/parse-feedback.mjs --feedback 'feedback/consumer-radar-product-feedback.md' --out .workflow/app-feedback/feedback-analysis.json",
+            "usage": null
+          },
+          "apply_enhancement": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/e13919244f75906e6e71bd55689542b555b043361da8bca8c82ef7a95a136f3a"
+            },
+            "notes": "Script completed: node scripts/app-feedback/apply-feedback-enhancement.mjs --target 'consumer-radar' --app-dir 'apps/generated-consumer-app-radar' --feedback 'feedback/consumer-radar-product-feedback.md'",
+            "usage": null
+          },
           "native_checks": {
             "status": "succeeded",
             "context_updates": {
@@ -1497,6 +1525,93 @@
             },
             "notes": "Script completed: node scripts/app-feedback/spec-kitty-feedback-gate.mjs --analysis .workflow/app-feedback/feedback-analysis.json --out .workflow/app-feedback/spec-kitty-feedback-gate.json --target 'consumer-radar'",
             "usage": null
+          }
+        },
+        "next_node_id": "product_surface_gate",
+        "git_commit_sha": "5f84417e1498162e94de4a64af665e2aa814694a",
+        "node_visits": {
+          "parse_feedback": 1,
+          "start": 1,
+          "apply_enhancement": 1,
+          "wait_for_support_files": 1,
+          "native_checks": 1,
+          "spec_kitty_feedback_gate": 1
+        }
+      },
+      "diff": {
+        "patch": "diff --git a/apps/generated-consumer-app-radar/.data/apps.json b/apps/generated-consumer-app-radar/.data/apps.json\nindex 5da8242..f7e2aa5 100644\n--- a/apps/generated-consumer-app-radar/.data/apps.json\n+++ b/apps/generated-consumer-app-radar/.data/apps.json\n@@ -91,7 +91,7 @@\n       \"confidence\": 0.58,\n       \"basis\": \"Fixture-backed hypothesis. No live Apify social scrape was completed in this run.\",\n       \"liveScraped\": false,\n-      \"sourceMode\": \"fixture\"\n+      \"sourceMode\": \"manual-seed\"\n     },\n     \"reviewSamples\": [\n       {\n@@ -129,7 +129,7 @@\n         \"verifiedLiveScrape\": false\n       }\n     ],\n-    \"dataMode\": \"fixture\",\n+    \"dataMode\": \"manual-seed\",\n     \"opportunityScore\": 92,\n     \"radarRank\": 1\n   },\n@@ -224,7 +224,7 @@\n       \"confidence\": 0.58,\n       \"basis\": \"Fixture-backed hypothesis. No live Apify social scrape was completed in this run.\",\n       \"liveScraped\": false,\n-      \"sourceMode\": \"fixture\"\n+      \"sourceMode\": \"manual-seed\"\n     },\n     \"reviewSamples\": [\n       {\n@@ -262,7 +262,7 @@\n         \"verifiedLiveScrape\": false\n       }\n     ],\n-    \"dataMode\": \"fixture\",\n+    \"dataMode\": \"manual-seed\",\n     \"opportunityScore\": 77,\n     \"radarRank\": 2\n   },\n@@ -357,7 +357,7 @@\n       \"confidence\": 0.58,\n       \"basis\": \"Fixture-backed hypothesis. No live Apify social scrape was completed in this run.\",\n       \"liveScraped\": false,\n-      \"sourceMode\": \"fixture\"\n+      \"sourceMode\": \"manual-seed\"\n     },\n     \"reviewSamples\": [\n       {\n@@ -395,7 +395,7 @@\n         \"verifiedLiveScrape\": false\n       }\n     ],\n-    \"dataMode\": \"fixture\",\n+    \"dataMode\": \"manual-seed\",\n     \"opportunityScore\": 74,\n     \"radarRank\": 3\n   },\n@@ -490,7 +490,7 @@\n       \"confidence\": 0.58,\n       \"basis\": \"Fixture-backed hypothesis. No live Apify social scrape was completed in this run.\",\n       \"liveScraped\": false,\n-      \"sourceMode\": \"fixture\"\n+      \"sourceMode\": \"manual-seed\"\n     },\n     \"reviewSamples\": [\n       {\n@@ -528,7 +528,7 @@\n         \"verifiedLiveScrape\": false\n       }\n     ],\n-    \"dataMode\": \"fixture\",\n+    \"dataMode\": \"manual-seed\",\n     \"opportunityScore\": 71,\n     \"radarRank\": 4\n   },\n@@ -623,7 +623,7 @@\n       \"confidence\": 0.58,\n       \"basis\": \"Fixture-backed hypothesis. No live Apify social scrape was completed in this run.\",\n       \"liveScraped\": false,\n-      \"sourceMode\": \"fixture\"\n+      \"sourceMode\": \"manual-seed\"\n     },\n     \"reviewSamples\": [\n       {\n@@ -661,7 +661,7 @@\n         \"verifiedLiveScrape\": false\n       }\n     ],\n-    \"dataMode\": \"fixture\",\n+    \"dataMode\": \"manual-seed\",\n     \"opportunityScore\": 70,\n     \"radarRank\": 5\n   },\n@@ -756,7 +756,7 @@\n       \"confidence\": 0.58,\n       \"basis\": \"Fixture-backed hypothesis. No live Apify social scrape was completed in this run.\",\n       \"liveScraped\": false,\n-      \"sourceMode\": \"fixture\"\n+      \"sourceMode\": \"manual-seed\"\n     },\n     \"reviewSamples\": [\n       {\n@@ -794,7 +794,7 @@\n         \"verifiedLiveScrape\": false\n       }\n     ],\n-    \"dataMode\": \"fixture\",\n+    \"dataMode\": \"manual-seed\",\n     \"opportunityScore\": 66,\n     \"radarRank\": 6\n   },\n@@ -889,7 +889,7 @@\n       \"confidence\": 0.58,\n       \"basis\": \"Fixture-backed hypothesis. No live Apify social scrape was completed in this run.\",\n       \"liveScraped\": false,\n-      \"sourceMode\": \"fixture\"\n+      \"sourceMode\": \"manual-seed\"\n     },\n     \"reviewSamples\": [\n       {\n@@ -927,7 +927,7 @@\n         \"verifiedLiveScrape\": false\n       }\n     ],\n-    \"dataMode\": \"fixture\",\n+    \"dataMode\": \"manual-seed\",\n     \"opportunityScore\": 59,\n     \"radarRank\": 7\n   },\n@@ -1022,7 +1022,7 @@\n       \"confidence\": 0.58,\n       \"basis\": \"Fixture-backed hypothesis. No live Apify social scrape was completed in this run.\",\n       \"liveScraped\": false,\n-      \"sourceMode\": \"fixture\"\n+      \"sourceMode\": \"manual-seed\"\n     },\n     \"reviewSamples\": [\n       {\n@@ -1060,8 +1060,115 @@\n         \"verifiedLiveScrape\": false\n       }\n     ],\n-    \"dataMode\": \"fixture\",\n+    \"dataMode\": \"manual-seed\",\n     \"opportunityScore\": 57,\n     \"radarRank\": 8\n+  },\n+  {\n+    \"id\": \"test-focus-app\",\n+    \"name\": \"Test Focus App\",\n+    \"category\": \"Productivity\",\n+    \"country\": \"US\",\n+    \"appStoreId\": \"test-focus-app\",\n+    \"currentRank\": 140,\n+    \"isCategoryLeader\": false,\n+    \"categoryLeader\": false,\n+    \"sizeBand\": \"manual-seed\",\n+    \"rankDelta4w\": 18,\n+    \"reviewDelta4w\": 12,\n+    \"rating\": 4.5,\n+    \"socialDelta4w\": 20,\n+    \"socialStrategy\": [\n+      \"Manual seed awaiting live social scrape\"\n+    ],\n+    \"reviewThemes\": [\n+      \"Research target added manually\"\n+    ],\n+    \"featureRequests\": [\n+      \"Run live review scrape\",\n+      \"Find TikTok and Instagram content examples\"\n+    ],\n+    \"evidence\": [\n+      \"Manual seed from Add app form\"\n+    ],\n+    \"weeklySnapshots\": [\n+      {\n+        \"week\": \"4w ago\",\n+        \"rank\": 158,\n+        \"reviewCount\": 90,\n+        \"socialMentions\": 45\n+      },\n+      {\n+        \"week\": \"3w ago\",\n+        \"rank\": 153,\n+        \"reviewCount\": 95,\n+        \"socialMentions\": 50\n+      },\n+      {\n+        \"week\": \"2w ago\",\n+        \"rank\": 148,\n+        \"reviewCount\": 99,\n+        \"socialMentions\": 57\n+      },\n+      {\n+        \"week\": \"1w ago\",\n+        \"rank\": 143,\n+        \"reviewCount\": 103,\n+        \"socialMentions\": 62\n+      },\n+      {\n+        \"week\": \"current\",\n+        \"rank\": 140,\n+        \"reviewCount\": 108,\n+        \"socialMentions\": 69\n+      }\n+    ],\n+    \"investigationAngles\": [\n+      \"Validate App Store rank movement before treating this as a true opportunity.\",\n+      \"Run Apify search for TikTok and Instagram posts that mention this app.\",\n+      \"Scrape recent App Store reviews and replace the manual placeholder pain points.\"\n+    ],\n+    \"growthHypothesis\": {\n+      \"text\": \"Manual research seed; no growth claim yet.\",\n+      \"confidence\": 0.25,\n+      \"basis\": \"Fixture-backed hypothesis. No live Apify social scrape was completed in this run.\",\n+      \"liveScraped\": false,\n+      \"sourceMode\": \"manual-seed\"\n+    },\n+    \"reviewSamples\": [\n+      {\n+        \"rating\": 0,\n+        \"title\": \"Manual seed\",\n+        \"body\": \"Run review ingestion to populate real customer feedback.\",\n+        \"source\": \"manual-placeholder\"\n+      }\n+    ],\n+    \"exampleContent\": [\n+      {\n+        \"platform\": \"TikTok\",\n+        \"creator\": \"pending\",\n+        \"format\": \"pending scrape\",\n+        \"hook\": \"Search needed\",\n+        \"caption\": \"Run Apify to find example content.\",\n+        \"engagement\": 0,\n+        \"source\": \"manual-placeholder\",\n+        \"verifiedLiveScrape\": false\n+      }\n+    ],\n+    \"dataSources\": [\n+      {\n+        \"name\": \"Manual seed\",\n+        \"status\": \"active\",\n+        \"note\": \"Added through the dashboard form.\"\n+      },\n+      {\n+        \"name\": \"Apify TikTok/Instagram\",\n+        \"status\": \"not-run\",\n+        \"note\": \"Use live refresh once actors are tuned.\"\n+      }\n+    ],\n+    \"dataMode\": \"manual-seed\",\n+    \"opportunityScore\": 34,\n+    \"radarRank\": 9\n   }\n ]\ndiff --git a/reports/consumer-radar/quality/native-checks.json b/reports/consumer-radar/quality/native-checks.json\nindex e6d6af6..6ff994a 100644\n--- a/reports/consumer-radar/quality/native-checks.json\n+++ b/reports/consumer-radar/quality/native-checks.json\n@@ -11,7 +11,7 @@\n     {\n       \"command\": \"npm test\",\n       \"status\": 0,\n-      \"stdout\": \"\\n> test\\n> node --test tests/*.test.js\\n\\n✔ fixture ingest produces ranked apps (1.885834ms)\\n✔ fixture data is explicit about non-live growth evidence (2.089458ms)\\n✔ ranking prefers emerging fast growers over category leaders (0.130792ms)\\n✔ custom app addition creates a ranked research seed (1.904167ms)\\n✔ frontend surfaces feedback-driven controls and evidence panels (0.259125ms)\\n✔ score rewards acceleration and review/social velocity (1.573167ms)\\n✔ rankApps sorts by opportunity score (0.1985ms)\\nℹ tests 7\\nℹ suites 0\\nℹ pass 7\\nℹ fail 0\\nℹ cancelled 0\\nℹ skipped 0\\nℹ todo 0\\nℹ duration_ms 80.105625\\n\",\n+      \"stdout\": \"\\n> test\\n> node --test tests/*.test.js\\n\\nTAP version 13\\n# Subtest: fixture ingest produces ranked apps\\nok 1 - fixture ingest produces ranked apps\\n  ---\\n  duration_ms: 2.315432\\n  type: 'test'\\n  ...\\n# Subtest: fixture data is explicit about non-live growth evidence\\nok 2 - fixture data is explicit about non-live growth evidence\\n  ---\\n  duration_ms: 1.947832\\n  type: 'test'\\n  ...\\n# Subtest: ranking prefers emerging fast growers over category leaders\\nok 3 - ranking prefers emerging fast growers over category leaders\\n  ---\\n  duration_ms: 0.16344\\n  type: 'test'\\n  ...\\n# Subtest: custom app addition creates a ranked research seed\\nok 4 - custom app addition creates a ranked research seed\\n  ---\\n  duration_ms: 1.971292\\n  type: 'test'\\n  ...\\n# Subtest: frontend surfaces feedback-driven controls and evidence panels\\nok 5 - frontend surfaces feedback-driven controls and evidence panels\\n  ---\\n  duration_ms: 0.19593\\n  type: 'test'\\n  ...\\n# Subtest: score rewards acceleration and review/social velocity\\nok 6 - score rewards acceleration and review/social velocity\\n  ---\\n  duration_ms: 0.60638\\n  type: 'test'\\n  ...\\n# Subtest: rankApps sorts by opportunity score\\nok 7 - rankApps sorts by opportunity score\\n  ---\\n  duration_ms: 0.19695\\n  type: 'test'\\n  ...\\n1..7\\n# tests 7\\n# suites 0\\n# pass 7\\n# fail 0\\n# cancelled 0\\n# skipped 0\\n# todo 0\\n# duration_ms 118.353422\\n\",\n       \"stderr\": \"\"\n     },\n     {\n",
+        "summary": {
+          "files_changed": 11,
+          "additions": 291,
+          "deletions": 681
+        }
+      }
+    },
+    {
+      "seq": 0,
+      "checkpoint": {
+        "timestamp": "2026-05-13T16:52:57.236828202Z",
+        "current_node": "product_surface_gate",
+        "completed_nodes": [
+          "start",
+          "wait_for_support_files",
+          "parse_feedback",
+          "spec_kitty_feedback_gate",
+          "apply_enhancement",
+          "native_checks",
+          "product_surface_gate"
+        ],
+        "node_retries": {},
+        "context_values": {
+          "thread.start.current_node": "wait_for_support_files",
+          "command.output": "blob://sha256/10236580d31bb7837ec1fd3bc1e6c8e4f05485ea7c46ef3f8e1af4ba69c6969b",
+          "internal.work_dir": "/home/daytona/workspace",
+          "current_node": "product_surface_gate",
+          "internal.retry_count.wait_for_support_files": 0,
+          "internal.retry_count.spec_kitty_feedback_gate": 0,
+          "failure_class": "",
+          "graph.outputs": "feedback_analysis, enhanced_app, quality_reports, review_consensus, handoff",
+          "graph.inputs": "app_dir, feedback_path, target_adapter, real_mode, allow_quality_fallback, minimum_active_reviews",
+          "internal.thread_id": "native_checks",
+          "graph.model_stylesheet": "\n            *       { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: low; }\n            .review { provider: openrouter; model: google/gemini-3.1-pro-preview; reasoning_effort: high; }\n            .cheap  { provider: openrouter; model: deepseek/deepseek-v4-flash; reasoning_effort: low; }\n        ",
+          "internal.retry_count.start": 0,
+          "internal.retry_count.parse_feedback": 0,
+          "thread.cheap.current_node": "apply_enhancement",
+          "thread.apply_enhancement.current_node": "native_checks",
+          "thread.wait_for_support_files.current_node": "parse_feedback",
+          "internal.run_id": "01KRH41V4MPCQXV5V7Z0795E2T",
+          "graph.retry_target": "apply_enhancement",
+          "graph.goal": "Enhance Consumer App Radar from product feedback using the generic app feedback workflow",
+          "graph.persona": "app-feedback-workflow-builder",
+          "graph.rankdir": "LR",
+          "failure_signature": "",
+          "internal.retry_count.apply_enhancement": 0,
+          "internal.retry_count.product_surface_gate": 0,
+          "graph.default_max_retries": "2",
+          "internal.fidelity": "compact",
+          "thread.parse_feedback.current_node": "spec_kitty_feedback_gate",
+          "graph.fallback_retry_target": "apply_enhancement",
+          "thread.native_checks.current_node": "product_surface_gate",
+          "internal.retry_count.native_checks": 0,
+          "outcome": "succeeded",
+          "internal.node_visit_count": 1
+        },
+        "node_outcomes": {
+          "spec_kitty_feedback_gate": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/41c40c06c8259d1f1b0b7afabaabfd4ae60308f088df97538f8e7985070da89d"
+            },
+            "notes": "Script completed: node scripts/app-feedback/spec-kitty-feedback-gate.mjs --analysis .workflow/app-feedback/feedback-analysis.json --out .workflow/app-feedback/spec-kitty-feedback-gate.json --target 'consumer-radar'",
+            "usage": null
+          },
+          "native_checks": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/3cb84a9bb9e20844631d561961b12684816930e946cc09fc74b597b239f65682"
+            },
+            "notes": "Script completed: node scripts/consumer-radar/run-native-checks.mjs 'apps/generated-consumer-app-radar'",
+            "usage": null
           },
           "start": {
             "status": "succeeded",
@@ -1510,14 +1625,6 @@
             "notes": "Script completed: node scripts/app-feedback/parse-feedback.mjs --feedback 'feedback/consumer-radar-product-feedback.md' --out .workflow/app-feedback/feedback-analysis.json",
             "usage": null
           },
-          "wait_for_support_files": {
-            "status": "succeeded",
-            "context_updates": {
-              "command.output": "blob://sha256/b5a3a27785c10a6fc1f5a02472c6297fcb9708eaa1c0cfbdc52dacf40288112b"
-            },
-            "notes": "Script completed: for i in $(seq 1 90); do if [ -f scripts/app-feedback/parse-feedback.mjs ] && [ -f scripts/app-feedback/apply-feedback-enhancement.mjs ] && [ -f 'feedback/consumer-radar-product-feedback.md' ]; then echo feedback-support-ready; exit 0; fi; sleep 2; done; echo 'missing feedback enhancement support files' >&2; exit 1",
-            "usage": null
-          },
           "apply_enhancement": {
             "status": "succeeded",
             "context_updates": {
@@ -1525,15 +1632,32 @@
             },
             "notes": "Script completed: node scripts/app-feedback/apply-feedback-enhancement.mjs --target 'consumer-radar' --app-dir 'apps/generated-consumer-app-radar' --feedback 'feedback/consumer-radar-product-feedback.md'",
             "usage": null
+          },
+          "product_surface_gate": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/10236580d31bb7837ec1fd3bc1e6c8e4f05485ea7c46ef3f8e1af4ba69c6969b"
+            },
+            "notes": "Script completed: node scripts/consumer-radar/assert-product-surface.mjs 'apps/generated-consumer-app-radar'",
+            "usage": null
+          },
+          "wait_for_support_files": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/b5a3a27785c10a6fc1f5a02472c6297fcb9708eaa1c0cfbdc52dacf40288112b"
+            },
+            "notes": "Script completed: for i in $(seq 1 90); do if [ -f scripts/app-feedback/parse-feedback.mjs ] && [ -f scripts/app-feedback/apply-feedback-enhancement.mjs ] && [ -f 'feedback/consumer-radar-product-feedback.md' ]; then echo feedback-support-ready; exit 0; fi; sleep 2; done; echo 'missing feedback enhancement support files' >&2; exit 1",
+            "usage": null
           }
         },
-        "next_node_id": "product_surface_gate",
+        "next_node_id": "feedback_acceptance_gate",
         "node_visits": {
           "apply_enhancement": 1,
           "start": 1,
           "wait_for_support_files": 1,
           "parse_feedback": 1,
           "spec_kitty_feedback_gate": 1,
+          "product_surface_gate": 1,
           "native_checks": 1
         }
       },
@@ -1676,7 +1800,12 @@
       "first_event_seq": 72,
       "prompt": null,
       "response": null,
-      "completion": null,
+      "completion": {
+        "outcome": "succeeded",
+        "notes": "Script completed: node scripts/consumer-radar/run-native-checks.mjs 'apps/generated-consumer-app-radar'",
+        "failure_reason": null,
+        "timestamp": "2026-05-13T16:52:52.394084137Z"
+      },
       "provider_used": null,
       "diff": null,
       "script_invocation": {
@@ -1698,6 +1827,44 @@
       "live_streaming": true,
       "termination": "exited",
       "started_at": "2026-05-13T16:52:50.082765725Z",
+      "handler": "command",
+      "duration_ms": 2081,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "total_tokens": 0,
+        "reasoning_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "state": "succeeded"
+    },
+    "product_surface_gate@1": {
+      "first_event_seq": 84,
+      "prompt": null,
+      "response": null,
+      "completion": null,
+      "provider_used": null,
+      "diff": null,
+      "script_invocation": {
+        "script": "node scripts/consumer-radar/assert-product-surface.mjs 'apps/generated-consumer-app-radar'",
+        "command": "exec 2>&1\nnode scripts/consumer-radar/assert-product-surface.mjs 'apps/generated-consumer-app-radar'",
+        "language": "shell"
+      },
+      "script_timing": {
+        "output": "blob://sha256/10236580d31bb7837ec1fd3bc1e6c8e4f05485ea7c46ef3f8e1af4ba69c6969b",
+        "exit_code": 0,
+        "duration_ms": 1645,
+        "termination": "exited",
+        "output_bytes": 204,
+        "live_streaming": true
+      },
+      "parallel_results": null,
+      "output": null,
+      "output_bytes": 204,
+      "live_streaming": true,
+      "termination": "exited",
+      "started_at": "2026-05-13T16:52:55.504272840Z",
       "handler": "command",
       "usage": {
         "input_tokens": 0,
