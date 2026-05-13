@@ -40,6 +40,14 @@ digraph ConsumerRadarLiveEnrichment {
     ]
     plan_join [shape=tripleoctagon, label="Plan Join", join_policy="wait_all"]
 
+    ensure_plan_candidates [
+        label="Ensure Plan Candidates",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="implementation_plan_fanout",
+        script="node scripts/app-feedback/ensure-live-enrichment-plans.mjs --plans .workflow/consumer-radar-live-enrichment/plans --minimum-candidates 2"
+    ]
+
     plan_eval [
         label="Plan Eval",
         shape=parallelogram,
@@ -148,7 +156,8 @@ digraph ConsumerRadarLiveEnrichment {
     implementation_plan_fanout -> plan_product_surface
     plan_live_sources -> plan_join
     plan_product_surface -> plan_join
-    plan_join -> plan_eval
+    plan_join -> ensure_plan_candidates
+    ensure_plan_candidates -> plan_eval
     plan_eval -> implement_live_enrichment [condition="outcome=succeeded"]
     plan_eval -> implementation_plan_fanout [label="Replan"]
     implement_live_enrichment -> native_checks [condition="outcome=succeeded"]

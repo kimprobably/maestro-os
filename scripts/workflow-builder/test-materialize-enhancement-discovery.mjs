@@ -36,6 +36,7 @@ const requiredFiles = [
   "scripts/app-feedback/ensure-enhancement-candidates.mjs",
   "scripts/app-feedback/fabro-validate-compat.mjs",
   "scripts/app-feedback/materialize-enhancement-workflow.mjs",
+  "scripts/app-feedback/ensure-live-enrichment-plans.mjs",
   "scripts/app-feedback/live-source-preflight.mjs",
   "scripts/app-feedback/promptfoo-workflow-quality.mjs",
   "scripts/app-feedback/validate-enhancement-discovery.mjs",
@@ -100,6 +101,10 @@ if (childMaterialize.status !== 0) {
 
 const childRunConfig = readFileSync(
   resolve(outDir, "workflows/consumer-radar/live-enrichment.toml"),
+  "utf8",
+);
+const childWorkflow = readFileSync(
+  resolve(outDir, "workflows/consumer-radar/live-enrichment.fabro"),
   "utf8",
 );
 const prompts = [
@@ -235,6 +240,17 @@ for (const actorDefault of [
 ]) {
   if (!childRunConfig.includes(actorDefault)) {
     throw new Error(`generated child run config missing public actor default: ${actorDefault}`);
+  }
+}
+
+for (const marker of [
+  "ensure_plan_candidates",
+  "ensure-live-enrichment-plans",
+  "plan_join -> ensure_plan_candidates",
+  "ensure_plan_candidates -> plan_eval",
+]) {
+  if (!childWorkflow.includes(marker)) {
+    throw new Error(`generated child workflow missing deterministic plan guard: ${marker}`);
   }
 }
 

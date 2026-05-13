@@ -36,6 +36,7 @@ const generatedFiles = [
   "scripts/app-feedback/ensure-enhancement-candidates.mjs",
   "scripts/app-feedback/fabro-validate-compat.mjs",
   "scripts/app-feedback/materialize-enhancement-workflow.mjs",
+  "scripts/app-feedback/ensure-live-enrichment-plans.mjs",
   "scripts/app-feedback/live-source-preflight.mjs",
   "scripts/app-feedback/promptfoo-workflow-quality.mjs",
   "scripts/app-feedback/validate-enhancement-discovery.mjs",
