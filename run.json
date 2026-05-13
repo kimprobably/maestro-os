@@ -360,14 +360,118 @@
     }
   },
   "web_url": "http://127.0.0.1:32276/runs/01KRGSV3XBHVD54Z5S7VMPQ46Q",
-  "start": null,
-  "status": {
-    "kind": "starting"
+  "start": {
+    "start_time": "2026-05-13T13:53:57.319908Z",
+    "run_branch": "fabro/run/01KRGSV3XBHVD54Z5S7VMPQ46Q",
+    "base_sha": "7e8836e72ecb4abeca76e01bd7d9e1600f93f38c"
   },
-  "status_updated_at": "2026-05-13T13:53:54.638798Z",
-  "last_event_at": "2026-05-13T13:53:56.888815Z",
+  "status": {
+    "kind": "running"
+  },
+  "status_updated_at": "2026-05-13T13:53:57.319955Z",
+  "last_event_at": "2026-05-13T13:54:44.320337Z",
   "pending_control": null,
-  "checkpoints": [],
+  "checkpoints": [
+    {
+      "seq": 18,
+      "checkpoint": {
+        "timestamp": "2026-05-13T13:53:58.640246Z",
+        "current_node": "start",
+        "completed_nodes": [
+          "start"
+        ],
+        "node_retries": {},
+        "context_values": {
+          "internal.work_dir": "/home/daytona/workspace",
+          "graph.inputs": "",
+          "graph.outputs": "spike_workflow_registry_report",
+          "outcome": "succeeded",
+          "current_node": "start",
+          "graph.retry_target": "register_workflows",
+          "graph.model_stylesheet": "\n            *       { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: low; }\n            .coding { provider: openrouter; model: qwen/qwen3.6-plus; reasoning_effort: high; }\n            .review { provider: openrouter; model: google/gemini-3.1-pro-preview; reasoning_effort: high; }\n        ",
+          "graph.rankdir": "LR",
+          "graph.fallback_retry_target": "register_workflows",
+          "internal.fidelity": "compact",
+          "internal.node_visit_count": 1,
+          "internal.retry_count.start": 0,
+          "failure_signature": "",
+          "internal.run_id": "01KRGSV3XBHVD54Z5S7VMPQ46Q",
+          "graph.persona": "workflow-registry",
+          "failure_class": "",
+          "graph.goal": "Validate, quality-check, and register all spike Fabro workflows in Daytona",
+          "internal.thread_id": null,
+          "graph.default_max_retries": "1"
+        },
+        "node_outcomes": {
+          "start": {
+            "status": "succeeded",
+            "usage": null
+          }
+        },
+        "next_node_id": "register_workflows",
+        "node_visits": {
+          "start": 1
+        }
+      },
+      "diff": {}
+    },
+    {
+      "seq": 0,
+      "checkpoint": {
+        "timestamp": "2026-05-13T13:54:44.688564Z",
+        "current_node": "register_workflows",
+        "completed_nodes": [
+          "start",
+          "register_workflows"
+        ],
+        "node_retries": {},
+        "context_values": {
+          "graph.goal": "Validate, quality-check, and register all spike Fabro workflows in Daytona",
+          "graph.default_max_retries": "1",
+          "graph.retry_target": "register_workflows",
+          "graph.persona": "workflow-registry",
+          "internal.fidelity": "compact",
+          "command.output": "blob://sha256/e8c4eb177d929c2dac2be44d079528feeddb2be3a125c9179c7ac3774eee1b5d",
+          "graph.model_stylesheet": "\n            *       { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: low; }\n            .coding { provider: openrouter; model: qwen/qwen3.6-plus; reasoning_effort: high; }\n            .review { provider: openrouter; model: google/gemini-3.1-pro-preview; reasoning_effort: high; }\n        ",
+          "outcome": "succeeded",
+          "failure_signature": "",
+          "graph.outputs": "spike_workflow_registry_report",
+          "internal.thread_id": "start",
+          "internal.run_id": "01KRGSV3XBHVD54Z5S7VMPQ46Q",
+          "internal.retry_count.start": 0,
+          "failure_class": "",
+          "graph.rankdir": "LR",
+          "current_node": "register_workflows",
+          "graph.fallback_retry_target": "register_workflows",
+          "internal.work_dir": "/home/daytona/workspace",
+          "internal.node_visit_count": 1,
+          "thread.start.current_node": "register_workflows",
+          "graph.inputs": "",
+          "internal.retry_count.register_workflows": 0
+        },
+        "node_outcomes": {
+          "start": {
+            "status": "succeeded",
+            "usage": null
+          },
+          "register_workflows": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/e8c4eb177d929c2dac2be44d079528feeddb2be3a125c9179c7ac3774eee1b5d"
+            },
+            "notes": "Script completed: node scripts/register-spike-workflows.mjs .workflow/spike-workflow-registry.json",
+            "usage": null
+          }
+        },
+        "next_node_id": "write_report",
+        "node_visits": {
+          "start": 1,
+          "register_workflows": 1
+        }
+      },
+      "diff": {}
+    }
+  ],
   "conclusion": null,
   "sandbox": {
     "provider": "daytona",
@@ -384,5 +488,72 @@
   "pull_request": null,
   "superseded_by": null,
   "pending_interviews": {},
-  "stages": {}
+  "stages": {
+    "start@1": {
+      "first_event_seq": 15,
+      "prompt": null,
+      "response": null,
+      "completion": {
+        "outcome": "succeeded",
+        "notes": null,
+        "failure_reason": null,
+        "timestamp": "2026-05-13T13:53:58.640048Z"
+      },
+      "provider_used": null,
+      "diff": null,
+      "script_invocation": null,
+      "script_timing": null,
+      "parallel_results": null,
+      "output": null,
+      "started_at": "2026-05-13T13:53:58.539479Z",
+      "handler": "start",
+      "duration_ms": 0,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "total_tokens": 0,
+        "reasoning_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "state": "succeeded"
+    },
+    "register_workflows@1": {
+      "first_event_seq": 19,
+      "prompt": null,
+      "response": null,
+      "completion": null,
+      "provider_used": null,
+      "diff": null,
+      "script_invocation": {
+        "script": "node scripts/register-spike-workflows.mjs .workflow/spike-workflow-registry.json",
+        "command": "exec 2>&1\nnode scripts/register-spike-workflows.mjs .workflow/spike-workflow-registry.json",
+        "language": "shell"
+      },
+      "script_timing": {
+        "output": "blob://sha256/e8c4eb177d929c2dac2be44d079528feeddb2be3a125c9179c7ac3774eee1b5d",
+        "exit_code": 0,
+        "duration_ms": 45675,
+        "termination": "exited",
+        "output_bytes": 4765,
+        "live_streaming": true
+      },
+      "parallel_results": null,
+      "output": null,
+      "output_bytes": 4765,
+      "live_streaming": true,
+      "termination": "exited",
+      "started_at": "2026-05-13T13:53:58.640390Z",
+      "handler": "command",
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "total_tokens": 0,
+        "reasoning_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "state": "running"
+    }
+  }
 }
