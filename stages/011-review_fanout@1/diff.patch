@@ -1,0 +1,44 @@
+diff --git a/reports/consumer-radar/reviews/deepseek.json b/reports/consumer-radar/reviews/deepseek.json
+new file mode 100644
+index 0000000..6697cb0
+--- /dev/null
++++ b/reports/consumer-radar/reviews/deepseek.json
+@@ -0,0 +1,38 @@
++{
++  "ok": true,
++  "skipped": false,
++  "real_mode": true,
++  "model": "deepseek/deepseek-v4-flash",
++  "role": "simplification_and_ci",
++  "status": 200,
++  "parsed": {
++    "verdict": "APPROVE",
++    "score": 0.97,
++    "findings": [
++      {
++        "severity": "low",
++        "issue": "Static file serving uses simple path prefix check, not fully hardened against traversal",
++        "fix": "For production, use a more robust check (e.g., path.resolve and ensure within publicDir), but acceptable for spike"
++      },
++      {
++        "severity": "low",
++        "issue": "Public/app.js detail view expects socialStrategy/reviewThemes/featureRequests arrays; safe fallback via (items||[]) exists",
++        "fix": "No change needed, but ensure fixture data includes these fields"
++      },
++      {
++        "severity": "info",
++        "issue": "Live data adapters (Apple, Apify) are scaffolded but not integrated into main flow in this pass",
++        "fix": "Future: connect refreshApps to live adapters when tokens are set; currently fixture-only is acceptable"
++      }
++    ],
++    "suggested_next_steps": [
++      "Add tests for API endpoints using Node test runner with mock server",
++      "Wire live adapters into ingest.js for 'live' mode with environment variable guards",
++      "Add Qlty and Promptfoo configurations to the workflow orchestration layer"
++    ]
++  },
++  "raw_excerpt": "{\n  \"verdict\": \"APPROVE\",\n  \"score\": 0.97,\n  \"findings\": [\n    {\n      \"severity\": \"low\",\n      \"issue\": \"Static file serving uses simple path prefix check, not fully hardened against traversal\",\n      \"fix\": \"For production, use a more robust check (e.g., path.resolve and ensure within publicDir), but acceptable for spike\"\n    },\n    {\n      \"severity\": \"low\",\n      \"issue\": \"Public/app.js detail view expects socialStrategy/reviewThemes/featureRequests arrays; safe fallback via (items||[]) exists\",\n      \"fix\": \"No change needed, but ensure fixture data includes these fields\"\n    },\n    {\n      \"severity\": \"info\",\n      \"issue\": \"Live data adapters (Apple, Apify) are scaffolded but not integrated into main flow in this pass\",\n      \"fix\": \"Future: connect refreshApps to live adapters when tokens are set; currently fixture-only is acceptable\"\n    }\n  ],\n  \"suggested_next_steps\": [\n    \"Add tests for API endpoints using Node test runner with mock server\",\n    \"Wire live adapters into ingest.js for 'live' mode with environment variable guards\",\n    \"Add Qlty and Promptfoo configurations to the workflow orchestration layer\"\n  ]\n}",
++  "error": null,
++  "payload_excerpt": null,
++  "payload_text_excerpt": "\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n{\"id\":\"gen-1778672728-ELc6aBPT91E2q13pcow6\",\"object\":\"chat.completion\",\"created\":1778672728,\"model\":\"deepseek/deepseek-v4-flash-20260423\",\"provider\":\"SiliconFlow\",\"system_fingerprint\":\"fp_8b330d02d0_prod0820_fp8_kvcache_20260402\",\"choices\":[{\"index\":0,\"logprobs\":null,\"finish_reason\":\"stop\",\"native_finish_reason\":\"stop\",\"message\":{\"role\":\"assistant\",\"content\":\"{\\n  \\\"verdict\\\": \\\"APPROVE\\\",\\n  \\\"score\\\": 0.97,\\n  \\\"findings\\\": [\\n    {\\n      \\\"severity\\\": \\\"low\\\",\\n      \\\"issue\\\": \\\"Static file serving uses simple path prefix check, not fully hardened against traversal\\\",\\n      \\\"fix\\\": \\\"For production, use a more robust check (e.g., path.resolve and ensure within publicDir), but acceptable for spike\\\"\\n"
++}
