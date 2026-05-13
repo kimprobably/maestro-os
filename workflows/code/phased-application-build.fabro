@@ -1,0 +1,268 @@
+digraph PhasedApplicationBuild {
+    graph [
+        goal="Build an application from a goal or spec through reusable phased implementation and verification",
+        persona="code-factory",
+        inputs="goal_path, spec_path, app_dir",
+        outputs="application, phase_evidence, final_review, handoff",
+        default_max_retries=2,
+        retry_target="phase_plan",
+        fallback_retry_target="phase_plan",
+        model_stylesheet="
+            *              { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: low; }
+            .spec          { backend: cli; provider: anthropic; model: claude-sonnet-4-5; reasoning_effort: high; }
+            .coding        { backend: cli; provider: anthropic; model: claude-sonnet-4-5; reasoning_effort: high; }
+            .verify        { backend: cli; provider: anthropic; model: claude-sonnet-4-5; reasoning_effort: high; }
+            .review        { backend: cli; provider: anthropic; model: claude-sonnet-4-5; reasoning_effort: high; }
+            .security      { backend: cli; provider: anthropic; model: claude-sonnet-4-5; reasoning_effort: high; }
+        "
+    ]
+    rankdir=LR
+
+    start [shape=Mdiamond, label="Start"]
+    exit  [shape=Msquare, label="Exit"]
+
+    bootstrap [
+        label="Bootstrap Context",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="bootstrap",
+        script="mkdir -p .workflow/phased/evidence '{{ inputs.app_dir|default('apps/generated-phased-app') }}'; if [ -f '{{ inputs.spec_path|default('.workflow/phased/spec.md') }}' ]; then cp '{{ inputs.spec_path|default('.workflow/phased/spec.md') }}' .workflow/phased/source-spec.md; elif [ -f '{{ inputs.goal_path|default('specs/factory/vague-goal.md') }}' ]; then cp '{{ inputs.goal_path|default('specs/factory/vague-goal.md') }}' .workflow/phased/source-goal.md; else echo 'missing goal_path or spec_path' >&2; exit 1; fi; ./bin/maestro knowledge get architecture-principles coding-standards workflow-standards known-gotchas validator-library fabro-workflow-patterns --format text > .workflow/phased/maestro-context.md; echo phased-context-loaded"
+    ]
+
+    expand_goal [
+        label="Expand Goal Or Spec",
+        class="spec",
+        goal_gate=true,
+        retry_target="expand_goal",
+        prompt="@../../prompts/code-phased/expand-goal.md"
+    ]
+
+    validate_spec [
+        label="Validate Expanded Spec",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="expand_goal",
+        script="./bin/maestro verify spec-quality .workflow/phased/spec.md"
+    ]
+
+    phase_plan [
+        label="Create Phase Plan",
+        class="spec",
+        goal_gate=true,
+        retry_target="phase_plan",
+        prompt="@../../prompts/code-phased/phase-plan.md"
+    ]
+
+    validate_phase_plan [
+        label="Validate Phase Plan",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="phase_plan",
+        script="node -e \"const fs=require('fs'); const data=JSON.parse(fs.readFileSync('.workflow/phased/phase-plan.json','utf8')); const ids=(data.phases||[]).map((p)=>p.id); const expected=['foundation','core','interface','integration']; if (JSON.stringify(ids)!==JSON.stringify(expected)) throw new Error('phase ids must be ' + expected.join(',')); if (data.app_dir !== '{{ inputs.app_dir|default('apps/generated-phased-app') }}') throw new Error('phase plan app_dir mismatch'); for (const phase of data.phases) { for (const key of ['title','objective','files','acceptance','commands','evidence','risks']) { if (phase[key] == null) throw new Error('phase ' + phase.id + ' missing ' + key); } if (!Array.isArray(phase.acceptance) || phase.acceptance.length === 0) throw new Error('phase ' + phase.id + ' has no acceptance criteria'); } console.log(JSON.stringify({ok:true, phases:ids}));\""
+    ]
+
+    approve_plan [shape=hexagon, label="Approve Phase Plan"]
+
+    implement_foundation [
+        label="Implement Foundation",
+        class="coding",
+        goal_gate=true,
+        retry_target="implement_foundation",
+        prompt="@../../prompts/code-phased/implement-foundation.md"
+    ]
+    verify_foundation [
+        label="Verify Foundation",
+        class="verify",
+        goal_gate=true,
+        retry_target="implement_foundation",
+        prompt="@../../prompts/code-phased/verify-foundation.md"
+    ]
+    gate_foundation [
+        label="Foundation Gate",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="implement_foundation",
+        script="node scripts/verify-phased-app-phase.mjs foundation '{{ inputs.app_dir|default('apps/generated-phased-app') }}'"
+    ]
+
+    implement_core [
+        label="Implement Core",
+        class="coding",
+        goal_gate=true,
+        retry_target="implement_core",
+        prompt="@../../prompts/code-phased/implement-core.md"
+    ]
+    verify_core [
+        label="Verify Core",
+        class="verify",
+        goal_gate=true,
+        retry_target="implement_core",
+        prompt="@../../prompts/code-phased/verify-core.md"
+    ]
+    gate_core [
+        label="Core Gate",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="implement_core",
+        script="node scripts/verify-phased-app-phase.mjs core '{{ inputs.app_dir|default('apps/generated-phased-app') }}'"
+    ]
+
+    implement_interface [
+        label="Implement Interface",
+        class="coding",
+        goal_gate=true,
+        retry_target="implement_interface",
+        prompt="@../../prompts/code-phased/implement-interface.md"
+    ]
+    verify_interface [
+        label="Verify Interface",
+        class="verify",
+        goal_gate=true,
+        retry_target="implement_interface",
+        prompt="@../../prompts/code-phased/verify-interface.md"
+    ]
+    gate_interface [
+        label="Interface Gate",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="implement_interface",
+        script="node scripts/verify-phased-app-phase.mjs interface '{{ inputs.app_dir|default('apps/generated-phased-app') }}'"
+    ]
+
+    implement_integration [
+        label="Implement Integration",
+        class="coding",
+        goal_gate=true,
+        retry_target="implement_integration",
+        prompt="@../../prompts/code-phased/implement-integration.md"
+    ]
+    verify_integration [
+        label="Verify Integration",
+        class="verify",
+        goal_gate=true,
+        retry_target="implement_integration",
+        prompt="@../../prompts/code-phased/verify-integration.md"
+    ]
+    gate_integration [
+        label="Integration Gate",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="implement_integration",
+        script="node scripts/verify-phased-app-phase.mjs integration '{{ inputs.app_dir|default('apps/generated-phased-app') }}'"
+    ]
+
+    review_fanout [shape=component, label="Final Review Fan-Out"]
+    correctness_review [label="Correctness Review", class="review", prompt="@../../prompts/code-phased/correctness-review.md"]
+    test_review [label="Test Review", class="review", prompt="@../../prompts/code-phased/test-review.md"]
+    security_review [label="Security Review", class="security", prompt="@../../prompts/code-phased/security-review.md"]
+    simplification_review [label="Simplification Review", class="review", prompt="@../../prompts/code-phased/simplification-review.md"]
+    review_join [shape=tripleoctagon, label="Review Join", join_policy="wait_all"]
+
+    review_consensus [
+        label="Final Goal Review",
+        class="review",
+        goal_gate=true,
+        retry_target="postmortem",
+        prompt="@../../prompts/code-phased/review-consensus.md"
+    ]
+
+    final_goal_gate [
+        label="Final Goal Gate",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="postmortem",
+        script="./bin/maestro verify text-gate .workflow/phased/final-review.md --pass 'VERDICT:\\s*APPROVED' --fail 'VERDICT:\\s*REJECTED|\\bREJECTED\\b'"
+    ]
+
+    postmortem [
+        label="Repair Postmortem",
+        class="review",
+        goal_gate=true,
+        retry_target="phase_plan",
+        prompt="@../../prompts/code-phased/postmortem.md"
+    ]
+
+    approve_release [shape=hexagon, label="Approve Release Handoff"]
+
+    publish_handoff [
+        label="Publish Handoff",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="review_consensus",
+        script="node scripts/write-phased-build-handoff.mjs .workflow/phased/spec.md '{{ inputs.app_dir|default('apps/generated-phased-app') }}'"
+    ]
+
+    memory_summary [
+        label="Memory Summary",
+        shape=parallelogram,
+        script="printf '{\"kind\":\"phased_app_build.completed\",\"payload\":{\"spec_path\":\".workflow/phased/spec.md\",\"app_dir\":\"{{ inputs.app_dir|default('apps/generated-phased-app') }}\"}}' | ./bin/maestro memory append 'team/code/phased-builds' >/dev/null; echo memory-updated"
+    ]
+
+    start -> bootstrap
+    bootstrap -> expand_goal [condition="outcome=succeeded"]
+    bootstrap -> bootstrap [label="Retry", loop_restart=true]
+    expand_goal -> validate_spec [condition="outcome=succeeded"]
+    expand_goal -> expand_goal [loop_restart=true]
+    validate_spec -> phase_plan [condition="outcome=succeeded"]
+    validate_spec -> expand_goal [label="Fix"]
+    phase_plan -> validate_phase_plan [condition="outcome=succeeded"]
+    phase_plan -> phase_plan [loop_restart=true]
+    validate_phase_plan -> approve_plan [condition="outcome=succeeded"]
+    validate_phase_plan -> phase_plan [label="Fix"]
+    approve_plan -> implement_foundation [label="[A] Approve"]
+    approve_plan -> phase_plan [label="[R] Revise"]
+
+    implement_foundation -> verify_foundation [condition="outcome=succeeded"]
+    implement_foundation -> implement_foundation [loop_restart=true]
+    verify_foundation -> gate_foundation [condition="outcome=succeeded"]
+    verify_foundation -> implement_foundation [label="Fix"]
+    gate_foundation -> implement_core [condition="outcome=succeeded"]
+    gate_foundation -> implement_foundation [label="Fix"]
+
+    implement_core -> verify_core [condition="outcome=succeeded"]
+    implement_core -> implement_core [loop_restart=true]
+    verify_core -> gate_core [condition="outcome=succeeded"]
+    verify_core -> implement_core [label="Fix"]
+    gate_core -> implement_interface [condition="outcome=succeeded"]
+    gate_core -> implement_core [label="Fix"]
+
+    implement_interface -> verify_interface [condition="outcome=succeeded"]
+    implement_interface -> implement_interface [loop_restart=true]
+    verify_interface -> gate_interface [condition="outcome=succeeded"]
+    verify_interface -> implement_interface [label="Fix"]
+    gate_interface -> implement_integration [condition="outcome=succeeded"]
+    gate_interface -> implement_interface [label="Fix"]
+
+    implement_integration -> verify_integration [condition="outcome=succeeded"]
+    implement_integration -> implement_integration [loop_restart=true]
+    verify_integration -> gate_integration [condition="outcome=succeeded"]
+    verify_integration -> implement_integration [label="Fix"]
+    gate_integration -> review_fanout [condition="outcome=succeeded"]
+    gate_integration -> implement_integration [label="Fix"]
+
+    review_fanout -> correctness_review
+    review_fanout -> test_review
+    review_fanout -> security_review
+    review_fanout -> simplification_review
+    correctness_review -> review_join [condition="outcome=succeeded"]
+    correctness_review -> implement_integration [label="Fix"]
+    test_review -> review_join [condition="outcome=succeeded"]
+    test_review -> implement_integration [label="Fix"]
+    security_review -> review_join [condition="outcome=succeeded"]
+    security_review -> implement_integration [label="Fix"]
+    simplification_review -> review_join [condition="outcome=succeeded"]
+    simplification_review -> implement_integration [label="Fix"]
+    review_join -> review_consensus
+    review_consensus -> final_goal_gate [condition="outcome=succeeded"]
+    review_consensus -> postmortem [label="Fix"]
+    final_goal_gate -> approve_release [condition="outcome=succeeded"]
+    final_goal_gate -> postmortem [label="Fix"]
+    postmortem -> phase_plan [condition="outcome=succeeded"]
+    postmortem -> phase_plan [label="Retry", loop_restart=true]
+    approve_release -> publish_handoff [label="[A] Approve"]
+    approve_release -> postmortem [label="[R] Revise"]
+    publish_handoff -> memory_summary [condition="outcome=succeeded"]
+    publish_handoff -> review_consensus [label="Fix"]
+    memory_summary -> exit [condition="outcome=succeeded"]
+    memory_summary -> publish_handoff [label="Fix"]
+}

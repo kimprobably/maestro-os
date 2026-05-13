@@ -1,0 +1,52 @@
+digraph OpenRouterModelSmoke {
+    graph [
+        goal="Verify curated OpenRouter model routing targets through Fabro",
+        persona="model-smoke",
+        inputs="",
+        outputs="openrouter_model_report",
+        default_max_retries=1,
+        retry_target="probe_model_list",
+        fallback_retry_target="probe_model_list",
+        model_stylesheet="
+            *       { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: low; }
+            .coding { provider: openrouter; model: moonshotai/kimi-k2.6; reasoning_effort: high; }
+            .review { provider: openrouter; model: google/gemini-3.1-pro-preview; reasoning_effort: high; }
+        "
+    ]
+    rankdir=LR
+
+    start [shape=Mdiamond, label="Start"]
+    exit  [shape=Msquare, label="Exit"]
+
+    probe_model_list [
+        label="Probe OpenRouter Model List",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="probe_model_list",
+        script="mkdir -p .workflow; fabro model list --provider openrouter --json > .workflow/openrouter-models.json; node -e \"const fs=require('fs'); const models=JSON.parse(fs.readFileSync('.workflow/openrouter-models.json','utf8')); const required=['moonshotai/kimi-k2.6','google/gemini-3.1-flash-lite','google/gemini-3.1-pro-preview','qwen/qwen3.6-plus','deepseek/deepseek-v4-pro','deepseek/deepseek-v4-flash']; const byId=new Map(models.map((m)=>[m.id,m])); const missing=required.filter((id)=>!byId.has(id)); if (missing.length) throw new Error('missing OpenRouter models: ' + missing.join(',')); for (const id of required) { const model=byId.get(id); if (model.provider !== 'openrouter') throw new Error(id + ' has wrong provider'); if (model.configured !== true) throw new Error(id + ' is not configured'); if (!model.costs || model.costs.input_cost_per_mtok == null || model.costs.output_cost_per_mtok == null) throw new Error(id + ' missing costs'); } console.log(JSON.stringify({checked: required.length, listed: models.length}));\""
+    ]
+
+    test_models [
+        label="Run OpenRouter Model Tests",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="probe_model_list",
+        script="fabro model test --provider openrouter --json --no-upgrade-check > .workflow/openrouter-model-test.json; node -e \"const fs=require('fs'); const result=JSON.parse(fs.readFileSync('.workflow/openrouter-model-test.json','utf8')); if (result.failures !== 0) throw new Error('OpenRouter model test failures=' + result.failures); if (result.skipped !== 0) throw new Error('OpenRouter model test skipped=' + result.skipped); const required=['moonshotai/kimi-k2.6','google/gemini-3.1-flash-lite','google/gemini-3.1-pro-preview','qwen/qwen3.6-plus','deepseek/deepseek-v4-pro','deepseek/deepseek-v4-flash']; const passed=new Set(result.results.filter((row)=>row.result === 'pass').map((row)=>row.model)); const missing=required.filter((id)=>!passed.has(id)); if (missing.length) throw new Error('OpenRouter models did not pass: ' + missing.join(',')); console.log(JSON.stringify({total: result.total, failures: result.failures, skipped: result.skipped}));\""
+    ]
+
+    write_report [
+        label="Write Model Smoke Report",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="probe_model_list",
+        script="node -e \"const fs=require('fs'); const models=JSON.parse(fs.readFileSync('.workflow/openrouter-models.json','utf8')); const result=JSON.parse(fs.readFileSync('.workflow/openrouter-model-test.json','utf8')); const rows=models.map((model)=>'- ' + model.id + ' alias=' + model.aliases[0] + ' context=' + model.limits.context_window + ' cost=' + model.costs.input_cost_per_mtok + '/' + model.costs.output_cost_per_mtok); const lines=['# OpenRouter Model Smoke', '', 'total_tested=' + result.total, 'failures=' + result.failures, 'skipped=' + result.skipped, '', ...rows]; fs.writeFileSync('.workflow/openrouter-model-smoke.md', lines.join('\\n') + '\\n'); console.log(lines.join('\\n'));\""
+    ]
+
+    start -> probe_model_list
+    probe_model_list -> test_models [condition="outcome=succeeded"]
+    probe_model_list -> probe_model_list [label="Retry", loop_restart=true, max_visits=2]
+    test_models -> write_report [condition="outcome=succeeded"]
+    test_models -> probe_model_list [label="Retry", loop_restart=true]
+    write_report -> exit [condition="outcome=succeeded"]
+    write_report -> probe_model_list [label="Repair", loop_restart=true]
+}

@@ -1,0 +1,53 @@
+digraph Phase1TestRun {
+    graph [
+        goal="Validate Fabro, OpenRouter, Slack approval gates, and Maestro CLI shell execution",
+        persona="phase1-smoke",
+        inputs="none",
+        outputs="phase1_run_summary",
+        model_stylesheet="
+            *       { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: low; }
+            .coding { provider: openrouter; model: qwen/qwen3.6-plus; reasoning_effort: high; }
+            .review { provider: openrouter; model: google/gemini-3.1-pro-preview; reasoning_effort: high; }
+        "
+    ]
+    rankdir=LR
+
+    start [shape=Mdiamond, label="Start"]
+    exit  [shape=Msquare, label="Exit"]
+
+    plan [
+        label="Plan",
+        class="coding",
+        shape=tab,
+        project_memory=false,
+        max_tokens=512,
+        prompt="Read the workflow goal and write exactly three concise bullets for how to validate it. Do not edit files."
+    ]
+    approve [shape=hexagon, label="Approve Plan"]
+    draft [
+        label="Draft",
+        class="review",
+        shape=tab,
+        project_memory=false,
+        max_tokens=512,
+        prompt="Based on the approved plan, write one short paragraph summarizing whether the Phase 1 path is ready for the next test. Do not edit files."
+    ]
+    stop_before_post [
+        label="STOP: Post Phase 1 Result",
+        shape=hexagon,
+        gate_type="STOP",
+        message="About to post the Phase 1 smoke result to Slack",
+        details="Persona: test-bot. Action: chat.postMessage.",
+        options="approve,reject"
+    ]
+    persist [
+        label="Persist",
+        shape=parallelogram,
+        script="set -a; . .env.local; set +a; ./bin/maestro slack post --persona test-bot --text 'Workflow complete: Fabro ran the command-stage Maestro CLI path.'"
+    ]
+
+    start -> plan -> approve
+    approve -> draft [label="[A] Approve"]
+    approve -> plan  [label="[R] Revise"]
+    draft -> stop_before_post -> persist -> exit
+}

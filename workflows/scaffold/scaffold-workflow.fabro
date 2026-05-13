@@ -1,0 +1,111 @@
+digraph ScaffoldWorkflow {
+    graph [
+        goal="Generate a new Fabro workflow from a natural-language spec",
+        persona="workflow-architect",
+        inputs="spec, workflow_path, const_path",
+        outputs="validated_workflow, registration_record",
+        model_stylesheet="
+            *          { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: low; }
+            .reasoning { backend: cli; provider: anthropic; model: claude-sonnet-4-5; reasoning_effort: high; }
+            .coding    { backend: cli; provider: anthropic; model: claude-sonnet-4-5; reasoning_effort: high; }
+            .review    { backend: cli; provider: anthropic; model: claude-sonnet-4-5; reasoning_effort: high; }
+        "
+    ]
+    rankdir=LR
+
+    start [shape=Mdiamond, label="Start"]
+    exit  [shape=Msquare, label="Exit"]
+
+    load_const [
+        label="Load Constitution",
+        shape=parallelogram,
+        script="mkdir -p .maestro/scaffold; ./bin/maestro knowledge get architecture-principles workflow-standards cli-conventions known-gotchas validator-library personas --format text > ${CONST:-.maestro/scaffold/constitution.md}; echo constitution-loaded"
+    ]
+    parse_spec [
+        label="Parse Spec",
+        class="reasoning",
+        goal_gate=true,
+        retry_target="parse_spec",
+        prompt="@../../prompts/scaffold/parse-spec.md"
+    ]
+    approve_plan [shape=hexagon, label="Approve Plan"]
+
+    generate_workflow [
+        label="Generate Workflow",
+        class="coding",
+        goal_gate=true,
+        retry_target="generate_workflow",
+        prompt="@../../prompts/scaffold/generate-workflow.md"
+    ]
+    lint [
+        label="Lint Workflow",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="generate_workflow",
+        script="./bin/maestro verify dot-syntax ${WORKFLOW_PATH:-workflows/scaffold/generated-toy-slack-hello.fabro} 2>&1"
+    ]
+
+    review [
+        label="Review Against Standards",
+        class="review",
+        goal_gate=true,
+        retry_target="fix_loop",
+        prompt="@../../prompts/scaffold/review-workflow.md"
+    ]
+    review_gate [
+        label="Review Verdict Gate",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="fix_loop",
+        script="./bin/maestro verify text-gate .maestro/scaffold/review.json --pass '\"passed\"\\s*:\\s*true' --fail '\"passed\"\\s*:\\s*false|\"severity\"\\s*:\\s*\"blocker\"|\"severity\"\\s*:\\s*\"major\"'"
+    ]
+    quality_gate [
+        label="Workflow Quality Gate",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="fix_loop",
+        script="./bin/maestro verify workflow-quality ${WORKFLOW_PATH:-workflows/scaffold/generated-toy-slack-hello.fabro}"
+    ]
+    fix_loop [
+        label="Fix Loop",
+        class="coding",
+        max_visits=3,
+        prompt="@../../prompts/scaffold/fix-loop.md"
+    ]
+    approve_final [shape=hexagon, label="Approve Final"]
+    register [
+        label="Register Workflow",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="fix_loop",
+        script="./bin/maestro workflow register ${WORKFLOW_PATH:-workflows/scaffold/generated-toy-slack-hello.fabro}"
+    ]
+
+    start -> load_const
+    load_const -> parse_spec [condition="outcome=succeeded"]
+    load_const -> load_const [loop_restart=true]
+    parse_spec -> approve_plan [condition="outcome=succeeded"]
+    parse_spec -> parse_spec [loop_restart=true]
+
+    approve_plan -> generate_workflow [label="[A] Approve"]
+    approve_plan -> parse_spec        [label="[R] Revise"]
+
+    generate_workflow -> lint              [condition="outcome=succeeded"]
+    generate_workflow -> generate_workflow [loop_restart=true]
+    lint -> quality_gate      [condition="outcome=succeeded"]
+    lint -> generate_workflow [loop_restart=true]
+    quality_gate -> review   [condition="outcome=succeeded"]
+    quality_gate -> fix_loop [label="Fix"]
+    review -> review_gate    [condition="outcome=succeeded"]
+    review -> fix_loop       [label="Fix"]
+    review_gate -> approve_final [condition="outcome=succeeded"]
+    review_gate -> fix_loop      [label="Fix"]
+
+    fix_loop -> lint [condition="outcome=succeeded"]
+    fix_loop -> fix_loop [loop_restart=true]
+
+    approve_final -> register          [label="[A] Approve"]
+    approve_final -> fix_loop          [label="[R] Revise"]
+    register -> exit     [condition="outcome=succeeded"]
+    register -> fix_loop [label="Fix"]
+}

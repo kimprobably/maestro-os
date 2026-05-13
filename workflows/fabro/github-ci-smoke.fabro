@@ -1,0 +1,42 @@
+digraph GitHubCiSmoke {
+    graph [
+        goal="Verify GitHub CI and Qlty/Spec Kitty automation files",
+        persona="ci-smoke",
+        inputs="",
+        outputs="github_ci_report",
+        default_max_retries=1,
+        retry_target="validate_ci",
+        fallback_retry_target="validate_ci",
+        model_stylesheet="
+            *       { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: low; }
+            .coding { provider: openrouter; model: qwen/qwen3.6-plus; reasoning_effort: high; }
+            .review { provider: openrouter; model: google/gemini-3.1-pro-preview; reasoning_effort: high; }
+        "
+    ]
+    rankdir=LR
+
+    start [shape=Mdiamond, label="Start"]
+    exit  [shape=Msquare, label="Exit"]
+
+    validate_ci [
+        label="Validate CI Files",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="validate_ci",
+        script="mkdir -p .workflow; test -f .github/workflows/quality.yml; qlty config validate --no-upgrade-check; qlty check --all --filter actionlint --no-progress --no-fail --summary --no-upgrade-check > .workflow/github-ci-actionlint.txt 2>&1; spec-kitty verify-setup --json > .workflow/spec-kitty-setup.json; node -e \"const fs=require('fs'); const setup=JSON.parse(fs.readFileSync('.workflow/spec-kitty-setup.json','utf8')); if (setup.managed_skills && setup.managed_skills.status !== 'ok') throw new Error('Spec Kitty skills not ok'); const yaml=fs.readFileSync('.github/workflows/quality.yml','utf8'); for (const text of ['bun test','bun run check','qlty config validate','qlty check --all --install-only','spec-kitty verify-setup --json']) { if (!yaml.includes(text)) throw new Error('CI missing ' + text); } console.log(JSON.stringify({ci:true,spec_kitty:true}));\""
+    ]
+
+    write_report [
+        label="Write CI Smoke Report",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="validate_ci",
+        script="node -e \"const fs=require('fs'); const actionlint=fs.readFileSync('.workflow/github-ci-actionlint.txt','utf8').trim().split(/\\n/).slice(0,8); const lines=['# GitHub CI Smoke', '', 'workflow=.github/workflows/quality.yml', 'qlty_actionlint=' + (actionlint[0] || 'ok'), 'spec_kitty=ok']; fs.writeFileSync('.workflow/github-ci-smoke.md', lines.join('\\n') + '\\n'); console.log(lines.join('\\n'));\""
+    ]
+
+    start -> validate_ci
+    validate_ci -> write_report [condition="outcome=succeeded"]
+    validate_ci -> validate_ci [label="Retry", loop_restart=true, max_visits=2]
+    write_report -> exit [condition="outcome=succeeded"]
+    write_report -> validate_ci [label="Repair", loop_restart=true]
+}

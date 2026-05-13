@@ -1,0 +1,42 @@
+digraph OpenRouterCodingEval {
+    graph [
+        goal="Evaluate OpenRouter coding and review candidates on shared Maestro tasks",
+        persona="model-smoke",
+        inputs="mode, models",
+        outputs="openrouter_coding_eval_report",
+        default_max_retries=1,
+        retry_target="run_eval",
+        fallback_retry_target="run_eval",
+        model_stylesheet="
+            *       { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: low; }
+            .coding { provider: openrouter; model: qwen/qwen3.6-plus; reasoning_effort: high; }
+            .review { provider: openrouter; model: deepseek/deepseek-v4-pro; reasoning_effort: high; }
+        "
+    ]
+    rankdir=LR
+
+    start [shape=Mdiamond, label="Start"]
+    exit  [shape=Msquare, label="Exit"]
+
+    run_eval [
+        label="Run OpenRouter Coding Eval",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="run_eval",
+        script="mkdir -p .workflow/model-evals; MODE='{{ inputs.mode|default('dry') }}'; MODE_FLAG=''; if [ \"$MODE\" = 'live' ]; then MODE_FLAG='--live'; fi; node scripts/evaluate-openrouter-models.mjs $MODE_FLAG --models '{{ inputs.models|default('moonshotai/kimi-k2.6,qwen/qwen3.6-plus,deepseek/deepseek-v4-pro,deepseek/deepseek-v4-flash') }}' --output .workflow/model-evals/openrouter-coding-eval.json"
+    ]
+
+    write_report [
+        label="Write Eval Report",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="run_eval",
+        script="node -e \"const fs=require('fs'); const report=JSON.parse(fs.readFileSync('.workflow/model-evals/openrouter-coding-eval.json','utf8')); const rows=(report.summary || []).map((row)=>'- ' + row.model + ' avg_score=' + row.avg_score + ' cost=' + row.estimated_cost_usd + ' latency_ms=' + row.avg_latency_ms); const lines=['# OpenRouter Coding Eval', '', 'mode=' + (report.mode || 'live'), 'models=' + (report.models || []).length, 'tasks=' + (report.tasks || []).length, '', ...rows]; fs.writeFileSync('.workflow/openrouter-coding-eval.md', lines.join('\\n') + '\\n'); console.log(lines.join('\\n'));\""
+    ]
+
+    start -> run_eval
+    run_eval -> write_report [condition="outcome=succeeded"]
+    run_eval -> run_eval [label="Retry", loop_restart=true, max_visits=2]
+    write_report -> exit [condition="outcome=succeeded"]
+    write_report -> run_eval [label="Repair", loop_restart=true]
+}

@@ -1,0 +1,42 @@
+digraph GoalToProductionContractSmoke {
+    graph [
+        goal="Verify the goal-to-production factory workflow contains the required end-to-end contract",
+        persona="workflow-registry",
+        inputs="",
+        outputs="goal_to_production_contract_report",
+        default_max_retries=1,
+        retry_target="verify_contract",
+        fallback_retry_target="verify_contract",
+        model_stylesheet="
+            *       { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: low; }
+            .coding { provider: openrouter; model: qwen/qwen3.6-plus; reasoning_effort: high; }
+            .review { provider: openrouter; model: google/gemini-3.1-pro-preview; reasoning_effort: high; }
+        "
+    ]
+    rankdir=LR
+
+    start [shape=Mdiamond, label="Start"]
+    exit  [shape=Msquare, label="Exit"]
+
+    verify_contract [
+        label="Verify Factory Contract",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="verify_contract",
+        script="mkdir -p .workflow; node -e \"const fs=require('fs'); const graph=fs.readFileSync('workflows/factory/goal-to-production.fabro','utf8'); const required=['Load Factory Context','Create Spec Kitty Mission','Draft Spec','Validate Spec','Spec Review','Approve Spec','Architecture And ADR','Validate Architecture','Create Work Packages','Implement','Native Checks','Code Review Fan-Out','Correctness Review','Test Review','Security Review','Review Consensus','Simplify','CI/CD Gate','Final Release Review','Approve Release Handoff','Publish Handoff','Memory Summary']; for (const text of required) { if (!graph.includes(text)) throw new Error('missing factory stage: ' + text); } const prompts=['prompts/factory/draft-spec.md','prompts/factory/spec-review.md','prompts/factory/architecture.md','prompts/factory/work-packages.md','prompts/factory/implement.md','prompts/factory/review-code.md','prompts/factory/review-consensus.md','prompts/factory/simplify.md','prompts/factory/final-release-review.md']; for (const prompt of prompts) { if (!fs.existsSync(prompt)) throw new Error('missing prompt: ' + prompt); } for (const edge of ['review_fanout -> correctness_review','review_fanout -> test_review','review_fanout -> security_review','review_join -> review_consensus','review_gate -> simplify','ci_cd_gate -> final_release_review']) { if (!graph.includes(edge)) throw new Error('missing edge: ' + edge); } const gates=(graph.match(/shape=hexagon/g) || []).length; if (gates < 2) throw new Error('expected at least two human gates'); const report={ok:true, required_stages:required.length, prompt_count:prompts.length, human_gates:gates}; fs.writeFileSync('.workflow/goal-to-production-contract.json', JSON.stringify(report,null,2)+'\\n'); console.log(JSON.stringify(report));\""
+    ]
+
+    write_report [
+        label="Write Contract Report",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="verify_contract",
+        script="node -e \"const fs=require('fs'); const report=JSON.parse(fs.readFileSync('.workflow/goal-to-production-contract.json','utf8')); const lines=['# Goal To Production Contract Smoke', '', 'required_stages=' + report.required_stages, 'prompt_count=' + report.prompt_count, 'human_gates=' + report.human_gates]; fs.writeFileSync('.workflow/goal-to-production-contract-smoke.md', lines.join('\\n') + '\\n'); console.log(lines.join('\\n'));\""
+    ]
+
+    start -> verify_contract
+    verify_contract -> write_report [condition="outcome=succeeded"]
+    verify_contract -> verify_contract [label="Retry", loop_restart=true, max_visits=2]
+    write_report -> exit [condition="outcome=succeeded"]
+    write_report -> verify_contract [label="Repair", loop_restart=true]
+}

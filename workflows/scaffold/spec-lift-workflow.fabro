@@ -1,0 +1,118 @@
+digraph SpecLiftWorkflow {
+    graph [
+        goal="Turn an initial idea into a completed, validated Maestro spec",
+        persona="spec-lead",
+        inputs="idea_path, spec_path, spec_json_path, spec_kitty_feature",
+        outputs="completed_spec, review_consensus, validation_report",
+        default_max_retries=2,
+        retry_target="draft_spec",
+        fallback_retry_target="draft_spec",
+        model_stylesheet="
+            *          { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: low; }
+            .coding    { backend: cli; provider: anthropic; model: claude-sonnet-4-5; reasoning_effort: high; }
+            .hard      { backend: cli; provider: anthropic; model: claude-sonnet-4-5; reasoning_effort: high; }
+            .review    { backend: cli; provider: anthropic; model: claude-sonnet-4-5; reasoning_effort: high; }
+        "
+    ]
+    rankdir=LR
+
+    start [shape=Mdiamond, label="Start"]
+    exit  [shape=Msquare, label="Exit"]
+
+    load_const [
+        label="Load Constitution",
+        shape=parallelogram,
+        script="mkdir -p .maestro/spec-lift; ./bin/maestro knowledge get architecture-principles workflow-standards cli-conventions known-gotchas validator-library personas voice --format text > .maestro/spec-lift/constitution.md; echo constitution-loaded"
+    ]
+    init_package [
+        label="Initialize Work Package",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="init_package",
+        script="test -f '{{ inputs.idea_path|default('specs/scaffold/toy-slack-hello.md') }}'; mkdir -p .maestro/spec-lift \"$(dirname '{{ inputs.spec_path|default('specs/scaffold/completed-spec.md') }}')\"; cp '{{ inputs.idea_path|default('specs/scaffold/toy-slack-hello.md') }}' .maestro/spec-lift/idea.md; FEATURE='{{ inputs.spec_kitty_feature|default('') }}'; if command -v spec-kitty >/dev/null 2>&1; then if [ -n \"$FEATURE\" ]; then spec-kitty specify \"$FEATURE\" --mission-type software-dev --json > .maestro/spec-lift/spec-kitty.json; else spec-kitty verify-setup --json > .maestro/spec-lift/spec-kitty.json; fi; else printf '{\"error\":\"spec-kitty missing\"}\\n' > .maestro/spec-lift/spec-kitty.json; fi; echo package-ready"
+    ]
+    draft_spec [
+        label="Draft Spec",
+        class="hard",
+        goal_gate=true,
+        retry_target="draft_spec",
+        prompt="@../../prompts/spec-lift/draft-spec.md"
+    ]
+    validate_spec [
+        label="Validate Spec",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="draft_spec",
+        script="./bin/maestro verify spec-quality '{{ inputs.spec_path|default('specs/scaffold/completed-spec.md') }}'"
+    ]
+
+    review_fanout [shape=component, label="Spec Review Fan-Out"]
+    product_review [
+        label="Product Review",
+        class="review",
+        prompt="@../../prompts/spec-lift/product-review.md"
+    ]
+    engineering_review [
+        label="Engineering Review",
+        class="review",
+        prompt="@../../prompts/spec-lift/engineering-review.md"
+    ]
+    quality_review [
+        label="Quality Review",
+        class="review",
+        prompt="@../../prompts/spec-lift/quality-review.md"
+    ]
+    review_consensus [
+        label="Review Consensus",
+        class="review",
+        goal_gate=true,
+        retry_target="draft_spec",
+        prompt="@../../prompts/spec-lift/review-consensus.md"
+    ]
+    review_gate [
+        label="Spec Review Gate",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="draft_spec",
+        script="./bin/maestro verify text-gate .maestro/spec-lift/review-consensus.md --pass 'VERDICT:\\s*APPROVED' --fail 'VERDICT:\\s*REJECTED|\\bREJECTED\\b'"
+    ]
+    approve_spec [shape=hexagon, label="Approve Completed Spec"]
+    publish_package [
+        label="Publish Spec Package",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="draft_spec",
+        script="mkdir -p \"$(dirname '{{ inputs.spec_json_path|default('specs/scaffold/completed-spec.json') }}')\"; node -e \"const fs=require('fs'),crypto=require('crypto');const spec='{{ inputs.spec_path|default('specs/scaffold/completed-spec.md') }}';const json='{{ inputs.spec_json_path|default('specs/scaffold/completed-spec.json') }}';const body=fs.readFileSync(spec,'utf8');let kitty={};try{kitty=JSON.parse(fs.readFileSync('.maestro/spec-lift/spec-kitty.json','utf8'));}catch{} if (kitty.spec_file && fs.existsSync(kitty.spec_file)) fs.writeFileSync(kitty.spec_file, body); fs.writeFileSync(json, JSON.stringify({spec_path:spec,spec_kitty:{mission_slug:kitty.mission_slug||null,mission_type:kitty.mission_type||null,spec_file:kitty.spec_file||null,meta_file:kitty.meta_file||null},sha256:crypto.createHash('sha256').update(body).digest('hex'),status:'approved',updated_at:new Date().toISOString()}, null, 2)+'\\n')\""
+    ]
+    memory_summary [
+        label="Memory Summary",
+        shape=parallelogram,
+        script="printf '{\"kind\":\"spec.approved\",\"payload\":{\"spec_path\":\"{{ inputs.spec_path|default('specs/scaffold/completed-spec.md') }}\",\"spec_json_path\":\"{{ inputs.spec_json_path|default('specs/scaffold/completed-spec.json') }}\"}}' | ./bin/maestro memory append 'team/code/specs' >/dev/null; echo memory-updated"
+    ]
+
+    start -> load_const
+    load_const -> init_package [condition="outcome=succeeded"]
+    load_const -> load_const   [loop_restart=true]
+    init_package -> draft_spec [condition="outcome=succeeded"]
+    init_package -> init_package [loop_restart=true]
+    draft_spec -> validate_spec [condition="outcome=succeeded"]
+    draft_spec -> draft_spec    [loop_restart=true]
+    validate_spec -> review_fanout [condition="outcome=succeeded"]
+    validate_spec -> draft_spec    [label="Fix"]
+    review_fanout -> product_review
+    review_fanout -> engineering_review
+    review_fanout -> quality_review
+    product_review -> review_consensus
+    engineering_review -> review_consensus
+    quality_review -> review_consensus
+    review_consensus -> review_gate [condition="outcome=succeeded"]
+    review_consensus -> draft_spec  [label="Fix"]
+    review_gate -> approve_spec [condition="outcome=succeeded"]
+    review_gate -> draft_spec   [label="Fix"]
+    approve_spec -> publish_package [label="[A] Approve"]
+    approve_spec -> draft_spec      [label="[R] Revise"]
+    publish_package -> memory_summary [condition="outcome=succeeded"]
+    publish_package -> draft_spec     [label="Fix"]
+    memory_summary -> exit       [condition="outcome=succeeded"]
+    memory_summary -> draft_spec [label="Fix"]
+}

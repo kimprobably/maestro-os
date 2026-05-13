@@ -1,0 +1,25 @@
+_version = 1
+
+[server.web]
+enabled = true
+url = "{{ env.FABRO_WEB_URL }}"
+
+[server.auth]
+methods = ["dev-token"]
+
+[server.storage]
+root = "/storage"
+
+[server.scheduler]
+max_concurrent_runs = 5
+
+[server.integrations.github]
+enabled = true
+strategy = "token"
+
+[server.integrations.slack]
+enabled = true
+default_channel = "{{ env.FABRO_SLACK_CHANNEL_ID }}"
+
+[features]
+session_sandboxes = false

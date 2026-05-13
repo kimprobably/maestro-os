@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Goal-to-Production Factory</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>🏭 Goal-to-Production Factory</h1>
+      <p class="subtitle">Transform vague ideas into production-ready implementations</p>
+    </header>
+
+    <!-- Input Form -->
+    <div id="input-view" class="view">
+      <div class="card">
+        <h2>Submit Your Goal</h2>
+        <form id="goal-form">
+          <div class="form-group">
+            <label for="goal-input">Describe your product idea (3-5000 characters):</label>
+            <textarea
+              id="goal-input"
+              name="goal"
+              rows="8"
+              minlength="3"
+              maxlength="5000"
+              placeholder="Build a tiny internal web tool that lets Tim paste a product idea, turns it into an implementation spec, and shows the review status for each quality gate."
+              required
+            ></textarea>
+            <div class="char-count">
+              <span id="char-count">0</span> / 5000
+            </div>
+          </div>
+          <button type="submit" class="btn btn-primary">Start Workflow</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Progress View -->
+    <div id="progress-view" class="view hidden">
+      <div class="run-header">
+        <h2>Workflow Progress</h2>
+        <div class="run-meta">
+          <span>Run ID: <code id="run-id"></code></span>
+          <span>Elapsed: <span id="elapsed-time">0s</span></span>
+        </div>
+      </div>
+
+      <div class="progress-bar-container">
+        <div id="progress-bar" class="progress-bar"></div>
+      </div>
+
+      <div class="stages">
+        <!-- Stage items populated by JS -->
+      </div>
+
+      <div class="artifacts">
+        <h3>Artifacts</h3>
+        <div id="artifact-links" class="artifact-list">
+          <p class="muted">Artifacts will appear as stages complete...</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Human Gate Modal -->
+    <div id="gate-modal" class="modal hidden">
+      <div class="modal-content">
+        <h2 id="gate-title">Human Gate</h2>
+        <div id="gate-body">
+          <p><strong>What will happen if approved:</strong></p>
+          <p id="gate-what-happens"></p>
+
+          <p><strong>Files that will change:</strong></p>
+          <ul id="gate-files"></ul>
+
+          <p id="gate-cost"></p>
+        </div>
+        <div class="modal-actions">
+          <button id="gate-approve" class="btn btn-primary">Approve</button>
+          <button id="gate-reject" class="btn btn-secondary">Reject</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="/app.js"></script>
+</body>
+</html>

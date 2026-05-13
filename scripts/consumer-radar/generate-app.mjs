@@ -547,7 +547,9 @@ write("README.md", [
   "",
   "## Live Data",
   "",
-  "The first pass uses fixture data for repeatable CI. Live adapters are scaffolded for Apple RSS/iTunes and Apify actors. Set APIFY_TOKEN plus actor IDs in the workflow sandbox env before enabling live refresh."
+  "The first pass uses fixture data for repeatable CI. Live adapters are scaffolded",
+  "for Apple RSS/iTunes and Apify actors. Set APIFY_TOKEN plus actor IDs in the",
+  "workflow sandbox env before enabling live refresh."
 ]);
 
 mkdirSync(".workflow/consumer-radar", { recursive: true });

@@ -1,0 +1,42 @@
+digraph PhasedApplicationBuildContractSmoke {
+    graph [
+        goal="Verify the generic phased application build workflow contains the required Solitaire-style contract",
+        persona="workflow-registry",
+        inputs="",
+        outputs="phased_application_build_contract_report",
+        default_max_retries=1,
+        retry_target="verify_contract",
+        fallback_retry_target="verify_contract",
+        model_stylesheet="
+            *       { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: low; }
+            .coding { provider: openrouter; model: qwen/qwen3.6-plus; reasoning_effort: high; }
+            .review { provider: openrouter; model: google/gemini-3.1-pro-preview; reasoning_effort: high; }
+        "
+    ]
+    rankdir=LR
+
+    start [shape=Mdiamond, label="Start"]
+    exit  [shape=Msquare, label="Exit"]
+
+    verify_contract [
+        label="Verify Phased Build Contract",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="verify_contract",
+        script="mkdir -p .workflow; node -e \"const fs=require('fs'); const graph=fs.readFileSync('workflows/code/phased-application-build.fabro','utf8'); const required=['Bootstrap Context','Expand Goal Or Spec','Validate Expanded Spec','Create Phase Plan','Validate Phase Plan','Approve Phase Plan','Implement Foundation','Verify Foundation','Foundation Gate','Implement Core','Verify Core','Core Gate','Implement Interface','Verify Interface','Interface Gate','Implement Integration','Verify Integration','Integration Gate','Final Review Fan-Out','Correctness Review','Test Review','Security Review','Simplification Review','Final Goal Review','Final Goal Gate','Approve Release Handoff','Publish Handoff','Memory Summary']; for (const text of required) { if (!graph.includes(text)) throw new Error('missing phased build stage: ' + text); } const prompts=['prompts/code-phased/expand-goal.md','prompts/code-phased/phase-plan.md','prompts/code-phased/implement-foundation.md','prompts/code-phased/implement-core.md','prompts/code-phased/implement-interface.md','prompts/code-phased/implement-integration.md','prompts/code-phased/verify-foundation.md','prompts/code-phased/verify-core.md','prompts/code-phased/verify-interface.md','prompts/code-phased/verify-integration.md','prompts/code-phased/correctness-review.md','prompts/code-phased/test-review.md','prompts/code-phased/security-review.md','prompts/code-phased/simplification-review.md','prompts/code-phased/review-consensus.md','prompts/code-phased/postmortem.md']; for (const prompt of prompts) { if (!fs.existsSync(prompt)) throw new Error('missing prompt: ' + prompt); } for (const edge of ['gate_foundation -> implement_core','gate_core -> implement_interface','gate_interface -> implement_integration','gate_integration -> review_fanout','review_fanout -> correctness_review','review_fanout -> test_review','review_fanout -> security_review','review_fanout -> simplification_review','final_goal_gate -> approve_release']) { if (!graph.includes(edge)) throw new Error('missing edge: ' + edge); } for (const script of ['scripts/verify-phased-app-phase.mjs','scripts/write-phased-build-handoff.mjs']) { if (!fs.existsSync(script)) throw new Error('missing script: ' + script); } const gates=(graph.match(/goal_gate=true/g) || []).length; const report={ok:true, required_stages:required.length, prompt_count:prompts.length, goal_gates:gates}; fs.writeFileSync('.workflow/phased-application-build-contract.json', JSON.stringify(report,null,2)+'\\n'); console.log(JSON.stringify(report));\""
+    ]
+
+    write_report [
+        label="Write Contract Report",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="verify_contract",
+        script="node -e \"const fs=require('fs'); const report=JSON.parse(fs.readFileSync('.workflow/phased-application-build-contract.json','utf8')); const lines=['# Phased Application Build Contract Smoke', '', 'required_stages=' + report.required_stages, 'prompt_count=' + report.prompt_count, 'goal_gates=' + report.goal_gates]; fs.writeFileSync('.workflow/phased-application-build-contract-smoke.md', lines.join('\\n') + '\\n'); console.log(lines.join('\\n'));\""
+    ]
+
+    start -> verify_contract
+    verify_contract -> write_report [condition="outcome=succeeded"]
+    verify_contract -> verify_contract [label="Retry", loop_restart=true, max_visits=2]
+    write_report -> exit [condition="outcome=succeeded"]
+    write_report -> verify_contract [label="Repair", loop_restart=true]
+}

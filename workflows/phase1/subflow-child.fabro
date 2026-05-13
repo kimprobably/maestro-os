@@ -1,0 +1,33 @@
+digraph Phase1SubflowChild {
+    graph [
+        goal="Produce a child workflow result for Phase 1 sub-workflow validation",
+        persona="phase1-child",
+        inputs="none",
+        outputs="subflow.result",
+        model_stylesheet="
+            *       { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: low; }
+            .coding { provider: openrouter; model: qwen/qwen3.6-plus; reasoning_effort: high; }
+            .review { provider: openrouter; model: google/gemini-3.1-pro-preview; reasoning_effort: high; }
+        "
+    ]
+    rankdir=LR
+
+    start [shape=Mdiamond, label="Start"]
+    exit  [shape=Msquare, label="Exit"]
+
+    child_plan [
+        label="Child Result",
+        class="coding",
+        shape=tab,
+        project_memory=false,
+        max_tokens=128,
+        prompt="Respond with exactly this JSON and no extra text: {\"context_updates\":{\"subflow.result\":\"CHILD-SUBFLOW-CHECK result=ok\"}}"
+    ]
+    validate_child_contract [
+        label="Validate Child Contract",
+        shape=parallelogram,
+        script="echo child-contract-validated"
+    ]
+
+    start -> child_plan -> validate_child_contract -> exit
+}

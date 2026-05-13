@@ -1,0 +1,120 @@
+_version = 1
+
+[project]
+name = "maestro-os"
+
+[run.agent]
+permissions = "full"
+
+[run.sandbox]
+preserve = false
+stop_on_terminal = true
+
+[run.sandbox.env]
+OPENROUTER_API_KEY = "${{ secrets.OPENROUTER_API_KEY }}"
+APIFY_TOKEN = "${{ secrets.APIFY_TOKEN }}"
+APIFY_APPSTORE_ACTOR = "crawlerbros/appstore-scraper"
+APIFY_TIKTOK_ACTOR = "clockworks/tiktok-scraper"
+APIFY_INSTAGRAM_ACTOR = "apify/instagram-scraper"
+DAYTONA_API_URL = "${{ secrets.DAYTONA_API_URL }}"
+DAYTONA_API_KEY = "${{ secrets.DAYTONA_API_KEY }}"
+LINEAR_API_KEY = "${{ secrets.LINEAR_API_KEY }}"
+LINEAR_API_URL = "${{ secrets.LINEAR_API_URL }}"
+FABRO_SERVER = "${{ secrets.FABRO_SERVER }}"
+FABRO_DEV_TOKEN = "${{ secrets.FABRO_DEV_TOKEN }}"
+FABRO_SLACK_BOT_TOKEN = "${{ secrets.FABRO_SLACK_BOT_TOKEN }}"
+FABRO_SLACK_CHANNEL_ID = "${{ secrets.FABRO_SLACK_CHANNEL_ID }}"
+MAESTRO_AGENT_STATE_DIR = "/home/daytona/agent-state"
+PROMPTFOO_DISABLE_TELEMETRY = "1"
+
+[run.sandbox.daytona]
+auto_stop_interval = 60
+network = "allow_all"
+skip_clone = false
+
+[run.sandbox.daytona.labels]
+project = "maestro-os"
+purpose = "code-factory"
+
+[[run.sandbox.daytona.volumes]]
+volume_id = "beefe1da-59a0-48f6-9e19-a513d1790ce3"
+mount_path = "/home/daytona/agent-state"
+subpath = "agent-auth"
+
+[run.sandbox.daytona.snapshot]
+name = "maestro-code-factory-v5"
+cpu = 2
+memory = "4GB"
+disk = "10GB"
+dockerfile = """
+FROM ubuntu:24.04
+
+ENV DEBIAN_FRONTEND=noninteractive
+ENV BUN_INSTALL=/root/.bun
+ENV PATH="/root/.fabro/bin:/root/.bun/bin:/root/.local/bin:/root/.qlty/bin:${PATH}"
+WORKDIR /home/daytona
+
+RUN apt-get update \
+  && apt-get install -y --no-install-recommends \
+    bash \
+    ca-certificates \
+    curl \
+    git \
+    jq \
+    openssh-client \
+    python3 \
+    python3-pip \
+    pipx \
+    ripgrep \
+    shellcheck \
+    unzip \
+    xz-utils \
+  && rm -rf /var/lib/apt/lists/*
+
+RUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash - \
+  && apt-get update \
+  && apt-get install -y --no-install-recommends nodejs \
+  && npm install -g @anthropic-ai/claude-code @openai/codex promptfoo \
+  && npm cache clean --force \
+  && rm -rf /var/lib/apt/lists/*
+
+RUN curl -fsSL https://bun.sh/install | bash -s "bun-v1.2.22" \
+  && ln -sf /root/.bun/bin/bun /usr/local/bin/bun
+
+RUN pipx install spec-kitty-cli==3.1.8 \
+  && curl -fsSL https://qlty.sh | sh \
+  && ln -sf /root/.qlty/bin/qlty /usr/local/bin/qlty
+
+RUN set -eux; \
+  target="x86_64-unknown-linux-gnu"; \
+  asset="fabro-${target}.tar.gz"; \
+  url="$(curl -fsSL https://api.github.com/repos/fabro-sh/fabro/releases/latest | jq -r --arg asset "$asset" '.assets[] | select(.name == $asset) | .browser_download_url')"; \
+  test -n "$url"; \
+  curl -fsSL "$url" -o /tmp/fabro.tar.gz; \
+  tar -xzf /tmp/fabro.tar.gz -C /tmp; \
+  install -m 0755 "/tmp/fabro-${target}/fabro" /usr/local/bin/fabro; \
+  rm -rf /tmp/fabro.tar.gz "/tmp/fabro-${target}"; \
+  fabro --version
+
+CMD ["/bin/bash"]
+"""
+
+[run.integrations.github.permissions]
+metadata = "read"
+contents = "write"
+pull_requests = "write"
+issues = "write"
+actions = "read"
+
+[run.artifacts]
+include = [
+  ".workflow/**",
+  "reports/**",
+  "evals/output/**",
+  "apps/generated-*/README.md",
+  "apps/generated-*/.workflow-build.json",
+  "apps/generated-*/fixtures/**",
+  "apps/generated-*/public/**",
+  "apps/generated-*/src/**",
+  "apps/generated-*/tests/**",
+]

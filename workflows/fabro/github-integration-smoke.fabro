@@ -1,0 +1,42 @@
+digraph GitHubIntegrationSmoke {
+    graph [
+        goal="Verify local Fabro GitHub integration and auth prerequisites",
+        persona="integration-smoke",
+        inputs="",
+        outputs="github_integration_report",
+        default_max_retries=1,
+        retry_target="probe_github",
+        fallback_retry_target="probe_github",
+        model_stylesheet="
+            *       { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: low; }
+            .coding { backend: cli; provider: anthropic; model: claude-sonnet-4-5; reasoning_effort: high; }
+            .review { backend: cli; provider: anthropic; model: claude-sonnet-4-5; reasoning_effort: high; }
+        "
+    ]
+    rankdir=LR
+
+    start [shape=Mdiamond, label="Start"]
+    exit  [shape=Msquare, label="Exit"]
+
+    probe_github [
+        label="Probe GitHub Integration",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="probe_github",
+        script="mkdir -p .workflow; fabro settings --json > .workflow/fabro-settings.json; node -e \"const fs=require('fs'); const cfg=JSON.parse(fs.readFileSync('.workflow/fabro-settings.json','utf8')); const github=cfg.server.server.integrations.github; const methods=cfg.server.server.auth.methods; if (!github || github.enabled !== true) throw new Error('GitHub integration is not enabled'); if (github.strategy !== 'token') throw new Error('Expected GitHub token strategy'); if (!Array.isArray(methods) || !methods.includes('dev-token')) throw new Error('dev-token auth is not enabled');\"; grep -Eq '^SESSION_SECRET=[0-9a-f]{64}$' ~/.fabro/storage/server.env; grep -Eq '^FABRO_DEV_TOKEN=fabro_dev_[0-9a-f]{64}$' ~/.fabro/storage/server.env; gh auth status >/dev/null 2>&1; fabro repo --help >/dev/null; fabro pr --help >/dev/null; printf '{\"github_enabled\":true,\"strategy\":\"token\",\"auth\":\"dev-token\",\"session_secret\":true,\"dev_token\":true,\"gh_auth\":true,\"fabro_repo_cli\":true,\"fabro_pr_cli\":true}\\n' > .workflow/github-integration-smoke.json; cat .workflow/github-integration-smoke.json"
+    ]
+
+    write_report [
+        label="Write GitHub Smoke Report",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="probe_github",
+        script="node -e \"const fs=require('fs'); const result=JSON.parse(fs.readFileSync('.workflow/github-integration-smoke.json','utf8')); const lines=['# GitHub Integration Smoke', '', 'github_enabled=' + result.github_enabled, 'strategy=' + result.strategy, 'auth=' + result.auth, 'session_secret=' + result.session_secret, 'dev_token=' + result.dev_token, 'gh_auth=' + result.gh_auth, 'fabro_repo_cli=' + result.fabro_repo_cli, 'fabro_pr_cli=' + result.fabro_pr_cli]; fs.writeFileSync('.workflow/github-integration-smoke.md', lines.join('\\n') + '\\n'); console.log(lines.join('\\n'));\""
+    ]
+
+    start -> probe_github
+    probe_github -> write_report [condition="outcome=succeeded"]
+    probe_github -> probe_github [label="Retry", loop_restart=true, max_visits=2]
+    write_report -> exit [condition="outcome=succeeded"]
+    write_report -> probe_github [label="Repair", loop_restart=true]
+}

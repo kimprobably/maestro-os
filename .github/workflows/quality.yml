@@ -1,0 +1,55 @@
+name: Maestro Quality
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  quality:
+    name: Quality
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Set up Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.3.11
+
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v7
+
+      - name: Install Qlty
+        run: |
+          curl -fsSL https://qlty.sh | sh
+          echo "$HOME/.qlty/bin" >> "$GITHUB_PATH"
+
+      - name: Install Spec Kitty
+        run: uv tool install spec-kitty-cli
+
+      - name: Bun Tests
+        run: bun test
+
+      - name: Bun Build Check
+        run: bun run check
+
+      - name: Qlty Config
+        run: qlty config validate --no-upgrade-check
+
+      - name: Qlty Tool Install
+        run: qlty check --all --install-only --no-progress --no-upgrade-check
+
+      - name: Qlty Report
+        run: qlty check --all --no-progress --no-fail --summary --no-upgrade-check
+
+      - name: Spec Kitty Setup
+        run: spec-kitty verify-setup --json

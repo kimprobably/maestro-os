@@ -1,0 +1,35 @@
+digraph Phase1SubflowWrapper {
+    graph [
+        goal="Validate first-class child workflow invocation and result propagation",
+        persona="phase1-wrapper",
+        inputs="none",
+        outputs="parent_summary",
+        model_stylesheet="
+            *       { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: low; }
+            .coding { provider: openrouter; model: qwen/qwen3.6-plus; reasoning_effort: high; }
+            .review { provider: openrouter; model: google/gemini-3.1-pro-preview; reasoning_effort: high; }
+        "
+    ]
+    rankdir=LR
+
+    start [shape=Mdiamond, label="Start"]
+    exit  [shape=Msquare, label="Exit"]
+
+    call_child [
+        label="Call Child",
+        type="stack.manager_loop",
+        stack.child_workflow="./subflow-child.fabro",
+        manager.max_cycles=100,
+        manager.poll_interval="10ms"
+    ]
+    parent_summary [
+        label="Parent Summary",
+        class="review",
+        shape=tab,
+        project_memory=false,
+        max_tokens=128,
+        prompt="Read the context key subflow.result. If it contains CHILD-SUBFLOW-CHECK, write exactly: PARENT-SAW-CHILD result=ok. Otherwise write exactly: PARENT-SAW-CHILD result=missing."
+    ]
+
+    start -> call_child -> parent_summary -> exit
+}

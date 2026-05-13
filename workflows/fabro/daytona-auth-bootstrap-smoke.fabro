@@ -1,0 +1,42 @@
+digraph DaytonaAuthBootstrapSmoke {
+    graph [
+        goal="Verify Daytona agent auth bootstrap script syntax and safety markers",
+        persona="sandbox-smoke",
+        inputs="",
+        outputs="daytona_auth_bootstrap_report",
+        default_max_retries=1,
+        retry_target="validate_bootstrap",
+        fallback_retry_target="validate_bootstrap",
+        model_stylesheet="
+            *       { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: low; }
+            .coding { provider: openrouter; model: qwen/qwen3.6-plus; reasoning_effort: high; }
+            .review { provider: openrouter; model: google/gemini-3.1-pro-preview; reasoning_effort: high; }
+        "
+    ]
+    rankdir=LR
+
+    start [shape=Mdiamond, label="Start"]
+    exit  [shape=Msquare, label="Exit"]
+
+    validate_bootstrap [
+        label="Validate Bootstrap",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="validate_bootstrap",
+        script="mkdir -p .workflow; test -x sandbox/bootstrap-agent-auth.sh || chmod +x sandbox/bootstrap-agent-auth.sh; sh -n sandbox/bootstrap-agent-auth.sh; node -e \"const fs=require('fs'); const body=fs.readFileSync('sandbox/bootstrap-agent-auth.sh','utf8'); for (const text of ['claude -p','codex login status','codex exec --skip-git-repo-check','Do not copy local ~/.claude or ~/.codex','MAESTRO_AGENT_STATE_DIR']) { if (!body.includes(text)) throw new Error('missing safety marker: ' + text); } console.log(JSON.stringify({bootstrap:true}));\" > .workflow/daytona-auth-bootstrap.json"
+    ]
+
+    write_report [
+        label="Write Bootstrap Report",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="validate_bootstrap",
+        script="node -e \"const lines=['# Daytona Auth Bootstrap Smoke', '', 'script=sandbox/bootstrap-agent-auth.sh', 'syntax=ok', 'safety_markers=ok']; require('fs').writeFileSync('.workflow/daytona-auth-bootstrap-smoke.md', lines.join('\\n') + '\\n'); console.log(lines.join('\\n'));\""
+    ]
+
+    start -> validate_bootstrap
+    validate_bootstrap -> write_report [condition="outcome=succeeded"]
+    validate_bootstrap -> validate_bootstrap [label="Retry", loop_restart=true, max_visits=2]
+    write_report -> exit [condition="outcome=succeeded"]
+    write_report -> validate_bootstrap [label="Repair", loop_restart=true]
+}

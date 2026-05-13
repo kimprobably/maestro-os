@@ -10,7 +10,8 @@ function argValue(name, fallback) {
   const index = process.argv.indexOf(name);
   if (index === -1) return fallback;
   const value = process.argv[index + 1];
-  if (!value || value.startsWith("--")) throw new Error(`Missing value for ${name}`);
+  if (!value || value.startsWith("--"))
+    throw new Error(`Missing value for ${name}`);
   return value;
 }
 
@@ -95,7 +96,8 @@ function builderReport() {
       "scripts/consumer-radar/validate-build-artifacts.mjs",
       "scripts/consumer-radar/data-source-smoke.mjs",
       "evals/consumer-app-radar-quality.yaml",
-      "docs/CONSUMER-APP-RADAR-WORKFLOW.md"
+      "docs/CONSUMER-APP-RADAR-WORKFLOW.md",
+      ".fabro/project.toml",
     ],
     workflow_run_order: [
       "bootstrap_spec",
@@ -107,22 +109,26 @@ function builderReport() {
       "promptfoo_gate",
       "parallel OpenRouter review fanout",
       "review_consensus",
-      "publish_handoff"
+      "publish_handoff",
     ],
     model_routing: {
-      scaffold_and_hard_review: ["google/gemini-3.1-pro-preview", "anthropic/claude-haiku-4-5"],
+      scaffold_and_hard_review: [
+        "google/gemini-3.1-pro-preview",
+        "anthropic/claude-haiku-4-5",
+      ],
       open_source_review_test: [
         "moonshotai/kimi-k2.6",
         "qwen/qwen3.6-plus",
         "deepseek/deepseek-v4-pro",
-        "deepseek/deepseek-v4-flash"
+        "deepseek/deepseek-v4-flash",
       ],
       repeated_generation_or_classification: [
         "deepseek/deepseek-v4-flash",
-        "google/gemini-3.1-flash-lite"
-      ]
+        "google/gemini-3.1-flash-lite",
+      ],
     },
-    secret_policy: "Workflow TOML references APIFY_TOKEN and OPENROUTER_API_KEY through env interpolation only; no raw secret values are written."
+    secret_policy:
+      "Fabro project config references sandbox credentials through secret-vault tokens only; no raw secret values are written.",
   };
 }
 
@@ -322,25 +328,132 @@ provider = "daytona"
 preserve = true
 stop_on_terminal = true
 
+[run.sandbox.daytona]
+auto_stop_interval = 60
+`;
+}
+
+function projectConfig() {
+  return `_version = 1
+
+[project]
+name = "maestro-os"
+
+[run.agent]
+permissions = "full"
+
+[run.sandbox]
+preserve = false
+stop_on_terminal = true
+
 [run.sandbox.env]
-APIFY_TOKEN = "{{ env.APIFY_TOKEN }}"
-OPENROUTER_API_KEY = "{{ env.OPENROUTER_API_KEY }}"
+OPENROUTER_API_KEY = "\${{ secrets.OPENROUTER_API_KEY }}"
+APIFY_TOKEN = "\${{ secrets.APIFY_TOKEN }}"
 APIFY_APPSTORE_ACTOR = "crawlerbros/appstore-scraper"
 APIFY_TIKTOK_ACTOR = "clockworks/tiktok-scraper"
 APIFY_INSTAGRAM_ACTOR = "apify/instagram-scraper"
+DAYTONA_API_URL = "\${{ secrets.DAYTONA_API_URL }}"
+DAYTONA_API_KEY = "\${{ secrets.DAYTONA_API_KEY }}"
+LINEAR_API_KEY = "\${{ secrets.LINEAR_API_KEY }}"
+LINEAR_API_URL = "\${{ secrets.LINEAR_API_URL }}"
+FABRO_SERVER = "\${{ secrets.FABRO_SERVER }}"
+FABRO_DEV_TOKEN = "\${{ secrets.FABRO_DEV_TOKEN }}"
+FABRO_SLACK_BOT_TOKEN = "\${{ secrets.FABRO_SLACK_BOT_TOKEN }}"
+FABRO_SLACK_CHANNEL_ID = "\${{ secrets.FABRO_SLACK_CHANNEL_ID }}"
+MAESTRO_AGENT_STATE_DIR = "/home/daytona/agent-state"
 PROMPTFOO_DISABLE_TELEMETRY = "1"
 
 [run.sandbox.daytona]
 auto_stop_interval = 60
+network = "allow_all"
+skip_clone = false
+
+[run.sandbox.daytona.labels]
+project = "maestro-os"
+purpose = "code-factory"
+
+[[run.sandbox.daytona.volumes]]
+volume_id = "beefe1da-59a0-48f6-9e19-a513d1790ce3"
+mount_path = "/home/daytona/agent-state"
+subpath = "agent-auth"
 
 [run.sandbox.daytona.snapshot]
-name = "maestro-code-factory"
+name = "maestro-code-factory-v5"
+cpu = 2
+memory = "4GB"
+disk = "10GB"
 dockerfile = """
-FROM node:22-bookworm
-RUN apt-get update && apt-get install -y bash ca-certificates curl git jq ripgrep python3 python3-pip pipx openssh-client && rm -rf /var/lib/apt/lists/*
-RUN npm install -g promptfoo @openai/codex @anthropic-ai/claude-code
-RUN curl -fsSL https://qlty.sh | sh && ln -sf /root/.qlty/bin/qlty /usr/local/bin/qlty
+FROM ubuntu:24.04
+
+ENV DEBIAN_FRONTEND=noninteractive
+ENV BUN_INSTALL=/root/.bun
+ENV PATH="/root/.fabro/bin:/root/.bun/bin:/root/.local/bin:/root/.qlty/bin:\${PATH}"
+WORKDIR /home/daytona
+
+RUN apt-get update \\
+  && apt-get install -y --no-install-recommends \\
+    bash \\
+    ca-certificates \\
+    curl \\
+    git \\
+    jq \\
+    openssh-client \\
+    python3 \\
+    python3-pip \\
+    pipx \\
+    ripgrep \\
+    shellcheck \\
+    unzip \\
+    xz-utils \\
+  && rm -rf /var/lib/apt/lists/*
+
+RUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash - \\
+  && apt-get update \\
+  && apt-get install -y --no-install-recommends nodejs \\
+  && npm install -g @anthropic-ai/claude-code @openai/codex promptfoo \\
+  && npm cache clean --force \\
+  && rm -rf /var/lib/apt/lists/*
+
+RUN curl -fsSL https://bun.sh/install | bash -s "bun-v1.2.22" \\
+  && ln -sf /root/.bun/bin/bun /usr/local/bin/bun
+
+RUN pipx install spec-kitty-cli==3.1.8 \\
+  && curl -fsSL https://qlty.sh | sh \\
+  && ln -sf /root/.qlty/bin/qlty /usr/local/bin/qlty
+
+RUN set -eux; \\
+  target="x86_64-unknown-linux-gnu"; \\
+  asset="fabro-\${target}.tar.gz"; \\
+  url="$(curl -fsSL https://api.github.com/repos/fabro-sh/fabro/releases/latest | jq -r --arg asset "$asset" '.assets[] | select(.name == $asset) | .browser_download_url')"; \\
+  test -n "$url"; \\
+  curl -fsSL "$url" -o /tmp/fabro.tar.gz; \\
+  tar -xzf /tmp/fabro.tar.gz -C /tmp; \\
+  install -m 0755 "/tmp/fabro-\${target}/fabro" /usr/local/bin/fabro; \\
+  rm -rf /tmp/fabro.tar.gz "/tmp/fabro-\${target}"; \\
+  fabro --version
+
+CMD ["/bin/bash"]
 """
+
+[run.integrations.github.permissions]
+metadata = "read"
+contents = "write"
+pull_requests = "write"
+issues = "write"
+actions = "read"
+
+[run.artifacts]
+include = [
+  ".workflow/**",
+  "reports/**",
+  "evals/output/**",
+  "apps/generated-*/README.md",
+  "apps/generated-*/.workflow-build.json",
+  "apps/generated-*/fixtures/**",
+  "apps/generated-*/public/**",
+  "apps/generated-*/src/**",
+  "apps/generated-*/tests/**",
+]
 `;
 }
 
@@ -1022,7 +1135,9 @@ write("README.md", [
   "",
   "## Live Data",
   "",
-  "The first pass uses fixture data for repeatable CI. Live adapters are scaffolded for Apple RSS/iTunes and Apify actors. Set APIFY_TOKEN plus actor IDs in the workflow sandbox env before enabling live refresh."
+  "The first pass uses fixture data for repeatable CI. Live adapters are scaffolded",
+  "for Apple RSS/iTunes and Apify actors. Set APIFY_TOKEN plus actor IDs in the",
+  "workflow sandbox env before enabling live refresh."
 ]);
 
 mkdirSync(".workflow/consumer-radar", { recursive: true });
@@ -1116,13 +1231,22 @@ if (!available) {
 }
 
 let check = null;
+let fmt = null;
 if (available) {
-  check = run("export PATH=$HOME/.qlty/bin:$PATH; qlty check --all --no-progress --no-fail --summary --no-upgrade-check");
+  const strictMode = realMode && !allowFallback;
+  if (strictMode) {
+    fmt = run("export PATH=$HOME/.qlty/bin:$PATH; qlty fmt --all --no-progress --no-upgrade-check");
+  }
+  const checkCommand = strictMode
+    ? "export PATH=$HOME/.qlty/bin:$PATH; qlty check --all --no-progress --summary --no-upgrade-check"
+    : "export PATH=$HOME/.qlty/bin:$PATH; qlty check --all --no-progress --no-fail --summary --no-upgrade-check";
+  check = run(checkCommand);
 }
 
 const hardFailures = [];
 if (realMode && !allowFallback) {
   if (!available) hardFailures.push("Qlty unavailable in real mode");
+  if (fmt && fmt.status !== 0) hardFailures.push("Qlty formatter failed in real mode");
   if (check && check.status !== 0) hardFailures.push("Qlty check command failed in real mode");
 }
 const report = {
@@ -1131,10 +1255,11 @@ const report = {
   allow_fallback: allowFallback,
   qlty_available: available,
   install_status: install ? install.status : null,
+  fmt_status: fmt ? fmt.status : null,
   check_status: check ? check.status : null,
   hard_failures: hardFailures,
-  stdout: check ? check.stdout.slice(-5000) : "",
-  stderr: check ? check.stderr.slice(-5000) : "qlty unavailable; native checks remain the blocking gate"
+  stdout: [fmt?.stdout, check?.stdout].filter(Boolean).join("\\n").slice(-5000),
+  stderr: [fmt?.stderr, check?.stderr].filter(Boolean).join("\\n").slice(-5000) || "qlty unavailable; native checks remain the blocking gate"
 };
 writeReport(report);
 console.log(JSON.stringify(report, null, 2));
@@ -1608,7 +1733,9 @@ The workflow builds \`apps/generated-consumer-app-radar\` inside the Daytona san
 
 Because this spike repo currently has no Git remote for Daytona to clone, remote runs include a short support-file wait stage. Start the run detached, then copy \`scripts/consumer-radar\`, \`specs/consumer-app-radar\`, and \`evals/consumer-app-radar-quality.yaml\` into the run sandbox with \`fabro sandbox cp\`.
 
-Secrets are not stored in this repo. \`APIFY_TOKEN\` and \`OPENROUTER_API_KEY\` are injected into the sandbox from the Fabro server process environment via \`[run.sandbox.env]\`.
+Secrets are not stored in this repo. \`APIFY_TOKEN\` and
+\`OPENROUTER_API_KEY\` are injected into the sandbox from the Fabro server
+secret vault via \`[run.sandbox.env]\`.
 `;
 }
 
@@ -1618,6 +1745,7 @@ import { existsSync, readFileSync, writeFileSync, mkdirSync } from "node:fs";
 
 const required = [
   "specs/consumer-app-radar/spec.md",
+  ".fabro/project.toml",
   "workflows/consumer-radar/build-consumer-app-radar.fabro",
   "workflows/consumer-radar/build-consumer-app-radar.toml",
   "scripts/consumer-radar/generate-app.mjs",
@@ -1626,11 +1754,13 @@ const required = [
   "evals/consumer-app-radar-quality.yaml"
 ];
 const missing = required.filter((file) => !existsSync(file));
-const workflow = existsSync(required[1]) ? readFileSync(required[1], "utf8") : "";
-const toml = existsSync(required[2]) ? readFileSync(required[2], "utf8") : "";
+const project = existsSync(required[1]) ? readFileSync(required[1], "utf8") : "";
+const workflow = existsSync(required[2]) ? readFileSync(required[2], "utf8") : "";
+const toml = existsSync(required[3]) ? readFileSync(required[3], "utf8") : "";
 const hasMarkers = ["review_fanout", "qlty_gate", "promptfoo_gate", "Spec Kitty", "moonshotai/kimi-k2.6", "qwen/qwen3.6-plus", "deepseek/deepseek-v4"].every((text) => workflow.includes(text) || toml.includes(text) || readFileSync(required[0], "utf8").includes(text));
-const leaks = /apify_api_|sk-or-v1-|xoxb-|xapp-/.test(workflow + toml);
-const report = { ok: missing.length === 0 && hasMarkers && !leaks, missing, has_markers: hasMarkers, leaks };
+const hasProjectEnv = project.includes('[run.sandbox.env]') && project.includes('\${{ secrets.APIFY_TOKEN }}') && project.includes('\${{ secrets.OPENROUTER_API_KEY }}') && project.includes('network = "allow_all"');
+const leaks = /apify_api_|sk-or-v1-|xoxb-|xapp-/.test(project + workflow + toml);
+const report = { ok: missing.length === 0 && hasMarkers && hasProjectEnv && !leaks, missing, has_markers: hasMarkers, has_project_env: hasProjectEnv, leaks };
 mkdirSync(".workflow/workflow-builder", { recursive: true });
 writeFileSync(".workflow/workflow-builder/validation.json", JSON.stringify(report, null, 2) + "\\n");
 console.log(JSON.stringify(report, null, 2));
@@ -1639,25 +1769,47 @@ if (!report.ok) process.exit(1);
 }
 
 write("specs/consumer-app-radar/spec.md", consumerSpec());
-write("workflows/consumer-radar/build-consumer-app-radar.fabro", buildWorkflow());
+write(".fabro/project.toml", projectConfig());
+write(
+  "workflows/consumer-radar/build-consumer-app-radar.fabro",
+  buildWorkflow(),
+);
 write("workflows/consumer-radar/build-consumer-app-radar.toml", buildToml());
 write("scripts/consumer-radar/bootstrap-spec.mjs", bootstrapSpecScript());
 write("scripts/consumer-radar/data-source-smoke.mjs", dataSourceSmokeScript());
 write("scripts/consumer-radar/generate-app.mjs", generateAppScript());
 write("scripts/consumer-radar/run-native-checks.mjs", runNativeChecksScript());
 write("scripts/consumer-radar/qlty-gate.mjs", qltyGateScript());
-write("scripts/consumer-radar/promptfoo-or-fallback.mjs", promptfooFallbackScript());
+write(
+  "scripts/consumer-radar/promptfoo-or-fallback.mjs",
+  promptfooFallbackScript(),
+);
 write("scripts/consumer-radar/openrouter-review.mjs", openRouterReviewScript());
 write("scripts/consumer-radar/review-consensus.mjs", reviewConsensusScript());
-write("scripts/consumer-radar/validate-build-artifacts.mjs", validateBuildArtifactsScript());
+write(
+  "scripts/consumer-radar/validate-build-artifacts.mjs",
+  validateBuildArtifactsScript(),
+);
 write("evals/consumer-app-radar-quality.yaml", promptfooConfig());
 write("docs/CONSUMER-APP-RADAR-WORKFLOW.md", workflowDoc());
-write("scripts/workflow-builder/validate-consumer-radar-builder.mjs", validateBuilderScript());
-write(".workflow/workflow-builder/consumer-radar-report.json", json(builderReport()));
+write(
+  "scripts/workflow-builder/validate-consumer-radar-builder.mjs",
+  validateBuilderScript(),
+);
+write(
+  ".workflow/workflow-builder/consumer-radar-report.json",
+  json(builderReport()),
+);
 
-console.log(JSON.stringify({
-  ok: true,
-  output_root: outputRoot,
-  mode,
-  report: ".workflow/workflow-builder/consumer-radar-report.json"
-}, null, 2));
+console.log(
+  JSON.stringify(
+    {
+      ok: true,
+      output_root: outputRoot,
+      mode,
+      report: ".workflow/workflow-builder/consumer-radar-report.json",
+    },
+    null,
+    2,
+  ),
+);

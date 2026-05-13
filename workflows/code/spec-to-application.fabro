@@ -1,0 +1,179 @@
+digraph SpecToApplication {
+    graph [
+        goal="Build an application from a completed spec with review and automated verification",
+        persona="code-factory",
+        inputs="spec_path, app_dir",
+        outputs="application, verification_report, review_report",
+        default_max_retries=3,
+        retry_target="plan_fanout",
+        fallback_retry_target="plan_fanout",
+        model_stylesheet="
+            *          { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: low; }
+            .coding    { backend: cli; provider: anthropic; model: claude-sonnet-4-5; reasoning_effort: high; }
+            .hard      { backend: cli; provider: anthropic; model: claude-sonnet-4-5; reasoning_effort: high; }
+            .review    { backend: cli; provider: anthropic; model: claude-sonnet-4-5; reasoning_effort: high; }
+            .verify    { backend: cli; provider: anthropic; model: claude-sonnet-4-5; reasoning_effort: high; }
+        "
+    ]
+    rankdir=LR
+
+    start [shape=Mdiamond, label="Start"]
+    exit  [shape=Msquare, label="Exit"]
+
+    bootstrap [
+        label="Bootstrap",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="bootstrap",
+        script="test -f '{{ inputs.spec_path|default('specs/scaffold/completed-toy-slack-hello.md') }}'; mkdir -p .workflow '{{ inputs.app_dir|default('apps/generated-app') }}'; ./bin/maestro verify spec-quality '{{ inputs.spec_path|default('specs/scaffold/completed-toy-slack-hello.md') }}'"
+    ]
+    expand_spec [
+        label="Expand Spec",
+        class="hard",
+        goal_gate=true,
+        retry_target="expand_spec",
+        prompt="@../../prompts/code-app/expand-spec.md"
+    ]
+
+    plan_fanout [shape=component, label="Plan Fan-Out"]
+    plan_a [label="Plan A", class="hard", prompt="@../../prompts/code-app/plan-a.md"]
+    plan_b [label="Plan B", class="hard", prompt="@../../prompts/code-app/plan-b.md"]
+    plan_consensus [
+        label="Plan Consensus",
+        class="review",
+        goal_gate=true,
+        retry_target="plan_fanout",
+        prompt="@../../prompts/code-app/plan-consensus.md"
+    ]
+    approve_plan [shape=hexagon, label="Approve Implementation Plan"]
+
+    implement [
+        label="Implement",
+        class="hard",
+        goal_gate=true,
+        retry_target="implement",
+        prompt="@../../prompts/code-app/implement.md"
+    ]
+
+    qlty_gate [
+        label="Qlty Gate",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="implement",
+        script="cd '{{ inputs.app_dir|default('apps/generated-app') }}'; if command -v qlty >/dev/null 2>&1; then qlty check --all --no-progress --no-upgrade-check 2>&1; else echo 'qlty is required for this workflow' >&2; exit 1; fi"
+    ]
+    native_checks [
+        label="Native Checks",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="implement",
+        script="cd '{{ inputs.app_dir|default('apps/generated-app') }}'; if [ -f package.json ]; then npm run lint --if-present && npm run typecheck --if-present && npm test --if-present && npm run build --if-present; elif [ -f Cargo.toml ]; then cargo fmt --check && cargo clippy --workspace --all-targets --all-features -- -D warnings && cargo test --workspace; else echo 'No recognized project manifest' >&2; exit 1; fi"
+    ]
+    browser_check [
+        label="Browser Check",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="implement",
+        script="cd '{{ inputs.app_dir|default('apps/generated-app') }}'; if [ -x scripts/validate-browser.sh ]; then sh scripts/validate-browser.sh; else echo 'scripts/validate-browser.sh is required for UI apps' >&2; exit 1; fi"
+    ]
+    artifact_check [
+        label="Artifact Check",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="implement",
+        script="cd '{{ inputs.app_dir|default('apps/generated-app') }}'; if [ -x scripts/validate-artifacts.sh ]; then sh scripts/validate-artifacts.sh; else echo 'scripts/validate-artifacts.sh is required' >&2; exit 1; fi"
+    ]
+    fidelity_review [
+        label="Fidelity Review",
+        class="verify",
+        goal_gate=true,
+        retry_target="implement",
+        prompt="@../../prompts/code-app/fidelity-review.md"
+    ]
+    fidelity_gate [
+        label="Fidelity Gate",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="implement",
+        script="./bin/maestro verify text-gate '{{ inputs.app_dir|default('apps/generated-app') }}/.workflow/verify_fidelity.md' --pass 'VERDICT:\\s*APPROVED' --fail 'VERDICT:\\s*REJECTED|\\bFAIL(ED|URE)?\\b'"
+    ]
+
+    review_fanout [shape=component, label="Review Fan-Out"]
+    correctness_review [label="Correctness Review", class="review", prompt="@../../prompts/code-app/correctness-review.md"]
+    test_review [label="Test Review", class="review", prompt="@../../prompts/code-app/test-review.md"]
+    security_review [label="Security Review", class="review", prompt="@../../prompts/code-app/security-review.md"]
+    review_consensus [
+        label="Review Consensus",
+        class="review",
+        goal_gate=true,
+        retry_target="postmortem",
+        prompt="@../../prompts/code-app/review-consensus.md"
+    ]
+    review_gate [
+        label="Review Verdict Gate",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="postmortem",
+        script="./bin/maestro verify text-gate '{{ inputs.app_dir|default('apps/generated-app') }}/.workflow/review_consensus.md' --pass 'VERDICT:\\s*APPROVED' --fail 'VERDICT:\\s*REJECTED|\\bREJECTED\\b'"
+    ]
+
+    postmortem [
+        label="Postmortem",
+        class="review",
+        prompt="@../../prompts/code-app/postmortem.md"
+    ]
+    memory_summary [
+        label="Memory Summary",
+        shape=parallelogram,
+        script="printf '{\"kind\":\"app.build.summary\",\"payload\":{\"spec_path\":\"{{ inputs.spec_path|default('specs/scaffold/completed-toy-slack-hello.md') }}\",\"app_dir\":\"{{ inputs.app_dir|default('apps/generated-app') }}\"}}' | ./bin/maestro memory append 'team/code/builds' >/dev/null; echo memory-updated"
+    ]
+    approve_release [shape=hexagon, label="Approve Release Handoff"]
+
+    start -> bootstrap
+    bootstrap -> expand_spec [condition="outcome=succeeded"]
+    bootstrap -> bootstrap   [loop_restart=true]
+    expand_spec -> plan_fanout [condition="outcome=succeeded"]
+    expand_spec -> expand_spec [loop_restart=true]
+    plan_fanout -> plan_a
+    plan_fanout -> plan_b
+    plan_a -> plan_consensus
+    plan_b -> plan_consensus
+    plan_consensus -> approve_plan [condition="outcome=succeeded"]
+    plan_consensus -> plan_fanout  [label="Replan"]
+    approve_plan -> implement   [label="[A] Approve"]
+    approve_plan -> plan_fanout [label="[R] Replan"]
+
+    implement -> qlty_gate [condition="outcome=succeeded"]
+    implement -> implement [loop_restart=true]
+    qlty_gate -> native_checks [condition="outcome=succeeded"]
+    qlty_gate -> implement     [label="Fix"]
+    native_checks -> browser_check [condition="outcome=succeeded"]
+    native_checks -> implement     [label="Fix"]
+    browser_check -> artifact_check [condition="outcome=succeeded"]
+    browser_check -> implement      [label="Fix"]
+    artifact_check -> fidelity_review [condition="outcome=succeeded"]
+    artifact_check -> implement       [label="Fix"]
+    fidelity_review -> fidelity_gate [condition="outcome=succeeded"]
+    fidelity_review -> implement     [label="Fix"]
+    fidelity_gate -> review_fanout [condition="outcome=succeeded"]
+    fidelity_gate -> implement     [label="Fix"]
+
+    review_fanout -> correctness_review
+    review_fanout -> test_review
+    review_fanout -> security_review
+    correctness_review -> review_consensus [condition="outcome=succeeded"]
+    correctness_review -> postmortem       [label="Fix"]
+    test_review -> review_consensus [condition="outcome=succeeded"]
+    test_review -> postmortem       [label="Fix"]
+    security_review -> review_consensus [condition="outcome=succeeded"]
+    security_review -> postmortem       [label="Fix"]
+    review_consensus -> review_gate [condition="outcome=succeeded"]
+    review_consensus -> postmortem  [label="Fix"]
+    review_gate -> approve_release [condition="outcome=succeeded"]
+    review_gate -> postmortem      [label="Fix"]
+    postmortem -> plan_fanout
+    approve_release -> memory_summary [label="[A] Approve"]
+    approve_release -> postmortem     [label="[R] Revise"]
+    memory_summary -> exit      [condition="outcome=succeeded"]
+    memory_summary -> postmortem [label="Fix"]
+}
