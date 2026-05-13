@@ -33,6 +33,14 @@ digraph WorkflowBuilder {
         script="node scripts/workflow-builder/materialize-consumer-radar.mjs --output-root '{{ inputs.output_root|default('.') }}'"
     ]
 
+    wait_for_builder_files [
+        label="Wait For Builder Files",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="wait_for_builder_files",
+        script="for i in $(seq 1 90); do if [ -f scripts/workflow-builder/materialize-consumer-radar.mjs ]; then echo builder-files-ready; exit 0; fi; sleep 2; done; echo 'missing builder support files' >&2; exit 1"
+    ]
+
     validate_generated [
         label="Validate Generated Workflow",
         shape=parallelogram,
@@ -58,8 +66,10 @@ digraph WorkflowBuilder {
     ]
 
     start -> define_quality_bar
-    define_quality_bar -> materialize_consumer_radar [condition="outcome=succeeded"]
+    define_quality_bar -> wait_for_builder_files [condition="outcome=succeeded"]
     define_quality_bar -> define_quality_bar [label="Retry", loop_restart=true]
+    wait_for_builder_files -> materialize_consumer_radar [condition="outcome=succeeded"]
+    wait_for_builder_files -> wait_for_builder_files [label="Retry", loop_restart=true]
     materialize_consumer_radar -> validate_generated [condition="outcome=succeeded"]
     materialize_consumer_radar -> materialize_consumer_radar [label="Retry", loop_restart=true]
     validate_generated -> smoke_generate_app [condition="outcome=succeeded"]

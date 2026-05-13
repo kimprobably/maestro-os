@@ -10,4 +10,6 @@ fabro run workflows/consumer-radar/build-consumer-app-radar.toml --server https:
 
 The workflow builds `apps/generated-consumer-app-radar` inside the Daytona sandbox, runs native checks, attempts Qlty, attempts Promptfoo, and fans out OpenRouter reviews across Kimi, Qwen, and DeepSeek. It records all reports under `.workflow/consumer-radar`.
 
+Because this spike repo currently has no Git remote for Daytona to clone, remote runs include a short support-file wait stage. Start the run detached, then copy `scripts/consumer-radar`, `specs/consumer-app-radar`, and `evals/consumer-app-radar-quality.yaml` into the run sandbox with `fabro sandbox cp`.
+
 Secrets are not stored in this repo. `APIFY_TOKEN` and `OPENROUTER_API_KEY` are injected into the sandbox from the Fabro server process environment via `[run.sandbox.env]`.

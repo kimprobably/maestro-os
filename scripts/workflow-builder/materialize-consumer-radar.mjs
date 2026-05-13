@@ -153,6 +153,14 @@ function buildWorkflow() {
         script="node scripts/consumer-radar/bootstrap-spec.mjs --spec '{{ inputs.spec_path|default('specs/consumer-app-radar/spec.md') }}' --app-dir '{{ inputs.app_dir|default('apps/generated-consumer-app-radar') }}'"
     ]
 
+    wait_for_support_files [
+        label="Wait For Support Files",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="wait_for_support_files",
+        script="for i in $(seq 1 90); do if [ -f scripts/consumer-radar/generate-app.mjs ] && [ -f '{{ inputs.spec_path|default('specs/consumer-app-radar/spec.md') }}' ]; then echo support-files-ready; exit 0; fi; sleep 2; done; echo 'missing consumer radar support files' >&2; exit 1"
+    ]
+
     spec_kitty_gate [
         label="Spec Kitty Gate",
         shape=parallelogram,
@@ -246,7 +254,9 @@ function buildWorkflow() {
         script="node -e \\"const fs=require('fs'); const path=require('path'); const app='{{ inputs.app_dir|default('apps/generated-consumer-app-radar') }}'; const out='.workflow/consumer-radar/handoff.json'; fs.mkdirSync(path.dirname(out),{recursive:true}); fs.writeFileSync(out, JSON.stringify({ok:true, app_dir:app, run_dir:process.cwd(), reports:['.workflow/consumer-radar/native-checks.json','.workflow/consumer-radar/qlty-report.json','.workflow/consumer-radar/promptfoo-report.json','.workflow/consumer-radar/review-consensus.json'], next:['Run npm start inside the generated app','Use POST /api/refresh with mode=live after Apify actors are tuned']}, null, 2)+'\\\\n'); console.log(fs.readFileSync(out,'utf8'));\\""
     ]
 
-    start -> bootstrap_spec
+    start -> wait_for_support_files
+    wait_for_support_files -> bootstrap_spec [condition="outcome=succeeded"]
+    wait_for_support_files -> wait_for_support_files [label="Retry", loop_restart=true]
     bootstrap_spec -> spec_kitty_gate [condition="outcome=succeeded"]
     bootstrap_spec -> bootstrap_spec [label="Retry", loop_restart=true]
     spec_kitty_gate -> data_source_smoke [condition="outcome=succeeded"]
@@ -1150,6 +1160,8 @@ fabro run workflows/consumer-radar/build-consumer-app-radar.toml --server https:
 \`\`\`
 
 The workflow builds \`apps/generated-consumer-app-radar\` inside the Daytona sandbox, runs native checks, attempts Qlty, attempts Promptfoo, and fans out OpenRouter reviews across Kimi, Qwen, and DeepSeek. It records all reports under \`.workflow/consumer-radar\`.
+
+Because this spike repo currently has no Git remote for Daytona to clone, remote runs include a short support-file wait stage. Start the run detached, then copy \`scripts/consumer-radar\`, \`specs/consumer-app-radar\`, and \`evals/consumer-app-radar-quality.yaml\` into the run sandbox with \`fabro sandbox cp\`.
 
 Secrets are not stored in this repo. \`APIFY_TOKEN\` and \`OPENROUTER_API_KEY\` are injected into the sandbox from the Fabro server process environment via \`[run.sandbox.env]\`.
 `;
