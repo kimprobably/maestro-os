@@ -84,6 +84,22 @@ const materializer = readFileSync(
   resolve(outDir, "scripts/app-feedback/materialize-enhancement-workflow.mjs"),
   "utf8",
 );
+const childMaterialize = spawnSync(
+  process.execPath,
+  ["scripts/app-feedback/materialize-enhancement-workflow.mjs", "--target", "consumer-radar"],
+  { cwd: outDir, encoding: "utf8" },
+);
+
+if (childMaterialize.status !== 0) {
+  process.stderr.write(childMaterialize.stderr);
+  process.stdout.write(childMaterialize.stdout);
+  process.exit(childMaterialize.status ?? 1);
+}
+
+const childRunConfig = readFileSync(
+  resolve(outDir, "workflows/consumer-radar/live-enrichment.toml"),
+  "utf8",
+);
 const prompts = [
   "prompts/app-feedback/spec-candidate-a.md",
   "prompts/app-feedback/spec-candidate-b.md",
@@ -198,6 +214,26 @@ for (const marker of [
 
 if (validator.includes("\"spec_eval_fanout\"")) {
   throw new Error("generated workflow validator must not require removed spec_eval_fanout marker");
+}
+
+for (const optionalActorSecret of [
+  "secrets.APIFY_APPSTORE_ACTOR",
+  "secrets.APIFY_TIKTOK_ACTOR",
+  "secrets.APIFY_INSTAGRAM_ACTOR",
+]) {
+  if (childRunConfig.includes(optionalActorSecret)) {
+    throw new Error(`generated child run config must not require optional server secret: ${optionalActorSecret}`);
+  }
+}
+
+for (const actorDefault of [
+  'APIFY_APPSTORE_ACTOR = "crawlerbros/appstore-scraper"',
+  'APIFY_TIKTOK_ACTOR = "clockworks/tiktok-scraper"',
+  'APIFY_INSTAGRAM_ACTOR = "apify/instagram-scraper"',
+]) {
+  if (!childRunConfig.includes(actorDefault)) {
+    throw new Error(`generated child run config missing public actor default: ${actorDefault}`);
+  }
 }
 
 for (const marker of [
