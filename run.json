@@ -932,7 +932,7 @@
     "kind": "running"
   },
   "status_updated_at": "2026-05-13T10:58:45.626753569Z",
-  "last_event_at": "2026-05-13T10:59:10.746807611Z",
+  "last_event_at": "2026-05-13T10:59:16.857903086Z",
   "pending_control": null,
   "checkpoints": [
     {
@@ -1303,9 +1303,9 @@
       }
     },
     {
-      "seq": 0,
+      "seq": 67,
       "checkpoint": {
-        "timestamp": "2026-05-13T10:59:12.944346185Z",
+        "timestamp": "2026-05-13T10:59:16.853051991Z",
         "current_node": "generate_app",
         "completed_nodes": [
           "start",
@@ -1317,12 +1317,125 @@
         ],
         "node_retries": {},
         "context_values": {
+          "internal.node_visit_count": 1,
+          "failure_class": "",
+          "graph.inputs": "app_dir, spec_path, real_mode, allow_fixture_fallback, allow_quality_fallback, minimum_active_reviews",
+          "graph.fallback_retry_target": "generate_app",
+          "internal.work_dir": "/home/daytona/workspace",
+          "internal.run_id": "01KRGFTABSM0R1X5CHQQA1Z76E",
+          "internal.retry_count.bootstrap_spec": 0,
+          "thread.start.current_node": "wait_for_support_files",
+          "failure_signature": "",
+          "internal.fidelity": "compact",
+          "thread.bootstrap_spec.current_node": "spec_kitty_gate",
+          "thread.wait_for_support_files.current_node": "bootstrap_spec",
+          "graph.default_max_retries": "2",
+          "graph.goal": "Build Consumer App Radar from spec with CI, eval, and model review",
+          "graph.retry_target": "generate_app",
+          "command.output": "blob://sha256/e13919244f75906e6e71bd55689542b555b043361da8bca8c82ef7a95a136f3a",
+          "outcome": "succeeded",
+          "graph.rankdir": "LR",
+          "internal.retry_count.generate_app": 0,
+          "internal.retry_count.spec_kitty_gate": 0,
+          "thread.data_source_smoke.current_node": "generate_app",
+          "internal.retry_count.data_source_smoke": 0,
+          "graph.outputs": "application, ci_report, eval_report, review_consensus, handoff",
+          "graph.persona": "code-factory",
+          "internal.retry_count.wait_for_support_files": 0,
+          "current_node": "generate_app",
+          "graph.model_stylesheet": "\n            *          { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: low; }\n            .review    { provider: openrouter; model: google/gemini-3.1-pro-preview; reasoning_effort: high; }\n            .cheap     { provider: openrouter; model: deepseek/deepseek-v4-flash; reasoning_effort: low; }\n        ",
+          "internal.retry_count.start": 0,
+          "internal.thread_id": "data_source_smoke",
+          "thread.spec_kitty_gate.current_node": "data_source_smoke"
+        },
+        "node_outcomes": {
+          "wait_for_support_files": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/a993020942c3b2f319b954a99b0a9f056f2f684e6388311672cad5808190f591"
+            },
+            "notes": "Script completed: for i in $(seq 1 90); do if [ -f scripts/consumer-radar/generate-app.mjs ] && [ -f 'specs/consumer-app-radar/spec.md' ]; then echo support-files-ready; exit 0; fi; sleep 2; done; echo 'missing consumer radar support files' >&2; exit 1",
+            "usage": null
+          },
+          "generate_app": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/e13919244f75906e6e71bd55689542b555b043361da8bca8c82ef7a95a136f3a"
+            },
+            "notes": "Script completed: node scripts/consumer-radar/generate-app.mjs --app-dir 'apps/generated-consumer-app-radar'",
+            "usage": null
+          },
+          "start": {
+            "status": "succeeded",
+            "usage": null
+          },
+          "spec_kitty_gate": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/8335e451da6a0b7f31e0f1812af554b3ce6eae3be488ea384c3040b843ecf439"
+            },
+            "notes": "Script completed: node scripts/consumer-radar/bootstrap-spec.mjs --spec 'specs/consumer-app-radar/spec.md' --app-dir 'apps/generated-consumer-app-radar' --spec-kitty",
+            "usage": null
+          },
+          "data_source_smoke": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/ec22e26fda622aff4d8409a568c42499ae94a91730c23091b87d56e392e8b227"
+            },
+            "notes": "Script completed: node scripts/consumer-radar/data-source-smoke.mjs --output .workflow/consumer-radar/data-source-smoke.json --real-mode 'true' --allow-fixture-fallback 'true'",
+            "usage": null
+          },
+          "bootstrap_spec": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/1e6b70db6011178fbd1bd694eeac11141ac625a664a68b46048a52bf00dceafc"
+            },
+            "notes": "Script completed: node scripts/consumer-radar/bootstrap-spec.mjs --spec 'specs/consumer-app-radar/spec.md' --app-dir 'apps/generated-consumer-app-radar'",
+            "usage": null
+          }
+        },
+        "next_node_id": "native_checks",
+        "git_commit_sha": "ae85f0c98943e8103772701ffe9f15713d1662c3",
+        "node_visits": {
+          "generate_app": 1,
+          "data_source_smoke": 1,
+          "spec_kitty_gate": 1,
+          "bootstrap_spec": 1,
+          "start": 1,
+          "wait_for_support_files": 1
+        }
+      },
+      "diff": {
+        "patch": "diff --git a/apps/generated-consumer-app-radar/.workflow-build.json b/apps/generated-consumer-app-radar/.workflow-build.json\nnew file mode 100644\nindex 0000000..aec3d8d\n--- /dev/null\n+++ b/apps/generated-consumer-app-radar/.workflow-build.json\n@@ -0,0 +1,6 @@\n+{\n+  \"ok\": true,\n+  \"app_dir\": \"/home/daytona/workspace/apps/generated-consumer-app-radar\",\n+  \"generated_at\": \"2026-05-13T10:59:11.154Z\",\n+  \"files\": 17\n+}\ndiff --git a/apps/generated-consumer-app-radar/README.md b/apps/generated-consumer-app-radar/README.md\nnew file mode 100644\nindex 0000000..ae8e62b\n--- /dev/null\n+++ b/apps/generated-consumer-app-radar/README.md\n@@ -0,0 +1,16 @@\n+# Consumer App Radar\n+\n+Generated by the Fabro Consumer App Radar workflow.\n+\n+## Run\n+\n+~~~bash\n+npm test\n+npm start\n+~~~\n+\n+Open http://localhost:4317.\n+\n+## Live Data\n+\n+The first pass uses fixture data for repeatable CI. Live adapters are scaffolded for Apple RSS/iTunes and Apify actors. Set APIFY_TOKEN plus actor IDs in the workflow sandbox env before enabling live refresh.\ndiff --git a/apps/generated-consumer-app-radar/fixtures/apps.json b/apps/generated-consumer-app-radar/fixtures/apps.json\nnew file mode 100644\nindex 0000000..992025c\n--- /dev/null\n+++ b/apps/generated-consumer-app-radar/fixtures/apps.json\n@@ -0,0 +1,235 @@\n+[\n+  {\n+    \"id\": \"one-sec\",\n+    \"name\": \"one sec\",\n+    \"category\": \"Productivity\",\n+    \"country\": \"US\",\n+    \"appStoreId\": \"1532875441\",\n+    \"rankDelta4w\": 76,\n+    \"reviewDelta4w\": 138,\n+    \"rating\": 4.8,\n+    \"socialDelta4w\": 212,\n+    \"socialStrategy\": [\n+      \"Creator demos interrupting app-open autopilot\",\n+      \"Short before-after clips\",\n+      \"Academic credibility hooks\"\n+    ],\n+    \"reviewThemes\": [\n+      \"Needs better schedule exceptions\",\n+      \"Users want stronger family controls\",\n+      \"More granular app groups requested\"\n+    ],\n+    \"featureRequests\": [\n+      \"Calendar-aware focus rules\",\n+      \"Shared household accountability\",\n+      \"Weekly relapse insights\"\n+    ],\n+    \"evidence\": [\n+      \"Fixture seed until live Apify ranking feed is tuned\",\n+      \"Apple RSS reviews supported by adapter\"\n+    ]\n+  },\n+  {\n+    \"id\": \"opal\",\n+    \"name\": \"Opal\",\n+    \"category\": \"Screen Time\",\n+    \"country\": \"US\",\n+    \"appStoreId\": \"1497465230\",\n+    \"rankDelta4w\": 42,\n+    \"reviewDelta4w\": 89,\n+    \"rating\": 4.7,\n+    \"socialDelta4w\": 156,\n+    \"socialStrategy\": [\n+      \"Founder-led productivity clips\",\n+      \"Relatable addiction framing\",\n+      \"Creator routines\"\n+    ],\n+    \"reviewThemes\": [\n+      \"Lock bypass confusion\",\n+      \"Subscription objections\",\n+      \"More reporting exports\"\n+    ],\n+    \"featureRequests\": [\n+      \"Anti-bypass education\",\n+      \"Cheaper student plan\",\n+      \"CSV/report export\"\n+    ],\n+    \"evidence\": [\n+      \"Fixture seed; social adapters support Apify enrichment\"\n+    ]\n+  },\n+  {\n+    \"id\": \"stoic\",\n+    \"name\": \"stoic.\",\n+    \"category\": \"Wellness\",\n+    \"country\": \"US\",\n+    \"appStoreId\": \"1312926037\",\n+    \"rankDelta4w\": 31,\n+    \"reviewDelta4w\": 64,\n+    \"rating\": 4.8,\n+    \"socialDelta4w\": 92,\n+    \"socialStrategy\": [\n+      \"Calm aesthetic reels\",\n+      \"Journaling prompts\",\n+      \"Mental model education\"\n+    ],\n+    \"reviewThemes\": [\n+      \"Users want gentler onboarding\",\n+      \"Export/sync concerns\",\n+      \"Prompt repetition\"\n+    ],\n+    \"featureRequests\": [\n+      \"Adaptive prompts\",\n+      \"Better Apple Health context\",\n+      \"Private export\"\n+    ],\n+    \"evidence\": [\n+      \"Fixture seed for repeatable CI\"\n+    ]\n+  },\n+  {\n+    \"id\": \"screenzen\",\n+    \"name\": \"ScreenZen\",\n+    \"category\": \"Screen Time\",\n+    \"country\": \"US\",\n+    \"appStoreId\": \"1541027222\",\n+    \"rankDelta4w\": 58,\n+    \"reviewDelta4w\": 73,\n+    \"rating\": 4.8,\n+    \"socialDelta4w\": 118,\n+    \"socialStrategy\": [\n+      \"Reddit-style authenticity\",\n+      \"Anti-subscription positioning\",\n+      \"Direct comparisons to expensive blockers\"\n+    ],\n+    \"reviewThemes\": [\n+      \"Users praise free controls\",\n+      \"Setup friction appears repeatedly\",\n+      \"Requests for more lockout nuance\"\n+    ],\n+    \"featureRequests\": [\n+      \"Preset lockout templates\",\n+      \"Onboarding checklist\",\n+      \"Cross-device shared rules\"\n+    ],\n+    \"evidence\": [\n+      \"Seed target for live chart/review enrichment\"\n+    ]\n+  },\n+  {\n+    \"id\": \"structured\",\n+    \"name\": \"Structured\",\n+    \"category\": \"Productivity\",\n+    \"country\": \"US\",\n+    \"appStoreId\": \"1499198946\",\n+    \"rankDelta4w\": 36,\n+    \"reviewDelta4w\": 82,\n+    \"rating\": 4.8,\n+    \"socialDelta4w\": 134,\n+    \"socialStrategy\": [\n+      \"ADHD creator routines\",\n+      \"Calendar before-after clips\",\n+      \"Aesthetic planning screenshots\"\n+    ],\n+    \"reviewThemes\": [\n+      \"Sync reliability matters\",\n+      \"Users want faster capture\",\n+      \"Recurring task UX is a purchase driver\"\n+    ],\n+    \"featureRequests\": [\n+      \"Natural-language task capture\",\n+      \"More robust calendar sync\",\n+      \"Better widgets\"\n+    ],\n+    \"evidence\": [\n+      \"Seed target for productivity category monitoring\"\n+    ]\n+  },\n+  {\n+    \"id\": \"finch\",\n+    \"name\": \"Finch\",\n+    \"category\": \"Positivity\",\n+    \"country\": \"US\",\n+    \"appStoreId\": \"1528595748\",\n+    \"rankDelta4w\": 29,\n+    \"reviewDelta4w\": 151,\n+    \"rating\": 4.9,\n+    \"socialDelta4w\": 177,\n+    \"socialStrategy\": [\n+      \"Character-led UGC\",\n+      \"Mental health community clips\",\n+      \"Gift/share loops\"\n+    ],\n+    \"reviewThemes\": [\n+      \"Emotional attachment is strong\",\n+      \"Users want more personalization\",\n+      \"Subscription boundaries are sensitive\"\n+    ],\n+    \"featureRequests\": [\n+      \"Adaptive self-care journeys\",\n+      \"More low-cost social gifting\",\n+      \"Smarter mood insights\"\n+    ],\n+    \"evidence\": [\n+      \"Seed target for positivity/wellness benchmarking\"\n+    ]\n+  },\n+  {\n+    \"id\": \"rise\",\n+    \"name\": \"Rise\",\n+    \"category\": \"Health\",\n+    \"country\": \"US\",\n+    \"appStoreId\": \"1453884781\",\n+    \"rankDelta4w\": 24,\n+    \"reviewDelta4w\": 57,\n+    \"rating\": 4.6,\n+    \"socialDelta4w\": 102,\n+    \"socialStrategy\": [\n+      \"Sleep debt education\",\n+      \"Science-backed creator explainers\",\n+      \"Routine optimization hooks\"\n+    ],\n+    \"reviewThemes\": [\n+      \"Accuracy questions\",\n+      \"Paywall complaints\",\n+      \"Users want wearable context\"\n+    ],\n+    \"featureRequests\": [\n+      \"Clearer accuracy explanations\",\n+      \"Better Apple Health summaries\",\n+      \"Actionable weekly plan\"\n+    ],\n+    \"evidence\": [\n+      \"Seed target for health/wellness category monitoring\"\n+    ]\n+  },\n+  {\n+    \"id\": \"ladder\",\n+    \"name\": \"Ladder\",\n+    \"category\": \"Fitness\",\n+    \"country\": \"US\",\n+    \"appStoreId\": \"1502936453\",\n+    \"rankDelta4w\": 51,\n+    \"reviewDelta4w\": 68,\n+    \"rating\": 4.9,\n+    \"socialDelta4w\": 189,\n+    \"socialStrategy\": [\n+      \"Trainer-led short clips\",\n+      \"Transformation proof\",\n+      \"Community/accountability framing\"\n+    ],\n+    \"reviewThemes\": [\n+      \"Program switching requests\",\n+      \"Equipment substitutions\",\n+      \"More beginner guidance\"\n+    ],\n+    \"featureRequests\": [\n+      \"Adaptive equipment swaps\",\n+      \"Beginner ramp plans\",\n+      \"Progress story exports\"\n+    ],\n+    \"evidence\": [\n+      \"Seed target for fitness category monitoring\"\n+    ]\n+  }\n+]\ndiff --git a/apps/generated-consumer-app-radar/package.json b/apps/generated-consumer-app-radar/package.json\nnew file mode 100644\nindex 0000000..d1fba6a\n--- /dev/null\n+++ b/apps/generated-consumer-app-radar/package.json\n@@ -0,0 +1,14 @@\n+{\n+  \"name\": \"generated-consumer-app-radar\",\n+  \"private\": true,\n+  \"type\": \"module\",\n+  \"scripts\": {\n+    \"start\": \"node src/server.js\",\n+    \"dev\": \"node src/server.js\",\n+    \"test\": \"node --test tests/*.test.js\",\n+    \"typecheck\": \"node --check src/server.js && node --check src/scoring.js && node --check src/repository.js && node --check src/ingest.js && node --check src/snapshots.js && node --check src/evidence.js && node --check src/sources/apify.js && node --check src/sources/apple.js && node --check src/sources/social.js && node --check public/app.js\",\n+    \"build\": \"node scripts/validate-artifacts.mjs\"\n+  },\n+  \"dependencies\": {},\n+  \"devDependencies\": {}\n+}\ndiff --git a/apps/generated-consumer-app-radar/public/app.js b/apps/generated-consumer-app-radar/public/app.js\nnew file mode 100644\nindex 0000000..ed8d528\n--- /dev/null\n+++ b/apps/generated-consumer-app-radar/public/app.js\n@@ -0,0 +1,41 @@\n+let apps = [];\n+\n+function list(items) {\n+  return '<ul>' + (items || []).map((item) => '<li>' + item + '</li>').join('') + '</ul>';\n+}\n+\n+function renderDetail(app) {\n+  const target = document.querySelector('#detail');\n+  if (!app) { target.innerHTML = '<p>Select an app to inspect.</p>'; return; }\n+  target.innerHTML = '<h3>' + app.name + '</h3>' +\n+    '<p>' + app.category + ' / rating ' + app.rating + '</p>' +\n+    '<div class=\"chips\"><span class=\"chip\">rank +' + app.rankDelta4w + '</span><span class=\"chip\">reviews +' + app.reviewDelta4w + '</span><span class=\"chip\">social +' + app.socialDelta4w + '</span></div>' +\n+    '<h2>Social Strategy</h2>' + list(app.socialStrategy) +\n+    '<h2>Review Pain</h2>' + list(app.reviewThemes) +\n+    '<h2>Feature requests</h2>' + list(app.featureRequests);\n+}\n+\n+function renderApps() {\n+  const root = document.querySelector('#apps');\n+  root.innerHTML = apps.map((app) => '<article class=\"app-row\" data-id=\"' + app.id + '\">' +\n+    '<div class=\"score\">' + app.opportunityScore + '</div>' +\n+    '<div><div class=\"name\">' + app.radarRank + '. ' + app.name + '</div><div class=\"meta\">' + app.category + ' / ' + app.country + '</div></div>' +\n+    '<div class=\"delta\">+' + app.rankDelta4w + ' rank</div>' +\n+  '</article>').join('');\n+  document.querySelectorAll('.app-row').forEach((row) => row.addEventListener('click', () => renderDetail(apps.find((app) => app.id === row.dataset.id))));\n+  renderDetail(apps[0]);\n+}\n+\n+async function loadApps() {\n+  const response = await fetch('/api/apps');\n+  const payload = await response.json();\n+  apps = payload.apps || [];\n+  renderApps();\n+}\n+\n+document.querySelector('#refresh').addEventListener('click', async () => {\n+  await fetch('/api/refresh', { method: 'POST' });\n+  await loadApps();\n+});\n+\n+await loadApps();\ndiff --git a/apps/generated-consumer-app-radar/public/index.html b/apps/generated-consumer-app-radar/public/index.html\nnew file mode 100644\nindex 0000000..6dae4b4\n--- /dev/null\n+++ b/apps/generated-consumer-app-radar/public/index.html\n@@ -0,0 +1,22 @@\n+<!doctype html>\n+<html lang=\"en\">\n+<head>\n+  <meta charset=\"utf-8\">\n+  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n+  <title>Consumer App Radar</title>\n+  <link rel=\"stylesheet\" href=\"/styles.css\">\n+</head>\n+<body>\n+  <main>\n+    <header class=\"topbar\">\n+      <div><h1>Consumer App Radar</h1><p>Fast-growing iPhone app opportunities</p></div>\n+      <button id=\"refresh\">Refresh</button>\n+    </header>\n+    <section class=\"layout\">\n+      <div class=\"panel\"><h2>Growth Signals</h2><div id=\"apps\" class=\"apps\"></div></div>\n+      <aside class=\"panel detail\"><h2>Opportunity</h2><div id=\"detail\"></div></aside>\n+    </section>\n+  </main>\n+  <script type=\"module\" src=\"/app.js\"></script>\n+</body>\n+</html>\ndiff --git a/apps/generated-consumer-app-radar/public/styles.css b/apps/generated-consumer-app-radar/public/styles.css\nnew file mode 100644\nindex 0000000..cd33f9d\n--- /dev/null\n+++ b/apps/generated-consumer-app-radar/public/styles.css\n@@ -0,0 +1,23 @@\n+:root { color-scheme: light; --ink: #17202a; --muted: #607080; --line: #d9e2ea; --panel: #ffffff; --bg: #f5f7f9; --accent: #126c5f; --warn: #a15c14; }\n+* { box-sizing: border-box; }\n+body { margin: 0; font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; color: var(--ink); background: var(--bg); }\n+main { max-width: 1240px; margin: 0 auto; padding: 24px; }\n+.topbar { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 18px; }\n+h1, h2, h3, p { margin: 0; }\n+h1 { font-size: 28px; line-height: 1.15; }\n+h2 { font-size: 15px; margin-bottom: 12px; }\n+p { color: var(--muted); }\n+button { border: 1px solid var(--line); background: var(--ink); color: white; border-radius: 6px; padding: 10px 12px; font-weight: 650; cursor: pointer; }\n+.layout { display: grid; grid-template-columns: minmax(0, 1.4fr) 420px; gap: 16px; align-items: start; }\n+.panel { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 16px; }\n+.apps { display: grid; gap: 10px; }\n+.app-row { display: grid; grid-template-columns: 64px minmax(0, 1fr) 90px; gap: 12px; align-items: center; border: 1px solid var(--line); border-radius: 8px; padding: 12px; background: white; cursor: pointer; }\n+.score { width: 52px; height: 52px; border-radius: 50%; display: grid; place-items: center; background: #e7f4f0; color: var(--accent); font-weight: 800; }\n+.name { font-weight: 760; }\n+.meta { color: var(--muted); font-size: 13px; margin-top: 4px; }\n+.delta { text-align: right; color: var(--warn); font-weight: 750; }\n+.chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }\n+.chip { border: 1px solid var(--line); border-radius: 999px; padding: 5px 8px; font-size: 12px; color: var(--muted); }\n+.detail ul { padding-left: 18px; }\n+.detail li { margin: 8px 0; color: var(--ink); }\n+@media (max-width: 860px) { main { padding: 16px; } .layout { grid-template-columns: 1fr; } .topbar { align-items: flex-start; flex-direction: column; } .app-row { grid-template-columns: 54px minmax(0, 1fr); } .delta { grid-column: 2; text-align: left; } }\ndiff --git a/apps/generated-consumer-app-radar/scripts/validate-artifacts.mjs b/apps/generated-consumer-app-radar/scripts/validate-artifacts.mjs\nnew file mode 100644\nindex 0000000..1931f38\n--- /dev/null\n+++ b/apps/generated-consumer-app-radar/scripts/validate-artifacts.mjs\n@@ -0,0 +1,5 @@\n+import { existsSync } from 'node:fs';\n+const required = ['package.json','src/server.js','src/scoring.js','src/snapshots.js','src/evidence.js','src/sources/social.js','public/index.html','public/app.js','fixtures/apps.json','tests/scoring.test.js'];\n+const missing = required.filter((file) => !existsSync(file));\n+if (missing.length) throw new Error('Missing generated artifacts: ' + missing.join(', '));\n+console.log(JSON.stringify({ ok: true, artifacts: required.length }, null, 2));\ndiff --git a/apps/generated-consumer-app-radar/src/evidence.js b/apps/generated-consumer-app-radar/src/evidence.js\nnew file mode 100644\nindex 0000000..13bbd90\n--- /dev/null\n+++ b/apps/generated-consumer-app-radar/src/evidence.js\n@@ -0,0 +1,18 @@\n+const REQUEST_WORDS = ['wish', 'please add', 'need', 'missing', 'would love', 'feature'];\n+\n+export function extractReviewThemes(reviews) {\n+  const text = (Array.isArray(reviews) ? reviews : []).map((review) => [review.title, review.body].filter(Boolean).join(' ')).join(' ').toLowerCase();\n+  const themes = [];\n+  if (/price|subscription|paywall|expensive/.test(text)) themes.push('Pricing and subscription sensitivity');\n+  if (/sync|calendar|apple health|widget/.test(text)) themes.push('Ecosystem integration requests');\n+  if (/confusing|setup|onboarding|hard/.test(text)) themes.push('Onboarding and setup friction');\n+  if (/bug|crash|slow|reliable/.test(text)) themes.push('Reliability concerns');\n+  return themes;\n+}\n+\n+export function featureRequestsFromReviews(reviews) {\n+  return (Array.isArray(reviews) ? reviews : [])\n+    .filter((review) => REQUEST_WORDS.some((word) => String(review.body || '').toLowerCase().includes(word)))\n+    .slice(0, 8)\n+    .map((review) => ({ title: review.title || 'Review request', excerpt: String(review.body || '').slice(0, 220) }));\n+}\ndiff --git a/apps/generated-consumer-app-radar/src/ingest.js b/apps/generated-consumer-app-radar/src/ingest.js\nnew file mode 100644\nindex 0000000..50c92f8\n--- /dev/null\n+++ b/apps/generated-consumer-app-radar/src/ingest.js\n@@ -0,0 +1,19 @@\n+import { readFileSync } from 'node:fs';\n+import { rankApps } from './scoring.js';\n+import { saveApps } from './repository.js';\n+\n+export function loadFixtureApps() {\n+  return JSON.parse(readFileSync(new URL('../fixtures/apps.json', import.meta.url), 'utf8'));\n+}\n+\n+export async function refreshApps({ mode = 'fixture' } = {}) {\n+  const apps = loadFixtureApps();\n+  const ranked = rankApps(apps).map((app, index) => ({ ...app, radarRank: index + 1, dataMode: mode }));\n+  saveApps(ranked);\n+  return ranked;\n+}\n+\n+if (process.argv[1] && process.argv[1].endsWith('ingest.js')) {\n+  const apps = await refreshApps({ mode: process.argv.includes('--live') ? 'live-smoke' : 'fixture' });\n+  console.log(JSON.stringify({ ok: true, apps: apps.length }, null, 2));\n+}\ndiff --git a/apps/generated-consumer-app-radar/src/repository.js b/apps/generated-consumer-app-radar/src/repository.js\nnew file mode 100644\nindex 0000000..f5ed458\n--- /dev/null\n+++ b/apps/generated-consumer-app-radar/src/repository.js\n@@ -0,0 +1,14 @@\n+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';\n+import { dirname, resolve } from 'node:path';\n+\n+const dbPath = resolve('.data/apps.json');\n+\n+export function saveApps(apps) {\n+  mkdirSync(dirname(dbPath), { recursive: true });\n+  writeFileSync(dbPath, JSON.stringify(apps, null, 2) + '\\n');\n+}\n+\n+export function loadApps() {\n+  if (!existsSync(dbPath)) return [];\n+  return JSON.parse(readFileSync(dbPath, 'utf8'));\n+}\ndiff --git a/apps/generated-consumer-app-radar/src/scoring.js b/apps/generated-consumer-app-radar/src/scoring.js\nnew file mode 100644\nindex 0000000..1899f69\n--- /dev/null\n+++ b/apps/generated-consumer-app-radar/src/scoring.js\n@@ -0,0 +1,17 @@\n+export function clamp(value, min = 0, max = 100) {\n+  return Math.max(min, Math.min(max, Number(value) || 0));\n+}\n+\n+export function scoreApp(app) {\n+  const rank = clamp(app.rankDelta4w, 0, 120) / 120;\n+  const reviews = clamp(app.reviewDelta4w, 0, 180) / 180;\n+  const social = clamp(app.socialDelta4w, 0, 240) / 240;\n+  const pain = clamp((app.reviewThemes || []).length * 18 + (app.featureRequests || []).length * 12, 0, 100) / 100;\n+  const rating = clamp(((Number(app.rating) || 0) - 3.5) * 35, 0, 55) / 100;\n+  const score = (rank * 0.34 + reviews * 0.23 + social * 0.24 + pain * 0.14 + rating * 0.05) * 100;\n+  return Math.round(score);\n+}\n+\n+export function rankApps(apps) {\n+  return apps.map((app) => ({ ...app, opportunityScore: scoreApp(app) })).sort((a, b) => b.opportunityScore - a.opportunityScore);\n+}\ndiff --git a/apps/generated-consumer-app-radar/src/server.js b/apps/generated-consumer-app-radar/src/server.js\nnew file mode 100644\nindex 0000000..0f605d3\n--- /dev/null\n+++ b/apps/generated-consumer-app-radar/src/server.js\n@@ -0,0 +1,47 @@\n+import { createServer } from 'node:http';\n+import { existsSync, createReadStream } from 'node:fs';\n+import { extname, join, resolve } from 'node:path';\n+import { loadApps } from './repository.js';\n+import { refreshApps } from './ingest.js';\n+\n+const publicDir = resolve('public');\n+const port = Number(process.env.PORT || 4317);\n+const types = { '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css' };\n+\n+function sendJson(res, status, body) {\n+  res.writeHead(status, { 'Content-Type': 'application/json' });\n+  res.end(JSON.stringify(body));\n+}\n+\n+function serveStatic(req, res) {\n+  const pathname = new URL(req.url, 'http://localhost').pathname;\n+  const file = pathname === '/' ? join(publicDir, 'index.html') : join(publicDir, pathname);\n+  if (!file.startsWith(publicDir) || !existsSync(file)) return false;\n+  res.writeHead(200, { 'Content-Type': types[extname(file)] || 'application/octet-stream' });\n+  createReadStream(file).pipe(res);\n+  return true;\n+}\n+\n+const server = createServer(async (req, res) => {\n+  const url = new URL(req.url, 'http://localhost');\n+  try {\n+    if (url.pathname === '/health') return sendJson(res, 200, { ok: true });\n+    if (url.pathname === '/api/apps' && req.method === 'GET') return sendJson(res, 200, { apps: loadApps() });\n+    if (url.pathname.startsWith('/api/apps/') && req.method === 'GET') {\n+      const id = decodeURIComponent(url.pathname.split('/').pop());\n+      const app = loadApps().find((item) => item.id === id);\n+      return app ? sendJson(res, 200, { app }) : sendJson(res, 404, { error: 'not_found' });\n+    }\n+    if (url.pathname === '/api/refresh' && req.method === 'POST') {\n+      const apps = await refreshApps({ mode: url.searchParams.get('mode') || 'fixture' });\n+      return sendJson(res, 200, { ok: true, apps });\n+    }\n+    if (serveStatic(req, res)) return;\n+    sendJson(res, 404, { error: 'not_found' });\n+  } catch (error) {\n+    sendJson(res, 500, { error: error instanceof Error ? error.message : String(error) });\n+  }\n+});\n+\n+await refreshApps({ mode: 'fixture' });\n+server.listen(port, () => console.log('Consumer App Radar listening on :' + port));\ndiff --git a/apps/generated-consumer-app-radar/src/snapshots.js b/apps/generated-consumer-app-radar/src/snapshots.js\nnew file mode 100644\nindex 0000000..60af28a\n--- /dev/null\n+++ b/apps/generated-consumer-app-radar/src/snapshots.js\n@@ -0,0 +1,17 @@\n+export function computeWeeklyDeltas(snapshots) {\n+  const rows = Array.isArray(snapshots) ? snapshots : [];\n+  return rows.map((row, index) => {\n+    const previous = rows[index - 1] || row;\n+    return {\n+      ...row,\n+      rankDelta: Number(previous.rank || row.rank || 0) - Number(row.rank || previous.rank || 0),\n+      reviewDelta: Number(row.reviewCount || 0) - Number(previous.reviewCount || 0),\n+      socialDelta: Number(row.socialMentions || 0) - Number(previous.socialMentions || 0)\n+    };\n+  });\n+}\n+\n+export function latestFourWeekVelocity(snapshots) {\n+  const deltas = computeWeeklyDeltas(snapshots).slice(-4);\n+  return deltas.reduce((sum, row) => sum + Math.max(0, row.rankDelta) + Math.max(0, row.reviewDelta) + Math.max(0, row.socialDelta), 0);\n+}\ndiff --git a/apps/generated-consumer-app-radar/src/sources/apify.js b/apps/generated-consumer-app-radar/src/sources/apify.js\nnew file mode 100644\nindex 0000000..2ec0a1d\n--- /dev/null\n+++ b/apps/generated-consumer-app-radar/src/sources/apify.js\n@@ -0,0 +1,30 @@\n+function actorPath(actorId) {\n+  return String(actorId || '').replace('/', '~');\n+}\n+\n+export async function runApifyActor(actorId, input, { token = process.env.APIFY_TOKEN, timeoutMs = 180000 } = {}) {\n+  if (!token || token.includes('{{')) throw new Error('APIFY_TOKEN is not configured');\n+  const start = await fetch('https://api.apify.com/v2/acts/' + actorPath(actorId) + '/runs?token=' + encodeURIComponent(token), {\n+    method: 'POST',\n+    headers: { 'Content-Type': 'application/json' },\n+    body: JSON.stringify(input || {})\n+  });\n+  if (!start.ok) throw new Error('Apify actor start failed: ' + start.status);\n+  const started = await start.json();\n+  const runId = started?.data?.id;\n+  const deadline = Date.now() + timeoutMs;\n+  while (Date.now() < deadline) {\n+    await new Promise((resolve) => setTimeout(resolve, 3500));\n+    const status = await fetch('https://api.apify.com/v2/actor-runs/' + runId + '?token=' + encodeURIComponent(token));\n+    const statusPayload = await status.json();\n+    const state = statusPayload?.data?.status;\n+    if (state === 'SUCCEEDED') {\n+      const datasetId = statusPayload.data.defaultDatasetId;\n+      const dataset = await fetch('https://api.apify.com/v2/datasets/' + datasetId + '/items?clean=true&format=json&token=' + encodeURIComponent(token));\n+      if (!dataset.ok) throw new Error('Apify dataset fetch failed: ' + dataset.status);\n+      return dataset.json();\n+    }\n+    if (['FAILED', 'ABORTED', 'TIMED-OUT'].includes(state)) throw new Error('Apify actor ended with status ' + state);\n+  }\n+  throw new Error('Apify actor timed out');\n+}\ndiff --git a/apps/generated-consumer-app-radar/src/sources/apple.js b/apps/generated-consumer-app-radar/src/sources/apple.js\nnew file mode 100644\nindex 0000000..a667cdc\n--- /dev/null\n+++ b/apps/generated-consumer-app-radar/src/sources/apple.js\n@@ -0,0 +1,21 @@\n+export async function fetchAppleReviews(appStoreId, country = 'us', limit = 25) {\n+  const url = 'https://itunes.apple.com/' + country + '/rss/customerreviews/id=' + encodeURIComponent(appStoreId) + '/sortBy=mostRecent/json';\n+  const response = await fetch(url, { signal: AbortSignal.timeout(15000) });\n+  if (!response.ok) throw new Error('Apple review RSS failed: ' + response.status);\n+  const payload = await response.json();\n+  const entries = Array.isArray(payload?.feed?.entry) ? payload.feed.entry.slice(1) : [];\n+  return entries.slice(0, limit).map((entry) => ({\n+    title: entry?.title?.label || '',\n+    body: entry?.content?.label || '',\n+    rating: Number(entry?.['im:rating']?.label || 0),\n+    updated: entry?.updated?.label || null\n+  }));\n+}\n+\n+export async function searchAppleApps(term, country = 'US') {\n+  const url = 'https://itunes.apple.com/search?entity=software&limit=10&country=' + encodeURIComponent(country) + '&term=' + encodeURIComponent(term);\n+  const response = await fetch(url, { signal: AbortSignal.timeout(15000) });\n+  if (!response.ok) throw new Error('Apple search failed: ' + response.status);\n+  const payload = await response.json();\n+  return payload.results || [];\n+}\ndiff --git a/apps/generated-consumer-app-radar/src/sources/social.js b/apps/generated-consumer-app-radar/src/sources/social.js\nnew file mode 100644\nindex 0000000..1e21e71\n--- /dev/null\n+++ b/apps/generated-consumer-app-radar/src/sources/social.js\n@@ -0,0 +1,18 @@\n+import { runApifyActor } from './apify.js';\n+\n+export async function fetchTikTokSignals(appName, { actorId = process.env.APIFY_TIKTOK_ACTOR || 'clockworks/tiktok-scraper' } = {}) {\n+  const items = await runApifyActor(actorId, { searchTerms: [appName], maxItems: 20 });\n+  return summarizeSocialItems(items, 'tiktok');\n+}\n+\n+export async function fetchInstagramSignals(appName, { actorId = process.env.APIFY_INSTAGRAM_ACTOR || 'apify/instagram-scraper' } = {}) {\n+  const items = await runApifyActor(actorId, { search: appName, resultsLimit: 20 });\n+  return summarizeSocialItems(items, 'instagram');\n+}\n+\n+export function summarizeSocialItems(items, platform) {\n+  const posts = Array.isArray(items) ? items : [];\n+  const engagements = posts.map((item) => Number(item.likes || item.likeCount || item.playCount || item.views || 0)).filter(Number.isFinite);\n+  const totalEngagement = engagements.reduce((sum, value) => sum + value, 0);\n+  return { platform, postCount: posts.length, totalEngagement, sampleCaptions: posts.slice(0, 5).map((item) => item.text || item.caption || item.description || '').filter(Boolean) };\n+}\ndiff --git a/apps/generated-consumer-app-radar/tests/api-fixture.test.js b/apps/generated-consumer-app-radar/tests/api-fixture.test.js\nnew file mode 100644\nindex 0000000..1cabc6d\n--- /dev/null\n+++ b/apps/generated-consumer-app-radar/tests/api-fixture.test.js\n@@ -0,0 +1,10 @@\n+import test from 'node:test';\n+import assert from 'node:assert/strict';\n+import { refreshApps } from '../src/ingest.js';\n+\n+test('fixture ingest produces ranked apps', async () => {\n+  const apps = await refreshApps({ mode: 'fixture' });\n+  assert.ok(apps.length >= 3);\n+  assert.equal(apps[0].radarRank, 1);\n+  assert.ok(apps[0].opportunityScore > 0);\n+});\ndiff --git a/apps/generated-consumer-app-radar/tests/scoring.test.js b/apps/generated-consumer-app-radar/tests/scoring.test.js\nnew file mode 100644\nindex 0000000..79c844b\n--- /dev/null\n+++ b/apps/generated-consumer-app-radar/tests/scoring.test.js\n@@ -0,0 +1,14 @@\n+import test from 'node:test';\n+import assert from 'node:assert/strict';\n+import { rankApps, scoreApp } from '../src/scoring.js';\n+\n+test('score rewards acceleration and review/social velocity', () => {\n+  const fast = { rankDelta4w: 80, reviewDelta4w: 120, socialDelta4w: 200, rating: 4.8, reviewThemes: ['a','b'], featureRequests: ['c'] };\n+  const slow = { rankDelta4w: 5, reviewDelta4w: 8, socialDelta4w: 12, rating: 4.9, reviewThemes: [], featureRequests: [] };\n+  assert.ok(scoreApp(fast) > scoreApp(slow));\n+});\n+\n+test('rankApps sorts by opportunity score', () => {\n+  const ranked = rankApps([{ id: 'slow', rankDelta4w: 1 }, { id: 'fast', rankDelta4w: 90, reviewDelta4w: 90, socialDelta4w: 90 }]);\n+  assert.equal(ranked[0].id, 'fast');\n+});\n",
+        "summary": {
+          "files_changed": 19,
+          "additions": 587,
+          "deletions": 0
+        }
+      }
+    },
+    {
+      "seq": 0,
+      "checkpoint": {
+        "timestamp": "2026-05-13T10:59:19.440283270Z",
+        "current_node": "native_checks",
+        "completed_nodes": [
+          "start",
+          "wait_for_support_files",
+          "bootstrap_spec",
+          "spec_kitty_gate",
+          "data_source_smoke",
+          "generate_app",
+          "native_checks"
+        ],
+        "node_retries": {},
+        "context_values": {
           "thread.spec_kitty_gate.current_node": "data_source_smoke",
           "internal.retry_count.data_source_smoke": 0,
           "internal.retry_count.bootstrap_spec": 0,
           "internal.work_dir": "/home/daytona/workspace",
           "outcome": "succeeded",
-          "command.output": "blob://sha256/e13919244f75906e6e71bd55689542b555b043361da8bca8c82ef7a95a136f3a",
+          "command.output": "blob://sha256/3cb84a9bb9e20844631d561961b12684816930e946cc09fc74b597b239f65682",
           "thread.data_source_smoke.current_node": "generate_app",
           "internal.retry_count.spec_kitty_gate": 0,
           "internal.fidelity": "compact",
@@ -1332,6 +1445,7 @@
           "failure_signature": "",
           "thread.bootstrap_spec.current_node": "spec_kitty_gate",
           "graph.inputs": "app_dir, spec_path, real_mode, allow_fixture_fallback, allow_quality_fallback, minimum_active_reviews",
+          "internal.retry_count.native_checks": 0,
           "thread.start.current_node": "wait_for_support_files",
           "graph.fallback_retry_target": "generate_app",
           "internal.retry_count.wait_for_support_files": 0,
@@ -1339,16 +1453,33 @@
           "graph.retry_target": "generate_app",
           "internal.node_visit_count": 1,
           "graph.default_max_retries": "2",
+          "thread.generate_app.current_node": "native_checks",
           "graph.model_stylesheet": "\n            *          { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: low; }\n            .review    { provider: openrouter; model: google/gemini-3.1-pro-preview; reasoning_effort: high; }\n            .cheap     { provider: openrouter; model: deepseek/deepseek-v4-flash; reasoning_effort: low; }\n        ",
           "failure_class": "",
           "internal.run_id": "01KRGFTABSM0R1X5CHQQA1Z76E",
-          "internal.thread_id": "data_source_smoke",
+          "internal.thread_id": "generate_app",
           "graph.persona": "code-factory",
-          "current_node": "generate_app",
+          "current_node": "native_checks",
           "graph.outputs": "application, ci_report, eval_report, review_consensus, handoff",
           "thread.wait_for_support_files.current_node": "bootstrap_spec"
         },
         "node_outcomes": {
+          "wait_for_support_files": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/a993020942c3b2f319b954a99b0a9f056f2f684e6388311672cad5808190f591"
+            },
+            "notes": "Script completed: for i in $(seq 1 90); do if [ -f scripts/consumer-radar/generate-app.mjs ] && [ -f 'specs/consumer-app-radar/spec.md' ]; then echo support-files-ready; exit 0; fi; sleep 2; done; echo 'missing consumer radar support files' >&2; exit 1",
+            "usage": null
+          },
+          "generate_app": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/e13919244f75906e6e71bd55689542b555b043361da8bca8c82ef7a95a136f3a"
+            },
+            "notes": "Script completed: node scripts/consumer-radar/generate-app.mjs --app-dir 'apps/generated-consumer-app-radar'",
+            "usage": null
+          },
           "spec_kitty_gate": {
             "status": "succeeded",
             "context_updates": {
@@ -1357,12 +1488,12 @@
             "notes": "Script completed: node scripts/consumer-radar/bootstrap-spec.mjs --spec 'specs/consumer-app-radar/spec.md' --app-dir 'apps/generated-consumer-app-radar' --spec-kitty",
             "usage": null
           },
-          "wait_for_support_files": {
+          "native_checks": {
             "status": "succeeded",
             "context_updates": {
-              "command.output": "blob://sha256/a993020942c3b2f319b954a99b0a9f056f2f684e6388311672cad5808190f591"
+              "command.output": "blob://sha256/3cb84a9bb9e20844631d561961b12684816930e946cc09fc74b597b239f65682"
             },
-            "notes": "Script completed: for i in $(seq 1 90); do if [ -f scripts/consumer-radar/generate-app.mjs ] && [ -f 'specs/consumer-app-radar/spec.md' ]; then echo support-files-ready; exit 0; fi; sleep 2; done; echo 'missing consumer radar support files' >&2; exit 1",
+            "notes": "Script completed: node scripts/consumer-radar/run-native-checks.mjs 'apps/generated-consumer-app-radar'",
             "usage": null
           },
           "start": {
@@ -1377,14 +1508,6 @@
             "notes": "Script completed: node scripts/consumer-radar/data-source-smoke.mjs --output .workflow/consumer-radar/data-source-smoke.json --real-mode 'true' --allow-fixture-fallback 'true'",
             "usage": null
           },
-          "generate_app": {
-            "status": "succeeded",
-            "context_updates": {
-              "command.output": "blob://sha256/e13919244f75906e6e71bd55689542b555b043361da8bca8c82ef7a95a136f3a"
-            },
-            "notes": "Script completed: node scripts/consumer-radar/generate-app.mjs --app-dir 'apps/generated-consumer-app-radar'",
-            "usage": null
-          },
           "bootstrap_spec": {
             "status": "succeeded",
             "context_updates": {
@@ -1394,8 +1517,9 @@
             "usage": null
           }
         },
-        "next_node_id": "native_checks",
+        "next_node_id": "qlty_gate",
         "node_visits": {
+          "native_checks": 1,
           "wait_for_support_files": 1,
           "data_source_smoke": 1,
           "generate_app": 1,
@@ -1582,6 +1706,33 @@
       },
       "state": "succeeded"
     },
+    "native_checks@1": {
+      "first_event_seq": 70,
+      "prompt": null,
+      "response": null,
+      "completion": null,
+      "provider_used": null,
+      "diff": null,
+      "script_invocation": {
+        "script": "node scripts/consumer-radar/run-native-checks.mjs 'apps/generated-consumer-app-radar'",
+        "command": "exec 2>&1\nnode scripts/consumer-radar/run-native-checks.mjs 'apps/generated-consumer-app-radar'",
+        "language": "shell"
+      },
+      "script_timing": null,
+      "parallel_results": null,
+      "output": null,
+      "started_at": "2026-05-13T10:59:16.857472464Z",
+      "handler": "command",
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "total_tokens": 0,
+        "reasoning_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "state": "running"
+    },
     "spec_kitty_gate@1": {
       "first_event_seq": 40,
       "prompt": null,
@@ -1629,7 +1780,12 @@
       "first_event_seq": 60,
       "prompt": null,
       "response": null,
-      "completion": null,
+      "completion": {
+        "outcome": "succeeded",
+        "notes": "Script completed: node scripts/consumer-radar/generate-app.mjs --app-dir 'apps/generated-consumer-app-radar'",
+        "failure_reason": null,
+        "timestamp": "2026-05-13T10:59:12.943415171Z"
+      },
       "provider_used": null,
       "diff": null,
       "script_invocation": {
@@ -1637,11 +1793,22 @@
         "command": "exec 2>&1\nnode scripts/consumer-radar/generate-app.mjs --app-dir 'apps/generated-consumer-app-radar'",
         "language": "shell"
       },
-      "script_timing": null,
+      "script_timing": {
+        "output": "blob://sha256/e13919244f75906e6e71bd55689542b555b043361da8bca8c82ef7a95a136f3a",
+        "exit_code": 0,
+        "duration_ms": 2192,
+        "termination": "exited",
+        "output_bytes": 91,
+        "live_streaming": true
+      },
       "parallel_results": null,
       "output": null,
+      "output_bytes": 91,
+      "live_streaming": true,
+      "termination": "exited",
       "started_at": "2026-05-13T10:59:10.746417105Z",
       "handler": "command",
+      "duration_ms": 2196,
       "usage": {
         "input_tokens": 0,
         "output_tokens": 0,
@@ -1650,7 +1817,7 @@
         "cache_read_tokens": 0,
         "cache_write_tokens": 0
       },
-      "state": "running"
+      "state": "succeeded"
     }
   }
 }
