@@ -932,7 +932,7 @@
     "kind": "running"
   },
   "status_updated_at": "2026-05-13T11:26:22.135262083Z",
-  "last_event_at": "2026-05-13T11:29:42.019705130Z",
+  "last_event_at": "2026-05-13T11:29:45.537898653Z",
   "pending_control": null,
   "checkpoints": [
     {
@@ -1821,9 +1821,9 @@
       }
     },
     {
-      "seq": 0,
+      "seq": 131,
       "checkpoint": {
-        "timestamp": "2026-05-13T11:29:42.243323070Z",
+        "timestamp": "2026-05-13T11:29:45.531088851Z",
         "current_node": "review_fanout",
         "completed_nodes": [
           "start",
@@ -1839,6 +1839,183 @@
         ],
         "node_retries": {},
         "context_values": {
+          "internal.retry_count.promptfoo_gate": 0,
+          "graph.persona": "code-factory",
+          "internal.node_visit_count": 1,
+          "parallel.results": [
+            {
+              "id": "review_kimi",
+              "status": "failed",
+              "head_sha": "a31363cef84592f5e9750bf22f1069896df70d11"
+            },
+            {
+              "id": "review_qwen",
+              "status": "succeeded",
+              "head_sha": "084f3d48d066078d3f211b6093bcf0e4b1d48440"
+            },
+            {
+              "id": "review_deepseek",
+              "status": "succeeded",
+              "head_sha": "a4b0d906d7e3d4757fc6fac58fe9cef957afd7b4"
+            }
+          ],
+          "graph.outputs": "application, ci_report, eval_report, review_consensus, handoff",
+          "internal.retry_count.wait_for_support_files": 0,
+          "internal.retry_count.qlty_gate": 0,
+          "outcome": "partially_succeeded",
+          "internal.fidelity": "compact",
+          "graph.default_max_retries": "2",
+          "graph.inputs": "app_dir, spec_path, real_mode, allow_fixture_fallback, allow_quality_fallback, minimum_active_reviews",
+          "internal.retry_count.start": 0,
+          "internal.run_id": "01KRGHCVZ451W08VHP6APHC64W",
+          "graph.model_stylesheet": "\n            *          { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: low; }\n            .review    { provider: openrouter; model: google/gemini-3.1-pro-preview; reasoning_effort: high; }\n            .cheap     { provider: openrouter; model: deepseek/deepseek-v4-flash; reasoning_effort: low; }\n        ",
+          "internal.retry_count.data_source_smoke": 0,
+          "thread.bootstrap_spec.current_node": "spec_kitty_gate",
+          "graph.fallback_retry_target": "generate_app",
+          "parallel.branch_count": 3,
+          "thread.native_checks.current_node": "qlty_gate",
+          "failure_signature": "",
+          "graph.goal": "Build Consumer App Radar from spec with CI, eval, and model review",
+          "internal.retry_count.bootstrap_spec": 0,
+          "internal.retry_count.spec_kitty_gate": 0,
+          "thread.promptfoo_gate.current_node": "review_fanout",
+          "failure_class": "",
+          "command.output": "blob://sha256/d0113b02e3b2d3e1768937b306dffdde6e684b1198efc197d7141bb20fe936b5",
+          "internal.work_dir": "/home/daytona/workspace",
+          "graph.rankdir": "LR",
+          "internal.retry_count.review_fanout": 0,
+          "thread.data_source_smoke.current_node": "generate_app",
+          "thread.spec_kitty_gate.current_node": "data_source_smoke",
+          "thread.start.current_node": "wait_for_support_files",
+          "thread.wait_for_support_files.current_node": "bootstrap_spec",
+          "current_node": "review_fanout",
+          "graph.retry_target": "generate_app",
+          "internal.retry_count.generate_app": 0,
+          "thread.generate_app.current_node": "native_checks",
+          "internal.retry_count.native_checks": 0,
+          "thread.qlty_gate.current_node": "promptfoo_gate",
+          "internal.thread_id": "promptfoo_gate"
+        },
+        "node_outcomes": {
+          "promptfoo_gate": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/d0113b02e3b2d3e1768937b306dffdde6e684b1198efc197d7141bb20fe936b5"
+            },
+            "notes": "Script completed: node scripts/consumer-radar/promptfoo-or-fallback.mjs 'apps/generated-consumer-app-radar' --real-mode 'true' --allow-fallback 'true'",
+            "usage": null
+          },
+          "generate_app": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/67e5edc6bf894fedc2d19b61aed13adcde6de82264da817ed9b1212357748df2"
+            },
+            "notes": "Script completed: node scripts/consumer-radar/generate-app.mjs --app-dir 'apps/generated-consumer-app-radar'",
+            "usage": null
+          },
+          "data_source_smoke": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/c46a79bb65bcb3867cfb81bf014d99b12cc22bb556661ee7db75b964951a5a14"
+            },
+            "notes": "Script completed: node scripts/consumer-radar/data-source-smoke.mjs --output .workflow/consumer-radar/data-source-smoke.json --real-mode 'true' --allow-fixture-fallback 'true'",
+            "usage": null
+          },
+          "qlty_gate": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/909f30fcf892fe529fc2dab34e4262f530b6d8b65434dc51d8ca70e4f08e0b0f"
+            },
+            "notes": "Script completed: node scripts/consumer-radar/qlty-gate.mjs 'apps/generated-consumer-app-radar' --real-mode 'true' --allow-fallback 'true'",
+            "usage": null
+          },
+          "review_fanout": {
+            "status": "partially_succeeded",
+            "jump_to_node": "review_join",
+            "notes": "Parallel node dispatched 3 branches (2 succeeded, 1 failed)",
+            "usage": null
+          },
+          "start": {
+            "status": "succeeded",
+            "usage": null
+          },
+          "native_checks": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/3cb84a9bb9e20844631d561961b12684816930e946cc09fc74b597b239f65682"
+            },
+            "notes": "Script completed: node scripts/consumer-radar/run-native-checks.mjs 'apps/generated-consumer-app-radar'",
+            "usage": null
+          },
+          "wait_for_support_files": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/a993020942c3b2f319b954a99b0a9f056f2f684e6388311672cad5808190f591"
+            },
+            "notes": "Script completed: for i in $(seq 1 90); do if [ -f scripts/consumer-radar/generate-app.mjs ] && [ -f 'specs/consumer-app-radar/spec.md' ]; then echo support-files-ready; exit 0; fi; sleep 2; done; echo 'missing consumer radar support files' >&2; exit 1",
+            "usage": null
+          },
+          "spec_kitty_gate": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/cd66b79235f88b451357c529d93466680f74e7ef06e9ad06b97526e2105b8caa"
+            },
+            "notes": "Script completed: node scripts/consumer-radar/bootstrap-spec.mjs --spec 'specs/consumer-app-radar/spec.md' --app-dir 'apps/generated-consumer-app-radar' --spec-kitty",
+            "usage": null
+          },
+          "bootstrap_spec": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/fb8456e5c0d2a78bba79793cbf65e0623c47ff767bcd342ec88ed7540d28485d"
+            },
+            "notes": "Script completed: node scripts/consumer-radar/bootstrap-spec.mjs --spec 'specs/consumer-app-radar/spec.md' --app-dir 'apps/generated-consumer-app-radar'",
+            "usage": null
+          }
+        },
+        "next_node_id": "review_join",
+        "git_commit_sha": "44017f5edd2788ffe15a8d78bc1638b1b5651426",
+        "node_visits": {
+          "data_source_smoke": 1,
+          "qlty_gate": 1,
+          "generate_app": 1,
+          "native_checks": 1,
+          "promptfoo_gate": 1,
+          "wait_for_support_files": 1,
+          "bootstrap_spec": 1,
+          "spec_kitty_gate": 1,
+          "start": 1,
+          "review_fanout": 1
+        }
+      },
+      "diff": {
+        "patch": "diff --git a/reports/consumer-radar/reviews/deepseek.json b/reports/consumer-radar/reviews/deepseek.json\nindex 197f1bc..b72c804 100644\n--- a/reports/consumer-radar/reviews/deepseek.json\n+++ b/reports/consumer-radar/reviews/deepseek.json\n@@ -2,36 +2,32 @@\n   \"ok\": true,\n   \"skipped\": false,\n   \"real_mode\": true,\n-  \"model\": \"deepseek/deepseek-v4-flash\",\n+  \"model\": \"deepseek/deepseek-v4-pro\",\n   \"role\": \"simplification_and_ci\",\n   \"status\": 200,\n   \"parsed\": {\n     \"verdict\": \"APPROVE\",\n-    \"score\": 0.95,\n+    \"score\": 0.92,\n     \"findings\": [\n       {\n         \"severity\": \"low\",\n-        \"issue\": \"No error handling for missing fixture file in loadFixtureApps.\",\n-        \"fix\": \"Wrap readFileSync in try/catch and return empty array on failure.\"\n+        \"issue\": \"refreshApps always loads fixture data regardless of mode, making live-smoke mode identical to fixture.\",\n+        \"fix\": \"In ingest.js, branch on mode to call live adapters when mode is 'live-smoke' and fall back to fixture on failure.\"\n       },\n       {\n         \"severity\": \"low\",\n-        \"issue\": \"POST /api/refresh does not validate request body or mode parameter.\",\n-        \"fix\": \"Add validation for mode parameter to accept only 'fixture' or 'live-smoke'.\"\n-      },\n-      {\n-        \"severity\": \"info\",\n-        \"issue\": \"No CORS headers on API responses; may block cross-origin requests.\",\n-        \"fix\": \"Add 'Access-Control-Allow-Origin: *' header to all API responses.\"\n+        \"issue\": \"No evidence of Qlty or Promptfoo gates being executed; spec requires recording their absence.\",\n+        \"fix\": \"Add a pre-test script that checks for Qlty/Promptfoo, logs warnings if missing, and exits 0 to keep the spike moving.\"\n       }\n     ],\n     \"suggested_next_steps\": [\n-      \"Add error handling for fixture file loading\",\n-      \"Add request validation for /api/refresh\",\n-      \"Add CORS headers for broader compatibility\"\n+      \"Wire live-smoke mode to Apple/Apify adapters with fixture fallback.\",\n+      \"Add Qlty/Promptfoo presence checks and record warnings in CI output.\",\n+      \"Add a test for the /api/apps/:id endpoint and the POST /api/refresh endpoint.\"\n     ]\n   },\n-  \"raw_excerpt\": \"{\\n  \\\"verdict\\\": \\\"APPROVE\\\",\\n  \\\"score\\\": 0.95,\\n  \\\"findings\\\": [\\n    {\\n      \\\"severity\\\": \\\"low\\\",\\n      \\\"issue\\\": \\\"No error handling for missing fixture file in loadFixtureApps.\\\",\\n      \\\"fix\\\": \\\"Wrap readFileSync in try/catch and return empty array on failure.\\\"\\n    },\\n    {\\n      \\\"severity\\\": \\\"low\\\",\\n      \\\"issue\\\": \\\"POST /api/refresh does not validate request body or mode parameter.\\\",\\n      \\\"fix\\\": \\\"Add validation for mode parameter to accept only 'fixture' or 'live-smoke'.\\\"\\n    },\\n    {\\n      \\\"severity\\\": \\\"info\\\",\\n      \\\"issue\\\": \\\"No CORS headers on API responses; may block cross-origin requests.\\\",\\n      \\\"fix\\\": \\\"Add 'Access-Control-Allow-Origin: *' header to all API responses.\\\"\\n    }\\n  ],\\n  \\\"suggested_next_steps\\\": [\\n    \\\"Add error handling for fixture file loading\\\",\\n    \\\"Add request validation for /api/refresh\\\",\\n    \\\"Add CORS headers for broader compatibility\\\"\\n  ]\\n}\",\n+  \"raw_excerpt\": \"{\\n  \\\"verdict\\\": \\\"APPROVE\\\",\\n  \\\"score\\\": 0.92,\\n  \\\"findings\\\": [\\n    {\\n      \\\"severity\\\": \\\"low\\\",\\n      \\\"issue\\\": \\\"refreshApps always loads fixture data regardless of mode, making live-smoke mode identical to fixture.\\\",\\n      \\\"fix\\\": \\\"In ingest.js, branch on mode to call live adapters when mode is 'live-smoke' and fall back to fixture on failure.\\\"\\n    },\\n    {\\n      \\\"severity\\\": \\\"low\\\",\\n      \\\"issue\\\": \\\"No evidence of Qlty or Promptfoo gates being executed; spec requires recording their absence.\\\",\\n      \\\"fix\\\": \\\"Add a pre-test script that checks for Qlty/Promptfoo, logs warnings if missing, and exits 0 to keep the spike moving.\\\"\\n    }\\n  ],\\n  \\\"suggested_next_steps\\\": [\\n    \\\"Wire live-smoke mode to Apple/Apify adapters with fixture fallback.\\\",\\n    \\\"Add Qlty/Promptfoo presence checks and record warnings in CI output.\\\",\\n    \\\"Add a test for the /api/apps/:id endpoint and the POST /api/refresh endpoint.\\\"\\n  ]\\n}\",\n   \"error\": null,\n-  \"payload_excerpt\": null\n+  \"payload_excerpt\": null,\n+  \"payload_text_excerpt\": \"\\n         \\n\\n         \\n\\n         \\n\\n         \\n\\n         \\n\\n         \\n\\n         \\n\\n         \\n\\n         \\n\\n         \\n\\n         \\n\\n         \\n\\n         \\n\\n         \\n\\n         \\n\\n         \\n\\n         \\n\\n         \\n\\n         \\n\\n         \\n\\n         \\n\\n         \\n\\n         \\n\\n         \\n\\n         \\n\\n         \\n\\n         \\n\\n         \\n\\n         \\n\\n         \\n\\n         \\n\\n         \\n\\n         \\n\\n         \\n\\n         \\n\\n         \\n\\n         \\n\\n         \\n\\n         \\n\\n         \\n\\n         \\n\\n         \\n\\n         \\n\\n         \\n\\n         \\n\\n         \\n\\n         \\n\\n         \\n\\n         \\n\\n         \\n\\n         \\n\\n         \\n\\n         \\n\\n         \\n\\n         \\n\\n         \\n\\n         \\n\\n         \\n{\\\"id\\\":\\\"gen-1778671725-hjY9c2y9By8k3V5SbNNA\\\",\\\"object\\\":\\\"chat.completion\\\",\\\"created\\\":1778671725,\\\"model\\\":\\\"deepseek/deepseek-v4-pro-20260423\\\",\\\"provider\\\":\\\"DeepInfra\\\",\\\"system_fingerprint\\\":null,\\\"choices\\\":[{\\\"index\\\":0,\\\"logprobs\\\":null,\\\"finish_reason\\\":\\\"stop\\\",\\\"native_finish_reason\\\":\\\"stop\\\",\\\"message\\\":{\\\"role\\\":\\\"assistant\\\",\\\"content\\\":\\\"{\\\\n  \\\\\\\"verdict\\\\\\\": \\\\\\\"APPROVE\\\\\\\",\\\\n  \\\\\\\"score\\\\\\\": 0.92,\\\\n  \\\\\\\"findings\\\\\\\": [\\\\n    {\\\\n      \\\\\\\"severity\\\\\\\": \\\\\\\"low\\\\\\\",\\\\n      \\\\\\\"issue\\\\\\\": \\\\\\\"refreshApps always loads fixture data regardless of mode, making live-smoke mode identical to fixture.\\\\\\\",\\\\n      \\\\\\\"fix\"\n }\n",
+        "summary": {
+          "files_changed": 2,
+          "additions": 13,
+          "deletions": 17
+        }
+      }
+    },
+    {
+      "seq": 0,
+      "checkpoint": {
+        "timestamp": "2026-05-13T11:29:45.624888734Z",
+        "current_node": "review_join",
+        "completed_nodes": [
+          "start",
+          "wait_for_support_files",
+          "bootstrap_spec",
+          "spec_kitty_gate",
+          "data_source_smoke",
+          "generate_app",
+          "native_checks",
+          "qlty_gate",
+          "promptfoo_gate",
+          "review_fanout",
+          "review_join"
+        ],
+        "node_retries": {},
+        "context_values": {
           "internal.retry_count.spec_kitty_gate": 0,
           "internal.run_id": "01KRGHCVZ451W08VHP6APHC64W",
           "internal.retry_count.generate_app": 0,
@@ -1847,7 +2024,8 @@
           "parallel.branch_count": 3,
           "graph.default_max_retries": "2",
           "thread.generate_app.current_node": "native_checks",
-          "internal.thread_id": "promptfoo_gate",
+          "parallel.fan_in.best_id": "review_deepseek",
+          "internal.thread_id": "review_fanout",
           "internal.retry_count.start": 0,
           "parallel.results": [
             {
@@ -1875,22 +2053,26 @@
           "internal.fidelity": "compact",
           "internal.work_dir": "/home/daytona/workspace",
           "thread.qlty_gate.current_node": "promptfoo_gate",
+          "thread.review_fanout.current_node": "review_join",
           "failure_class": "",
           "internal.retry_count.review_fanout": 0,
+          "parallel.fan_in.best_outcome": "succeeded",
           "thread.spec_kitty_gate.current_node": "data_source_smoke",
           "thread.data_source_smoke.current_node": "generate_app",
-          "current_node": "review_fanout",
+          "current_node": "review_join",
           "internal.node_visit_count": 1,
           "graph.outputs": "application, ci_report, eval_report, review_consensus, handoff",
           "internal.retry_count.bootstrap_spec": 0,
           "internal.retry_count.wait_for_support_files": 0,
+          "internal.retry_count.review_join": 0,
           "graph.retry_target": "generate_app",
-          "outcome": "partially_succeeded",
+          "outcome": "succeeded",
           "thread.bootstrap_spec.current_node": "spec_kitty_gate",
           "command.output": "blob://sha256/d0113b02e3b2d3e1768937b306dffdde6e684b1198efc197d7141bb20fe936b5",
           "failure_signature": "",
           "thread.wait_for_support_files.current_node": "bootstrap_spec",
           "internal.retry_count.qlty_gate": 0,
+          "parallel.fan_in.best_head_sha": "a4b0d906d7e3d4757fc6fac58fe9cef957afd7b4",
           "graph.fallback_retry_target": "generate_app",
           "graph.persona": "code-factory",
           "internal.retry_count.data_source_smoke": 0,
@@ -1949,6 +2131,16 @@
             "notes": "Script completed: for i in $(seq 1 90); do if [ -f scripts/consumer-radar/generate-app.mjs ] && [ -f 'specs/consumer-app-radar/spec.md' ]; then echo support-files-ready; exit 0; fi; sleep 2; done; echo 'missing consumer radar support files' >&2; exit 1",
             "usage": null
           },
+          "review_join": {
+            "status": "succeeded",
+            "context_updates": {
+              "parallel.fan_in.best_id": "review_deepseek",
+              "parallel.fan_in.best_outcome": "succeeded",
+              "parallel.fan_in.best_head_sha": "a4b0d906d7e3d4757fc6fac58fe9cef957afd7b4"
+            },
+            "notes": "Selected best candidate: review_deepseek",
+            "usage": null
+          },
           "review_fanout": {
             "status": "partially_succeeded",
             "jump_to_node": "review_join",
@@ -1972,7 +2164,7 @@
             "usage": null
           }
         },
-        "next_node_id": "review_join",
+        "next_node_id": "review_consensus",
         "node_visits": {
           "spec_kitty_gate": 1,
           "data_source_smoke": 1,
@@ -1983,6 +2175,7 @@
           "qlty_gate": 1,
           "promptfoo_gate": 1,
           "wait_for_support_files": 1,
+          "review_join": 1,
           "review_fanout": 1
         }
       },
@@ -2091,6 +2284,29 @@
         "cache_write_tokens": 0
       },
       "state": "succeeded"
+    },
+    "review_join@1": {
+      "first_event_seq": 134,
+      "prompt": null,
+      "response": null,
+      "completion": null,
+      "provider_used": null,
+      "diff": null,
+      "script_invocation": null,
+      "script_timing": null,
+      "parallel_results": null,
+      "output": null,
+      "started_at": "2026-05-13T11:29:45.537898653Z",
+      "handler": "parallel.fan_in",
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "total_tokens": 0,
+        "reasoning_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "state": "running"
     },
     "generate_app@1": {
       "first_event_seq": 60,
@@ -2297,7 +2513,12 @@
       "first_event_seq": 100,
       "prompt": null,
       "response": null,
-      "completion": null,
+      "completion": {
+        "outcome": "partially_succeeded",
+        "notes": "Parallel node dispatched 3 branches (2 succeeded, 1 failed)",
+        "failure_reason": null,
+        "timestamp": "2026-05-13T11:29:42.243104682Z"
+      },
       "provider_used": null,
       "diff": null,
       "script_invocation": {
@@ -2313,13 +2534,30 @@
         "output_bytes": 3629,
         "live_streaming": true
       },
-      "parallel_results": null,
+      "parallel_results": [
+        {
+          "id": "review_kimi",
+          "status": "failed",
+          "head_sha": "a31363cef84592f5e9750bf22f1069896df70d11"
+        },
+        {
+          "id": "review_qwen",
+          "status": "succeeded",
+          "head_sha": "084f3d48d066078d3f211b6093bcf0e4b1d48440"
+        },
+        {
+          "id": "review_deepseek",
+          "status": "succeeded",
+          "head_sha": "a4b0d906d7e3d4757fc6fac58fe9cef957afd7b4"
+        }
+      ],
       "output": null,
       "output_bytes": 3629,
       "live_streaming": true,
       "termination": "exited",
       "started_at": "2026-05-13T11:28:41.949912955Z",
       "handler": "parallel",
+      "duration_ms": 60293,
       "usage": {
         "input_tokens": 0,
         "output_tokens": 0,
@@ -2328,7 +2566,7 @@
         "cache_read_tokens": 0,
         "cache_write_tokens": 0
       },
-      "state": "running"
+      "state": "partially_succeeded"
     },
     "native_checks@1": {
       "first_event_seq": 70,
