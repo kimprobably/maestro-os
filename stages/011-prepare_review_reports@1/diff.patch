@@ -1,0 +1,127 @@
+diff --git a/reports/consumer-radar/review-consensus.json b/reports/consumer-radar/review-consensus.json
+deleted file mode 100644
+index 667b5ac..0000000
+--- a/reports/consumer-radar/review-consensus.json
++++ /dev/null
+@@ -1,18 +0,0 @@
+-{
+-  "ok": true,
+-  "verdict": "APPROVE",
+-  "review_count": 3,
+-  "active_review_count": 2,
+-  "minimum_active_reviews": 2,
+-  "skipped_review_count": 0,
+-  "failed_review_count": 1,
+-  "review_sources": [
+-    "reports/consumer-radar/reviews/deepseek-feedback.json",
+-    "reports/consumer-radar/reviews/kimi-feedback.json",
+-    "reports/consumer-radar/reviews/qwen-feedback.json"
+-  ],
+-  "average_model_score": 0.9,
+-  "blockers": [],
+-  "hard_failures": [],
+-  "note": "Consensus synthesized from available OpenRouter reviews."
+-}
+diff --git a/reports/consumer-radar/reviews/deepseek-feedback.json b/reports/consumer-radar/reviews/deepseek-feedback.json
+deleted file mode 100644
+index 8a0a435..0000000
+--- a/reports/consumer-radar/reviews/deepseek-feedback.json
++++ /dev/null
+@@ -1,33 +0,0 @@
+-{
+-  "ok": true,
+-  "skipped": false,
+-  "real_mode": false,
+-  "model": "deepseek/deepseek-v4-flash",
+-  "role": "feedback_simplification_and_ci",
+-  "status": 200,
+-  "parsed": {
+-    "verdict": "APPROVE",
+-    "score": 0.95,
+-    "findings": [
+-      {
+-        "severity": "low",
+-        "issue": "Qlty and Promptfoo gates not integrated; spec requires them but fallback to native checks is acceptable for spike.",
+-        "fix": "Add Qlty and Promptfoo scripts in CI if available; otherwise document fallback."
+-      },
+-      {
+-        "severity": "low",
+-        "issue": "Client-side app.js excerpt truncated; full rendering logic not fully verifiable but structure matches spec.",
+-        "fix": "Complete client-side code review if needed; current implementation appears functional."
+-      }
+-    ],
+-    "suggested_next_steps": [
+-      "Run full test suite and typecheck to confirm no runtime errors.",
+-      "Add Qlty and Promptfoo integration for production readiness.",
+-      "Expand test coverage for API endpoints and edge cases."
+-    ]
+-  },
+-  "raw_excerpt": "{\n  \"verdict\": \"APPROVE\",\n  \"score\": 0.95,\n  \"findings\": [\n    {\n      \"severity\": \"low\",\n      \"issue\": \"Qlty and Promptfoo gates not integrated; spec requires them but fallback to native checks is acceptable for spike.\",\n      \"fix\": \"Add Qlty and Promptfoo scripts in CI if available; otherwise document fallback.\"\n    },\n    {\n      \"severity\": \"low\",\n      \"issue\": \"Client-side app.js excerpt truncated; full rendering logic not fully verifiable but structure matches spec.\",\n      \"fix\": \"Complete client-side code review if needed; current implementation appears functional.\"\n    }\n  ],\n  \"suggested_next_steps\": [\n    \"Run full test suite and typecheck to confirm no runtime errors.\",\n    \"Add Qlty and Promptfoo integration for production readiness.\",\n    \"Expand test coverage for API endpoints and edge cases.\"\n  ]\n}",
+-  "error": null,
+-  "payload_excerpt": null,
+-  "payload_text_excerpt": "\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n{\"id\":\"gen-1778690385-B32ALRwQmC7LzP0YTQap\",\"object\":\"chat.completion\",\"created\":1778690385,\"model\":\"deepseek/deepseek-v4-flash-20260423\",\"provider\":\"Parasail\",\"system_fingerprint\":\"vllm-0.20.1rc1.dev1005+gcbf8428d0-dp2-ep-8d2ce3c3\",\"choices\":[{\"index\":0,\"logprobs\":null,\"finish_reason\":\"stop\",\"native_finish_reason\":\"stop\",\"messag"
+-}
+diff --git a/reports/consumer-radar/reviews/kimi-feedback.json b/reports/consumer-radar/reviews/kimi-feedback.json
+deleted file mode 100644
+index 0210334..0000000
+--- a/reports/consumer-radar/reviews/kimi-feedback.json
++++ /dev/null
+@@ -1,13 +0,0 @@
+-{
+-  "ok": false,
+-  "skipped": false,
+-  "real_mode": false,
+-  "model": "moonshotai/kimi-k2.6",
+-  "role": "feedback_product_strategy",
+-  "status": 200,
+-  "parsed": null,
+-  "raw_excerpt": "The user wants me to review a generated Consumer App Radar app based on provided source excerpts and file list. I need to return compact JSON only with specific fields: verdict, score, findings (max 3, severity/issue/fix under 180 chars), and suggested_next_steps.\n\nLet me analyze the source excerpts carefully:\n\n1. **package.json**: Standard setup, scripts include start, dev, test, typecheck, build. No dependencies. Uses node --check for syntax checking. Tests use node --test.\n\n2. **README.md**: Mentions fixture data for CI, live adapters scaffolded. Port 4317.\n\n3. **src/server.js**: \n   - Uses node:http, node:fs, node:path\n   - Endpoints: /health, /api/summary (GET), /api/apps (GET), /api/apps (POST), /api/apps/:id (GET), /api/refresh (POST)\n   - Static file serving with basic path traversal protection (`!file.startsWith(publicDir)`)\n   - CORS header on JSON responses\n   - Error handling with try/catch\n   - Calls refreshApps({ mode: \"fixture\" }) on startup\n   - Port from env or 4317\n\n4. **src/ingest.js**:\n   - Loads fixtures from ../fixtures/apps.json\n   - Allowed modes: \"fixture\", \"live-smoke\"\n   - refreshApps loads fixture apps and ranks them\n   - addCustomApp creates seed data w",
+-  "error": null,
+-  "payload_excerpt": null,
+-  "payload_text_excerpt": "\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n"
+-}
+diff --git a/reports/consumer-radar/reviews/qwen-feedback.json b/reports/consumer-radar/reviews/qwen-feedback.json
+deleted file mode 100644
+index 8f2ed9d..0000000
+--- a/reports/consumer-radar/reviews/qwen-feedback.json
++++ /dev/null
+@@ -1,39 +0,0 @@
+-{
+-  "ok": true,
+-  "skipped": false,
+-  "real_mode": false,
+-  "model": "qwen/qwen3.6-plus",
+-  "role": "feedback_implementation_quality",
+-  "status": 200,
+-  "parsed": {
+-    "verdict": "APPROVE",
+-    "score": 0.85,
+-    "findings": [
+-      {
+-        "severity": "medium",
+-        "issue": "server.js readJson lacks explicit JSON parse error handling, risking 500s on malformed payloads.",
+-        "fix": "Wrap JSON.parse in try/catch, return 400 with {error:'invalid_json'} before outer handler."
+-      },
+-      {
+-        "severity": "low",
+-        "issue": "app.js relies on innerHTML string concatenation for dynamic UI, risking XSS if escapeHtml misses edge cases.",
+-        "fix": "Adopt document.createElement or DOMPurify for detail panel rendering to guarantee safe DOM insertion."
+-      },
+-      {
+-        "severity": "medium",
+-        "issue": "ingest.js addCustomApp mixes sync loadApps with async refreshApps fallback, risking race conditions on concurrent calls.",
+-        "fix": "Convert loadApps to async or implement a mutex/queue to serialize state mutations during refresh."
+-      }
+-    ],
+-    "suggested_next_steps": [
+-      "Integrate OpenRouter fanout for automated review theme extraction",
+-      "Add Qlty and Promptfoo gates to CI pipeline",
+-      "Implement live-smoke mode with actual Apify tokens and rate limiting",
+-      "Add response caching and pagination for /api/apps endpoint"
+-    ]
+-  },
+-  "raw_excerpt": "{\n  \"verdict\": \"APPROVE\",\n  \"score\": 0.85,\n  \"findings\": [\n    {\n      \"severity\": \"medium\",\n      \"issue\": \"server.js readJson lacks explicit JSON parse error handling, risking 500s on malformed payloads.\",\n      \"fix\": \"Wrap JSON.parse in try/catch, return 400 with {error:'invalid_json'} before outer handler.\"\n    },\n    {\n      \"severity\": \"low\",\n      \"issue\": \"app.js relies on innerHTML string concatenation for dynamic UI, risking XSS if escapeHtml misses edge cases.\",\n      \"fix\": \"Adopt document.createElement or DOMPurify for detail panel rendering to guarantee safe DOM insertion.\"\n    },\n    {\n      \"severity\": \"medium\",\n      \"issue\": \"ingest.js addCustomApp mixes sync loadApps with async refreshApps fallback, risking race conditions on concurrent calls.\",\n      \"fix\": \"Convert loadApps to async or implement a mutex/queue to serialize state mutations during refresh.\"\n    }\n  ],\n  \"suggested_next_steps\": [\n    \"Integrate OpenRouter fanout for automated review theme extraction\",\n    \"Add Qlty and Promptfoo gates to CI pipeline\",\n    \"Implement live-smoke mode with actual Apify tokens and rate limiting\",\n    \"Add response caching and pagination for /api/apps endpoint\"\n  ]\n}",
+-  "error": null,
+-  "payload_excerpt": null,
+-  "payload_text_excerpt": "\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n         \n\n"
+-}
