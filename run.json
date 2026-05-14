@@ -357,14 +357,113 @@
     }
   },
   "web_url": "http://127.0.0.1:32276/runs/01KRHZC53DTSTDZ6TZHV59Y482",
-  "start": null,
-  "status": {
-    "kind": "starting"
+  "start": {
+    "start_time": "2026-05-14T00:49:54.564122Z",
+    "run_branch": "fabro/run/01KRHZC53DTSTDZ6TZHV59Y482",
+    "base_sha": "d3d684849632cc4899da2dca4e123db65815a93d"
   },
-  "status_updated_at": "2026-05-14T00:49:50.236531Z",
-  "last_event_at": "2026-05-14T00:49:53.790559Z",
+  "status": {
+    "kind": "running"
+  },
+  "status_updated_at": "2026-05-14T00:49:54.564170Z",
+  "last_event_at": "2026-05-14T00:50:16.054166Z",
   "pending_control": null,
-  "checkpoints": [],
+  "checkpoints": [
+    {
+      "seq": 19,
+      "checkpoint": {
+        "timestamp": "2026-05-14T00:49:55.915150Z",
+        "current_node": "start",
+        "completed_nodes": [
+          "start"
+        ],
+        "node_retries": {},
+        "context_values": {
+          "failure_signature": "",
+          "graph.outputs": "cli_auth_runtime_report",
+          "internal.work_dir": "/home/daytona/workspace",
+          "graph.model_stylesheet": "\n            * { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: low; }\n        ",
+          "internal.run_id": "01KRHZC53DTSTDZ6TZHV59Y482",
+          "failure_class": "",
+          "internal.retry_count.start": 0,
+          "graph.inputs": "none",
+          "graph.goal": "Verify Claude Code and Codex CLI auth work inside a fresh Daytona sandbox",
+          "internal.thread_id": null,
+          "internal.fidelity": "compact",
+          "outcome": "succeeded",
+          "current_node": "start",
+          "internal.node_visit_count": 1,
+          "graph.persona": "cli-auth-smoke"
+        },
+        "node_outcomes": {
+          "start": {
+            "status": "succeeded",
+            "usage": null
+          }
+        },
+        "next_node_id": "check_cli_auth_runtime",
+        "node_visits": {
+          "start": 1
+        }
+      },
+      "diff": {}
+    },
+    {
+      "seq": 0,
+      "checkpoint": {
+        "timestamp": "2026-05-14T00:50:16.360099Z",
+        "current_node": "check_cli_auth_runtime",
+        "completed_nodes": [
+          "start",
+          "check_cli_auth_runtime"
+        ],
+        "node_retries": {},
+        "context_values": {
+          "internal.retry_count.start": 0,
+          "graph.model_stylesheet": "\n            * { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: low; }\n        ",
+          "outcome": "failed",
+          "internal.node_visit_count": 1,
+          "internal.retry_count.check_cli_auth_runtime": 0,
+          "graph.inputs": "none",
+          "graph.persona": "cli-auth-smoke",
+          "failure_class": "deterministic",
+          "failure_signature": "check_cli_auth_runtime|deterministic|script failed with exit code: <n> ## output { \"ok\": false,\"env\": { \"openai_api_key\": false,\"claude_code_oauth_token\": false },\"missing\": [ \"openai_api_key\",\"claude_code_oauth_token\" ],\"checks\": [ { \"cmd\": \"claude --version\",\"status\": <n>,\"s",
+          "current_node": "check_cli_auth_runtime",
+          "thread.start.current_node": "check_cli_auth_runtime",
+          "command.output": "blob://sha256/140461fc5543ddcebdae1c17f85953777d531da542db0816cb30935e9249e0dd",
+          "graph.outputs": "cli_auth_runtime_report",
+          "internal.thread_id": "start",
+          "internal.run_id": "01KRHZC53DTSTDZ6TZHV59Y482",
+          "internal.fidelity": "compact",
+          "graph.goal": "Verify Claude Code and Codex CLI auth work inside a fresh Daytona sandbox",
+          "internal.work_dir": "/home/daytona/workspace"
+        },
+        "node_outcomes": {
+          "check_cli_auth_runtime": {
+            "status": "failed",
+            "context_updates": {
+              "command.output": "blob://sha256/140461fc5543ddcebdae1c17f85953777d531da542db0816cb30935e9249e0dd"
+            },
+            "failure": {
+              "message": "Script failed with exit code: 1\n\n## output\n{\n  \"ok\": false,\n  \"env\": {\n    \"OPENAI_API_KEY\": false,\n    \"CLAUDE_CODE_OAUTH_TOKEN\": false\n  },\n  \"missing\": [\n    \"OPENAI_API_KEY\",\n    \"CLAUDE_CODE_OAUTH_TOKEN\"\n  ],\n  \"checks\": [\n    {\n      \"cmd\": \"claude --version\",\n      \"status\": 0,\n      \"signal\": null,\n      \"stdout\": \"2.1.140 (Claude Code)\",\n      \"stderr\": \"\"\n    },\n    {\n      \"cmd\": \"codex --version\",\n      \"status\": 0,\n      \"signal\": null,\n      \"stdout\": \"codex-cli 0.130.0\",\n      \"stderr\": \"\"\n    },\n    {\n      \"cmd\": \"claude -p Reply with exactly OK.\",\n      \"status\": 1,\n      \"signal\": null,\n      \"stdout\": \"Failed to authenticate. API Error: 401 Invalid bearer token\",\n      \"stderr\": \"\"\n    },\n    {\n      \"cmd\": \"codex exec --skip-git-repo-check Reply with exactly OK.\",\n      \"status\": 1,\n      \"signal\": null,\n      \"stdout\": \"\",\n      \"stderr\": \"Reading additional input from stdin...\\nOpenAI Codex v0.130.0\\n--------\\nworkdir: /home/daytona/workspace\\nmodel: gpt-5.5\\nprovider: openai\\napproval: never\\nsandbox: read-only\\nreasoning effort: none\\nreasoning summaries: none\\nsession id: 019e23f6-37c7-7f60-b163-a7706e8455c8\\n--------\\nuser\\nReply with exactly OK.\\nwarning: Codex could not find bubblewrap on PATH. Install bubblewrap with your OS package manager. See the sandbox prerequisites: https://developers.openai.com/codex/concepts/sandboxing#prerequisites. Codex will use the bundled bubblewrap in the meantime.\\n2026-05-14T00:49:59.580181Z ERROR codex_api::endpoint::responses_websocket: failed to connect to websocket: HTTP error: 401 Unauthorized, url: wss://api.openai.com/v1/responses\\n2026-05-14T00:49:59.902597Z ERROR codex_api::endpoint::respons\"\n    }\n  ],\n  \"failed\": [\n    {\n      \"cmd\": \"claude -p Reply with exactly OK.\",\n      \"status\": 1,\n      \"signal\": null,\n      \"stdout\": \"Failed to authenticate. API Error: 401 Invalid bearer token\",\n      \"stderr\": \"\"\n    },\n    {\n      \"cmd\": \"codex exec --skip-git-repo-check Reply with exactly OK.\",\n      \"status\": 1,\n      \"signal\": null,\n      \"stdout\": \"\",\n      \"stderr\": \"Reading additional input from stdin...\\nOpenAI Codex v0.130.0\\n--------\\nworkdir: /home/daytona/workspace\\nmodel: gpt-5.5\\nprovider: openai\\napproval: never\\nsandbox: read-only\\nreasoning effort: none\\nreasoning summaries: none\\nsession id: 019e23f6-37c7-7f60-b163-a7706e8455c8\\n--------\\nuser\\nReply with exactly OK.\\nwarning: Codex could not find bubblewrap on PATH. Install bubblewrap with your OS package manager. See the sandbox prerequisites: https://developers.openai.com/codex/concepts/sandboxing#prerequisites. Codex will use the bundled bubblewrap in the meantime.\\n2026-05-14T00:49:59.580181Z ERROR codex_api::endpoint::responses_websocket: failed to connect to websocket: HTTP error: 401 Unauthorized, url: wss://api.openai.com/v1/responses\\n2026-05-14T00:49:59.902597Z ERROR codex_api::endpoint::respons\"\n    }\n  ]\n}\n",
+              "failure_class": "deterministic"
+            },
+            "usage": null
+          },
+          "start": {
+            "status": "succeeded",
+            "usage": null
+          }
+        },
+        "next_node_id": "fail_runtime",
+        "node_visits": {
+          "start": 1,
+          "check_cli_auth_runtime": 1
+        }
+      },
+      "diff": {}
+    }
+  ],
   "conclusion": null,
   "sandbox": {
     "provider": "daytona",
@@ -381,5 +480,72 @@
   "pull_request": null,
   "superseded_by": null,
   "pending_interviews": {},
-  "stages": {}
+  "stages": {
+    "start@1": {
+      "first_event_seq": 16,
+      "prompt": null,
+      "response": null,
+      "completion": {
+        "outcome": "succeeded",
+        "notes": null,
+        "failure_reason": null,
+        "timestamp": "2026-05-14T00:49:55.914914Z"
+      },
+      "provider_used": null,
+      "diff": null,
+      "script_invocation": null,
+      "script_timing": null,
+      "parallel_results": null,
+      "output": null,
+      "started_at": "2026-05-14T00:49:55.679025Z",
+      "handler": "start",
+      "duration_ms": 0,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "total_tokens": 0,
+        "reasoning_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "state": "succeeded"
+    },
+    "check_cli_auth_runtime@1": {
+      "first_event_seq": 20,
+      "prompt": null,
+      "response": null,
+      "completion": null,
+      "provider_used": null,
+      "diff": null,
+      "script_invocation": {
+        "script": "mkdir -p .workflow/fabro; node -e \"const fs=require('fs'); const {spawnSync}=require('child_process'); const clean=(value)=>String(value||'').replace(/sk-[A-Za-z0-9_-]+/g,'[redacted]').trim().slice(0,800); const usable=(key)=>{const value=process.env[key]||''; const unresolved=value.charCodeAt(0)===123 && value.charCodeAt(1)===123; return Boolean(value && !unresolved);}; const run=(cmd,args,timeout=120000)=>{const r=spawnSync(cmd,args,{encoding:'utf8',timeout,env:{...process.env,CI:'1'}}); return {cmd:[cmd,...args].join(' '), status:r.status, signal:r.signal||null, stdout:clean(r.stdout), stderr:clean(r.stderr)};}; const env={OPENAI_API_KEY:usable('OPENAI_API_KEY'), CLAUDE_CODE_OAUTH_TOKEN:usable('CLAUDE_CODE_OAUTH_TOKEN')}; const checks=[run('claude',['--version'],45000), run('codex',['--version'],45000), run('claude',['-p','Reply with exactly OK.'],120000), run('codex',['exec','--skip-git-repo-check','Reply with exactly OK.'],120000)]; const missing=Object.entries(env).filter(([,ok])=>!ok).map(([key])=>key); const failed=checks.filter((check)=>check.status!==0); const report={ok:missing.length===0 && failed.length===0, env, missing, checks, failed}; fs.writeFileSync('.workflow/fabro/daytona-cli-auth-runtime-smoke.json', JSON.stringify(report,null,2)+'\\n'); console.log(JSON.stringify(report,null,2)); if(!report.ok) process.exit(1);\"",
+        "command": "exec 2>&1\nmkdir -p .workflow/fabro; node -e \"const fs=require('fs'); const {spawnSync}=require('child_process'); const clean=(value)=>String(value||'').replace(/sk-[A-Za-z0-9_-]+/g,'[redacted]').trim().slice(0,800); const usable=(key)=>{const value=process.env[key]||''; const unresolved=value.charCodeAt(0)===123 && value.charCodeAt(1)===123; return Boolean(value && !unresolved);}; const run=(cmd,args,timeout=120000)=>{const r=spawnSync(cmd,args,{encoding:'utf8',timeout,env:{...process.env,CI:'1'}}); return {cmd:[cmd,...args].join(' '), status:r.status, signal:r.signal||null, stdout:clean(r.stdout), stderr:clean(r.stderr)};}; const env={OPENAI_API_KEY:usable('OPENAI_API_KEY'), CLAUDE_CODE_OAUTH_TOKEN:usable('CLAUDE_CODE_OAUTH_TOKEN')}; const checks=[run('claude',['--version'],45000), run('codex',['--version'],45000), run('claude',['-p','Reply with exactly OK.'],120000), run('codex',['exec','--skip-git-repo-check','Reply with exactly OK.'],120000)]; const missing=Object.entries(env).filter(([,ok])=>!ok).map(([key])=>key); const failed=checks.filter((check)=>check.status!==0); const report={ok:missing.length===0 && failed.length===0, env, missing, checks, failed}; fs.writeFileSync('.workflow/fabro/daytona-cli-auth-runtime-smoke.json', JSON.stringify(report,null,2)+'\\n'); console.log(JSON.stringify(report,null,2)); if(!report.ok) process.exit(1);\"",
+        "language": "shell"
+      },
+      "script_timing": {
+        "output": "blob://sha256/140461fc5543ddcebdae1c17f85953777d531da542db0816cb30935e9249e0dd",
+        "exit_code": 1,
+        "duration_ms": 20132,
+        "termination": "exited",
+        "output_bytes": 2861,
+        "live_streaming": true
+      },
+      "parallel_results": null,
+      "output": null,
+      "output_bytes": 2861,
+      "live_streaming": true,
+      "termination": "exited",
+      "started_at": "2026-05-14T00:49:55.915282Z",
+      "handler": "command",
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "total_tokens": 0,
+        "reasoning_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "state": "running"
+    }
+  }
 }
