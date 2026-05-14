@@ -97,6 +97,13 @@ struct SwiftAIBoilerplateProApp: App {
      * permissions if the user hasn't been asked before (notDetermined status)
      */
     private func requestNotificationPermissionsIfNeeded() async {
+        #if DEBUG
+            if ProcessInfo.processInfo.environment["DISABLE_NOTIFICATION_PROMPT"] == "1" {
+                AppLogger.info("Skipping notification permission prompt for UI test run", category: AppLogger.ui)
+                return
+            }
+        #endif
+
         let center = UNUserNotificationCenter.current()
         let settings = await center.notificationSettings()
 

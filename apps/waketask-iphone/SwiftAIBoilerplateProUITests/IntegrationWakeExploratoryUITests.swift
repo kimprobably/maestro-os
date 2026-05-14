@@ -10,8 +10,9 @@ final class IntegrationWakeExploratoryUITests: XCTestCase {
         telemetry = ExploratoryTelemetry()
         app = XCUIApplication()
         app.launchEnvironment["AUTH_BYPASS"] = "1"
+        app.launchEnvironment["DISABLE_NOTIFICATION_PROMPT"] = "1"
         app.launch()
-        dismissOnboardingIfNeeded()
+        enterMainAppIfNeeded()
         telemetry.visit("Home")
     }
 
@@ -106,22 +107,53 @@ final class IntegrationWakeExploratoryUITests: XCTestCase {
         return element.exists && element.isEnabled
     }
 
-    private func dismissOnboardingIfNeeded(timeout: TimeInterval = 10) {
+    private func enterMainAppIfNeeded(timeout: TimeInterval = 30) {
         let deadline = Date().addingTimeInterval(timeout)
         let runsTab = app.tabBars.buttons["Runs"]
         let skipOnboardingButton = app.buttons["Skip onboarding"]
+        let debugSignInButton = app.buttons["Debug: Mock Sign In"]
 
         while Date() < deadline {
             if runsTab.exists {
                 return
             }
 
+            dismissSystemAlertIfNeeded()
+
             if skipOnboardingButton.exists, skipOnboardingButton.isHittable {
                 telemetry.tap(skipOnboardingButton, id: "Skip onboarding")
-                return
+                waitForUIUpdate()
+                continue
+            }
+
+            if debugSignInButton.exists, debugSignInButton.isHittable {
+                telemetry.tap(debugSignInButton, id: "Debug: Mock Sign In")
+                waitForUIUpdate()
+                continue
             }
 
             waitForUIUpdate()
+        }
+    }
+
+    private func dismissSystemAlertIfNeeded() {
+        let springboard = XCUIApplication(bundleIdentifier: "com.apple.springboard")
+        let alert = springboard.alerts.firstMatch
+        guard alert.exists else {
+            return
+        }
+
+        for title in ["Allow", "OK", "Continue", "Don't Allow", "Don’t Allow"] {
+            let button = alert.buttons[title]
+            if button.exists {
+                button.tap()
+                return
+            }
+        }
+
+        let firstButton = alert.buttons.firstMatch
+        if firstButton.exists {
+            firstButton.tap()
         }
     }
 
