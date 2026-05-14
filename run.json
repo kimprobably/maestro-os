@@ -1,0 +1,3424 @@
+{
+  "title": "Build a differentiated iPhone app from a researched app opportunity using SwiftAIBoilerplatePro",
+  "spec": {
+    "run_id": "01KRJY9F9PKV1P01YH46A57WTS",
+    "settings": {
+      "project": {
+        "name": "maestro-os",
+        "description": null,
+        "metadata": {}
+      },
+      "workflow": {
+        "name": null,
+        "description": null,
+        "graph": "workflow.fabro",
+        "metadata": {}
+      },
+      "run": {
+        "goal": {
+          "type": "inline",
+          "value": "Build a differentiated iPhone app from a researched app opportunity using SwiftAIBoilerplatePro"
+        },
+        "working_dir": null,
+        "metadata": {
+          "factory": "iphone-app",
+          "app": "waketask",
+          "topic": "task-alarm",
+          "restart": "cli-routed-after-openrouter-credit-failure"
+        },
+        "inputs": {
+          "ios_validation_mode": "github",
+          "boilerplate_repo": "SwiftAIBoilerplatePro/SwiftAIBoilerplatePro-Distribution",
+          "app_dir": "apps/waketask-iphone",
+          "bundle_id": "com.keen.waketask",
+          "max_competitors": "12",
+          "use_mobbin": "true",
+          "spec_kitty_feature": "waketask-iphone-app",
+          "target_audience": "US iPhone users who oversleep, snooze repeatedly, or need high-friction wake-up accountability",
+          "app_type": "alarm clock apps that require a task or engagement before dismissal, such as puzzles, movement, scanning, commitment stakes, or accountability",
+          "app_name": "WakeTask",
+          "allow_macos_deferred": "false"
+        },
+        "model": {
+          "provider": "openai",
+          "name": "gpt-5.4",
+          "fallbacks": [],
+          "controls": {
+            "reasoning_effort": null,
+            "speed": null
+          }
+        },
+        "git": {
+          "author": null
+        },
+        "prepare": {
+          "commands": [],
+          "timeout_ms": 300000
+        },
+        "execution": {
+          "mode": "normal",
+          "approval": "prompt"
+        },
+        "checkpoint": {
+          "exclude_globs": []
+        },
+        "clone": {
+          "enabled": true
+        },
+        "run_branch": {
+          "enabled": true,
+          "push": true
+        },
+        "meta_branch": {
+          "enabled": true,
+          "push": true
+        },
+        "sandbox": {
+          "provider": "daytona",
+          "preserve": false,
+          "stop_on_terminal": true,
+          "devcontainer": false,
+          "env": {
+            "GITHUB_TOKEN": "{{ env.GITHUB_TOKEN }}",
+            "FABRO_SERVER": "{{ env.FABRO_SERVER }}",
+            "DAYTONA_API_URL": "{{ env.DAYTONA_API_URL }}",
+            "CODEX_AUTH_JSON_BASE64": "{{ env.CODEX_AUTH_JSON_BASE64 }}",
+            "LINEAR_API_KEY": "{{ env.LINEAR_API_KEY }}",
+            "APIFY_TOKEN": "{{ env.APIFY_TOKEN }}",
+            "OPENAI_API_KEY": "{{ env.OPENAI_API_KEY }}",
+            "CLAUDE_CODE_CREDENTIALS_JSON_BASE64": "{{ env.CLAUDE_CODE_CREDENTIALS_JSON_BASE64 }}",
+            "GH_TOKEN": "{{ env.GH_TOKEN }}",
+            "MOBBIN_EMAIL": "{{ env.MOBBIN_EMAIL }}",
+            "APIFY_APPSTORE_ACTOR": "crawlerbros/appstore-scraper",
+            "MOBBIN_PASSWORD": "{{ env.MOBBIN_PASSWORD }}",
+            "FABRO_SLACK_CHANNEL_ID": "{{ env.FABRO_SLACK_CHANNEL_ID }}",
+            "DAYTONA_API_KEY": "{{ env.DAYTONA_API_KEY }}",
+            "CLAUDE_CODE_OAUTH_TOKEN": "{{ env.CLAUDE_CODE_OAUTH_TOKEN }}",
+            "APIFY_INSTAGRAM_ACTOR": "apify/instagram-scraper",
+            "LINEAR_API_URL": "{{ env.LINEAR_API_URL }}",
+            "PROMPTFOO_DISABLE_TELEMETRY": "1",
+            "OPENROUTER_API_KEY": "{{ env.OPENROUTER_API_KEY }}",
+            "FABRO_DEV_TOKEN": "{{ env.FABRO_DEV_TOKEN }}",
+            "FABRO_SLACK_BOT_TOKEN": "{{ env.FABRO_SLACK_BOT_TOKEN }}",
+            "APIFY_TIKTOK_ACTOR": "clockworks/tiktok-scraper"
+          },
+          "docker": {
+            "image": "buildpack-deps:noble",
+            "network_mode": null,
+            "memory_limit": 4000000000,
+            "cpu_quota": 200000,
+            "env_vars": {}
+          },
+          "daytona": {
+            "auto_stop_interval": 30,
+            "labels": {
+              "project": "maestro-os",
+              "purpose": "code-factory"
+            },
+            "snapshot": {
+              "name": "maestro-code-factory-v6",
+              "cpu": 2,
+              "memory_gb": 4,
+              "disk_gb": 10,
+              "dockerfile": {
+                "type": "inline",
+                "value": "FROM ubuntu:24.04\n\nENV DEBIAN_FRONTEND=noninteractive\nENV BUN_INSTALL=/root/.bun\nENV PATH=\"/root/.fabro/bin:/root/.bun/bin:/root/.local/bin:/root/.qlty/bin:${PATH}\"\nWORKDIR /home/daytona\n\nRUN apt-get update && apt-get install -y --no-install-recommends bash ca-certificates curl git jq openssh-client python3 python3-pip pipx ripgrep shellcheck unzip xz-utils && rm -rf /var/lib/apt/lists/*\n\nRUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash - && apt-get update && apt-get install -y --no-install-recommends nodejs && npm install -g @anthropic-ai/claude-code@2.1.141 @openai/codex promptfoo && npm cache clean --force && rm -rf /var/lib/apt/lists/*\n\nRUN curl -fsSL https://bun.sh/install | bash -s \"bun-v1.2.22\" && ln -sf /root/.bun/bin/bun /usr/local/bin/bun\n\nRUN pipx install spec-kitty-cli==3.1.8 && curl -fsSL https://qlty.sh | sh && ln -sf /root/.qlty/bin/qlty /usr/local/bin/qlty\n\nRUN set -eux; target=\"x86_64-unknown-linux-gnu\"; asset=\"fabro-${target}.tar.gz\"; url=\"$(curl -fsSL https://api.github.com/repos/fabro-sh/fabro/releases/latest | jq -r --arg asset \"$asset\" '.assets[] | select(.name == $asset) | .browser_download_url')\"; test -n \"$url\"; curl -fsSL \"$url\" -o /tmp/fabro.tar.gz; tar -xzf /tmp/fabro.tar.gz -C /tmp; install -m 0755 \"/tmp/fabro-${target}/fabro\" /usr/local/bin/fabro; rm -rf /tmp/fabro.tar.gz \"/tmp/fabro-${target}\"; fabro --version\n\nCMD [\"/bin/bash\"]\n"
+              }
+            },
+            "network": "allow_all"
+          }
+        },
+        "notifications": {},
+        "interviews": {
+          "provider": null,
+          "slack": null
+        },
+        "agent": {
+          "permissions": "full",
+          "mcps": {}
+        },
+        "hooks": [],
+        "scm": {
+          "provider": null,
+          "owner": null,
+          "repository": null,
+          "github": null
+        },
+        "pull_request": null,
+        "artifacts": {
+          "include": [
+            ".workflow/**",
+            "reports/**",
+            "evals/output/**",
+            "apps/generated-*/README.md",
+            "apps/generated-*/.workflow-build.json",
+            "apps/generated-*/fixtures/**",
+            "apps/generated-*/public/**",
+            "apps/generated-*/src/**",
+            "apps/generated-*/tests/**"
+          ]
+        },
+        "integrations": {
+          "github": {
+            "permissions": {
+              "contents": "write",
+              "issues": "write",
+              "pull_requests": "write",
+              "actions": "read",
+              "metadata": "read"
+            }
+          }
+        }
+      }
+    },
+    "graph": {
+      "name": "BuildIPhoneApp",
+      "nodes": {
+        "ios_architecture_review": {
+          "id": "ios_architecture_review",
+          "attrs": {
+            "reasoning_effort": {
+              "String": "high"
+            },
+            "class": {
+              "String": "review"
+            },
+            "backend": {
+              "String": "cli"
+            },
+            "label": {
+              "String": "iOS Architecture"
+            },
+            "provider": {
+              "String": "openai"
+            },
+            "model": {
+              "String": "gpt-5.3-codex"
+            },
+            "prompt": {
+              "String": "# iOS Architecture Review\n\nReview the generated app against `.workflow/iphone-app-factory/architecture.md`, the boilerplate docs, and Swift 6 expectations.\n\nWrite `.workflow/iphone-app-factory/reviews/ios-architecture.md`.\n\nReject for unnecessary platform rewrites, broken module boundaries, large files, concurrency issues, or weak CompositionRoot wiring.\n"
+            }
+          },
+          "classes": [
+            "review"
+          ]
+        },
+        "implement_core": {
+          "id": "implement_core",
+          "attrs": {
+            "goal_gate": {
+              "Boolean": true
+            },
+            "model": {
+              "String": "gpt-5.3-codex"
+            },
+            "reasoning_effort": {
+              "String": "high"
+            },
+            "label": {
+              "String": "Implement Core"
+            },
+            "backend": {
+              "String": "cli"
+            },
+            "retry_target": {
+              "String": "implement_core"
+            },
+            "class": {
+              "String": "coding"
+            },
+            "provider": {
+              "String": "openai"
+            },
+            "prompt": {
+              "String": "# Implement Core Phase\n\nImplement only the core product logic phase in `apps/waketask-iphone`.\n\nUse the boilerplate's existing module boundaries, repositories, clients, logging, and Swift concurrency patterns.\n\nCore scope:\n\n- domain models\n- repositories/clients or local persistence needed for MVP\n- ViewModel logic without UI layout work\n- unit tests for logic, repositories, and ViewModels\n- privacy-preserving data handling\n\nDo not add broad infrastructure that the boilerplate already provides.\n\nWrite `.workflow/iphone-app-factory/evidence/core.md` with:\n\n- `Files changed`\n- `Commands run`\n- `Acceptance criteria`\n- `Risks`"
+            }
+          },
+          "classes": [
+            "coding"
+          ]
+        },
+        "implementation_security_review": {
+          "id": "implementation_security_review",
+          "attrs": {
+            "prompt": {
+              "String": "# Implementation Security Review\n\nRead the spec, architecture, phase evidence, app code, configs, scripts, and generated CI.\n\nReview security and privacy before simplification.\n\nCheck:\n\n- no hardcoded secrets\n- no workflow logs, reports, docs, scripts, or generated artifacts print real environment variable values or credentials\n- no PII in logs\n- privacy/legal text matches behavior\n- secure network/client usage\n- auth/payment/AI integrations use boilerplate abstractions\n- secret scanning is wired into CI\n- App Store privacy implications are documented\n\nWrite `.workflow/iphone-app-factory/reviews/implementation-security.md`.\n\nMark security, privacy, or secrets issues as blocking.\n"
+            },
+            "provider": {
+              "String": "openai"
+            },
+            "reasoning_effort": {
+              "String": "high"
+            },
+            "class": {
+              "String": "security"
+            },
+            "label": {
+              "String": "Implementation Security"
+            },
+            "backend": {
+              "String": "cli"
+            },
+            "model": {
+              "String": "gpt-5.3-codex"
+            }
+          },
+          "classes": [
+            "security"
+          ]
+        },
+        "spec_fanout": {
+          "id": "spec_fanout",
+          "attrs": {
+            "backend": {
+              "String": "cli"
+            },
+            "label": {
+              "String": "Adversarial Spec Fan-Out"
+            },
+            "join_policy": {
+              "String": "wait_all"
+            },
+            "shape": {
+              "String": "component"
+            },
+            "max_parallel": {
+              "Integer": 1
+            },
+            "provider": {
+              "String": "openai"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "model": {
+              "String": "gpt-5.3-codex"
+            }
+          }
+        },
+        "implementation_review_gate": {
+          "id": "implementation_review_gate",
+          "attrs": {
+            "retry_target": {
+              "String": "implement_integration"
+            },
+            "goal_gate": {
+              "Boolean": true
+            },
+            "script": {
+              "String": "./bin/maestro verify text-gate .workflow/iphone-app-factory/reviews/implementation-consensus.md --pass 'VERDICT:\\s*APPROVED' --fail 'VERDICT:\\s*REJECTED|\\bREJECTED\\b'"
+            },
+            "backend": {
+              "String": "cli"
+            },
+            "provider": {
+              "String": "openai"
+            },
+            "shape": {
+              "String": "parallelogram"
+            },
+            "label": {
+              "String": "Implementation Review Gate"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "model": {
+              "String": "gpt-5.3-codex"
+            }
+          }
+        },
+        "research_fanout": {
+          "id": "research_fanout",
+          "attrs": {
+            "provider": {
+              "String": "openai"
+            },
+            "backend": {
+              "String": "cli"
+            },
+            "join_policy": {
+              "String": "wait_all"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "shape": {
+              "String": "component"
+            },
+            "max_parallel": {
+              "Integer": 1
+            },
+            "label": {
+              "String": "Research Fan-Out"
+            },
+            "model": {
+              "String": "gpt-5.3-codex"
+            }
+          }
+        },
+        "arch_codex": {
+          "id": "arch_codex",
+          "attrs": {
+            "provider": {
+              "String": "openai"
+            },
+            "label": {
+              "String": "Qwen Architecture"
+            },
+            "fidelity": {
+              "String": "truncate"
+            },
+            "class": {
+              "String": "architecture"
+            },
+            "model": {
+              "String": "gpt-5.3-codex"
+            },
+            "reasoning_effort": {
+              "String": "high"
+            },
+            "prompt": {
+              "String": "# Independent Architecture Candidate\n\nRead:\n\n- `.workflow/iphone-app-factory/spec.md`\n- `.workflow/iphone-app-factory/definition-of-done.md`\n- `.workflow/iphone-app-factory/quality-bar.json`\n- SwiftAIBoilerplatePro docs if available in the app repo or GitHub.\n\nCreate an architecture plan that extends SwiftAIBoilerplatePro instead of rebuilding it.\n\nCover:\n\n- modules/packages to keep unchanged\n- modules/packages to adapt\n- modules/packages to remove only if justified\n- CompositionRoot changes\n- DesignSystem usage\n- data/repository/client plan\n- ViewModel boundaries\n- Swift 6 concurrency risks\n- test plan\n- Appium exploratory harness plan\n- GitHub macOS CI plan\n\nWrite the architecture candidate in your response with a clear model identity.\n"
+            },
+            "backend": {
+              "String": "cli"
+            }
+          },
+          "classes": [
+            "architecture"
+          ]
+        },
+        "prompt_quality_gate": {
+          "id": "prompt_quality_gate",
+          "attrs": {
+            "backend": {
+              "String": "cli"
+            },
+            "shape": {
+              "String": "parallelogram"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "model": {
+              "String": "gpt-5.3-codex"
+            },
+            "script": {
+              "String": "node scripts/iphone-app-factory/promptfoo-prompt-quality.mjs --config evals/iphone-app-factory/prompt-quality.yaml --registry evals/iphone-app-factory/prompt-registry.json --out .workflow/iphone-app-factory/evals/prompt-quality.json --allow-fallback true"
+            },
+            "label": {
+              "String": "Prompt Quality Gate"
+            },
+            "goal_gate": {
+              "Boolean": true
+            },
+            "retry_target": {
+              "String": "prompt_quality_gate"
+            },
+            "provider": {
+              "String": "openai"
+            }
+          }
+        },
+        "spec_codex": {
+          "id": "spec_codex",
+          "attrs": {
+            "prompt": {
+              "String": "# Independent Spec Candidate\n\nYou are producing one independent spec candidate. Do not assume other model outputs are correct.\n\nRead:\n\n- `.workflow/iphone-app-factory/research-synthesis.md`\n- `.workflow/iphone-app-factory/opportunity-matrix.json`\n- `.workflow/iphone-app-factory/quality-bar.json`\n\nDraft a complete iPhone app spec for `WakeTask`.\n\nThe spec must include:\n\n- problem statement\n- target user\n- MVP feature set\n- non-goals\n- user journeys\n- acceptance criteria\n- analytics/events\n- privacy/security requirements\n- App Store 4.3 differentiation statement\n- Appium exploratory testing requirements\n- SwiftAIBoilerplatePro module reuse plan\n- Definition of Done\n\nWrite the candidate in your response and include a clear title with your model identity. The consensus stage will merge the branch outputs from context."
+            },
+            "backend": {
+              "String": "cli"
+            },
+            "label": {
+              "String": "Gemini Spec"
+            },
+            "reasoning_effort": {
+              "String": "high"
+            },
+            "class": {
+              "String": "spec"
+            },
+            "provider": {
+              "String": "openai"
+            },
+            "fidelity": {
+              "String": "truncate"
+            },
+            "model": {
+              "String": "gpt-5.3-codex"
+            }
+          },
+          "classes": [
+            "spec"
+          ]
+        },
+        "gate_core": {
+          "id": "gate_core",
+          "attrs": {
+            "shape": {
+              "String": "parallelogram"
+            },
+            "provider": {
+              "String": "openai"
+            },
+            "script": {
+              "String": "node scripts/iphone-app-factory/phase-evidence-gate.mjs core 'apps/waketask-iphone'"
+            },
+            "goal_gate": {
+              "Boolean": true
+            },
+            "retry_target": {
+              "String": "implement_core"
+            },
+            "model": {
+              "String": "gpt-5.3-codex"
+            },
+            "label": {
+              "String": "Core Gate"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "backend": {
+              "String": "cli"
+            }
+          }
+        },
+        "gate_interface": {
+          "id": "gate_interface",
+          "attrs": {
+            "goal_gate": {
+              "Boolean": true
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "script": {
+              "String": "node scripts/iphone-app-factory/phase-evidence-gate.mjs interface 'apps/waketask-iphone'"
+            },
+            "model": {
+              "String": "gpt-5.3-codex"
+            },
+            "retry_target": {
+              "String": "implement_interface"
+            },
+            "backend": {
+              "String": "cli"
+            },
+            "provider": {
+              "String": "openai"
+            },
+            "shape": {
+              "String": "parallelogram"
+            },
+            "label": {
+              "String": "Interface Gate"
+            }
+          }
+        },
+        "appium_gate": {
+          "id": "appium_gate",
+          "attrs": {
+            "label": {
+              "String": "Appium Exploratory Gate"
+            },
+            "provider": {
+              "String": "openai"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "retry_target": {
+              "String": "ai_ui_explorer"
+            },
+            "backend": {
+              "String": "cli"
+            },
+            "script": {
+              "String": "node scripts/iphone-app-factory/appium-report-gate.mjs 'apps/waketask-iphone' --allow-deferred 'false'"
+            },
+            "model": {
+              "String": "gpt-5.3-codex"
+            },
+            "shape": {
+              "String": "parallelogram"
+            },
+            "goal_gate": {
+              "Boolean": true
+            }
+          }
+        },
+        "final_gate": {
+          "id": "final_gate",
+          "attrs": {
+            "label": {
+              "String": "Final Verdict Gate"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "goal_gate": {
+              "Boolean": true
+            },
+            "retry_target": {
+              "String": "simplification"
+            },
+            "model": {
+              "String": "gpt-5.3-codex"
+            },
+            "script": {
+              "String": "./bin/maestro verify text-gate .workflow/iphone-app-factory/final-consensus.md --pass 'VERDICT:\\s*APPROVED' --fail 'VERDICT:\\s*REJECTED|\\bREJECTED\\b'"
+            },
+            "provider": {
+              "String": "openai"
+            },
+            "shape": {
+              "String": "parallelogram"
+            },
+            "backend": {
+              "String": "cli"
+            }
+          }
+        },
+        "security_privacy_review": {
+          "id": "security_privacy_review",
+          "attrs": {
+            "backend": {
+              "String": "cli"
+            },
+            "provider": {
+              "String": "openai"
+            },
+            "label": {
+              "String": "Security Privacy"
+            },
+            "reasoning_effort": {
+              "String": "high"
+            },
+            "prompt": {
+              "String": "# Security And Privacy Review\n\nReview the generated app, configs, CI, and release artifacts.\n\nWrite `.workflow/iphone-app-factory/reviews/security-privacy.md`.\n\nReject for hardcoded secrets, PII logging, weak privacy/legal docs, unsafe network handling, or missing secret scanning.\n"
+            },
+            "model": {
+              "String": "gpt-5.3-codex"
+            },
+            "class": {
+              "String": "security"
+            }
+          },
+          "classes": [
+            "security"
+          ]
+        },
+        "research_synthesis": {
+          "id": "research_synthesis",
+          "attrs": {
+            "goal_gate": {
+              "Boolean": true
+            },
+            "class": {
+              "String": "research"
+            },
+            "retry_target": {
+              "String": "research_fanout"
+            },
+            "prompt": {
+              "String": "# Research Synthesis\n\nRead:\n\n- `.workflow/iphone-app-factory/research/app-store.md`\n- `.workflow/iphone-app-factory/research/reddit.md`\n- `.workflow/iphone-app-factory/research/competitors.md`\n- `.workflow/iphone-app-factory/research/design-patterns.md`\n- `.workflow/iphone-app-factory/quality-bar.json`\n\nWrite `.workflow/iphone-app-factory/research-synthesis.md` with:\n\n- target user and urgent problem\n- jobs-to-be-done\n- top complaint themes and quoted evidence summaries\n- competitor strengths and weaknesses\n- feature opportunity matrix\n- differentiation thesis strong enough for App Store 4.3 review\n- design direction\n- MVP scope and non-goals\n- risks and unknowns\n\nAlso write `.workflow/iphone-app-factory/opportunity-matrix.json` as strict JSON:\n\n```json\n{\n  \"opportunities\": [\n    {\n      \"title\": \"...\",\n      \"evidence\": [\"...\"],\n      \"user_pain\": \"...\",\n      \"mvp_feature\": \"...\",\n      \"differentiation\": \"...\",\n      \"risk\": \"low|medium|high\"\n    }\n  ]\n}\n```\n"
+            },
+            "backend": {
+              "String": "cli"
+            },
+            "model": {
+              "String": "gpt-5.3-codex"
+            },
+            "provider": {
+              "String": "openai"
+            },
+            "label": {
+              "String": "Research Synthesis"
+            },
+            "reasoning_effort": {
+              "String": "high"
+            }
+          },
+          "classes": [
+            "research"
+          ]
+        },
+        "spec_kitty_gate": {
+          "id": "spec_kitty_gate",
+          "attrs": {
+            "provider": {
+              "String": "openai"
+            },
+            "model": {
+              "String": "gpt-5.3-codex"
+            },
+            "label": {
+              "String": "Spec Kitty Mission"
+            },
+            "retry_target": {
+              "String": "spec_consensus"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "shape": {
+              "String": "parallelogram"
+            },
+            "goal_gate": {
+              "Boolean": true
+            },
+            "script": {
+              "String": "FEATURE='waketask-iphone-app'; if command -v spec-kitty >/dev/null 2>&1; then spec-kitty specify \"$FEATURE\" --mission-type software-dev --json > .workflow/iphone-app-factory/spec-kitty.json || spec-kitty verify-setup --json > .workflow/iphone-app-factory/spec-kitty.json; else echo 'spec-kitty is required for this workflow' >&2; exit 1; fi; cat .workflow/iphone-app-factory/spec-kitty.json"
+            },
+            "backend": {
+              "String": "cli"
+            }
+          }
+        },
+        "reddit_research": {
+          "id": "reddit_research",
+          "attrs": {
+            "reasoning_effort": {
+              "String": "high"
+            },
+            "prompt": {
+              "String": "# Reddit Pain Mining\n\nRead `.workflow/iphone-app-factory/context.md` and `quality-bar.json`.\n\nResearch Reddit conversations related to `alarm clock apps that require a task or engagement before dismissal, such as puzzles, movement, scanning, commitment stakes, or accountability`. Look for:\n\n- painful jobs-to-be-done\n- workarounds people describe\n- apps people recommend or complain about\n- language users use to describe the problem\n- feature requests and distrust/privacy concerns\n\nUse live data when available through Apify, Firecrawl, or web search. If unavailable, mark evidence as limited and do not fabricate quotes.\n\nSecret handling is blocking: never print environment variables or credential values. To check whether `APIFY_TOKEN` or another credential exists, use a boolean/presence-only command such as `node -e \"console.log(Boolean(process.env.APIFY_TOKEN))\"` and never echo, grep, dump, log, or write the value. Do not run environment dump commands such as `env`, `printenv`, `set`, `export`, or `declare -x`, and do not echo any `$...TOKEN`, `$...KEY`, `$...PASSWORD`, `$...AUTH`, or `$...CREDENTIAL` variable.\n\nWrite `.workflow/iphone-app-factory/research/reddit.md` with source links, summarized themes, and a ranked opportunity list."
+            },
+            "backend": {
+              "String": "cli"
+            },
+            "provider": {
+              "String": "openai"
+            },
+            "label": {
+              "String": "Reddit Pain Mining"
+            },
+            "model": {
+              "String": "gpt-5.3-codex"
+            },
+            "class": {
+              "String": "research"
+            }
+          },
+          "classes": [
+            "research"
+          ]
+        },
+        "ai_ui_explorer": {
+          "id": "ai_ui_explorer",
+          "attrs": {
+            "label": {
+              "String": "AI UI Explorer"
+            },
+            "class": {
+              "String": "macos"
+            },
+            "model": {
+              "String": "gpt-5.3-codex"
+            },
+            "goal_gate": {
+              "Boolean": true
+            },
+            "provider": {
+              "String": "openai"
+            },
+            "prompt": {
+              "String": "# AI UI Explorer\n\nRun or complete the automated exploratory UI pass for `apps/waketask-iphone`.\n\nThe target behavior is: launch the iOS app in simulator through Appium/XCUITest and tap every reachable enabled button/control across the MVP flows.\n\nThe explorer should:\n\n- record each screen source or screenshot\n- identify buttons, tabs, cells, navigation controls, and primary actions\n- tap controls breadth-first with a bounded depth\n- recover with back/navigation when possible\n- detect crashes, blank screens, stuck spinners, and unhandled error screens\n- produce `reports/ios/appium-exploratory-report.json`\n\nThe report JSON must include:\n\n```json\n{\n  \"ok\": true,\n  \"buttons_tapped\": 0,\n  \"screens_visited\": 0,\n  \"crashes\": 0,\n  \"failures\": 0,\n  \"failures_detail\": []\n}\n```\n\nDo not mark the pass complete unless a real simulator/Appium run happened, unless the workflow explicitly allows macOS deferral."
+            },
+            "reasoning_effort": {
+              "String": "high"
+            },
+            "backend": {
+              "String": "cli"
+            },
+            "retry_target": {
+              "String": "implement_interface"
+            }
+          },
+          "classes": [
+            "macos"
+          ]
+        },
+        "implementation_review_join": {
+          "id": "implementation_review_join",
+          "attrs": {
+            "model": {
+              "String": "gpt-5.3-codex"
+            },
+            "backend": {
+              "String": "cli"
+            },
+            "join_policy": {
+              "String": "wait_all"
+            },
+            "shape": {
+              "String": "tripleoctagon"
+            },
+            "provider": {
+              "String": "openai"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "label": {
+              "String": "Implementation Review Join"
+            }
+          }
+        },
+        "product_fidelity_review": {
+          "id": "product_fidelity_review",
+          "attrs": {
+            "prompt": {
+              "String": "# Product Fidelity Review\n\nReview the generated app against `.workflow/iphone-app-factory/spec.md` and research synthesis.\n\nWrite `.workflow/iphone-app-factory/reviews/product-fidelity.md`.\n\nReject if the app is generic, template-like, or misses the core researched user pain.\n"
+            },
+            "reasoning_effort": {
+              "String": "high"
+            },
+            "provider": {
+              "String": "openai"
+            },
+            "backend": {
+              "String": "cli"
+            },
+            "model": {
+              "String": "gpt-5.3-codex"
+            },
+            "class": {
+              "String": "review"
+            },
+            "label": {
+              "String": "Product Fidelity"
+            }
+          },
+          "classes": [
+            "review"
+          ]
+        },
+        "verify_foundation": {
+          "id": "verify_foundation",
+          "attrs": {
+            "provider": {
+              "String": "openai"
+            },
+            "class": {
+              "String": "verify"
+            },
+            "retry_target": {
+              "String": "implement_foundation"
+            },
+            "backend": {
+              "String": "cli"
+            },
+            "prompt": {
+              "String": "# Verify Current Phase\n\nRead the latest phase evidence in `.workflow/iphone-app-factory/evidence/`.\n\nindependently verify:\n\n- the phase did not exceed its scope\n- the evidence lists files, commands, acceptance criteria, and risks\n- boilerplate conventions were followed\n- no obvious quality gate was weakened or deferred without stating why\n- any generated code remains testable and modular\n\nIf you find issues, explain the exact retry target and what to fix. If acceptable, update the same evidence file with a short `Verifier notes` section.\n"
+            },
+            "label": {
+              "String": "Verify Foundation"
+            },
+            "reasoning_effort": {
+              "String": "medium"
+            },
+            "goal_gate": {
+              "Boolean": true
+            },
+            "model": {
+              "String": "gpt-5.3-codex"
+            }
+          },
+          "classes": [
+            "verify"
+          ]
+        },
+        "quality_contract_gate": {
+          "id": "quality_contract_gate",
+          "attrs": {
+            "retry_target": {
+              "String": "simplification"
+            },
+            "label": {
+              "String": "Quality Harness Contract"
+            },
+            "goal_gate": {
+              "Boolean": true
+            },
+            "backend": {
+              "String": "cli"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "script": {
+              "String": "node scripts/iphone-app-factory/quality-contract-gate.mjs 'apps/waketask-iphone'"
+            },
+            "model": {
+              "String": "gpt-5.3-codex"
+            },
+            "provider": {
+              "String": "openai"
+            },
+            "shape": {
+              "String": "parallelogram"
+            }
+          }
+        },
+        "gate_integration": {
+          "id": "gate_integration",
+          "attrs": {
+            "model": {
+              "String": "gpt-5.3-codex"
+            },
+            "provider": {
+              "String": "openai"
+            },
+            "script": {
+              "String": "node scripts/iphone-app-factory/phase-evidence-gate.mjs integration 'apps/waketask-iphone'"
+            },
+            "shape": {
+              "String": "parallelogram"
+            },
+            "retry_target": {
+              "String": "implement_integration"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "goal_gate": {
+              "Boolean": true
+            },
+            "label": {
+              "String": "Integration Gate"
+            },
+            "backend": {
+              "String": "cli"
+            }
+          }
+        },
+        "start": {
+          "id": "start",
+          "attrs": {
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "shape": {
+              "String": "Mdiamond"
+            },
+            "backend": {
+              "String": "cli"
+            },
+            "label": {
+              "String": "Start"
+            },
+            "model": {
+              "String": "gpt-5.3-codex"
+            },
+            "provider": {
+              "String": "openai"
+            }
+          }
+        },
+        "app_store_hardening": {
+          "id": "app_store_hardening",
+          "attrs": {
+            "goal_gate": {
+              "Boolean": true
+            },
+            "retry_target": {
+              "String": "implement_interface"
+            },
+            "prompt": {
+              "String": "# App Store 4.3 Hardening\n\nRead:\n\n- `.workflow/iphone-app-factory/spec.md`\n- `.workflow/iphone-app-factory/architecture.md`\n- app code in `apps/waketask-iphone`\n- SwiftAIBoilerplatePro App Store 4.3 checklist if present\n\nPerform release-readiness review focused on App Store duplicate/template risk.\n\nCheck:\n\n- binary/release strings audit plan and evidence\n- `SwiftAI`, `Boilerplate`, `EchoLLM`, `MockAuth`, `TODO`\n- app name, bundle ID, BrandConfig, launch screen, legal docs\n- App Store description and review notes\n- first screenshot/hero screen is product-specific\n- privacy manifest/nutrition label implications\n- no fixture/mock/test flags in production release\n\nWrite `.workflow/iphone-app-factory/app-store-hardening.md`.\n\nIt must include:\n\n- `release strings audit: PASS` only if real release/binary evidence exists or the generated CI script enforces it\n- audit notes for each forbidden token\n- Review Notes draft\n- Privacy notes\n\nEnd with exactly one verdict line:\n\n`VERDICT: APPROVED`\n\nor\n\n`VERDICT: REJECTED`"
+            },
+            "reasoning_effort": {
+              "String": "high"
+            },
+            "backend": {
+              "String": "cli"
+            },
+            "class": {
+              "String": "review"
+            },
+            "label": {
+              "String": "App Store 4.3 Hardening"
+            },
+            "provider": {
+              "String": "openai"
+            },
+            "model": {
+              "String": "gpt-5.3-codex"
+            }
+          },
+          "classes": [
+            "review"
+          ]
+        },
+        "app_store_gate": {
+          "id": "app_store_gate",
+          "attrs": {
+            "label": {
+              "String": "App Store Hardening Gate"
+            },
+            "provider": {
+              "String": "openai"
+            },
+            "model": {
+              "String": "gpt-5.3-codex"
+            },
+            "goal_gate": {
+              "Boolean": true
+            },
+            "shape": {
+              "String": "parallelogram"
+            },
+            "script": {
+              "String": "node scripts/iphone-app-factory/app-store-hardening-gate.mjs 'apps/waketask-iphone'"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "backend": {
+              "String": "cli"
+            },
+            "retry_target": {
+              "String": "app_store_hardening"
+            }
+          }
+        },
+        "architecture_join": {
+          "id": "architecture_join",
+          "attrs": {
+            "join_policy": {
+              "String": "wait_all"
+            },
+            "backend": {
+              "String": "cli"
+            },
+            "label": {
+              "String": "Architecture Join"
+            },
+            "provider": {
+              "String": "openai"
+            },
+            "shape": {
+              "String": "tripleoctagon"
+            },
+            "model": {
+              "String": "gpt-5.3-codex"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            }
+          }
+        },
+        "spec_red_team": {
+          "id": "spec_red_team",
+          "attrs": {
+            "retry_target": {
+              "String": "spec_consensus"
+            },
+            "provider": {
+              "String": "openai"
+            },
+            "prompt": {
+              "String": "# Spec Red Team\n\nRead:\n\n- `.workflow/iphone-app-factory/spec.md`\n- `.workflow/iphone-app-factory/definition-of-done.md`\n- `.workflow/iphone-app-factory/research-synthesis.md`\n- `.workflow/iphone-app-factory/quality-bar.json`\n\nReview the spec as a skeptical product, QA, iOS, and App Store reviewer.\n\nReject if:\n\n- research evidence is too weak to justify the product\n- features are vague or untestable\n- the app is too template-like\n- boilerplate reuse is unclear\n- Appium exploratory QA is not required\n- release criteria can pass without macOS/Xcode evidence\n\nWrite `.workflow/iphone-app-factory/spec-red-team.md`.\n\nEnd with exactly one verdict line:\n\n`VERDICT: APPROVED`\n\nor\n\n`VERDICT: REJECTED`\n"
+            },
+            "reasoning_effort": {
+              "String": "high"
+            },
+            "label": {
+              "String": "Spec Red Team"
+            },
+            "model": {
+              "String": "gpt-5.3-codex"
+            },
+            "goal_gate": {
+              "Boolean": true
+            },
+            "backend": {
+              "String": "cli"
+            },
+            "class": {
+              "String": "review"
+            }
+          },
+          "classes": [
+            "review"
+          ]
+        },
+        "macos_ci_gate": {
+          "id": "macos_ci_gate",
+          "attrs": {
+            "label": {
+              "String": "macOS iOS CI Gate"
+            },
+            "backend": {
+              "String": "cli"
+            },
+            "retry_target": {
+              "String": "implement_integration"
+            },
+            "goal_gate": {
+              "Boolean": true
+            },
+            "provider": {
+              "String": "openai"
+            },
+            "shape": {
+              "String": "parallelogram"
+            },
+            "model": {
+              "String": "gpt-5.3-codex"
+            },
+            "timeout": {
+              "Duration": {
+                "secs": 3600,
+                "nanos": 0
+              }
+            },
+            "script": {
+              "String": "node scripts/iphone-app-factory/ios-ci-gate.mjs 'apps/waketask-iphone' --mode 'github' --allow-deferred 'false'"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            }
+          }
+        },
+        "verify_core": {
+          "id": "verify_core",
+          "attrs": {
+            "goal_gate": {
+              "Boolean": true
+            },
+            "reasoning_effort": {
+              "String": "medium"
+            },
+            "prompt": {
+              "String": "# Verify Current Phase\n\nRead the latest phase evidence in `.workflow/iphone-app-factory/evidence/`.\n\nindependently verify:\n\n- the phase did not exceed its scope\n- the evidence lists files, commands, acceptance criteria, and risks\n- boilerplate conventions were followed\n- no obvious quality gate was weakened or deferred without stating why\n- any generated code remains testable and modular\n\nIf you find issues, explain the exact retry target and what to fix. If acceptable, update the same evidence file with a short `Verifier notes` section.\n"
+            },
+            "retry_target": {
+              "String": "implement_core"
+            },
+            "backend": {
+              "String": "cli"
+            },
+            "model": {
+              "String": "gpt-5.3-codex"
+            },
+            "provider": {
+              "String": "openai"
+            },
+            "class": {
+              "String": "verify"
+            },
+            "label": {
+              "String": "Verify Core"
+            }
+          },
+          "classes": [
+            "verify"
+          ]
+        },
+        "verify_interface": {
+          "id": "verify_interface",
+          "attrs": {
+            "backend": {
+              "String": "cli"
+            },
+            "class": {
+              "String": "verify"
+            },
+            "retry_target": {
+              "String": "implement_interface"
+            },
+            "reasoning_effort": {
+              "String": "medium"
+            },
+            "goal_gate": {
+              "Boolean": true
+            },
+            "label": {
+              "String": "Verify Interface"
+            },
+            "prompt": {
+              "String": "# Verify Current Phase\n\nRead the latest phase evidence in `.workflow/iphone-app-factory/evidence/`.\n\nindependently verify:\n\n- the phase did not exceed its scope\n- the evidence lists files, commands, acceptance criteria, and risks\n- boilerplate conventions were followed\n- no obvious quality gate was weakened or deferred without stating why\n- any generated code remains testable and modular\n\nIf you find issues, explain the exact retry target and what to fix. If acceptable, update the same evidence file with a short `Verifier notes` section.\n"
+            },
+            "model": {
+              "String": "gpt-5.3-codex"
+            },
+            "provider": {
+              "String": "openai"
+            }
+          },
+          "classes": [
+            "verify"
+          ]
+        },
+        "implementation_test_review": {
+          "id": "implementation_test_review",
+          "attrs": {
+            "class": {
+              "String": "review"
+            },
+            "reasoning_effort": {
+              "String": "high"
+            },
+            "prompt": {
+              "String": "# Implementation Test Review\n\nRead the spec, definition of done, architecture, phase evidence, and app code.\n\nReview tests before simplification.\n\nCheck:\n\n- unit tests for ViewModels, repositories, clients, and core logic\n- UI tests for primary flows\n- `xcodebuild build` and `xcodebuild test` evidence or CI wiring\n- Appium exploratory coverage for reachable controls\n- tests are meaningful rather than compile-only placeholders\n\nWrite `.workflow/iphone-app-factory/reviews/implementation-tests.md`.\n\nReject missing or fake tests as blocking.\n"
+            },
+            "backend": {
+              "String": "cli"
+            },
+            "provider": {
+              "String": "openai"
+            },
+            "label": {
+              "String": "Implementation Tests"
+            },
+            "model": {
+              "String": "gpt-5.3-codex"
+            }
+          },
+          "classes": [
+            "review"
+          ]
+        },
+        "implementation_correctness_review": {
+          "id": "implementation_correctness_review",
+          "attrs": {
+            "prompt": {
+              "String": "# Implementation Correctness Review\n\nRead:\n\n- `.workflow/iphone-app-factory/spec.md`\n- `.workflow/iphone-app-factory/definition-of-done.md`\n- `.workflow/iphone-app-factory/architecture.md`\n- all phase evidence\n- app code in `apps/waketask-iphone`\n\nReview correctness before simplification.\n\nCheck that the implementation actually satisfies the spec, not just the evidence notes. Look for missing flows, broken state handling, incorrect persistence, unhandled errors, bad edge cases, and mismatches between UI behavior and requirements.\n\nWrite `.workflow/iphone-app-factory/reviews/implementation-correctness.md`.\n\nUse `blocking` for issues that must go back to implementation before simplification."
+            },
+            "class": {
+              "String": "review"
+            },
+            "model": {
+              "String": "gpt-5.3-codex"
+            },
+            "label": {
+              "String": "Implementation Correctness"
+            },
+            "provider": {
+              "String": "openai"
+            },
+            "reasoning_effort": {
+              "String": "high"
+            },
+            "backend": {
+              "String": "cli"
+            }
+          },
+          "classes": [
+            "review"
+          ]
+        },
+        "qa_review": {
+          "id": "qa_review",
+          "attrs": {
+            "label": {
+              "String": "QA Evidence"
+            },
+            "provider": {
+              "String": "openai"
+            },
+            "class": {
+              "String": "review"
+            },
+            "prompt": {
+              "String": "# QA Evidence Review\n\nReview QA evidence:\n\n- xcodebuild build/test\n- unit/UI tests\n- Appium exploratory report\n- button tap coverage\n- crashes/failures\n\nWrite `.workflow/iphone-app-factory/reviews/qa-evidence.md`.\n\nReject if Appium did not tap reachable controls or if failures are unresolved.\n"
+            },
+            "backend": {
+              "String": "cli"
+            },
+            "model": {
+              "String": "gpt-5.3-codex"
+            },
+            "reasoning_effort": {
+              "String": "high"
+            }
+          },
+          "classes": [
+            "review"
+          ]
+        },
+        "final_review_join": {
+          "id": "final_review_join",
+          "attrs": {
+            "label": {
+              "String": "Final Review Join"
+            },
+            "shape": {
+              "String": "tripleoctagon"
+            },
+            "model": {
+              "String": "gpt-5.3-codex"
+            },
+            "backend": {
+              "String": "cli"
+            },
+            "provider": {
+              "String": "openai"
+            },
+            "join_policy": {
+              "String": "wait_all"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            }
+          }
+        },
+        "spec_claude": {
+          "id": "spec_claude",
+          "attrs": {
+            "model": {
+              "String": "gpt-5.3-codex"
+            },
+            "label": {
+              "String": "Claude Spec"
+            },
+            "class": {
+              "String": "spec"
+            },
+            "backend": {
+              "String": "cli"
+            },
+            "reasoning_effort": {
+              "String": "high"
+            },
+            "prompt": {
+              "String": "# Independent Spec Candidate\n\nYou are producing one independent spec candidate. Do not assume other model outputs are correct.\n\nRead:\n\n- `.workflow/iphone-app-factory/research-synthesis.md`\n- `.workflow/iphone-app-factory/opportunity-matrix.json`\n- `.workflow/iphone-app-factory/quality-bar.json`\n\nDraft a complete iPhone app spec for `WakeTask`.\n\nThe spec must include:\n\n- problem statement\n- target user\n- MVP feature set\n- non-goals\n- user journeys\n- acceptance criteria\n- analytics/events\n- privacy/security requirements\n- App Store 4.3 differentiation statement\n- Appium exploratory testing requirements\n- SwiftAIBoilerplatePro module reuse plan\n- Definition of Done\n\nWrite the candidate in your response and include a clear title with your model identity. The consensus stage will merge the branch outputs from context."
+            },
+            "fidelity": {
+              "String": "truncate"
+            },
+            "provider": {
+              "String": "openai"
+            }
+          },
+          "classes": [
+            "spec"
+          ]
+        },
+        "code_quality_review": {
+          "id": "code_quality_review",
+          "attrs": {
+            "prompt": {
+              "String": "# Code Quality Review\n\nReview code quality and maintainability.\n\nWrite `.workflow/iphone-app-factory/reviews/code-quality.md`.\n\nReject if SwiftLint/SwiftFormat/Qlty gates are missing, if tests are thin, if files exceed 400 lines, or if simplification was skipped.\n"
+            },
+            "label": {
+              "String": "Code Quality"
+            },
+            "backend": {
+              "String": "cli"
+            },
+            "model": {
+              "String": "gpt-5.3-codex"
+            },
+            "class": {
+              "String": "review"
+            },
+            "provider": {
+              "String": "openai"
+            },
+            "reasoning_effort": {
+              "String": "high"
+            }
+          },
+          "classes": [
+            "review"
+          ]
+        },
+        "arch_claude": {
+          "id": "arch_claude",
+          "attrs": {
+            "fidelity": {
+              "String": "truncate"
+            },
+            "backend": {
+              "String": "cli"
+            },
+            "reasoning_effort": {
+              "String": "high"
+            },
+            "model": {
+              "String": "gpt-5.3-codex"
+            },
+            "label": {
+              "String": "Claude Architecture"
+            },
+            "class": {
+              "String": "architecture"
+            },
+            "prompt": {
+              "String": "# Independent Architecture Candidate\n\nRead:\n\n- `.workflow/iphone-app-factory/spec.md`\n- `.workflow/iphone-app-factory/definition-of-done.md`\n- `.workflow/iphone-app-factory/quality-bar.json`\n- SwiftAIBoilerplatePro docs if available in the app repo or GitHub.\n\nCreate an architecture plan that extends SwiftAIBoilerplatePro instead of rebuilding it.\n\nCover:\n\n- modules/packages to keep unchanged\n- modules/packages to adapt\n- modules/packages to remove only if justified\n- CompositionRoot changes\n- DesignSystem usage\n- data/repository/client plan\n- ViewModel boundaries\n- Swift 6 concurrency risks\n- test plan\n- Appium exploratory harness plan\n- GitHub macOS CI plan\n\nWrite the architecture candidate in your response with a clear model identity.\n"
+            },
+            "provider": {
+              "String": "openai"
+            }
+          },
+          "classes": [
+            "architecture"
+          ]
+        },
+        "publish_handoff": {
+          "id": "publish_handoff",
+          "attrs": {
+            "provider": {
+              "String": "openai"
+            },
+            "retry_target": {
+              "String": "final_consensus"
+            },
+            "goal_gate": {
+              "Boolean": true
+            },
+            "model": {
+              "String": "gpt-5.3-codex"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "shape": {
+              "String": "parallelogram"
+            },
+            "backend": {
+              "String": "cli"
+            },
+            "script": {
+              "String": "node scripts/iphone-app-factory/publish-handoff.mjs 'apps/waketask-iphone'"
+            },
+            "label": {
+              "String": "Publish Handoff"
+            }
+          }
+        },
+        "spec_kimi": {
+          "id": "spec_kimi",
+          "attrs": {
+            "backend": {
+              "String": "cli"
+            },
+            "class": {
+              "String": "spec"
+            },
+            "reasoning_effort": {
+              "String": "high"
+            },
+            "fidelity": {
+              "String": "truncate"
+            },
+            "label": {
+              "String": "Kimi Spec"
+            },
+            "provider": {
+              "String": "openai"
+            },
+            "prompt": {
+              "String": "# Independent Spec Candidate\n\nYou are producing one independent spec candidate. Do not assume other model outputs are correct.\n\nRead:\n\n- `.workflow/iphone-app-factory/research-synthesis.md`\n- `.workflow/iphone-app-factory/opportunity-matrix.json`\n- `.workflow/iphone-app-factory/quality-bar.json`\n\nDraft a complete iPhone app spec for `WakeTask`.\n\nThe spec must include:\n\n- problem statement\n- target user\n- MVP feature set\n- non-goals\n- user journeys\n- acceptance criteria\n- analytics/events\n- privacy/security requirements\n- App Store 4.3 differentiation statement\n- Appium exploratory testing requirements\n- SwiftAIBoilerplatePro module reuse plan\n- Definition of Done\n\nWrite the candidate in your response and include a clear title with your model identity. The consensus stage will merge the branch outputs from context."
+            },
+            "model": {
+              "String": "gpt-5.3-codex"
+            }
+          },
+          "classes": [
+            "spec"
+          ]
+        },
+        "architecture_fanout": {
+          "id": "architecture_fanout",
+          "attrs": {
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "provider": {
+              "String": "openai"
+            },
+            "join_policy": {
+              "String": "wait_all"
+            },
+            "model": {
+              "String": "gpt-5.3-codex"
+            },
+            "label": {
+              "String": "Architecture Fan-Out"
+            },
+            "backend": {
+              "String": "cli"
+            },
+            "shape": {
+              "String": "component"
+            },
+            "max_parallel": {
+              "Integer": 1
+            }
+          }
+        },
+        "implementation_boilerplate_review": {
+          "id": "implementation_boilerplate_review",
+          "attrs": {
+            "backend": {
+              "String": "cli"
+            },
+            "provider": {
+              "String": "openai"
+            },
+            "model": {
+              "String": "gpt-5.3-codex"
+            },
+            "class": {
+              "String": "review"
+            },
+            "label": {
+              "String": "Implementation Boilerplate"
+            },
+            "reasoning_effort": {
+              "String": "high"
+            },
+            "prompt": {
+              "String": "# Implementation Boilerplate Review\n\nRead the spec, architecture, ADR, phase evidence, and app code.\n\nReview whether the implementation uses SwiftAIBoilerplatePro properly.\n\nCheck:\n\n- no unnecessary rebuild of auth, payments, AI, storage, networking, localization, settings, or DesignSystem\n- CompositionRoot and AppShell changes follow existing patterns\n- package boundaries are respected\n- AppLogger is used instead of `print`\n- Swift 6 concurrency patterns are preserved\n- user-visible strings use Localization where appropriate\n\nWrite `.workflow/iphone-app-factory/reviews/implementation-boilerplate.md`.\n\nReject if the implementation bypasses boilerplate infrastructure without an ADR.\n"
+            }
+          },
+          "classes": [
+            "review"
+          ]
+        },
+        "verify_integration": {
+          "id": "verify_integration",
+          "attrs": {
+            "retry_target": {
+              "String": "implement_integration"
+            },
+            "model": {
+              "String": "gpt-5.3-codex"
+            },
+            "prompt": {
+              "String": "# Verify Current Phase\n\nRead the latest phase evidence in `.workflow/iphone-app-factory/evidence/`.\n\nindependently verify:\n\n- the phase did not exceed its scope\n- the evidence lists files, commands, acceptance criteria, and risks\n- boilerplate conventions were followed\n- no obvious quality gate was weakened or deferred without stating why\n- any generated code remains testable and modular\n\nIf you find issues, explain the exact retry target and what to fix. If acceptable, update the same evidence file with a short `Verifier notes` section.\n"
+            },
+            "label": {
+              "String": "Verify Integration"
+            },
+            "provider": {
+              "String": "openai"
+            },
+            "goal_gate": {
+              "Boolean": true
+            },
+            "backend": {
+              "String": "cli"
+            },
+            "reasoning_effort": {
+              "String": "medium"
+            },
+            "class": {
+              "String": "verify"
+            }
+          },
+          "classes": [
+            "verify"
+          ]
+        },
+        "spec_join": {
+          "id": "spec_join",
+          "attrs": {
+            "model": {
+              "String": "gpt-5.3-codex"
+            },
+            "join_policy": {
+              "String": "wait_all"
+            },
+            "shape": {
+              "String": "tripleoctagon"
+            },
+            "label": {
+              "String": "Spec Join"
+            },
+            "backend": {
+              "String": "cli"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "provider": {
+              "String": "openai"
+            }
+          }
+        },
+        "app_store_research": {
+          "id": "app_store_research",
+          "attrs": {
+            "provider": {
+              "String": "openai"
+            },
+            "model": {
+              "String": "gpt-5.3-codex"
+            },
+            "label": {
+              "String": "App Store Reviews"
+            },
+            "prompt": {
+              "String": "# App Store Review Research\n\nRead `.workflow/iphone-app-factory/context.md` and `quality-bar.json`.\n\nResearch iPhone apps related to `alarm clock apps that require a task or engagement before dismissal, such as puzzles, movement, scanning, commitment stakes, or accountability` for `US iPhone users who oversleep, snooze repeatedly, or need high-friction wake-up accountability`.\n\nUse the existing Consumer Radar/App Store reviews tooling if available. Prefer live Apify/App Store data when credentials are present. If live scraping is unavailable, mark the limitation explicitly and do not invent review quotes.\n\nSecret handling is blocking: never print environment variables or credential values. To check whether `APIFY_TOKEN` or another credential exists, use a boolean/presence-only command such as `node -e \"console.log(Boolean(process.env.APIFY_TOKEN))\"` and never echo, grep, dump, log, or write the value. Do not run environment dump commands such as `env`, `printenv`, `set`, `export`, or `declare -x`, and do not echo any `$...TOKEN`, `$...KEY`, `$...PASSWORD`, `$...AUTH`, or `$...CREDENTIAL` variable.\n\nWrite `.workflow/iphone-app-factory/research/app-store.md` with:\n\n- candidate apps and App Store links\n- why each app is relevant\n- recent review themes, complaints, feature requests, and delight moments\n- what appears fast-growing versus merely large\n- evidence quality: `live`, `partial`, or `limited`\n- concrete product opportunities for our app\n\nDo not write implementation code."
+            },
+            "backend": {
+              "String": "cli"
+            },
+            "class": {
+              "String": "research"
+            },
+            "reasoning_effort": {
+              "String": "high"
+            }
+          },
+          "classes": [
+            "research"
+          ]
+        },
+        "spec_cross_critique": {
+          "id": "spec_cross_critique",
+          "attrs": {
+            "label": {
+              "String": "Spec Cross-Critique"
+            },
+            "reasoning_effort": {
+              "String": "high"
+            },
+            "retry_target": {
+              "String": "spec_fanout"
+            },
+            "backend": {
+              "String": "cli"
+            },
+            "class": {
+              "String": "review"
+            },
+            "prompt": {
+              "String": "# Spec Cross-Critique\n\nYou have independent spec candidates in context from Gemini, Claude, Kimi, and DeepSeek.\n\nCompare them adversarially:\n\n- identify consensus\n- identify contradictions\n- identify missing acceptance criteria\n- identify App Store 4.3 risks\n- identify where a candidate would rebuild boilerplate infrastructure unnecessarily\n- identify testability gaps\n- identify vague or non-verifiable claims\n\nWrite `.workflow/iphone-app-factory/spec-cross-critique.md`.\n\nBe strict. A spec is not good enough unless an implementation agent can build and verify it without guessing.\n"
+            },
+            "goal_gate": {
+              "Boolean": true
+            },
+            "provider": {
+              "String": "openai"
+            },
+            "model": {
+              "String": "gpt-5.3-codex"
+            },
+            "fidelity": {
+              "String": "full"
+            }
+          },
+          "classes": [
+            "review"
+          ]
+        },
+        "implement_integration": {
+          "id": "implement_integration",
+          "attrs": {
+            "prompt": {
+              "String": "# Implement Integration Phase\n\nImplement only the integration and release-hardening phase in `apps/waketask-iphone`.\n\nScope:\n\n- wire feature into CompositionRoot/AppShell\n- complete tests and UI test fixtures\n- complete `scripts/ci/ios-quality.sh`\n- complete `.github/workflows/ios-quality.yml`\n- complete Appium exploratory script\n- generate `reports/ios/ios-quality-report.json` when quality checks pass\n- generate `reports/ios/appium-exploratory-report.json` when Appium checks pass\n- create release/readiness docs\n\nThe CI script must include xcodebuild build/test, SwiftLint, SwiftFormat, Qlty, secret scan, and App Store string audit.\n\nSecret handling is blocking: never print environment variables or credential values. CI and local scripts may verify that required secrets are present, but output must be redacted true/false status only.\n\nWrite `.workflow/iphone-app-factory/evidence/integration.md` with:\n\n- `Files changed`\n- `Commands run`\n- `Acceptance criteria`\n- `Risks`"
+            },
+            "class": {
+              "String": "coding"
+            },
+            "retry_target": {
+              "String": "implement_integration"
+            },
+            "model": {
+              "String": "gpt-5.3-codex"
+            },
+            "label": {
+              "String": "Implement Integration"
+            },
+            "provider": {
+              "String": "openai"
+            },
+            "backend": {
+              "String": "cli"
+            },
+            "goal_gate": {
+              "Boolean": true
+            },
+            "reasoning_effort": {
+              "String": "high"
+            }
+          },
+          "classes": [
+            "coding"
+          ]
+        },
+        "spec_quality_gate": {
+          "id": "spec_quality_gate",
+          "attrs": {
+            "script": {
+              "String": "node scripts/iphone-app-factory/spec-gate.mjs"
+            },
+            "shape": {
+              "String": "parallelogram"
+            },
+            "backend": {
+              "String": "cli"
+            },
+            "goal_gate": {
+              "Boolean": true
+            },
+            "model": {
+              "String": "gpt-5.3-codex"
+            },
+            "retry_target": {
+              "String": "spec_consensus"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "label": {
+              "String": "Spec Quality Gate"
+            },
+            "provider": {
+              "String": "openai"
+            }
+          }
+        },
+        "research_evidence_gate": {
+          "id": "research_evidence_gate",
+          "attrs": {
+            "provider": {
+              "String": "openai"
+            },
+            "label": {
+              "String": "Research Evidence Gate"
+            },
+            "backend": {
+              "String": "cli"
+            },
+            "retry_target": {
+              "String": "research_fanout"
+            },
+            "model": {
+              "String": "gpt-5.3-codex"
+            },
+            "goal_gate": {
+              "Boolean": true
+            },
+            "script": {
+              "String": "node scripts/iphone-app-factory/research-evidence-gate.mjs"
+            },
+            "shape": {
+              "String": "parallelogram"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            }
+          }
+        },
+        "final_consensus": {
+          "id": "final_consensus",
+          "attrs": {
+            "goal_gate": {
+              "Boolean": true
+            },
+            "backend": {
+              "String": "cli"
+            },
+            "reasoning_effort": {
+              "String": "high"
+            },
+            "fidelity": {
+              "String": "full"
+            },
+            "prompt": {
+              "String": "# Final Consensus Review\n\nRead:\n\n- `.workflow/iphone-app-factory/spec.md`\n- `.workflow/iphone-app-factory/definition-of-done.md`\n- `.workflow/iphone-app-factory/reviews/product-fidelity.md`\n- `.workflow/iphone-app-factory/reviews/ios-architecture.md`\n- `.workflow/iphone-app-factory/reviews/security-privacy.md`\n- `.workflow/iphone-app-factory/reviews/code-quality.md`\n- `.workflow/iphone-app-factory/reviews/release-readiness.md`\n- `.workflow/iphone-app-factory/reviews/qa-evidence.md`\n- `.workflow/iphone-app-factory/quality-contract-gate.json`\n- `.workflow/iphone-app-factory/ios-ci-gate.json`\n- `.workflow/iphone-app-factory/appium-gate.json`\n- `.workflow/iphone-app-factory/app-store-hardening-gate.json`\n\nMerge the review fanout into a final release decision.\n\nRules:\n\n- If any reviewer finds a blocking issue, reject.\n- If macOS/Xcode or Appium evidence is missing and not explicitly deferred, reject.\n- If the app does not use the boilerplate substantially, reject.\n- If App Store 4.3 hardening did not pass, reject.\n\nWrite `.workflow/iphone-app-factory/final-consensus.md` with:\n\n- reviewer agreement/disagreement\n- blocking issues\n- remaining deferred items\n- release handoff notes\n\nEnd with exactly one verdict line:\n\n`VERDICT: APPROVED`\n\nor\n\n`VERDICT: REJECTED`\n"
+            },
+            "class": {
+              "String": "review"
+            },
+            "provider": {
+              "String": "openai"
+            },
+            "model": {
+              "String": "gpt-5.3-codex"
+            },
+            "retry_target": {
+              "String": "simplification"
+            },
+            "label": {
+              "String": "Final Consensus"
+            }
+          },
+          "classes": [
+            "review"
+          ]
+        },
+        "research_join": {
+          "id": "research_join",
+          "attrs": {
+            "shape": {
+              "String": "tripleoctagon"
+            },
+            "model": {
+              "String": "gpt-5.3-codex"
+            },
+            "backend": {
+              "String": "cli"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "provider": {
+              "String": "openai"
+            },
+            "label": {
+              "String": "Research Join"
+            },
+            "join_policy": {
+              "String": "wait_all"
+            }
+          }
+        },
+        "boilerplate_gate": {
+          "id": "boilerplate_gate",
+          "attrs": {
+            "goal_gate": {
+              "Boolean": true
+            },
+            "model": {
+              "String": "gpt-5.3-codex"
+            },
+            "script": {
+              "String": "node scripts/iphone-app-factory/boilerplate-contract-gate.mjs 'apps/waketask-iphone'"
+            },
+            "backend": {
+              "String": "cli"
+            },
+            "provider": {
+              "String": "openai"
+            },
+            "retry_target": {
+              "String": "boilerplate_setup"
+            },
+            "label": {
+              "String": "Boilerplate Contract Gate"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "shape": {
+              "String": "parallelogram"
+            }
+          }
+        },
+        "bootstrap": {
+          "id": "bootstrap",
+          "attrs": {
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "goal_gate": {
+              "Boolean": true
+            },
+            "backend": {
+              "String": "cli"
+            },
+            "shape": {
+              "String": "parallelogram"
+            },
+            "model": {
+              "String": "gpt-5.3-codex"
+            },
+            "script": {
+              "String": "node scripts/iphone-app-factory/bootstrap.mjs --app-dir 'apps/waketask-iphone' --app-name 'WakeTask' --bundle-id 'com.keen.waketask' --boilerplate-repo 'SwiftAIBoilerplatePro/SwiftAIBoilerplatePro-Distribution'"
+            },
+            "provider": {
+              "String": "openai"
+            },
+            "retry_target": {
+              "String": "bootstrap"
+            },
+            "label": {
+              "String": "Bootstrap iPhone Factory"
+            }
+          }
+        },
+        "release_readiness_review": {
+          "id": "release_readiness_review",
+          "attrs": {
+            "reasoning_effort": {
+              "String": "high"
+            },
+            "class": {
+              "String": "review"
+            },
+            "prompt": {
+              "String": "# Release Readiness Review\n\nReview release readiness evidence:\n\n- iOS CI report\n- App Store hardening report\n- App Store metadata/review notes\n- TestFlight readiness\n- signing/credential blockers\n\nWrite `.workflow/iphone-app-factory/reviews/release-readiness.md`.\n\nReject if the app claims App Store readiness without macOS/Xcode evidence.\n"
+            },
+            "model": {
+              "String": "gpt-5.3-codex"
+            },
+            "backend": {
+              "String": "cli"
+            },
+            "provider": {
+              "String": "openai"
+            },
+            "label": {
+              "String": "Release Readiness"
+            }
+          },
+          "classes": [
+            "review"
+          ]
+        },
+        "spec_deepseek": {
+          "id": "spec_deepseek",
+          "attrs": {
+            "model": {
+              "String": "gpt-5.3-codex"
+            },
+            "provider": {
+              "String": "openai"
+            },
+            "prompt": {
+              "String": "# Independent Spec Candidate\n\nYou are producing one independent spec candidate. Do not assume other model outputs are correct.\n\nRead:\n\n- `.workflow/iphone-app-factory/research-synthesis.md`\n- `.workflow/iphone-app-factory/opportunity-matrix.json`\n- `.workflow/iphone-app-factory/quality-bar.json`\n\nDraft a complete iPhone app spec for `WakeTask`.\n\nThe spec must include:\n\n- problem statement\n- target user\n- MVP feature set\n- non-goals\n- user journeys\n- acceptance criteria\n- analytics/events\n- privacy/security requirements\n- App Store 4.3 differentiation statement\n- Appium exploratory testing requirements\n- SwiftAIBoilerplatePro module reuse plan\n- Definition of Done\n\nWrite the candidate in your response and include a clear title with your model identity. The consensus stage will merge the branch outputs from context."
+            },
+            "reasoning_effort": {
+              "String": "high"
+            },
+            "class": {
+              "String": "spec"
+            },
+            "fidelity": {
+              "String": "truncate"
+            },
+            "backend": {
+              "String": "cli"
+            },
+            "label": {
+              "String": "DeepSeek Spec"
+            }
+          },
+          "classes": [
+            "spec"
+          ]
+        },
+        "architecture_consensus": {
+          "id": "architecture_consensus",
+          "attrs": {
+            "backend": {
+              "String": "cli"
+            },
+            "model": {
+              "String": "gpt-5.3-codex"
+            },
+            "prompt": {
+              "String": "# Architecture And ADR Consensus\n\nRead:\n\n- `.workflow/iphone-app-factory/spec.md`\n- `.workflow/iphone-app-factory/definition-of-done.md`\n- all architecture candidates in context\n- `.workflow/iphone-app-factory/quality-bar.json`\n\nWrite:\n\n- `.workflow/iphone-app-factory/architecture.md`\n- `.workflow/iphone-app-factory/adr.md`\n\nThe architecture must explicitly map the product to SwiftAIBoilerplatePro:\n\n- `SwiftAIBoilerplatePro.xcodeproj`\n- `Config/App.xcconfig`\n- `Packages/Core`\n- `Packages/Networking`\n- `Packages/Storage`\n- `Packages/Auth`\n- `Packages/Payments`\n- `Packages/AI`\n- `Packages/FeatureSettings`\n- `Packages/Localization`\n- `Packages/DesignSystem`\n- `CompositionRoot`\n\nIf any module is removed, the ADR must explain dependency order and App Store 4.3 consequences.\n"
+            },
+            "reasoning_effort": {
+              "String": "high"
+            },
+            "class": {
+              "String": "architecture"
+            },
+            "fidelity": {
+              "String": "full"
+            },
+            "label": {
+              "String": "Architecture And ADR"
+            },
+            "retry_target": {
+              "String": "architecture_fanout"
+            },
+            "goal_gate": {
+              "Boolean": true
+            },
+            "provider": {
+              "String": "openai"
+            }
+          },
+          "classes": [
+            "architecture"
+          ]
+        },
+        "implement_interface": {
+          "id": "implement_interface",
+          "attrs": {
+            "label": {
+              "String": "Implement Interface"
+            },
+            "provider": {
+              "String": "openai"
+            },
+            "class": {
+              "String": "coding"
+            },
+            "model": {
+              "String": "gpt-5.3-codex"
+            },
+            "reasoning_effort": {
+              "String": "high"
+            },
+            "prompt": {
+              "String": "# Implement Interface Phase\n\nImplement only the SwiftUI interface phase in `apps/waketask-iphone`.\n\nUse:\n\n- existing AppShell/navigation patterns\n- DesignSystem tokens/components\n- Localization where strings are user-visible\n- accessibility labels for every tappable control\n- Dynamic Type and VoiceOver friendly layouts\n\nDo not make the first screen a marketing landing page. Build the actual app experience.\n\nAlso make sure the Appium exploratory tapper can discover buttons, tabs, cells, and navigation controls.\n\nWrite `.workflow/iphone-app-factory/evidence/interface.md` with:\n\n- `Files changed`\n- `Commands run`\n- `Acceptance criteria`\n- `Risks`"
+            },
+            "goal_gate": {
+              "Boolean": true
+            },
+            "retry_target": {
+              "String": "implement_interface"
+            },
+            "backend": {
+              "String": "cli"
+            }
+          },
+          "classes": [
+            "coding"
+          ]
+        },
+        "design_pattern_research": {
+          "id": "design_pattern_research",
+          "attrs": {
+            "backend": {
+              "String": "cli"
+            },
+            "model": {
+              "String": "gpt-5.3-codex"
+            },
+            "reasoning_effort": {
+              "String": "high"
+            },
+            "class": {
+              "String": "design"
+            },
+            "prompt": {
+              "String": "# iOS Design Pattern Research\n\nRead `.workflow/iphone-app-factory/context.md`, `quality-bar.json`, and the research artifacts.\n\nIf `true` is true and a usable Mobbin login/session is available, use browser tooling to inspect Mobbin iOS patterns that fit this app type. Credentials, if available, come from `MOBBIN_EMAIL` and `MOBBIN_PASSWORD`; never write either value into files, prompts, logs, or reports. Use Mobbin's native email/password path by clicking `See other options`; do not choose Google OAuth for these credentials. Otherwise use Apple Human Interface Guidelines, competitor screenshots/listings, and the boilerplate DesignSystem docs.\n\nSecret handling is blocking: never print environment variables or credential values. If checking Mobbin credential availability, report only true/false presence and never echo, grep, dump, log, or write the email, password, cookies, or session values. Do not run environment dump commands such as `env`, `printenv`, `set`, `export`, or `declare -x`, and do not echo any `$...TOKEN`, `$...KEY`, `$...PASSWORD`, `$...AUTH`, or `$...CREDENTIAL` variable.\n\nWrite `.workflow/iphone-app-factory/research/design-patterns.md` with:\n\n- pattern name\n- source app or design reference\n- why it fits this product\n- what to adapt into SwiftUI\n- what not to copy\n- DesignSystem components or tokens likely to use\n\nThis is inspiration and pattern abstraction, not clone work. Do not copy another app's visual design or proprietary assets."
+            },
+            "provider": {
+              "String": "openai"
+            },
+            "label": {
+              "String": "Design Pattern Research"
+            }
+          },
+          "classes": [
+            "design"
+          ]
+        },
+        "boilerplate_setup": {
+          "id": "boilerplate_setup",
+          "attrs": {
+            "retry_target": {
+              "String": "boilerplate_setup"
+            },
+            "provider": {
+              "String": "openai"
+            },
+            "label": {
+              "String": "Clone And Rebrand Boilerplate"
+            },
+            "prompt": {
+              "String": "# Clone And Rebrand SwiftAIBoilerplatePro\n\nRead:\n\n- `.workflow/iphone-app-factory/spec.md`\n- `.workflow/iphone-app-factory/architecture.md`\n- `.workflow/iphone-app-factory/adr.md`\n- `.workflow/iphone-app-factory/quality-bar.json`\n\nCreate `apps/waketask-iphone` from `SwiftAIBoilerplatePro/SwiftAIBoilerplatePro-Distribution`.\n\nUse the boilerplate as much as possible:\n\n- do not recreate auth/payments/networking/storage/AI/settings/design system from scratch\n- start with rebranding, app identity, and product-specific surfaces\n- keep Swift 6 and package boundaries intact\n- keep Xcode project and test targets functional\n\nRead `AGENTS.md`, `DISTRIBUTION_README.md`, `docs/CLAUDE.md`, `docs/BUILDING_YOUR_APP.md`, and the App Store 4.3 checklist in the boilerplate.\n\nSecret handling is blocking: never print environment variables or credential values. Do not copy local auth files, API tokens, cookies, or passwords into the app. Any credential checks must be presence-only.\n\nWrite `.workflow/iphone-app-factory/evidence/boilerplate-setup.md` with files changed, commands run, and unresolved risks."
+            },
+            "goal_gate": {
+              "Boolean": true
+            },
+            "class": {
+              "String": "coding"
+            },
+            "backend": {
+              "String": "cli"
+            },
+            "model": {
+              "String": "gpt-5.3-codex"
+            },
+            "reasoning_effort": {
+              "String": "high"
+            }
+          },
+          "classes": [
+            "coding"
+          ]
+        },
+        "implementation_review_consensus": {
+          "id": "implementation_review_consensus",
+          "attrs": {
+            "retry_target": {
+              "String": "implement_integration"
+            },
+            "goal_gate": {
+              "Boolean": true
+            },
+            "provider": {
+              "String": "openai"
+            },
+            "prompt": {
+              "String": "# Implementation Review Consensus\n\nRead:\n\n- `.workflow/iphone-app-factory/reviews/implementation-correctness.md`\n- `.workflow/iphone-app-factory/reviews/implementation-tests.md`\n- `.workflow/iphone-app-factory/reviews/implementation-security.md`\n- `.workflow/iphone-app-factory/reviews/implementation-boilerplate.md`\n- `.workflow/iphone-app-factory/spec.md`\n- `.workflow/iphone-app-factory/definition-of-done.md`\n\nMerge the implementation code-review findings before simplification.\n\nWrite `.workflow/iphone-app-factory/reviews/implementation-consensus.md` with:\n\n- reviewer agreement and disagreement\n- blocking issues, if any\n- concrete retry target\n- explicit simplification instructions if approved\n\nRules:\n\n- If any reviewer marks an issue blocking, reject.\n- If tests, Appium wiring, or boilerplate reuse are missing, reject.\n- If approved, simplification should focus only on reducing complexity without weakening quality gates.\n\nEnd with exactly one verdict line:\n\n`VERDICT: APPROVED`\n\nor\n\n`VERDICT: REJECTED`\n"
+            },
+            "model": {
+              "String": "gpt-5.3-codex"
+            },
+            "backend": {
+              "String": "cli"
+            },
+            "fidelity": {
+              "String": "full"
+            },
+            "label": {
+              "String": "Implementation Review Consensus"
+            },
+            "reasoning_effort": {
+              "String": "high"
+            },
+            "class": {
+              "String": "review"
+            }
+          },
+          "classes": [
+            "review"
+          ]
+        },
+        "exit": {
+          "id": "exit",
+          "attrs": {
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "backend": {
+              "String": "cli"
+            },
+            "label": {
+              "String": "Exit"
+            },
+            "provider": {
+              "String": "openai"
+            },
+            "shape": {
+              "String": "Msquare"
+            },
+            "model": {
+              "String": "gpt-5.3-codex"
+            }
+          }
+        },
+        "simplification": {
+          "id": "simplification",
+          "attrs": {
+            "prompt": {
+              "String": "# Code Simplification Pass\n\nRead:\n\n- `.workflow/iphone-app-factory/spec.md`\n- `.workflow/iphone-app-factory/architecture.md`\n- all phase evidence\n- the app code in `apps/waketask-iphone`\n\nSimplify without changing intended behavior.\n\nRequired checks:\n\n- remove dead/duplicate code\n- split Swift files approaching 400 lines\n- simplify large ViewModels\n- keep Views stateless where possible\n- preserve DesignSystem usage\n- preserve tests and CI\n- do not remove quality gates\n\nWrite `.workflow/iphone-app-factory/evidence/simplification.md`."
+            },
+            "reasoning_effort": {
+              "String": "high"
+            },
+            "retry_target": {
+              "String": "simplification"
+            },
+            "provider": {
+              "String": "openai"
+            },
+            "goal_gate": {
+              "Boolean": true
+            },
+            "label": {
+              "String": "Code Simplification"
+            },
+            "model": {
+              "String": "gpt-5.3-codex"
+            },
+            "class": {
+              "String": "simplify"
+            },
+            "backend": {
+              "String": "cli"
+            }
+          },
+          "classes": [
+            "simplify"
+          ]
+        },
+        "competitor_research": {
+          "id": "competitor_research",
+          "attrs": {
+            "backend": {
+              "String": "cli"
+            },
+            "reasoning_effort": {
+              "String": "high"
+            },
+            "label": {
+              "String": "Competitor Research"
+            },
+            "prompt": {
+              "String": "# Competitor Research\n\nRead `.workflow/iphone-app-factory/context.md`, `quality-bar.json`, and any research artifacts already available.\n\nFind up to `12` competitor iPhone apps. For each:\n\n- positioning and primary promise\n- onboarding shape\n- monetization\n- main features\n- retention mechanics\n- visible reviews/complaints\n- likely growth channel or social wedge\n- gaps we can exploit\n\nWrite `.workflow/iphone-app-factory/research/competitors.md`.\n\nSecret handling is blocking: never print environment variables or credential values. If checking credential availability, report only true/false presence and never echo, grep, dump, log, or write the value. Do not run environment dump commands such as `env`, `printenv`, `set`, `export`, or `declare -x`, and do not echo any `$...TOKEN`, `$...KEY`, `$...PASSWORD`, `$...AUTH`, or `$...CREDENTIAL` variable.\n\nBe explicit about evidence quality. Do not overfit to the largest apps if smaller fast-growing products better match the opportunity."
+            },
+            "class": {
+              "String": "research"
+            },
+            "model": {
+              "String": "gpt-5.3-codex"
+            },
+            "provider": {
+              "String": "openai"
+            }
+          },
+          "classes": [
+            "research"
+          ]
+        },
+        "spec_consensus": {
+          "id": "spec_consensus",
+          "attrs": {
+            "class": {
+              "String": "spec"
+            },
+            "reasoning_effort": {
+              "String": "high"
+            },
+            "model": {
+              "String": "gpt-5.3-codex"
+            },
+            "label": {
+              "String": "Spec Consensus"
+            },
+            "provider": {
+              "String": "openai"
+            },
+            "backend": {
+              "String": "cli"
+            },
+            "prompt": {
+              "String": "# Spec Consensus\n\nRead:\n\n- `.workflow/iphone-app-factory/research-synthesis.md`\n- `.workflow/iphone-app-factory/opportunity-matrix.json`\n- all spec candidate outputs in context\n- `.workflow/iphone-app-factory/spec-cross-critique.md`\n- `.workflow/iphone-app-factory/quality-bar.json`\n\nMerge the strongest ideas into one buildable spec.\n\nWrite:\n\n- `.workflow/iphone-app-factory/spec.md`\n- `.workflow/iphone-app-factory/definition-of-done.md`\n- `.workflow/iphone-app-factory/spec-consensus.md`\n\n`spec.md` must include these section headings exactly:\n\n- `# Product Spec`\n- `## Research Evidence`\n- `## User Journeys`\n- `## MVP Scope`\n- `## Boilerplate Reuse`\n- `## Design Direction`\n- `## Acceptance Criteria`\n- `## Appium Exploratory QA`\n- `## App Store Readiness`\n- `## Definition of Done`\n\nThe Definition of Done must be checklist-based and testable.\n"
+            },
+            "goal_gate": {
+              "Boolean": true
+            },
+            "fidelity": {
+              "String": "full"
+            },
+            "retry_target": {
+              "String": "spec_fanout"
+            }
+          },
+          "classes": [
+            "spec"
+          ]
+        },
+        "architecture_gate": {
+          "id": "architecture_gate",
+          "attrs": {
+            "label": {
+              "String": "Architecture Gate"
+            },
+            "goal_gate": {
+              "Boolean": true
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "provider": {
+              "String": "openai"
+            },
+            "shape": {
+              "String": "parallelogram"
+            },
+            "model": {
+              "String": "gpt-5.3-codex"
+            },
+            "script": {
+              "String": "test -s .workflow/iphone-app-factory/architecture.md; test -s .workflow/iphone-app-factory/adr.md; grep -Eq 'SwiftAIBoilerplatePro|boilerplate|Packages/|DesignSystem|CompositionRoot' .workflow/iphone-app-factory/architecture.md"
+            },
+            "retry_target": {
+              "String": "architecture_consensus"
+            },
+            "backend": {
+              "String": "cli"
+            }
+          }
+        },
+        "implementation_review_fanout": {
+          "id": "implementation_review_fanout",
+          "attrs": {
+            "max_parallel": {
+              "Integer": 1
+            },
+            "provider": {
+              "String": "openai"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "model": {
+              "String": "gpt-5.3-codex"
+            },
+            "label": {
+              "String": "Implementation Review Fan-Out"
+            },
+            "join_policy": {
+              "String": "wait_all"
+            },
+            "shape": {
+              "String": "component"
+            },
+            "backend": {
+              "String": "cli"
+            }
+          }
+        },
+        "memory_summary": {
+          "id": "memory_summary",
+          "attrs": {
+            "shape": {
+              "String": "parallelogram"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "provider": {
+              "String": "openai"
+            },
+            "label": {
+              "String": "Memory Summary"
+            },
+            "backend": {
+              "String": "cli"
+            },
+            "model": {
+              "String": "gpt-5.3-codex"
+            },
+            "script": {
+              "String": "printf '{\"kind\":\"iphone_app_factory.completed\",\"payload\":{\"app_dir\":\"apps/waketask-iphone\",\"app_name\":\"WakeTask\"}}' | ./bin/maestro memory append 'team/iphone-app-factory/builds' >/dev/null; echo memory-updated"
+            }
+          }
+        },
+        "implement_foundation": {
+          "id": "implement_foundation",
+          "attrs": {
+            "class": {
+              "String": "coding"
+            },
+            "goal_gate": {
+              "Boolean": true
+            },
+            "model": {
+              "String": "gpt-5.3-codex"
+            },
+            "retry_target": {
+              "String": "implement_foundation"
+            },
+            "reasoning_effort": {
+              "String": "high"
+            },
+            "prompt": {
+              "String": "# Implement Foundation Phase\n\nImplement only the foundation phase in `apps/waketask-iphone`.\n\nRead the spec, definition of done, architecture, ADR, and quality bar.\n\nFoundation scope:\n\n- app name and bundle ID\n- BrandConfig and visible app identity\n- colors/tokens where needed\n- launch screen/app icon placeholders if final assets are unavailable\n- legal docs placeholders with real product-specific text, not template copy\n- secrets config templates, no hardcoded secrets\n- GitHub macOS CI shell/workflow skeleton\n- Appium exploratory tapper skeleton\n\nUse SwiftAIBoilerplatePro conventions.\n\nSecret handling is blocking: never print environment variables or credential values. Generated config may include placeholder keys only; do not write real tokens, passwords, cookies, OAuth credentials, or base64 auth blobs into app files, docs, CI, reports, or logs.\n\nWrite `.workflow/iphone-app-factory/evidence/foundation.md` with:\n\n- `Files changed`\n- `Commands run`\n- `Acceptance criteria`\n- `Risks`"
+            },
+            "backend": {
+              "String": "cli"
+            },
+            "provider": {
+              "String": "openai"
+            },
+            "label": {
+              "String": "Implement Foundation"
+            }
+          },
+          "classes": [
+            "coding"
+          ]
+        },
+        "final_review_fanout": {
+          "id": "final_review_fanout",
+          "attrs": {
+            "join_policy": {
+              "String": "wait_all"
+            },
+            "provider": {
+              "String": "openai"
+            },
+            "max_parallel": {
+              "Integer": 1
+            },
+            "backend": {
+              "String": "cli"
+            },
+            "model": {
+              "String": "gpt-5.3-codex"
+            },
+            "shape": {
+              "String": "component"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "label": {
+              "String": "Final Review Fan-Out"
+            }
+          }
+        },
+        "gate_foundation": {
+          "id": "gate_foundation",
+          "attrs": {
+            "model": {
+              "String": "gpt-5.3-codex"
+            },
+            "retry_target": {
+              "String": "implement_foundation"
+            },
+            "goal_gate": {
+              "Boolean": true
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "label": {
+              "String": "Foundation Gate"
+            },
+            "script": {
+              "String": "node scripts/iphone-app-factory/phase-evidence-gate.mjs foundation 'apps/waketask-iphone'"
+            },
+            "backend": {
+              "String": "cli"
+            },
+            "provider": {
+              "String": "openai"
+            },
+            "shape": {
+              "String": "parallelogram"
+            }
+          }
+        }
+      },
+      "edges": [
+        {
+          "from": "start",
+          "to": "bootstrap",
+          "attrs": {}
+        },
+        {
+          "from": "bootstrap",
+          "to": "prompt_quality_gate",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "bootstrap",
+          "to": "bootstrap",
+          "attrs": {
+            "loop_restart": {
+              "Boolean": true
+            },
+            "label": {
+              "String": "Retry"
+            }
+          }
+        },
+        {
+          "from": "prompt_quality_gate",
+          "to": "research_fanout",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "prompt_quality_gate",
+          "to": "prompt_quality_gate",
+          "attrs": {
+            "loop_restart": {
+              "Boolean": true
+            },
+            "label": {
+              "String": "Retry"
+            }
+          }
+        },
+        {
+          "from": "research_fanout",
+          "to": "app_store_research",
+          "attrs": {}
+        },
+        {
+          "from": "research_fanout",
+          "to": "reddit_research",
+          "attrs": {}
+        },
+        {
+          "from": "research_fanout",
+          "to": "competitor_research",
+          "attrs": {}
+        },
+        {
+          "from": "research_fanout",
+          "to": "design_pattern_research",
+          "attrs": {}
+        },
+        {
+          "from": "app_store_research",
+          "to": "research_join",
+          "attrs": {}
+        },
+        {
+          "from": "reddit_research",
+          "to": "research_join",
+          "attrs": {}
+        },
+        {
+          "from": "competitor_research",
+          "to": "research_join",
+          "attrs": {}
+        },
+        {
+          "from": "design_pattern_research",
+          "to": "research_join",
+          "attrs": {}
+        },
+        {
+          "from": "research_join",
+          "to": "research_synthesis",
+          "attrs": {}
+        },
+        {
+          "from": "research_synthesis",
+          "to": "research_evidence_gate",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "research_synthesis",
+          "to": "research_fanout",
+          "attrs": {
+            "label": {
+              "String": "Retry"
+            }
+          }
+        },
+        {
+          "from": "research_evidence_gate",
+          "to": "spec_fanout",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "research_evidence_gate",
+          "to": "research_fanout",
+          "attrs": {
+            "label": {
+              "String": "Retry"
+            }
+          }
+        },
+        {
+          "from": "spec_fanout",
+          "to": "spec_codex",
+          "attrs": {}
+        },
+        {
+          "from": "spec_fanout",
+          "to": "spec_claude",
+          "attrs": {}
+        },
+        {
+          "from": "spec_fanout",
+          "to": "spec_kimi",
+          "attrs": {}
+        },
+        {
+          "from": "spec_fanout",
+          "to": "spec_deepseek",
+          "attrs": {}
+        },
+        {
+          "from": "spec_codex",
+          "to": "spec_join",
+          "attrs": {}
+        },
+        {
+          "from": "spec_claude",
+          "to": "spec_join",
+          "attrs": {}
+        },
+        {
+          "from": "spec_kimi",
+          "to": "spec_join",
+          "attrs": {}
+        },
+        {
+          "from": "spec_deepseek",
+          "to": "spec_join",
+          "attrs": {}
+        },
+        {
+          "from": "spec_join",
+          "to": "spec_cross_critique",
+          "attrs": {}
+        },
+        {
+          "from": "spec_cross_critique",
+          "to": "spec_consensus",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "spec_cross_critique",
+          "to": "spec_fanout",
+          "attrs": {
+            "label": {
+              "String": "Retry"
+            }
+          }
+        },
+        {
+          "from": "spec_consensus",
+          "to": "spec_red_team",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "spec_consensus",
+          "to": "spec_fanout",
+          "attrs": {
+            "label": {
+              "String": "Retry"
+            }
+          }
+        },
+        {
+          "from": "spec_red_team",
+          "to": "spec_quality_gate",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "spec_red_team",
+          "to": "spec_consensus",
+          "attrs": {
+            "label": {
+              "String": "Fix"
+            }
+          }
+        },
+        {
+          "from": "spec_quality_gate",
+          "to": "spec_kitty_gate",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "spec_quality_gate",
+          "to": "spec_consensus",
+          "attrs": {
+            "label": {
+              "String": "Fix"
+            }
+          }
+        },
+        {
+          "from": "spec_kitty_gate",
+          "to": "architecture_fanout",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "spec_kitty_gate",
+          "to": "spec_consensus",
+          "attrs": {
+            "label": {
+              "String": "Fix"
+            }
+          }
+        },
+        {
+          "from": "architecture_fanout",
+          "to": "arch_codex",
+          "attrs": {}
+        },
+        {
+          "from": "architecture_fanout",
+          "to": "arch_claude",
+          "attrs": {}
+        },
+        {
+          "from": "arch_codex",
+          "to": "architecture_join",
+          "attrs": {}
+        },
+        {
+          "from": "arch_claude",
+          "to": "architecture_join",
+          "attrs": {}
+        },
+        {
+          "from": "architecture_join",
+          "to": "architecture_consensus",
+          "attrs": {}
+        },
+        {
+          "from": "architecture_consensus",
+          "to": "architecture_gate",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "architecture_consensus",
+          "to": "architecture_fanout",
+          "attrs": {
+            "label": {
+              "String": "Retry"
+            }
+          }
+        },
+        {
+          "from": "architecture_gate",
+          "to": "boilerplate_setup",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "architecture_gate",
+          "to": "architecture_consensus",
+          "attrs": {
+            "label": {
+              "String": "Fix"
+            }
+          }
+        },
+        {
+          "from": "boilerplate_setup",
+          "to": "boilerplate_gate",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "boilerplate_setup",
+          "to": "boilerplate_setup",
+          "attrs": {
+            "loop_restart": {
+              "Boolean": true
+            },
+            "label": {
+              "String": "Retry"
+            }
+          }
+        },
+        {
+          "from": "boilerplate_gate",
+          "to": "implement_foundation",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "boilerplate_gate",
+          "to": "boilerplate_setup",
+          "attrs": {
+            "label": {
+              "String": "Fix"
+            }
+          }
+        },
+        {
+          "from": "implement_foundation",
+          "to": "verify_foundation",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "implement_foundation",
+          "to": "implement_foundation",
+          "attrs": {
+            "label": {
+              "String": "Retry"
+            },
+            "loop_restart": {
+              "Boolean": true
+            }
+          }
+        },
+        {
+          "from": "verify_foundation",
+          "to": "gate_foundation",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "verify_foundation",
+          "to": "implement_foundation",
+          "attrs": {
+            "label": {
+              "String": "Fix"
+            }
+          }
+        },
+        {
+          "from": "gate_foundation",
+          "to": "implement_core",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "gate_foundation",
+          "to": "implement_foundation",
+          "attrs": {
+            "label": {
+              "String": "Fix"
+            }
+          }
+        },
+        {
+          "from": "implement_core",
+          "to": "verify_core",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "implement_core",
+          "to": "implement_core",
+          "attrs": {
+            "loop_restart": {
+              "Boolean": true
+            },
+            "label": {
+              "String": "Retry"
+            }
+          }
+        },
+        {
+          "from": "verify_core",
+          "to": "gate_core",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "verify_core",
+          "to": "implement_core",
+          "attrs": {
+            "label": {
+              "String": "Fix"
+            }
+          }
+        },
+        {
+          "from": "gate_core",
+          "to": "implement_interface",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "gate_core",
+          "to": "implement_core",
+          "attrs": {
+            "label": {
+              "String": "Fix"
+            }
+          }
+        },
+        {
+          "from": "implement_interface",
+          "to": "verify_interface",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "implement_interface",
+          "to": "implement_interface",
+          "attrs": {
+            "loop_restart": {
+              "Boolean": true
+            },
+            "label": {
+              "String": "Retry"
+            }
+          }
+        },
+        {
+          "from": "verify_interface",
+          "to": "gate_interface",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "verify_interface",
+          "to": "implement_interface",
+          "attrs": {
+            "label": {
+              "String": "Fix"
+            }
+          }
+        },
+        {
+          "from": "gate_interface",
+          "to": "implement_integration",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "gate_interface",
+          "to": "implement_interface",
+          "attrs": {
+            "label": {
+              "String": "Fix"
+            }
+          }
+        },
+        {
+          "from": "implement_integration",
+          "to": "verify_integration",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "implement_integration",
+          "to": "implement_integration",
+          "attrs": {
+            "label": {
+              "String": "Retry"
+            },
+            "loop_restart": {
+              "Boolean": true
+            }
+          }
+        },
+        {
+          "from": "verify_integration",
+          "to": "gate_integration",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "verify_integration",
+          "to": "implement_integration",
+          "attrs": {
+            "label": {
+              "String": "Fix"
+            }
+          }
+        },
+        {
+          "from": "gate_integration",
+          "to": "implementation_review_fanout",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "gate_integration",
+          "to": "implement_integration",
+          "attrs": {
+            "label": {
+              "String": "Fix"
+            }
+          }
+        },
+        {
+          "from": "implementation_review_fanout",
+          "to": "implementation_correctness_review",
+          "attrs": {}
+        },
+        {
+          "from": "implementation_review_fanout",
+          "to": "implementation_test_review",
+          "attrs": {}
+        },
+        {
+          "from": "implementation_review_fanout",
+          "to": "implementation_security_review",
+          "attrs": {}
+        },
+        {
+          "from": "implementation_review_fanout",
+          "to": "implementation_boilerplate_review",
+          "attrs": {}
+        },
+        {
+          "from": "implementation_correctness_review",
+          "to": "implementation_review_join",
+          "attrs": {}
+        },
+        {
+          "from": "implementation_test_review",
+          "to": "implementation_review_join",
+          "attrs": {}
+        },
+        {
+          "from": "implementation_security_review",
+          "to": "implementation_review_join",
+          "attrs": {}
+        },
+        {
+          "from": "implementation_boilerplate_review",
+          "to": "implementation_review_join",
+          "attrs": {}
+        },
+        {
+          "from": "implementation_review_join",
+          "to": "implementation_review_consensus",
+          "attrs": {}
+        },
+        {
+          "from": "implementation_review_consensus",
+          "to": "implementation_review_gate",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "implementation_review_consensus",
+          "to": "implement_integration",
+          "attrs": {
+            "label": {
+              "String": "Fix"
+            }
+          }
+        },
+        {
+          "from": "implementation_review_gate",
+          "to": "simplification",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "implementation_review_gate",
+          "to": "implement_integration",
+          "attrs": {
+            "label": {
+              "String": "Fix"
+            }
+          }
+        },
+        {
+          "from": "simplification",
+          "to": "quality_contract_gate",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "simplification",
+          "to": "simplification",
+          "attrs": {
+            "loop_restart": {
+              "Boolean": true
+            },
+            "label": {
+              "String": "Retry"
+            }
+          }
+        },
+        {
+          "from": "quality_contract_gate",
+          "to": "macos_ci_gate",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "quality_contract_gate",
+          "to": "simplification",
+          "attrs": {
+            "label": {
+              "String": "Fix"
+            }
+          }
+        },
+        {
+          "from": "macos_ci_gate",
+          "to": "ai_ui_explorer",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "macos_ci_gate",
+          "to": "implement_integration",
+          "attrs": {
+            "label": {
+              "String": "Fix"
+            }
+          }
+        },
+        {
+          "from": "ai_ui_explorer",
+          "to": "appium_gate",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "ai_ui_explorer",
+          "to": "implement_interface",
+          "attrs": {
+            "label": {
+              "String": "Fix"
+            }
+          }
+        },
+        {
+          "from": "appium_gate",
+          "to": "app_store_hardening",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "appium_gate",
+          "to": "ai_ui_explorer",
+          "attrs": {
+            "label": {
+              "String": "Fix"
+            }
+          }
+        },
+        {
+          "from": "app_store_hardening",
+          "to": "app_store_gate",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "app_store_hardening",
+          "to": "implement_interface",
+          "attrs": {
+            "label": {
+              "String": "Fix"
+            }
+          }
+        },
+        {
+          "from": "app_store_gate",
+          "to": "final_review_fanout",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "app_store_gate",
+          "to": "app_store_hardening",
+          "attrs": {
+            "label": {
+              "String": "Fix"
+            }
+          }
+        },
+        {
+          "from": "final_review_fanout",
+          "to": "product_fidelity_review",
+          "attrs": {}
+        },
+        {
+          "from": "final_review_fanout",
+          "to": "ios_architecture_review",
+          "attrs": {}
+        },
+        {
+          "from": "final_review_fanout",
+          "to": "security_privacy_review",
+          "attrs": {}
+        },
+        {
+          "from": "final_review_fanout",
+          "to": "code_quality_review",
+          "attrs": {}
+        },
+        {
+          "from": "final_review_fanout",
+          "to": "release_readiness_review",
+          "attrs": {}
+        },
+        {
+          "from": "final_review_fanout",
+          "to": "qa_review",
+          "attrs": {}
+        },
+        {
+          "from": "product_fidelity_review",
+          "to": "final_review_join",
+          "attrs": {}
+        },
+        {
+          "from": "ios_architecture_review",
+          "to": "final_review_join",
+          "attrs": {}
+        },
+        {
+          "from": "security_privacy_review",
+          "to": "final_review_join",
+          "attrs": {}
+        },
+        {
+          "from": "code_quality_review",
+          "to": "final_review_join",
+          "attrs": {}
+        },
+        {
+          "from": "release_readiness_review",
+          "to": "final_review_join",
+          "attrs": {}
+        },
+        {
+          "from": "qa_review",
+          "to": "final_review_join",
+          "attrs": {}
+        },
+        {
+          "from": "final_review_join",
+          "to": "final_consensus",
+          "attrs": {}
+        },
+        {
+          "from": "final_consensus",
+          "to": "final_gate",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "final_consensus",
+          "to": "simplification",
+          "attrs": {
+            "label": {
+              "String": "Fix"
+            }
+          }
+        },
+        {
+          "from": "final_gate",
+          "to": "publish_handoff",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "final_gate",
+          "to": "simplification",
+          "attrs": {
+            "label": {
+              "String": "Fix"
+            }
+          }
+        },
+        {
+          "from": "publish_handoff",
+          "to": "memory_summary",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "publish_handoff",
+          "to": "final_consensus",
+          "attrs": {
+            "label": {
+              "String": "Fix"
+            }
+          }
+        },
+        {
+          "from": "memory_summary",
+          "to": "exit",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "memory_summary",
+          "to": "publish_handoff",
+          "attrs": {
+            "label": {
+              "String": "Fix"
+            }
+          }
+        }
+      ],
+      "attrs": {
+        "rankdir": {
+          "String": "LR"
+        },
+        "default_max_retries": {
+          "Integer": 2
+        },
+        "model_stylesheet": {
+          "String": "\n            *                  { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: low; }\n            .research          { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            .design            { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            .spec              { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            .architecture      { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            .coding            { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            .review            { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            .verify            { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: medium; }\n            .security          { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            .simplify          { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            .macos             { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            #spec_codex        { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            #spec_claude       { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            #spec_kimi         { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            #spec_deepseek     { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            #arch_codex        { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            #arch_claude       { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n        "
+        },
+        "fallback_retry_target": {
+          "String": "architecture_consensus"
+        },
+        "retry_target": {
+          "String": "spec_consensus"
+        },
+        "inputs": {
+          "String": "app_type,target_audience,app_name,bundle_id,app_dir,spec_kitty_feature,boilerplate_repo,max_competitors,use_mobbin,ios_validation_mode,allow_macos_deferred"
+        },
+        "outputs": {
+          "String": "research_pack,spec,architecture,swift_app,ios_quality_report,appium_report,release_handoff"
+        },
+        "secret_policy": {
+          "String": "never print environment variables or credential values; credential checks must be presence-only true/false checks; do not run environment dump commands."
+        },
+        "persona": {
+          "String": "iphone-app-factory"
+        },
+        "goal": {
+          "String": "Build a differentiated iPhone app from a researched app opportunity using SwiftAIBoilerplatePro"
+        }
+      }
+    },
+    "graph_source": "digraph BuildIPhoneApp {\n    graph [\n        goal=\"Build a differentiated iPhone app from a researched app opportunity using SwiftAIBoilerplatePro\",\n        persona=\"iphone-app-factory\",\n        secret_policy=\"never print environment variables or credential values; credential checks must be presence-only true/false checks; do not run environment dump commands.\",\n        inputs=\"app_type,target_audience,app_name,bundle_id,app_dir,spec_kitty_feature,boilerplate_repo,max_competitors,use_mobbin,ios_validation_mode,allow_macos_deferred\",\n        outputs=\"research_pack,spec,architecture,swift_app,ios_quality_report,appium_report,release_handoff\",\n        default_max_retries=2,\n        retry_target=\"spec_consensus\",\n        fallback_retry_target=\"architecture_consensus\",\n        model_stylesheet=\"\n            *                  { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: low; }\n            .research          { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            .design            { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            .spec              { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            .architecture      { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            .coding            { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            .review            { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            .verify            { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: medium; }\n            .security          { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            .simplify          { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            .macos             { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            #spec_codex        { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            #spec_claude       { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            #spec_kimi         { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            #spec_deepseek     { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            #arch_codex        { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            #arch_claude       { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n        \"\n    ]\n    rankdir=LR\n\n    start [shape=Mdiamond, label=\"Start\"]\n    exit  [shape=Msquare, label=\"Exit\"]\n\n    bootstrap [\n        label=\"Bootstrap iPhone Factory\",\n        shape=parallelogram,\n        goal_gate=true,\n        retry_target=\"bootstrap\",\n        script=\"node scripts/iphone-app-factory/bootstrap.mjs --app-dir '{{ inputs.app_dir|default('apps/generated-iphone-app') }}' --app-name '{{ inputs.app_name|default('Generated iPhone App') }}' --bundle-id '{{ inputs.bundle_id|default('com.maestro.generatediphoneapp') }}' --boilerplate-repo '{{ inputs.boilerplate_repo|default('SwiftAIBoilerplatePro/SwiftAIBoilerplatePro-Distribution') }}'\"\n    ]\n\n    prompt_quality_gate [\n        label=\"Prompt Quality Gate\",\n        shape=parallelogram,\n        goal_gate=true,\n        retry_target=\"prompt_quality_gate\",\n        script=\"node scripts/iphone-app-factory/promptfoo-prompt-quality.mjs --config evals/iphone-app-factory/prompt-quality.yaml --registry evals/iphone-app-factory/prompt-registry.json --out .workflow/iphone-app-factory/evals/prompt-quality.json --allow-fallback true\"\n    ]\n\n    research_fanout [label=\"Research Fan-Out\", shape=component, join_policy=\"wait_all\", max_parallel=1]\n    app_store_research [label=\"App Store Reviews\", class=\"research\", prompt=\"@../../prompts/iphone-app-factory/research-app-store.md\"]\n    reddit_research [label=\"Reddit Pain Mining\", class=\"research\", prompt=\"@../../prompts/iphone-app-factory/research-reddit.md\"]\n    competitor_research [label=\"Competitor Research\", class=\"research\", prompt=\"@../../prompts/iphone-app-factory/research-competitors.md\"]\n    design_pattern_research [label=\"Design Pattern Research\", class=\"design\", prompt=\"@../../prompts/iphone-app-factory/research-design-patterns.md\"]\n    research_join [label=\"Research Join\", shape=tripleoctagon, join_policy=\"wait_all\"]\n\n    research_synthesis [\n        label=\"Research Synthesis\",\n        class=\"research\",\n        goal_gate=true,\n        retry_target=\"research_fanout\",\n        prompt=\"@../../prompts/iphone-app-factory/synthesize-research.md\"\n    ]\n    research_evidence_gate [\n        label=\"Research Evidence Gate\",\n        shape=parallelogram,\n        goal_gate=true,\n        retry_target=\"research_fanout\",\n        script=\"node scripts/iphone-app-factory/research-evidence-gate.mjs\"\n    ]\n\n    spec_fanout [label=\"Adversarial Spec Fan-Out\", shape=component, join_policy=\"wait_all\", max_parallel=1]\n    spec_codex [label=\"Gemini Spec\", class=\"spec\", fidelity=\"truncate\", prompt=\"@../../prompts/iphone-app-factory/spec-candidate.md\"]\n    spec_claude [label=\"Claude Spec\", class=\"spec\", fidelity=\"truncate\", prompt=\"@../../prompts/iphone-app-factory/spec-candidate.md\"]\n    spec_kimi [label=\"Kimi Spec\", class=\"spec\", fidelity=\"truncate\", prompt=\"@../../prompts/iphone-app-factory/spec-candidate.md\"]\n    spec_deepseek [label=\"DeepSeek Spec\", class=\"spec\", fidelity=\"truncate\", prompt=\"@../../prompts/iphone-app-factory/spec-candidate.md\"]\n    spec_join [label=\"Spec Join\", shape=tripleoctagon, join_policy=\"wait_all\"]\n\n    spec_cross_critique [\n        label=\"Spec Cross-Critique\",\n        class=\"review\",\n        goal_gate=true,\n        retry_target=\"spec_fanout\",\n        fidelity=\"full\",\n        prompt=\"@../../prompts/iphone-app-factory/spec-cross-critique.md\"\n    ]\n    spec_consensus [\n        label=\"Spec Consensus\",\n        class=\"spec\",\n        goal_gate=true,\n        retry_target=\"spec_fanout\",\n        fidelity=\"full\",\n        prompt=\"@../../prompts/iphone-app-factory/spec-consensus.md\"\n    ]\n    spec_red_team [\n        label=\"Spec Red Team\",\n        class=\"review\",\n        goal_gate=true,\n        retry_target=\"spec_consensus\",\n        prompt=\"@../../prompts/iphone-app-factory/spec-red-team.md\"\n    ]\n    spec_quality_gate [\n        label=\"Spec Quality Gate\",\n        shape=parallelogram,\n        goal_gate=true,\n        retry_target=\"spec_consensus\",\n        script=\"node scripts/iphone-app-factory/spec-gate.mjs\"\n    ]\n    spec_kitty_gate [\n        label=\"Spec Kitty Mission\",\n        shape=parallelogram,\n        goal_gate=true,\n        retry_target=\"spec_consensus\",\n        script=\"FEATURE='{{ inputs.spec_kitty_feature|default('iphone-app-factory') }}'; if command -v spec-kitty >/dev/null 2>&1; then spec-kitty specify \\\"$FEATURE\\\" --mission-type software-dev --json > .workflow/iphone-app-factory/spec-kitty.json || spec-kitty verify-setup --json > .workflow/iphone-app-factory/spec-kitty.json; else echo 'spec-kitty is required for this workflow' >&2; exit 1; fi; cat .workflow/iphone-app-factory/spec-kitty.json\"\n    ]\n\n    architecture_fanout [label=\"Architecture Fan-Out\", shape=component, join_policy=\"wait_all\", max_parallel=1]\n    arch_codex [label=\"Qwen Architecture\", class=\"architecture\", fidelity=\"truncate\", prompt=\"@../../prompts/iphone-app-factory/architecture-candidate.md\"]\n    arch_claude [label=\"Claude Architecture\", class=\"architecture\", fidelity=\"truncate\", prompt=\"@../../prompts/iphone-app-factory/architecture-candidate.md\"]\n    architecture_join [label=\"Architecture Join\", shape=tripleoctagon, join_policy=\"wait_all\"]\n    architecture_consensus [\n        label=\"Architecture And ADR\",\n        class=\"architecture\",\n        goal_gate=true,\n        retry_target=\"architecture_fanout\",\n        fidelity=\"full\",\n        prompt=\"@../../prompts/iphone-app-factory/architecture-consensus.md\"\n    ]\n    architecture_gate [\n        label=\"Architecture Gate\",\n        shape=parallelogram,\n        goal_gate=true,\n        retry_target=\"architecture_consensus\",\n        script=\"test -s .workflow/iphone-app-factory/architecture.md; test -s .workflow/iphone-app-factory/adr.md; grep -Eq 'SwiftAIBoilerplatePro|boilerplate|Packages/|DesignSystem|CompositionRoot' .workflow/iphone-app-factory/architecture.md\"\n    ]\n\n    boilerplate_setup [\n        label=\"Clone And Rebrand Boilerplate\",\n        class=\"coding\",\n        goal_gate=true,\n        retry_target=\"boilerplate_setup\",\n        prompt=\"@../../prompts/iphone-app-factory/boilerplate-setup.md\"\n    ]\n    boilerplate_gate [\n        label=\"Boilerplate Contract Gate\",\n        shape=parallelogram,\n        goal_gate=true,\n        retry_target=\"boilerplate_setup\",\n        script=\"node scripts/iphone-app-factory/boilerplate-contract-gate.mjs '{{ inputs.app_dir|default('apps/generated-iphone-app') }}'\"\n    ]\n\n    implement_foundation [label=\"Implement Foundation\", class=\"coding\", goal_gate=true, retry_target=\"implement_foundation\", prompt=\"@../../prompts/iphone-app-factory/implement-foundation.md\"]\n    verify_foundation [label=\"Verify Foundation\", class=\"verify\", goal_gate=true, retry_target=\"implement_foundation\", prompt=\"@../../prompts/iphone-app-factory/verify-phase.md\"]\n    gate_foundation [label=\"Foundation Gate\", shape=parallelogram, goal_gate=true, retry_target=\"implement_foundation\", script=\"node scripts/iphone-app-factory/phase-evidence-gate.mjs foundation '{{ inputs.app_dir|default('apps/generated-iphone-app') }}'\"]\n\n    implement_core [label=\"Implement Core\", class=\"coding\", goal_gate=true, retry_target=\"implement_core\", prompt=\"@../../prompts/iphone-app-factory/implement-core.md\"]\n    verify_core [label=\"Verify Core\", class=\"verify\", goal_gate=true, retry_target=\"implement_core\", prompt=\"@../../prompts/iphone-app-factory/verify-phase.md\"]\n    gate_core [label=\"Core Gate\", shape=parallelogram, goal_gate=true, retry_target=\"implement_core\", script=\"node scripts/iphone-app-factory/phase-evidence-gate.mjs core '{{ inputs.app_dir|default('apps/generated-iphone-app') }}'\"]\n\n    implement_interface [label=\"Implement Interface\", class=\"coding\", goal_gate=true, retry_target=\"implement_interface\", prompt=\"@../../prompts/iphone-app-factory/implement-interface.md\"]\n    verify_interface [label=\"Verify Interface\", class=\"verify\", goal_gate=true, retry_target=\"implement_interface\", prompt=\"@../../prompts/iphone-app-factory/verify-phase.md\"]\n    gate_interface [label=\"Interface Gate\", shape=parallelogram, goal_gate=true, retry_target=\"implement_interface\", script=\"node scripts/iphone-app-factory/phase-evidence-gate.mjs interface '{{ inputs.app_dir|default('apps/generated-iphone-app') }}'\"]\n\n    implement_integration [label=\"Implement Integration\", class=\"coding\", goal_gate=true, retry_target=\"implement_integration\", prompt=\"@../../prompts/iphone-app-factory/implement-integration.md\"]\n    verify_integration [label=\"Verify Integration\", class=\"verify\", goal_gate=true, retry_target=\"implement_integration\", prompt=\"@../../prompts/iphone-app-factory/verify-phase.md\"]\n    gate_integration [label=\"Integration Gate\", shape=parallelogram, goal_gate=true, retry_target=\"implement_integration\", script=\"node scripts/iphone-app-factory/phase-evidence-gate.mjs integration '{{ inputs.app_dir|default('apps/generated-iphone-app') }}'\"]\n\n    implementation_review_fanout [label=\"Implementation Review Fan-Out\", shape=component, join_policy=\"wait_all\", max_parallel=1]\n    implementation_correctness_review [label=\"Implementation Correctness\", class=\"review\", prompt=\"@../../prompts/iphone-app-factory/review-implementation-correctness.md\"]\n    implementation_test_review [label=\"Implementation Tests\", class=\"review\", prompt=\"@../../prompts/iphone-app-factory/review-implementation-tests.md\"]\n    implementation_security_review [label=\"Implementation Security\", class=\"security\", prompt=\"@../../prompts/iphone-app-factory/review-implementation-security.md\"]\n    implementation_boilerplate_review [label=\"Implementation Boilerplate\", class=\"review\", prompt=\"@../../prompts/iphone-app-factory/review-implementation-boilerplate.md\"]\n    implementation_review_join [label=\"Implementation Review Join\", shape=tripleoctagon, join_policy=\"wait_all\"]\n    implementation_review_consensus [\n        label=\"Implementation Review Consensus\",\n        class=\"review\",\n        goal_gate=true,\n        retry_target=\"implement_integration\",\n        fidelity=\"full\",\n        prompt=\"@../../prompts/iphone-app-factory/review-implementation-consensus.md\"\n    ]\n    implementation_review_gate [\n        label=\"Implementation Review Gate\",\n        shape=parallelogram,\n        goal_gate=true,\n        retry_target=\"implement_integration\",\n        script=\"./bin/maestro verify text-gate .workflow/iphone-app-factory/reviews/implementation-consensus.md --pass 'VERDICT:\\\\s*APPROVED' --fail 'VERDICT:\\\\s*REJECTED|\\\\bREJECTED\\\\b'\"\n    ]\n\n    simplification [\n        label=\"Code Simplification\",\n        class=\"simplify\",\n        goal_gate=true,\n        retry_target=\"simplification\",\n        prompt=\"@../../prompts/iphone-app-factory/simplification.md\"\n    ]\n    quality_contract_gate [\n        label=\"Quality Harness Contract\",\n        shape=parallelogram,\n        goal_gate=true,\n        retry_target=\"simplification\",\n        script=\"node scripts/iphone-app-factory/quality-contract-gate.mjs '{{ inputs.app_dir|default('apps/generated-iphone-app') }}'\"\n    ]\n    macos_ci_gate [\n        label=\"macOS iOS CI Gate\",\n        shape=parallelogram,\n        goal_gate=true,\n        retry_target=\"implement_integration\",\n        timeout=\"3600s\",\n        script=\"node scripts/iphone-app-factory/ios-ci-gate.mjs '{{ inputs.app_dir|default('apps/generated-iphone-app') }}' --mode '{{ inputs.ios_validation_mode|default('github') }}' --allow-deferred '{{ inputs.allow_macos_deferred|default('false') }}'\"\n    ]\n    ai_ui_explorer [\n        label=\"AI UI Explorer\",\n        class=\"macos\",\n        goal_gate=true,\n        retry_target=\"implement_interface\",\n        prompt=\"@../../prompts/iphone-app-factory/ai-ui-explorer.md\"\n    ]\n    appium_gate [\n        label=\"Appium Exploratory Gate\",\n        shape=parallelogram,\n        goal_gate=true,\n        retry_target=\"ai_ui_explorer\",\n        script=\"node scripts/iphone-app-factory/appium-report-gate.mjs '{{ inputs.app_dir|default('apps/generated-iphone-app') }}' --allow-deferred '{{ inputs.allow_macos_deferred|default('false') }}'\"\n    ]\n    app_store_hardening [\n        label=\"App Store 4.3 Hardening\",\n        class=\"review\",\n        goal_gate=true,\n        retry_target=\"implement_interface\",\n        prompt=\"@../../prompts/iphone-app-factory/app-store-hardening.md\"\n    ]\n    app_store_gate [\n        label=\"App Store Hardening Gate\",\n        shape=parallelogram,\n        goal_gate=true,\n        retry_target=\"app_store_hardening\",\n        script=\"node scripts/iphone-app-factory/app-store-hardening-gate.mjs '{{ inputs.app_dir|default('apps/generated-iphone-app') }}'\"\n    ]\n\n    final_review_fanout [label=\"Final Review Fan-Out\", shape=component, join_policy=\"wait_all\", max_parallel=1]\n    product_fidelity_review [label=\"Product Fidelity\", class=\"review\", prompt=\"@../../prompts/iphone-app-factory/review-product-fidelity.md\"]\n    ios_architecture_review [label=\"iOS Architecture\", class=\"review\", prompt=\"@../../prompts/iphone-app-factory/review-ios-architecture.md\"]\n    security_privacy_review [label=\"Security Privacy\", class=\"security\", prompt=\"@../../prompts/iphone-app-factory/review-security-privacy.md\"]\n    code_quality_review [label=\"Code Quality\", class=\"review\", prompt=\"@../../prompts/iphone-app-factory/review-code-quality.md\"]\n    release_readiness_review [label=\"Release Readiness\", class=\"review\", prompt=\"@../../prompts/iphone-app-factory/review-release-readiness.md\"]\n    qa_review [label=\"QA Evidence\", class=\"review\", prompt=\"@../../prompts/iphone-app-factory/review-qa-evidence.md\"]\n    final_review_join [label=\"Final Review Join\", shape=tripleoctagon, join_policy=\"wait_all\"]\n    final_consensus [\n        label=\"Final Consensus\",\n        class=\"review\",\n        goal_gate=true,\n        retry_target=\"simplification\",\n        fidelity=\"full\",\n        prompt=\"@../../prompts/iphone-app-factory/final-consensus.md\"\n    ]\n    final_gate [\n        label=\"Final Verdict Gate\",\n        shape=parallelogram,\n        goal_gate=true,\n        retry_target=\"simplification\",\n        script=\"./bin/maestro verify text-gate .workflow/iphone-app-factory/final-consensus.md --pass 'VERDICT:\\\\s*APPROVED' --fail 'VERDICT:\\\\s*REJECTED|\\\\bREJECTED\\\\b'\"\n    ]\n    publish_handoff [\n        label=\"Publish Handoff\",\n        shape=parallelogram,\n        goal_gate=true,\n        retry_target=\"final_consensus\",\n        script=\"node scripts/iphone-app-factory/publish-handoff.mjs '{{ inputs.app_dir|default('apps/generated-iphone-app') }}'\"\n    ]\n    memory_summary [\n        label=\"Memory Summary\",\n        shape=parallelogram,\n        script=\"printf '{\\\"kind\\\":\\\"iphone_app_factory.completed\\\",\\\"payload\\\":{\\\"app_dir\\\":\\\"{{ inputs.app_dir|default('apps/generated-iphone-app') }}\\\",\\\"app_name\\\":\\\"{{ inputs.app_name|default('Generated iPhone App') }}\\\"}}' | ./bin/maestro memory append 'team/iphone-app-factory/builds' >/dev/null; echo memory-updated\"\n    ]\n\n    start -> bootstrap\n    bootstrap -> prompt_quality_gate [condition=\"outcome=succeeded\"]\n    bootstrap -> bootstrap [label=\"Retry\", loop_restart=true]\n    prompt_quality_gate -> research_fanout [condition=\"outcome=succeeded\"]\n    prompt_quality_gate -> prompt_quality_gate [label=\"Retry\", loop_restart=true]\n    research_fanout -> app_store_research\n    research_fanout -> reddit_research\n    research_fanout -> competitor_research\n    research_fanout -> design_pattern_research\n    app_store_research -> research_join\n    reddit_research -> research_join\n    competitor_research -> research_join\n    design_pattern_research -> research_join\n    research_join -> research_synthesis\n    research_synthesis -> research_evidence_gate [condition=\"outcome=succeeded\"]\n    research_synthesis -> research_fanout [label=\"Retry\"]\n    research_evidence_gate -> spec_fanout [condition=\"outcome=succeeded\"]\n    research_evidence_gate -> research_fanout [label=\"Retry\"]\n\n    spec_fanout -> spec_codex\n    spec_fanout -> spec_claude\n    spec_fanout -> spec_kimi\n    spec_fanout -> spec_deepseek\n    spec_codex -> spec_join\n    spec_claude -> spec_join\n    spec_kimi -> spec_join\n    spec_deepseek -> spec_join\n    spec_join -> spec_cross_critique\n    spec_cross_critique -> spec_consensus [condition=\"outcome=succeeded\"]\n    spec_cross_critique -> spec_fanout [label=\"Retry\"]\n    spec_consensus -> spec_red_team [condition=\"outcome=succeeded\"]\n    spec_consensus -> spec_fanout [label=\"Retry\"]\n    spec_red_team -> spec_quality_gate [condition=\"outcome=succeeded\"]\n    spec_red_team -> spec_consensus [label=\"Fix\"]\n    spec_quality_gate -> spec_kitty_gate [condition=\"outcome=succeeded\"]\n    spec_quality_gate -> spec_consensus [label=\"Fix\"]\n    spec_kitty_gate -> architecture_fanout [condition=\"outcome=succeeded\"]\n    spec_kitty_gate -> spec_consensus [label=\"Fix\"]\n\n    architecture_fanout -> arch_codex\n    architecture_fanout -> arch_claude\n    arch_codex -> architecture_join\n    arch_claude -> architecture_join\n    architecture_join -> architecture_consensus\n    architecture_consensus -> architecture_gate [condition=\"outcome=succeeded\"]\n    architecture_consensus -> architecture_fanout [label=\"Retry\"]\n    architecture_gate -> boilerplate_setup [condition=\"outcome=succeeded\"]\n    architecture_gate -> architecture_consensus [label=\"Fix\"]\n\n    boilerplate_setup -> boilerplate_gate [condition=\"outcome=succeeded\"]\n    boilerplate_setup -> boilerplate_setup [label=\"Retry\", loop_restart=true]\n    boilerplate_gate -> implement_foundation [condition=\"outcome=succeeded\"]\n    boilerplate_gate -> boilerplate_setup [label=\"Fix\"]\n\n    implement_foundation -> verify_foundation [condition=\"outcome=succeeded\"]\n    implement_foundation -> implement_foundation [label=\"Retry\", loop_restart=true]\n    verify_foundation -> gate_foundation [condition=\"outcome=succeeded\"]\n    verify_foundation -> implement_foundation [label=\"Fix\"]\n    gate_foundation -> implement_core [condition=\"outcome=succeeded\"]\n    gate_foundation -> implement_foundation [label=\"Fix\"]\n\n    implement_core -> verify_core [condition=\"outcome=succeeded\"]\n    implement_core -> implement_core [label=\"Retry\", loop_restart=true]\n    verify_core -> gate_core [condition=\"outcome=succeeded\"]\n    verify_core -> implement_core [label=\"Fix\"]\n    gate_core -> implement_interface [condition=\"outcome=succeeded\"]\n    gate_core -> implement_core [label=\"Fix\"]\n\n    implement_interface -> verify_interface [condition=\"outcome=succeeded\"]\n    implement_interface -> implement_interface [label=\"Retry\", loop_restart=true]\n    verify_interface -> gate_interface [condition=\"outcome=succeeded\"]\n    verify_interface -> implement_interface [label=\"Fix\"]\n    gate_interface -> implement_integration [condition=\"outcome=succeeded\"]\n    gate_interface -> implement_interface [label=\"Fix\"]\n\n    implement_integration -> verify_integration [condition=\"outcome=succeeded\"]\n    implement_integration -> implement_integration [label=\"Retry\", loop_restart=true]\n    verify_integration -> gate_integration [condition=\"outcome=succeeded\"]\n    verify_integration -> implement_integration [label=\"Fix\"]\n    gate_integration -> implementation_review_fanout [condition=\"outcome=succeeded\"]\n    gate_integration -> implement_integration [label=\"Fix\"]\n\n    implementation_review_fanout -> implementation_correctness_review\n    implementation_review_fanout -> implementation_test_review\n    implementation_review_fanout -> implementation_security_review\n    implementation_review_fanout -> implementation_boilerplate_review\n    implementation_correctness_review -> implementation_review_join\n    implementation_test_review -> implementation_review_join\n    implementation_security_review -> implementation_review_join\n    implementation_boilerplate_review -> implementation_review_join\n    implementation_review_join -> implementation_review_consensus\n    implementation_review_consensus -> implementation_review_gate [condition=\"outcome=succeeded\"]\n    implementation_review_consensus -> implement_integration [label=\"Fix\"]\n    implementation_review_gate -> simplification [condition=\"outcome=succeeded\"]\n    implementation_review_gate -> implement_integration [label=\"Fix\"]\n\n    simplification -> quality_contract_gate [condition=\"outcome=succeeded\"]\n    simplification -> simplification [label=\"Retry\", loop_restart=true]\n    quality_contract_gate -> macos_ci_gate [condition=\"outcome=succeeded\"]\n    quality_contract_gate -> simplification [label=\"Fix\"]\n    macos_ci_gate -> ai_ui_explorer [condition=\"outcome=succeeded\"]\n    macos_ci_gate -> implement_integration [label=\"Fix\"]\n    ai_ui_explorer -> appium_gate [condition=\"outcome=succeeded\"]\n    ai_ui_explorer -> implement_interface [label=\"Fix\"]\n    appium_gate -> app_store_hardening [condition=\"outcome=succeeded\"]\n    appium_gate -> ai_ui_explorer [label=\"Fix\"]\n    app_store_hardening -> app_store_gate [condition=\"outcome=succeeded\"]\n    app_store_hardening -> implement_interface [label=\"Fix\"]\n    app_store_gate -> final_review_fanout [condition=\"outcome=succeeded\"]\n    app_store_gate -> app_store_hardening [label=\"Fix\"]\n\n    final_review_fanout -> product_fidelity_review\n    final_review_fanout -> ios_architecture_review\n    final_review_fanout -> security_privacy_review\n    final_review_fanout -> code_quality_review\n    final_review_fanout -> release_readiness_review\n    final_review_fanout -> qa_review\n    product_fidelity_review -> final_review_join\n    ios_architecture_review -> final_review_join\n    security_privacy_review -> final_review_join\n    code_quality_review -> final_review_join\n    release_readiness_review -> final_review_join\n    qa_review -> final_review_join\n    final_review_join -> final_consensus\n    final_consensus -> final_gate [condition=\"outcome=succeeded\"]\n    final_consensus -> simplification [label=\"Fix\"]\n    final_gate -> publish_handoff [condition=\"outcome=succeeded\"]\n    final_gate -> simplification [label=\"Fix\"]\n    publish_handoff -> memory_summary [condition=\"outcome=succeeded\"]\n    publish_handoff -> final_consensus [label=\"Fix\"]\n    memory_summary -> exit [condition=\"outcome=succeeded\"]\n    memory_summary -> publish_handoff [label=\"Fix\"]\n}\n",
+    "workflow_slug": "build-iphone-app.cli",
+    "source_directory": "/Users/timlife/Documents/claude code/maestro-os",
+    "labels": {
+      "restart": "cli-routed-after-openrouter-credit-failure",
+      "app": "waketask",
+      "factory": "iphone-app",
+      "topic": "task-alarm"
+    },
+    "provenance": {
+      "server": {
+        "version": "0.232.0-nightly.0"
+      },
+      "client": {
+        "user_agent": "fabro-cli/0.232.0-nightly.0",
+        "name": "fabro-cli",
+        "version": "0.232.0-nightly.0"
+      },
+      "subject": {
+        "kind": "user",
+        "identity": {
+          "issuer": "fabro:dev",
+          "subject": "dev"
+        },
+        "login": "dev",
+        "auth_method": "dev_token"
+      }
+    },
+    "manifest_blob": "02ba3c9540b0d4074c1665d830272f318c4cca1aa4935f63de3a1394a3688066",
+    "definition_blob": "b6ba0379e988dd762b63883b655ccc779ae2348166e2f0739d29e8f71012559e",
+    "git": {
+      "origin_url": "https://github.com/kimprobably/maestro-os",
+      "branch": "spike/fabro-code-factory-v5",
+      "sha": "32949003c4d4e2ac5d2ae8c69b4fd8804a6633d5",
+      "dirty": "dirty",
+      "push_outcome": {
+        "type": "not_attempted"
+      }
+    }
+  },
+  "web_url": "http://127.0.0.1:32276/runs/01KRJY9F9PKV1P01YH46A57WTS",
+  "start": null,
+  "status": {
+    "kind": "starting"
+  },
+  "status_updated_at": "2026-05-14T09:50:08.265845Z",
+  "last_event_at": "2026-05-14T09:50:09.623375Z",
+  "pending_control": null,
+  "checkpoints": [],
+  "conclusion": null,
+  "sandbox": {
+    "provider": "daytona",
+    "image": "buildpack-deps:noble",
+    "snapshot": "maestro-code-factory-v6",
+    "runtime": {
+      "id": "fabro-01KRJY9F9PKV1P01YH46A57WTS",
+      "working_directory": "/home/daytona/workspace",
+      "repo_cloned": true,
+      "clone_origin_url": "https://github.com/kimprobably/maestro-os",
+      "clone_branch": "spike/fabro-code-factory-v5"
+    }
+  },
+  "pull_request": null,
+  "superseded_by": null,
+  "pending_interviews": {},
+  "stages": {}
+}
