@@ -38,21 +38,21 @@ struct MainTabView: View {
     }
     
     let homeViewModel: HomeViewModel
-    let chatHistoryViewModel: ChatHistoryViewModel
+    let wakeFlowViewModel: WakeFlowViewModel
     let settingsViewModel: SettingsViewModel
     let profileViewModel: ProfileViewModel
     
     init(
         selectedTab: Binding<Tab>,
         homeViewModel: HomeViewModel,
-        chatHistoryViewModel: ChatHistoryViewModel,
+        wakeFlowViewModel: WakeFlowViewModel,
         settingsViewModel: SettingsViewModel,
         profileViewModel: ProfileViewModel,
         onTabChange: @escaping (Tab) -> Void = { _ in }
     ) {
         self._selectedTab = selectedTab
         self.homeViewModel = homeViewModel
-        self.chatHistoryViewModel = chatHistoryViewModel
+        self.wakeFlowViewModel = wakeFlowViewModel
         self.settingsViewModel = settingsViewModel
         self.profileViewModel = profileViewModel
         self.onTabChange = onTabChange
@@ -82,12 +82,14 @@ struct MainTabView: View {
                     selectedTab = .chat
                 }
             )
+                .accessibilityIdentifier("homeTabRoot")
                 .tabItem {
                     Label(Tab.home.title, systemImage: Tab.home.icon)
                 }
                 .tag(Tab.home)
             
-            ChatHistoryView(viewModel: chatHistoryViewModel)
+            WakeDashboardView(viewModel: wakeFlowViewModel)
+                .accessibilityIdentifier("wakeTabRoot")
                 .tabItem {
                     Label(Tab.chat.title, systemImage: Tab.chat.icon)
                 }
@@ -103,6 +105,7 @@ struct MainTabView: View {
                     showSettings = true
                 }
             )
+                .accessibilityIdentifier("profileTabRoot")
                 .tabItem {
                     Label(Tab.profile.title, systemImage: Tab.profile.icon)
                 }
@@ -142,7 +145,7 @@ struct MainTabView: View {
         MainTabView(
             selectedTab: $selectedTab,
             homeViewModel: homeVM,
-            chatHistoryViewModel: PreviewComposition.chatHistoryVM(),
+            wakeFlowViewModel: PreviewComposition.wakeFlowVM(),
             settingsViewModel: PreviewComposition.settingsVM(),
             profileViewModel: profileVM
         )

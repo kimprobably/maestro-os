@@ -45,7 +45,7 @@ struct AppRootView: View {
                 MainTabView(
                     selectedTab: $selectedTab,
                     homeViewModel: environment.compositionRoot.makeHomeViewModel(),
-                    chatHistoryViewModel: environment.compositionRoot.makeChatHistoryViewModel(),
+                    wakeFlowViewModel: environment.compositionRoot.makeWakeFlowViewModel(),
                     settingsViewModel: environment.compositionRoot.makeSettingsViewModel(),
                     profileViewModel: environment.compositionRoot.makeProfileViewModel()
                 )

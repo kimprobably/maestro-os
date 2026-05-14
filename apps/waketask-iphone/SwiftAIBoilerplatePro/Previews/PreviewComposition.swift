@@ -5,6 +5,7 @@ import FeatureChat
 import FeatureSettings
 import Auth
 import Storage
+import Core
 
 /// Composition helpers for SwiftUI previews
 @MainActor
@@ -42,6 +43,14 @@ enum PreviewComposition {
             settingsRepository: PreviewMocks.MockSettingsRepository(),
             authClient: PreviewMocks.MockAuthClient(),
             paymentsClient: PreviewMocks.MockPaymentsClient()
+        )
+    }
+
+    static func wakeFlowVM() -> WakeFlowViewModel {
+        WakeFlowViewModel(
+            alarmRepository: PreviewMocks.MockWakeAlarmRepository(),
+            runRepository: PreviewMocks.MockWakeRunRepository(),
+            missionEngine: PreviewMocks.MockWakeMissionEngine()
         )
     }
 

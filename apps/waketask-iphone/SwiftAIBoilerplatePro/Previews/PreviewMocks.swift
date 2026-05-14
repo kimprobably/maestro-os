@@ -4,6 +4,7 @@ import Storage
 import Auth
 import Payments
 import FeatureChat
+import Core
 
 /// Minimal mocks for SwiftUI previews
 /// These conform to public protocols and return static/empty data
@@ -63,6 +64,40 @@ enum PreviewMocks {
                     updatedAt: Date().addingTimeInterval(-3600),
                     personaName: "AI Assistant"
                 )
+            ]
+        }
+    }
+
+    final class MockWakeAlarmRepository: WakeAlarmRepository, @unchecked Sendable {
+        func listAlarms() async throws -> [WakeAlarm] {
+            [
+                WakeAlarm(
+                    title: "Workday Start",
+                    hour: 7,
+                    minute: 0,
+                    enabled: true,
+                    strictness: .balanced,
+                    wakeCheckWindowSeconds: 120,
+                    firstTaskTitle: "Review top 3 priorities"
+                )
+            ]
+        }
+
+        func upsertAlarm(_ alarm: WakeAlarm) async throws {}
+    }
+
+    final class MockWakeRunRepository: WakeRunRepository, @unchecked Sendable {
+        func saveRun(_ run: WakeRun) async throws {}
+        func loadRun(id: UUID) async throws -> WakeRun? { nil }
+        func listRuns(alarmID: UUID?, limit: Int) async throws -> [WakeRun] { [] }
+    }
+
+    struct MockWakeMissionEngine: WakeMissionRotationEngine, Sendable {
+        func missions(for alarm: WakeAlarm, previousRuns: [WakeRun], missionCount: Int) -> [WakeMission] {
+            [
+                WakeMission(modality: .cognitive, prompt: "Say tomorrow's first meeting out loud"),
+                WakeMission(modality: .movement, prompt: "Do 20 seconds of shoulder mobility"),
+                WakeMission(modality: .scanPhoto, prompt: "Scan your bathroom sink area")
             ]
         }
     }
@@ -230,4 +265,3 @@ enum PreviewMocks {
     }
 }
 #endif
-
