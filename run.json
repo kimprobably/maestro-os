@@ -414,7 +414,7 @@
     "kind": "running"
   },
   "status_updated_at": "2026-05-14T02:51:16.369640570Z",
-  "last_event_at": "2026-05-14T02:51:21.225897368Z",
+  "last_event_at": "2026-05-14T02:51:26.613805114Z",
   "pending_control": null,
   "checkpoints": [
     {
@@ -457,13 +457,79 @@
       "diff": {}
     },
     {
-      "seq": 0,
+      "seq": 29,
       "checkpoint": {
-        "timestamp": "2026-05-14T02:51:21.534799472Z",
+        "timestamp": "2026-05-14T02:51:24.821174707Z",
         "current_node": "check_claude_runtime",
         "completed_nodes": [
           "start",
           "check_claude_runtime"
+        ],
+        "node_retries": {},
+        "context_values": {
+          "thread.start.current_node": "check_claude_runtime",
+          "graph.goal": "Verify Claude Code and Codex CLI auth work inside a fresh Daytona sandbox",
+          "internal.fidelity": "compact",
+          "graph.persona": "cli-auth-smoke",
+          "failure_class": "deterministic",
+          "internal.retry_count.check_claude_runtime": 0,
+          "graph.outputs": "cli_auth_runtime_report",
+          "graph.model_stylesheet": "\n            *      { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: low; }\n            .codex { backend: cli; provider: openai; model: gpt-5.3-codex-spark; reasoning_effort: low; }\n        ",
+          "failure_signature": "check_claude_runtime|deterministic|script failed with exit code: <n> ## output { \"ok\": false,\"env\": { \"claude_code_oauth_token\": true },\"missing\": [],\"checks\": [ { \"cmd\": \"claude --version\",\"status\": <n>,\"signal\": null,\"stdout\": \"<n>.<n>.<n> (claude code)\",\"stderr\": \"\" },{ \"",
+          "internal.node_visit_count": 1,
+          "internal.retry_count.start": 0,
+          "current_node": "check_claude_runtime",
+          "command.output": "blob://sha256/8586529c1d689e009f716cb17466e886c892101add15e6f6ce3d05b2df97e27b",
+          "internal.run_id": "01KRJ617RM1H3CAYZ3CVQ22RHB",
+          "internal.thread_id": "start",
+          "internal.work_dir": "/home/daytona/workspace",
+          "outcome": "failed",
+          "graph.inputs": "none"
+        },
+        "node_outcomes": {
+          "check_claude_runtime": {
+            "status": "failed",
+            "context_updates": {
+              "command.output": "blob://sha256/8586529c1d689e009f716cb17466e886c892101add15e6f6ce3d05b2df97e27b"
+            },
+            "failure": {
+              "message": "Script failed with exit code: 1\n\n## output\n{\n  \"ok\": false,\n  \"env\": {\n    \"CLAUDE_CODE_OAUTH_TOKEN\": true\n  },\n  \"missing\": [],\n  \"checks\": [\n    {\n      \"cmd\": \"claude --version\",\n      \"status\": 0,\n      \"signal\": null,\n      \"stdout\": \"2.1.141 (Claude Code)\",\n      \"stderr\": \"\"\n    },\n    {\n      \"cmd\": \"claude -p Reply with exactly OK.\",\n      \"status\": 1,\n      \"signal\": null,\n      \"stdout\": \"Failed to authenticate. API Error: 401 Invalid bearer token\",\n      \"stderr\": \"\"\n    }\n  ],\n  \"failed\": [\n    {\n      \"cmd\": \"claude -p Reply with exactly OK.\",\n      \"status\": 1,\n      \"signal\": null,\n      \"stdout\": \"Failed to authenticate. API Error: 401 Invalid bearer token\",\n      \"stderr\": \"\"\n    }\n  ]\n}\n",
+              "failure_class": "deterministic"
+            },
+            "usage": null
+          },
+          "start": {
+            "status": "succeeded",
+            "usage": null
+          }
+        },
+        "next_node_id": "fail_runtime",
+        "git_commit_sha": "15ea6298d0c01baa64dafc603afbdd0b2de971d2",
+        "loop_failure_signatures": {
+          "check_claude_runtime|deterministic|script failed with exit code: <n> ## output { \"ok\": false,\"env\": { \"claude_code_oauth_token\": true },\"missing\": [],\"checks\": [ { \"cmd\": \"claude --version\",\"status\": <n>,\"signal\": null,\"stdout\": \"<n>.<n>.<n> (claude code)\",\"stderr\": \"\" },{ \"": 1
+        },
+        "node_visits": {
+          "check_claude_runtime": 1,
+          "start": 1
+        }
+      },
+      "diff": {
+        "summary": {
+          "files_changed": 0,
+          "additions": 0,
+          "deletions": 0
+        }
+      }
+    },
+    {
+      "seq": 0,
+      "checkpoint": {
+        "timestamp": "2026-05-14T02:51:26.696128063Z",
+        "current_node": "fail_runtime",
+        "completed_nodes": [
+          "start",
+          "check_claude_runtime",
+          "fail_runtime"
         ],
         "node_retries": {},
         "context_values": {
@@ -475,14 +541,16 @@
           "graph.outputs": "cli_auth_runtime_report",
           "internal.retry_count.start": 0,
           "internal.run_id": "01KRJ617RM1H3CAYZ3CVQ22RHB",
-          "command.output": "blob://sha256/8586529c1d689e009f716cb17466e886c892101add15e6f6ce3d05b2df97e27b",
+          "command.output": "blob://sha256/707b31017ee07b12ecc2d0a799cd5e7c1690fbb49e3ffb8dd5848cb3c46510bb",
           "graph.inputs": "none",
+          "thread.check_claude_runtime.current_node": "fail_runtime",
+          "internal.retry_count.fail_runtime": 0,
           "outcome": "failed",
           "graph.model_stylesheet": "\n            *      { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: low; }\n            .codex { backend: cli; provider: openai; model: gpt-5.3-codex-spark; reasoning_effort: low; }\n        ",
-          "current_node": "check_claude_runtime",
-          "failure_signature": "check_claude_runtime|deterministic|script failed with exit code: <n> ## output { \"ok\": false,\"env\": { \"claude_code_oauth_token\": true },\"missing\": [],\"checks\": [ { \"cmd\": \"claude --version\",\"status\": <n>,\"signal\": null,\"stdout\": \"<n>.<n>.<n> (claude code)\",\"stderr\": \"\" },{ \"",
+          "current_node": "fail_runtime",
+          "failure_signature": "fail_runtime|deterministic|script failed with exit code: <n> ## output { \"ok\": false,\"env\": { \"claude_code_oauth_token\": true },\"missing\": [],\"checks\": [ { \"cmd\": \"claude --version\",\"status\": <n>,\"signal\": null,\"stdout\": \"<n>.<n>.<n> (claude code)\",\"stderr\": \"\" },{ \"",
           "thread.start.current_node": "check_claude_runtime",
-          "internal.thread_id": "start",
+          "internal.thread_id": "check_claude_runtime",
           "internal.work_dir": "/home/daytona/workspace",
           "failure_class": "deterministic"
         },
@@ -501,10 +569,21 @@
               "failure_class": "deterministic"
             },
             "usage": null
+          },
+          "fail_runtime": {
+            "status": "failed",
+            "context_updates": {
+              "command.output": "blob://sha256/707b31017ee07b12ecc2d0a799cd5e7c1690fbb49e3ffb8dd5848cb3c46510bb"
+            },
+            "failure": {
+              "message": "Script failed with exit code: 1\n\n## output\n{\n  \"ok\": false,\n  \"env\": {\n    \"CLAUDE_CODE_OAUTH_TOKEN\": true\n  },\n  \"missing\": [],\n  \"checks\": [\n    {\n      \"cmd\": \"claude --version\",\n      \"status\": 0,\n      \"signal\": null,\n      \"stdout\": \"2.1.141 (Claude Code)\",\n      \"stderr\": \"\"\n    },\n    {\n      \"cmd\": \"claude -p Reply with exactly OK.\",\n      \"status\": 1,\n      \"signal\": null,\n      \"stdout\": \"Failed to authenticate. API Error: 401 Invalid bearer token\",\n      \"stderr\": \"\"\n    }\n  ],\n  \"failed\": [\n    {\n      \"cmd\": \"claude -p Reply with exactly OK.\",\n      \"status\": 1,\n      \"signal\": null,\n      \"stdout\": \"Failed to authenticate. API Error: 401 Invalid bearer token\",\n      \"stderr\": \"\"\n    }\n  ]\n}\n\n",
+              "failure_class": "deterministic"
+            },
+            "usage": null
           }
         },
-        "next_node_id": "fail_runtime",
         "node_visits": {
+          "fail_runtime": 1,
           "check_claude_runtime": 1,
           "start": 1
         }
@@ -558,11 +637,53 @@
       },
       "state": "succeeded"
     },
+    "fail_runtime@1": {
+      "first_event_seq": 32,
+      "prompt": null,
+      "response": null,
+      "completion": null,
+      "provider_used": null,
+      "diff": null,
+      "script_invocation": {
+        "script": "node -e \"const fs=require('fs'); const body=fs.existsSync('.workflow/fabro/daytona-cli-auth-runtime-smoke.json') ? fs.readFileSync('.workflow/fabro/daytona-cli-auth-runtime-smoke.json','utf8') : '{}'; console.error(body); process.exit(1);\"",
+        "command": "exec 2>&1\nnode -e \"const fs=require('fs'); const body=fs.existsSync('.workflow/fabro/daytona-cli-auth-runtime-smoke.json') ? fs.readFileSync('.workflow/fabro/daytona-cli-auth-runtime-smoke.json','utf8') : '{}'; console.error(body); process.exit(1);\"",
+        "language": "shell"
+      },
+      "script_timing": {
+        "output": "blob://sha256/707b31017ee07b12ecc2d0a799cd5e7c1690fbb49e3ffb8dd5848cb3c46510bb",
+        "exit_code": 1,
+        "duration_ms": 1788,
+        "termination": "exited",
+        "output_bytes": 673,
+        "live_streaming": true
+      },
+      "parallel_results": null,
+      "output": null,
+      "output_bytes": 673,
+      "live_streaming": true,
+      "termination": "exited",
+      "started_at": "2026-05-14T02:51:24.822413588Z",
+      "handler": "command",
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "total_tokens": 0,
+        "reasoning_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "state": "running"
+    },
     "check_claude_runtime@1": {
       "first_event_seq": 21,
       "prompt": null,
       "response": null,
-      "completion": null,
+      "completion": {
+        "outcome": "failed",
+        "notes": null,
+        "failure_reason": "Script failed with exit code: 1\n\n## output\n{\n  \"ok\": false,\n  \"env\": {\n    \"CLAUDE_CODE_OAUTH_TOKEN\": true\n  },\n  \"missing\": [],\n  \"checks\": [\n    {\n      \"cmd\": \"claude --version\",\n      \"status\": 0,\n      \"signal\": null,\n      \"stdout\": \"2.1.141 (Claude Code)\",\n      \"stderr\": \"\"\n    },\n    {\n      \"cmd\": \"claude -p Reply with exactly OK.\",\n      \"status\": 1,\n      \"signal\": null,\n      \"stdout\": \"Failed to authenticate. API Error: 401 Invalid bearer token\",\n      \"stderr\": \"\"\n    }\n  ],\n  \"failed\": [\n    {\n      \"cmd\": \"claude -p Reply with exactly OK.\",\n      \"status\": 1,\n      \"signal\": null,\n      \"stdout\": \"Failed to authenticate. API Error: 401 Invalid bearer token\",\n      \"stderr\": \"\"\n    }\n  ]\n}\n",
+        "timestamp": "2026-05-14T02:51:21.533930628Z"
+      },
       "provider_used": null,
       "diff": null,
       "script_invocation": {
@@ -585,6 +706,7 @@
       "termination": "exited",
       "started_at": "2026-05-14T02:51:17.258589977Z",
       "handler": "command",
+      "duration_ms": 3967,
       "usage": {
         "input_tokens": 0,
         "output_tokens": 0,
@@ -593,7 +715,7 @@
         "cache_read_tokens": 0,
         "cache_write_tokens": 0
       },
-      "state": "running"
+      "state": "failed"
     }
   }
 }
