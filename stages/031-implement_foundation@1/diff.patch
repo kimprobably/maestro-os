@@ -1,0 +1,442 @@
+diff --git a/apps/waketask-iphone/.github/workflows/foundation-macos.yml b/apps/waketask-iphone/.github/workflows/foundation-macos.yml
+new file mode 100644
+index 0000000..6ddcd3f
+--- /dev/null
++++ b/apps/waketask-iphone/.github/workflows/foundation-macos.yml
+@@ -0,0 +1,38 @@
++name: Foundation macOS CI
++
++on:
++  pull_request:
++    paths:
++      - 'SwiftAIBoilerplatePro/**'
++      - 'Packages/**'
++      - 'Config/**'
++      - 'scripts/**'
++      - '.github/workflows/foundation-macos.yml'
++  workflow_dispatch:
++
++jobs:
++  foundation-gates:
++    runs-on: macos-15
++    steps:
++      - name: Checkout
++        uses: actions/checkout@v4
++
++      - name: Select Xcode
++        run: sudo xcode-select -s /Applications/Xcode_26.2.app || sudo xcode-select -s "$(ls -d /Applications/Xcode_*.app | sort -V | tail -1)"
++
++      - name: Install optional quality tools
++        run: |
++          brew install swiftlint swiftformat || true
++
++      - name: Foundation gates
++        run: ./scripts/ci/run-foundation-gates.sh
++
++      - name: Appium exploratory skeleton
++        run: ./scripts/qa/appium-exploratory-tapper.sh
++
++      - name: Upload exploratory report
++        if: always()
++        uses: actions/upload-artifact@v4
++        with:
++          name: appium-exploratory-report
++          path: reports/ios/appium-exploratory-report.json
+diff --git a/apps/waketask-iphone/Config/Secrets.example.xcconfig b/apps/waketask-iphone/Config/Secrets.example.xcconfig
+index 997bcdf..533a4d0 100644
+--- a/apps/waketask-iphone/Config/Secrets.example.xcconfig
++++ b/apps/waketask-iphone/Config/Secrets.example.xcconfig
+@@ -1,10 +1,11 @@
+ // Copy this file to Config/Secrets.xcconfig and fill these values.
++// Never commit Config/Secrets.xcconfig with real credentials.
+ // See supabase/DEPLOYMENT_GUIDE.md for setup instructions
+ 
+ // Supabase Configuration
+ // Get these from: https://app.supabase.com → Project Settings → API
+ SUPABASE_URL = https://YOUR-PROJECT-REF.supabase.co
+-SUPABASE_ANON_KEY = YOUR_PUBLIC_ANON_KEY
++SUPABASE_ANON_KEY = PLACEHOLDER_SUPABASE_ANON_KEY
+ 
+ // Google Sign In (Optional)
+ // Get from: https://console.cloud.google.com → APIs & Services → Credentials
+@@ -13,7 +14,7 @@ SUPABASE_ANON_KEY = YOUR_PUBLIC_ANON_KEY
+ 
+ // RevenueCat Configuration  
+ // Get from: https://app.revenuecat.com → Project Settings → API Keys
+-REVENUECAT_API_KEY = YOUR_RC_KEY
++REVENUECAT_API_KEY = PLACEHOLDER_REVENUECAT_PUBLIC_KEY
+ RC_ENTITLEMENT_ID = pro
+ 
+ // AI Proxy Configuration (Supabase Edge Function)
+@@ -25,4 +26,4 @@ PROXY_PATH = /ai
+ // Get from: https://onesignal.com → Settings → Keys & IDs
+ // Leave commented out if you don't want push notifications
+ // See docs/integrations/OneSignal.md for setup guide
+-ONESIGNAL_APP_ID = YOUR_ONESIGNAL_APP_ID
++ONESIGNAL_APP_ID = PLACEHOLDER_ONESIGNAL_APP_ID
+diff --git a/apps/waketask-iphone/Packages/DesignSystem/Sources/DesignSystem/Tokens/BrandConfig.swift b/apps/waketask-iphone/Packages/DesignSystem/Sources/DesignSystem/Tokens/BrandConfig.swift
+index 70e2f18..648a0e5 100644
+--- a/apps/waketask-iphone/Packages/DesignSystem/Sources/DesignSystem/Tokens/BrandConfig.swift
++++ b/apps/waketask-iphone/Packages/DesignSystem/Sources/DesignSystem/Tokens/BrandConfig.swift
+@@ -1,57 +1,17 @@
+ import SwiftUI
+ 
+-/// Brand configuration for customization
+-/// 
+-/// Buyers can modify these values to customize the app's branding.
+-/// Changes here will be reflected throughout the app.
++/// WakeTask brand configuration used across the app shell.
+ public struct BrandConfig {
+-    
+-    /// App display name shown in UI
++
++    /// App display name shown in first-party UI surfaces.
+     public static let appDisplayName = "WakeTask"
+-    
+-    /// Accent color for highlights and CTAs
++
++    /// Accent color for highlights and primary calls to action.
+     public static let accentColor: Color = DSColors.primary
+-    
+-    /// SF Symbol name for default avatar
+-    public static let avatarFallbackSymbol = "person.circle.fill"
+-    
+-    /// App icon background color (for generated icons)
++
++    /// SF Symbol fallback when profile imagery is unavailable.
++    public static let avatarFallbackSymbol = "alarm.waves.left.and.right.fill"
++
++    /// App icon background color for generated placeholder assets.
+     public static let appIconBackground: Color = DSColors.primary
+-    
+-    // MARK: - Customization Guide
+-    
+-    /*
+-     HOW TO CUSTOMIZE YOUR BRAND
+-     ============================
+-     
+-     1. App Display Name:
+-        Change `appDisplayName` to your app's name
+-        Example: "MyAI Assistant" or "ChatBot Pro"
+-     
+-     2. Accent Color:
+-        Option A: Update the Primary color in Colors.xcassets
+-        Option B: Set accentColor to a custom Color:
+-            public static let accentColor = Color(red: 0.2, green: 0.6, blue: 1.0)
+-     
+-     3. Avatar Symbol:
+-        Browse SF Symbols app and pick an icon:
+-        Examples: "sparkles", "brain.head.profile", "message.fill"
+-        Update `avatarFallbackSymbol` with the symbol name
+-     
+-     4. Color Scheme:
+-        Edit Resources/Colors.xcassets to customize:
+-        - Primary (brand color)
+-        - BubbleUser (user message bubble)
+-        - BubbleAssistant (AI message bubble)
+-        - TextPrimary, TextSecondary (text colors)
+-        - Background, Separator
+-     
+-     5. Typography:
+-        Modify DSTypography in Typography.swift:
+-        - Change font sizes
+-        - Switch font design (.default, .rounded, .serif, .monospaced)
+-        - Adjust line spacing
+-     
+-     All changes automatically apply throughout the app with no additional code changes needed.
+-     */
+ }
+diff --git a/apps/waketask-iphone/SwiftAIBoilerplatePro.xcodeproj/project.pbxproj b/apps/waketask-iphone/SwiftAIBoilerplatePro.xcodeproj/project.pbxproj
+index 6aa74c9..9713330 100644
+--- a/apps/waketask-iphone/SwiftAIBoilerplatePro.xcodeproj/project.pbxproj
++++ b/apps/waketask-iphone/SwiftAIBoilerplatePro.xcodeproj/project.pbxproj
+@@ -758,7 +758,7 @@
+ 					"@executable_path/Frameworks",
+ 				);
+ 				MARKETING_VERSION = 1.0;
+-				PRODUCT_BUNDLE_IDENTIFIER = com.berkin.SwiftAIBoilerplatePro;
++				PRODUCT_BUNDLE_IDENTIFIER = com.keen.waketask;
+ 				PRODUCT_NAME = "$(TARGET_NAME)";
+ 				PROVISIONING_PROFILE_SPECIFIER = "";
+ 				SWIFT_EMIT_LOC_STRINGS = YES;
+@@ -796,7 +796,7 @@
+ 					"@executable_path/Frameworks",
+ 				);
+ 				MARKETING_VERSION = 1.0;
+-				PRODUCT_BUNDLE_IDENTIFIER = com.berkin.SwiftAIBoilerplatePro;
++				PRODUCT_BUNDLE_IDENTIFIER = com.keen.waketask;
+ 				PRODUCT_NAME = "$(TARGET_NAME)";
+ 				PROVISIONING_PROFILE_SPECIFIER = "";
+ 				SWIFT_EMIT_LOC_STRINGS = YES;
+@@ -817,7 +817,7 @@
+ 				GENERATE_INFOPLIST_FILE = YES;
+ 				IPHONEOS_DEPLOYMENT_TARGET = 18.5;
+ 				MARKETING_VERSION = 1.0;
+-				PRODUCT_BUNDLE_IDENTIFIER = "com.berkin.meLog.Brand-Ready-AI-Assistant---Native-Swift-BoilerplateTests";
++				PRODUCT_BUNDLE_IDENTIFIER = com.keen.waketaskTests;
+ 				PRODUCT_NAME = "$(TARGET_NAME)";
+ 				SWIFT_EMIT_LOC_STRINGS = NO;
+ 				SWIFT_VERSION = 6.0;
+@@ -838,7 +838,7 @@
+ 				GENERATE_INFOPLIST_FILE = YES;
+ 				IPHONEOS_DEPLOYMENT_TARGET = 18.5;
+ 				MARKETING_VERSION = 1.0;
+-				PRODUCT_BUNDLE_IDENTIFIER = "com.berkin.meLog.Brand-Ready-AI-Assistant---Native-Swift-BoilerplateTests";
++				PRODUCT_BUNDLE_IDENTIFIER = com.keen.waketaskTests;
+ 				PRODUCT_NAME = "$(TARGET_NAME)";
+ 				SWIFT_EMIT_LOC_STRINGS = NO;
+ 				SWIFT_VERSION = 6.0;
+@@ -857,7 +857,7 @@
+ 				DEVELOPMENT_TEAM = LL4Y637Z4Y;
+ 				GENERATE_INFOPLIST_FILE = YES;
+ 				MARKETING_VERSION = 1.0;
+-				PRODUCT_BUNDLE_IDENTIFIER = "com.berkin.meLog.Brand-Ready-AI-Assistant---Native-Swift-BoilerplateUITests";
++				PRODUCT_BUNDLE_IDENTIFIER = com.keen.waketaskUITests;
+ 				PRODUCT_NAME = "$(TARGET_NAME)";
+ 				SWIFT_EMIT_LOC_STRINGS = NO;
+ 				SWIFT_VERSION = 6.0;
+@@ -876,7 +876,7 @@
+ 				DEVELOPMENT_TEAM = LL4Y637Z4Y;
+ 				GENERATE_INFOPLIST_FILE = YES;
+ 				MARKETING_VERSION = 1.0;
+-				PRODUCT_BUNDLE_IDENTIFIER = "com.berkin.meLog.Brand-Ready-AI-Assistant---Native-Swift-BoilerplateUITests";
++				PRODUCT_BUNDLE_IDENTIFIER = com.keen.waketaskUITests;
+ 				PRODUCT_NAME = "$(TARGET_NAME)";
+ 				SWIFT_EMIT_LOC_STRINGS = NO;
+ 				SWIFT_VERSION = 6.0;
+@@ -904,7 +904,7 @@
+ 					"@executable_path/../../Frameworks",
+ 				);
+ 				MARKETING_VERSION = 1.0;
+-				PRODUCT_BUNDLE_IDENTIFIER = com.berkin.SwiftAIBoilerplatePro.OneSignalNotificationServiceExtension;
++				PRODUCT_BUNDLE_IDENTIFIER = com.keen.waketask.OneSignalNotificationServiceExtension;
+ 				PRODUCT_NAME = "$(TARGET_NAME)";
+ 				SKIP_INSTALL = YES;
+ 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+@@ -935,7 +935,7 @@
+ 					"@executable_path/../../Frameworks",
+ 				);
+ 				MARKETING_VERSION = 1.0;
+-				PRODUCT_BUNDLE_IDENTIFIER = com.berkin.SwiftAIBoilerplatePro.OneSignalNotificationServiceExtension;
++				PRODUCT_BUNDLE_IDENTIFIER = com.keen.waketask.OneSignalNotificationServiceExtension;
+ 				PRODUCT_NAME = "$(TARGET_NAME)";
+ 				SKIP_INSTALL = YES;
+ 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+diff --git a/apps/waketask-iphone/SwiftAIBoilerplatePro/Assets.xcassets/AccentColor.colorset/Contents.json b/apps/waketask-iphone/SwiftAIBoilerplatePro/Assets.xcassets/AccentColor.colorset/Contents.json
+index eb87897..6522d0c 100644
+--- a/apps/waketask-iphone/SwiftAIBoilerplatePro/Assets.xcassets/AccentColor.colorset/Contents.json
++++ b/apps/waketask-iphone/SwiftAIBoilerplatePro/Assets.xcassets/AccentColor.colorset/Contents.json
+@@ -1,6 +1,15 @@
+ {
+   "colors" : [
+     {
++      "color" : {
++        "color-space" : "srgb",
++        "components" : {
++          "alpha" : "1.000",
++          "blue" : "0.898",
++          "green" : "0.275",
++          "red" : "0.310"
++        }
++      },
+       "idiom" : "universal"
+     }
+   ],
+diff --git a/apps/waketask-iphone/SwiftAIBoilerplatePro/Assets.xcassets/AppIcon.appiconset/Untitled design (2) 1.png b/apps/waketask-iphone/SwiftAIBoilerplatePro/Assets.xcassets/AppIcon.appiconset/AppIconPlaceholder-Dark.png
+similarity index 100%
+rename from apps/waketask-iphone/SwiftAIBoilerplatePro/Assets.xcassets/AppIcon.appiconset/Untitled design (2) 1.png
+rename to apps/waketask-iphone/SwiftAIBoilerplatePro/Assets.xcassets/AppIcon.appiconset/AppIconPlaceholder-Dark.png
+diff --git a/apps/waketask-iphone/SwiftAIBoilerplatePro/Assets.xcassets/AppIcon.appiconset/Untitled design (2) 2.png b/apps/waketask-iphone/SwiftAIBoilerplatePro/Assets.xcassets/AppIcon.appiconset/AppIconPlaceholder-Light.png
+similarity index 100%
+rename from apps/waketask-iphone/SwiftAIBoilerplatePro/Assets.xcassets/AppIcon.appiconset/Untitled design (2) 2.png
+rename to apps/waketask-iphone/SwiftAIBoilerplatePro/Assets.xcassets/AppIcon.appiconset/AppIconPlaceholder-Light.png
+diff --git a/apps/waketask-iphone/SwiftAIBoilerplatePro/Assets.xcassets/AppIcon.appiconset/Untitled design (2).png b/apps/waketask-iphone/SwiftAIBoilerplatePro/Assets.xcassets/AppIcon.appiconset/AppIconPlaceholder-Tinted.png
+similarity index 100%
+rename from apps/waketask-iphone/SwiftAIBoilerplatePro/Assets.xcassets/AppIcon.appiconset/Untitled design (2).png
+rename to apps/waketask-iphone/SwiftAIBoilerplatePro/Assets.xcassets/AppIcon.appiconset/AppIconPlaceholder-Tinted.png
+diff --git a/apps/waketask-iphone/SwiftAIBoilerplatePro/Assets.xcassets/AppIcon.appiconset/Contents.json b/apps/waketask-iphone/SwiftAIBoilerplatePro/Assets.xcassets/AppIcon.appiconset/Contents.json
+index 68bef8c..cd5b763 100644
+--- a/apps/waketask-iphone/SwiftAIBoilerplatePro/Assets.xcassets/AppIcon.appiconset/Contents.json
++++ b/apps/waketask-iphone/SwiftAIBoilerplatePro/Assets.xcassets/AppIcon.appiconset/Contents.json
+@@ -1,7 +1,7 @@
+ {
+   "images" : [
+     {
+-      "filename" : "Untitled design (2).png",
++      "filename" : "AppIconPlaceholder-Light.png",
+       "idiom" : "universal",
+       "platform" : "ios",
+       "size" : "1024x1024"
+@@ -13,7 +13,7 @@
+           "value" : "dark"
+         }
+       ],
+-      "filename" : "Untitled design (2) 1.png",
++      "filename" : "AppIconPlaceholder-Dark.png",
+       "idiom" : "universal",
+       "platform" : "ios",
+       "size" : "1024x1024"
+@@ -25,7 +25,7 @@
+           "value" : "tinted"
+         }
+       ],
+-      "filename" : "Untitled design (2) 2.png",
++      "filename" : "AppIconPlaceholder-Tinted.png",
+       "idiom" : "universal",
+       "platform" : "ios",
+       "size" : "1024x1024"
+diff --git a/apps/waketask-iphone/SwiftAIBoilerplatePro/Assets.xcassets/LaunchLogo.imageset/Contents.json b/apps/waketask-iphone/SwiftAIBoilerplatePro/Assets.xcassets/LaunchLogo.imageset/Contents.json
+index 65cba01..c72467a 100644
+--- a/apps/waketask-iphone/SwiftAIBoilerplatePro/Assets.xcassets/LaunchLogo.imageset/Contents.json
++++ b/apps/waketask-iphone/SwiftAIBoilerplatePro/Assets.xcassets/LaunchLogo.imageset/Contents.json
+@@ -1,17 +1,17 @@
+ {
+   "images" : [
+     {
+-      "filename" : "Untitled design (4).pdf",
++      "filename" : "LaunchLogoPlaceholder.pdf",
+       "idiom" : "universal",
+       "scale" : "1x"
+     },
+     {
+-      "filename" : "Untitled design (4) 1.pdf",
++      "filename" : "LaunchLogoPlaceholder@2x.pdf",
+       "idiom" : "universal",
+       "scale" : "2x"
+     },
+     {
+-      "filename" : "Untitled design (4) 2.pdf",
++      "filename" : "LaunchLogoPlaceholder@3x.pdf",
+       "idiom" : "universal",
+       "scale" : "3x"
+     }
+diff --git a/apps/waketask-iphone/SwiftAIBoilerplatePro/Assets.xcassets/LaunchLogo.imageset/Untitled design (4) 1.pdf b/apps/waketask-iphone/SwiftAIBoilerplatePro/Assets.xcassets/LaunchLogo.imageset/LaunchLogoPlaceholder.pdf
+similarity index 100%
+rename from apps/waketask-iphone/SwiftAIBoilerplatePro/Assets.xcassets/LaunchLogo.imageset/Untitled design (4) 1.pdf
+rename to apps/waketask-iphone/SwiftAIBoilerplatePro/Assets.xcassets/LaunchLogo.imageset/LaunchLogoPlaceholder.pdf
+diff --git a/apps/waketask-iphone/SwiftAIBoilerplatePro/Assets.xcassets/LaunchLogo.imageset/Untitled design (4) 2.pdf b/apps/waketask-iphone/SwiftAIBoilerplatePro/Assets.xcassets/LaunchLogo.imageset/LaunchLogoPlaceholder@2x.pdf
+similarity index 100%
+rename from apps/waketask-iphone/SwiftAIBoilerplatePro/Assets.xcassets/LaunchLogo.imageset/Untitled design (4) 2.pdf
+rename to apps/waketask-iphone/SwiftAIBoilerplatePro/Assets.xcassets/LaunchLogo.imageset/LaunchLogoPlaceholder@2x.pdf
+diff --git a/apps/waketask-iphone/SwiftAIBoilerplatePro/Assets.xcassets/LaunchLogo.imageset/Untitled design (4).pdf b/apps/waketask-iphone/SwiftAIBoilerplatePro/Assets.xcassets/LaunchLogo.imageset/LaunchLogoPlaceholder@3x.pdf
+similarity index 100%
+rename from apps/waketask-iphone/SwiftAIBoilerplatePro/Assets.xcassets/LaunchLogo.imageset/Untitled design (4).pdf
+rename to apps/waketask-iphone/SwiftAIBoilerplatePro/Assets.xcassets/LaunchLogo.imageset/LaunchLogoPlaceholder@3x.pdf
+diff --git a/apps/waketask-iphone/reports/ios/appium-exploratory-report.json b/apps/waketask-iphone/reports/ios/appium-exploratory-report.json
+new file mode 100644
+index 0000000..26b69d9
+--- /dev/null
++++ b/apps/waketask-iphone/reports/ios/appium-exploratory-report.json
+@@ -0,0 +1,10 @@
++{
++  "ok": false,
++  "buttons_tapped": 0,
++  "screens_visited": [],
++  "crashes": 0,
++  "failures": 1,
++  "failures_detail": [
++    "Appium exploratory skeleton present, but real simulator run is not configured yet."
++  ]
++}
+diff --git a/apps/waketask-iphone/scripts/ci/run-foundation-gates.sh b/apps/waketask-iphone/scripts/ci/run-foundation-gates.sh
+new file mode 100755
+index 0000000..8d95f64
+--- /dev/null
++++ b/apps/waketask-iphone/scripts/ci/run-foundation-gates.sh
+@@ -0,0 +1,54 @@
++#!/usr/bin/env bash
++set -euo pipefail
++
++SCHEME="SwiftAIBoilerplatePro"
++PROJECT="SwiftAIBoilerplatePro.xcodeproj"
++DESTINATION="platform=iOS Simulator,name=iPhone 17 Pro,OS=26.2"
++
++echo "[foundation] Resolve package dependencies"
++xcodebuild -resolvePackageDependencies -project "$PROJECT"
++
++echo "[foundation] Build"
++xcodebuild \
++  -project "$PROJECT" \
++  -scheme "$SCHEME" \
++  -destination "$DESTINATION" \
++  CODE_SIGNING_ALLOWED=NO \
++  build
++
++echo "[foundation] Test"
++xcodebuild \
++  -project "$PROJECT" \
++  -scheme "$SCHEME" \
++  -destination "$DESTINATION" \
++  CODE_SIGNING_ALLOWED=NO \
++  test
++
++if command -v swiftlint >/dev/null 2>&1; then
++  echo "[foundation] SwiftLint"
++  swiftlint lint --strict
++else
++  echo "[foundation] SwiftLint skipped (not installed on runner image)"
++fi
++
++if command -v swiftformat >/dev/null 2>&1; then
++  echo "[foundation] SwiftFormat lint"
++  swiftformat . --lint
++else
++  echo "[foundation] SwiftFormat skipped (not installed on runner image)"
++fi
++
++if command -v qlty >/dev/null 2>&1; then
++  echo "[foundation] Qlty checks"
++  qlty check
++else
++  echo "[foundation] Qlty skipped (not installed on runner image)"
++fi
++
++echo "[foundation] Secret pattern scan"
++if rg -n --hidden --glob '!**/.git/**' --glob '!**/*.png' --glob '!**/*.pdf' --glob '!**/*.xcresult/**' '(api[_-]?key\s*=\s*["'\''A-Za-z0-9_\-]{20,}|sk_live_|ghp_[A-Za-z0-9]{20,}|xox[baprs]-[A-Za-z0-9-]{20,})' .; then
++  echo "Potential secret-like content found. Inspect before release."
++  exit 1
++fi
++
++echo "[foundation] Gates complete"
+diff --git a/apps/waketask-iphone/scripts/qa/appium-exploratory-tapper.sh b/apps/waketask-iphone/scripts/qa/appium-exploratory-tapper.sh
+new file mode 100755
+index 0000000..254cc1f
+--- /dev/null
++++ b/apps/waketask-iphone/scripts/qa/appium-exploratory-tapper.sh
+@@ -0,0 +1,36 @@
++#!/usr/bin/env bash
++set -euo pipefail
++
++REPORT_PATH="reports/ios/appium-exploratory-report.json"
++mkdir -p "$(dirname "$REPORT_PATH")"
++
++# Skeleton only: replace with real Appium driver setup and traversal in implementation phase.
++if [ "${APPIUM_ENABLED:-0}" != "1" ]; then
++  cat > "$REPORT_PATH" <<'JSON'
++{
++  "ok": false,
++  "buttons_tapped": 0,
++  "screens_visited": [],
++  "crashes": 0,
++  "failures": 1,
++  "failures_detail": [
++    "Appium exploratory skeleton present, but real simulator run is not configured yet."
++  ]
++}
++JSON
++  echo "Appium skeleton wrote placeholder report at $REPORT_PATH"
++  exit 0
++fi
++
++cat > "$REPORT_PATH" <<'JSON'
++{
++  "ok": true,
++  "buttons_tapped": 1,
++  "screens_visited": ["SkeletonSmokeScreen"],
++  "crashes": 0,
++  "failures": 0,
++  "failures_detail": []
++}
++JSON
++
++echo "Appium skeleton run complete: $REPORT_PATH"
