@@ -12,9 +12,9 @@ The workflow does not run paid human testing. It does require an automated Appiu
 
 ## Core Pattern
 
-1. Research fanout: App Store reviews, Reddit, competitors, and iOS design patterns.
+1. Research fanout: App Store reviews, Reddit, competitors, and iOS design patterns. The fanout is serialized in overnight mode so branch startup failures cannot be hidden by parallel scheduling.
 2. Prompt quality gate: validate the tracked prompt registry and run the Promptfoo prompt-quality eval when available.
-3. Research synthesis: jobs-to-be-done, complaints, feature gaps, monetization, and differentiation.
+3. Research synthesis and evidence gate: jobs-to-be-done, complaints, feature gaps, monetization, differentiation, all expected research artifacts, and a strict opportunity matrix.
 4. Adversarial spec lab: Codex, Claude, and OpenRouter models draft specs independently, critique each other, merge, and red-team.
 5. Spec Kitty gate: record the accepted spec and definition of done.
 6. Architecture and ADR: map the product to SwiftAIBoilerplatePro modules, explicitly deciding what to keep, adapt, or remove.

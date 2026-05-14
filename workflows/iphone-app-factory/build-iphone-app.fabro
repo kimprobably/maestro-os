@@ -49,7 +49,7 @@ digraph BuildIPhoneApp {
         script="node scripts/iphone-app-factory/promptfoo-prompt-quality.mjs --config evals/iphone-app-factory/prompt-quality.yaml --registry evals/iphone-app-factory/prompt-registry.json --out .workflow/iphone-app-factory/evals/prompt-quality.json --allow-fallback true"
     ]
 
-    research_fanout [label="Research Fan-Out", shape=component, join_policy="wait_all", max_parallel=4]
+    research_fanout [label="Research Fan-Out", shape=component, join_policy="wait_all", max_parallel=1]
     app_store_research [label="App Store Reviews", class="research", prompt="@../../prompts/iphone-app-factory/research-app-store.md"]
     reddit_research [label="Reddit Pain Mining", class="research", prompt="@../../prompts/iphone-app-factory/research-reddit.md"]
     competitor_research [label="Competitor Research", class="research", prompt="@../../prompts/iphone-app-factory/research-competitors.md"]
@@ -63,8 +63,15 @@ digraph BuildIPhoneApp {
         retry_target="research_fanout",
         prompt="@../../prompts/iphone-app-factory/synthesize-research.md"
     ]
+    research_evidence_gate [
+        label="Research Evidence Gate",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="research_fanout",
+        script="node scripts/iphone-app-factory/research-evidence-gate.mjs"
+    ]
 
-    spec_fanout [label="Adversarial Spec Fan-Out", shape=component, join_policy="wait_all", max_parallel=4]
+    spec_fanout [label="Adversarial Spec Fan-Out", shape=component, join_policy="wait_all", max_parallel=1]
     spec_codex [label="Codex Spec", class="spec", fidelity="truncate", prompt="@../../prompts/iphone-app-factory/spec-candidate.md"]
     spec_claude [label="Claude Spec", class="spec", fidelity="truncate", prompt="@../../prompts/iphone-app-factory/spec-candidate.md"]
     spec_kimi [label="Kimi Spec", class="spec", fidelity="truncate", prompt="@../../prompts/iphone-app-factory/spec-candidate.md"]
@@ -109,7 +116,7 @@ digraph BuildIPhoneApp {
         script="FEATURE='{{ inputs.spec_kitty_feature|default('iphone-app-factory') }}'; if command -v spec-kitty >/dev/null 2>&1; then spec-kitty specify \"$FEATURE\" --mission-type software-dev --json > .workflow/iphone-app-factory/spec-kitty.json || spec-kitty verify-setup --json > .workflow/iphone-app-factory/spec-kitty.json; else echo 'spec-kitty is required for this workflow' >&2; exit 1; fi; cat .workflow/iphone-app-factory/spec-kitty.json"
     ]
 
-    architecture_fanout [label="Architecture Fan-Out", shape=component, join_policy="wait_all", max_parallel=2]
+    architecture_fanout [label="Architecture Fan-Out", shape=component, join_policy="wait_all", max_parallel=1]
     arch_codex [label="Codex Architecture", class="architecture", fidelity="truncate", prompt="@../../prompts/iphone-app-factory/architecture-candidate.md"]
     arch_claude [label="Claude Architecture", class="architecture", fidelity="truncate", prompt="@../../prompts/iphone-app-factory/architecture-candidate.md"]
     architecture_join [label="Architecture Join", shape=tripleoctagon, join_policy="wait_all"]
@@ -160,7 +167,7 @@ digraph BuildIPhoneApp {
     verify_integration [label="Verify Integration", class="verify", goal_gate=true, retry_target="implement_integration", prompt="@../../prompts/iphone-app-factory/verify-phase.md"]
     gate_integration [label="Integration Gate", shape=parallelogram, goal_gate=true, retry_target="implement_integration", script="node scripts/iphone-app-factory/phase-evidence-gate.mjs integration '{{ inputs.app_dir|default('apps/generated-iphone-app') }}'"]
 
-    implementation_review_fanout [label="Implementation Review Fan-Out", shape=component, join_policy="wait_all", max_parallel=4]
+    implementation_review_fanout [label="Implementation Review Fan-Out", shape=component, join_policy="wait_all", max_parallel=1]
     implementation_correctness_review [label="Implementation Correctness", class="review", prompt="@../../prompts/iphone-app-factory/review-implementation-correctness.md"]
     implementation_test_review [label="Implementation Tests", class="review", prompt="@../../prompts/iphone-app-factory/review-implementation-tests.md"]
     implementation_security_review [label="Implementation Security", class="security", prompt="@../../prompts/iphone-app-factory/review-implementation-security.md"]
@@ -233,7 +240,7 @@ digraph BuildIPhoneApp {
         script="node scripts/iphone-app-factory/app-store-hardening-gate.mjs '{{ inputs.app_dir|default('apps/generated-iphone-app') }}'"
     ]
 
-    final_review_fanout [label="Final Review Fan-Out", shape=component, join_policy="wait_all", max_parallel=6]
+    final_review_fanout [label="Final Review Fan-Out", shape=component, join_policy="wait_all", max_parallel=1]
     product_fidelity_review [label="Product Fidelity", class="review", prompt="@../../prompts/iphone-app-factory/review-product-fidelity.md"]
     ios_architecture_review [label="iOS Architecture", class="review", prompt="@../../prompts/iphone-app-factory/review-ios-architecture.md"]
     security_privacy_review [label="Security Privacy", class="security", prompt="@../../prompts/iphone-app-factory/review-security-privacy.md"]
@@ -283,8 +290,10 @@ digraph BuildIPhoneApp {
     competitor_research -> research_join
     design_pattern_research -> research_join
     research_join -> research_synthesis
-    research_synthesis -> spec_fanout [condition="outcome=succeeded"]
+    research_synthesis -> research_evidence_gate [condition="outcome=succeeded"]
     research_synthesis -> research_fanout [label="Retry"]
+    research_evidence_gate -> spec_fanout [condition="outcome=succeeded"]
+    research_evidence_gate -> research_fanout [label="Retry"]
 
     spec_fanout -> spec_codex
     spec_fanout -> spec_claude

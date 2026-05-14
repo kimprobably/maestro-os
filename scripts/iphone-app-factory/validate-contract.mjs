@@ -15,6 +15,7 @@ function requireFile(path) {
 const graph = requireFile(workflow);
 for (const token of [
   "research_fanout",
+  "research_evidence_gate",
   "prompt_quality_gate",
   "spec_fanout",
   "fidelity=\"truncate\"",
@@ -81,6 +82,7 @@ for (const script of [
   "ios-ci-gate.mjs",
   "appium-report-gate.mjs",
   "app-store-hardening-gate.mjs",
+  "research-evidence-gate.mjs",
   "publish-handoff.mjs"
 ]) {
   requireFile(`scripts/iphone-app-factory/${script}`);
