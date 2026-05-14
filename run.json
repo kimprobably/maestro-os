@@ -3216,7 +3216,7 @@
     "kind": "running"
   },
   "status_updated_at": "2026-05-14T07:25:28.901065Z",
-  "last_event_at": "2026-05-14T07:44:06.994322Z",
+  "last_event_at": "2026-05-14T07:44:11.212067Z",
   "pending_control": null,
   "checkpoints": [
     {
@@ -3404,9 +3404,9 @@
       }
     },
     {
-      "seq": 0,
+      "seq": 612,
       "checkpoint": {
-        "timestamp": "2026-05-14T07:44:07.319638Z",
+        "timestamp": "2026-05-14T07:44:11.209668Z",
         "current_node": "research_fanout",
         "completed_nodes": [
           "start",
@@ -3416,31 +3416,147 @@
         ],
         "node_retries": {},
         "context_values": {
+          "internal.thread_id": "prompt_quality_gate",
+          "parallel.results": [
+            {
+              "id": "app_store_research",
+              "status": "succeeded",
+              "head_sha": "13cfb7972664267d6474ae391788a94bbc2ec549"
+            },
+            {
+              "id": "reddit_research",
+              "status": "succeeded",
+              "head_sha": "a52341d15223bfae86f40bf00df6474c5b5ce86c"
+            },
+            {
+              "id": "competitor_research",
+              "status": "succeeded",
+              "head_sha": "7a8535a783281fb3e8c4515e499f779091d2dac9"
+            },
+            {
+              "id": "design_pattern_research",
+              "status": "succeeded",
+              "head_sha": "3331720a77b3a0dc6d7bf48310141702d3b72980"
+            }
+          ],
+          "current_node": "research_fanout",
+          "graph.model_stylesheet": "\n            *                  { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: low; }\n            .research          { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: high; }\n            .design            { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: high; }\n            .spec              { provider: openrouter; model: google/gemini-3.1-pro-preview; reasoning_effort: high; }\n            .architecture      { provider: openrouter; model: qwen/qwen3.6-plus; reasoning_effort: high; }\n            .coding            { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            .review            { provider: openrouter; model: google/gemini-3.1-pro-preview; reasoning_effort: high; }\n            .verify            { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: medium; }\n            .security          { provider: openrouter; model: google/gemini-3.1-pro-preview; reasoning_effort: high; }\n            .simplify          { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            .macos             { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            #spec_codex        { provider: openrouter; model: google/gemini-3.1-pro-preview; reasoning_effort: high; }\n            #spec_claude       { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: high; }\n            #spec_kimi         { provider: openrouter; model: moonshotai/kimi-k2.6; reasoning_effort: high; }\n            #spec_deepseek     { provider: openrouter; model: deepseek/deepseek-v4-pro; reasoning_effort: high; }\n            #arch_codex        { provider: openrouter; model: qwen/qwen3.6-plus; reasoning_effort: high; }\n            #arch_claude       { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: high; }\n        ",
+          "internal.retry_count.research_fanout": 0,
+          "internal.node_visit_count": 1,
+          "thread.start.current_node": "bootstrap",
+          "failure_class": "",
+          "graph.persona": "iphone-app-factory",
+          "internal.fidelity": "compact",
+          "outcome": "succeeded",
+          "graph.fallback_retry_target": "architecture_consensus",
+          "graph.inputs": "app_type,target_audience,app_name,bundle_id,app_dir,spec_kitty_feature,boilerplate_repo,max_competitors,use_mobbin,ios_validation_mode,allow_macos_deferred",
+          "graph.default_max_retries": "2",
+          "thread.prompt_quality_gate.current_node": "research_fanout",
+          "internal.retry_count.start": 0,
+          "failure_signature": "",
+          "internal.retry_count.prompt_quality_gate": 0,
+          "graph.goal": "Build a differentiated iPhone app from a researched app opportunity using SwiftAIBoilerplatePro",
+          "graph.secret_policy": "never print environment variables or credential values; credential checks must be presence-only true/false checks; do not run environment dump commands.",
+          "parallel.branch_count": 4,
+          "command.output": "blob://sha256/9b2a77fe59958e8595d282ea81daa0689ed1589522e56db099654d7b8832ec52",
+          "internal.retry_count.bootstrap": 0,
+          "graph.outputs": "research_pack,spec,architecture,swift_app,ios_quality_report,appium_report,release_handoff",
+          "graph.retry_target": "spec_consensus",
+          "thread.bootstrap.current_node": "prompt_quality_gate",
+          "internal.work_dir": "/home/daytona/workspace",
+          "graph.rankdir": "LR",
+          "internal.run_id": "01KRJP0G480E26DDSHGFZXT99F"
+        },
+        "node_outcomes": {
+          "research_fanout": {
+            "status": "succeeded",
+            "jump_to_node": "research_join",
+            "notes": "Parallel node dispatched 4 branches (4 succeeded, 0 failed)",
+            "usage": null
+          },
+          "start": {
+            "status": "succeeded",
+            "usage": null
+          },
+          "bootstrap": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/5ffbb7dc1aaa52eba86cb6aa1cd6f26051bc1515a7cde4281e759508274a8e26"
+            },
+            "notes": "Script completed: node scripts/iphone-app-factory/bootstrap.mjs --app-dir 'apps/waketask-iphone' --app-name 'WakeTask' --bundle-id 'com.keen.waketask' --boilerplate-repo 'SwiftAIBoilerplatePro/SwiftAIBoilerplatePro-Distribution'",
+            "usage": null
+          },
+          "prompt_quality_gate": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/9b2a77fe59958e8595d282ea81daa0689ed1589522e56db099654d7b8832ec52"
+            },
+            "notes": "Script completed: node scripts/iphone-app-factory/promptfoo-prompt-quality.mjs --config evals/iphone-app-factory/prompt-quality.yaml --registry evals/iphone-app-factory/prompt-registry.json --out .workflow/iphone-app-factory/evals/prompt-quality.json --allow-fallback true",
+            "usage": null
+          }
+        },
+        "next_node_id": "research_join",
+        "git_commit_sha": "c5b98899ac070449c608676641d11d9e097e3942",
+        "node_visits": {
+          "bootstrap": 1,
+          "research_fanout": 1,
+          "prompt_quality_gate": 1,
+          "start": 1
+        }
+      },
+      "diff": {
+        "patch": "diff --git a/scripts/iphone-app-factory/research-app-store-live.mjs b/scripts/iphone-app-factory/research-app-store-live.mjs\nnew file mode 100755\nindex 0000000..9c72c73\n--- /dev/null\n+++ b/scripts/iphone-app-factory/research-app-store-live.mjs\n@@ -0,0 +1,277 @@\n+#!/usr/bin/env node\n+\n+/**\n+ * Research App Store reviews for alarm and task-based engagement apps\n+ * Uses Apify App Store scraper to collect live data\n+ * Focuses on apps requiring engagement before dismissal\n+ */\n+\n+import { writeFileSync, mkdirSync } from \"node:fs\";\n+import { dirname, resolve } from \"node:path\";\n+\n+function argValue(name, fallback) {\n+  const index = process.argv.indexOf(name);\n+  if (index === -1) return fallback;\n+  const value = process.argv[index + 1];\n+  if (!value || value.startsWith(\"--\")) throw new Error(`Missing value for ${name}`);\n+  return value;\n+}\n+\n+async function runApifyActor(actorId, input) {\n+  const token = process.env.APIFY_TOKEN;\n+  if (!token || token.includes(\"{{\")) {\n+    throw new Error(\"APIFY_TOKEN is not configured\");\n+  }\n+\n+  const actorPath = String(actorId || \"\").replace(\"/\", \"~\");\n+  const start = await fetch(\n+    `https://api.apify.com/v2/acts/${actorPath}/runs?token=${encodeURIComponent(token)}`,\n+    {\n+      method: \"POST\",\n+      headers: { \"Content-Type\": \"application/json\" },\n+      body: JSON.stringify(input || {}),\n+    }\n+  );\n+\n+  if (!start.ok) {\n+    throw new Error(`Apify actor start failed: ${start.status}`);\n+  }\n+\n+  const started = await start.json();\n+  const runId = started?.data?.id;\n+\n+  if (!runId) {\n+    throw new Error(\"No run ID returned from Apify\");\n+  }\n+\n+  const deadline = Date.now() + 180000; // 3 minute timeout\n+\n+  while (Date.now() < deadline) {\n+    await new Promise((resolve) => setTimeout(resolve, 3500));\n+\n+    const status = await fetch(\n+      `https://api.apify.com/v2/actor-runs/${runId}?token=${encodeURIComponent(token)}`\n+    );\n+\n+    const statusPayload = await status.json();\n+    const state = statusPayload?.data?.status;\n+\n+    if (state === \"SUCCEEDED\") {\n+      const datasetId = statusPayload.data.defaultDatasetId;\n+      const dataset = await fetch(\n+        `https://api.apify.com/v2/datasets/${datasetId}/items?clean=true&format=json&token=${encodeURIComponent(\n+          token\n+        )}`\n+      );\n+\n+      if (!dataset.ok) {\n+        throw new Error(`Apify dataset fetch failed: ${dataset.status}`);\n+      }\n+\n+      return dataset.json();\n+    }\n+\n+    if ([\"FAILED\", \"ABORTED\", \"TIMED-OUT\"].includes(state)) {\n+      throw new Error(`Apify actor ended with status ${state}`);\n+    }\n+  }\n+\n+  throw new Error(\"Apify actor timed out\");\n+}\n+\n+const outDir = resolve(argValue(\"--out-dir\", \".workflow/iphone-app-factory/research\"));\n+const allowFallback = argValue(\"--allow-fallback\", \"true\") === \"true\";\n+\n+mkdirSync(outDir, { recursive: true });\n+\n+// Candidate apps: mix of alarm apps, task-based wake-up apps, and gamified productivity\n+const candidateApps = [\n+  {\n+    name: \"Alarmy\",\n+    appId: \"1163786766\",\n+    category: \"Alarm - Task-Required\",\n+    description: \"Sleep heavy sleepers alarm that requires tasks before dismissal\",\n+  },\n+  {\n+    name: \"Puzzle Alarm\",\n+    appId: \"1444832313\",\n+    category: \"Alarm - Puzzle\",\n+    description: \"Math puzzle or memory game required before alarm dismissal\",\n+  },\n+  {\n+    name: \"Sleeptown\",\n+    appId: \"1511908439\",\n+    category: \"Sleep - Gamification\",\n+    description: \"Gamified sleep app with town building accountability\",\n+  },\n+  {\n+    name: \"Rise\",\n+    appId: \"1530087078\",\n+    category: \"Alarm - Smart\",\n+    description: \"Smart alarm with wake-up challenges and sleep coaching\",\n+  },\n+  {\n+    name: \"Habitica\",\n+    appId: \"994882113\",\n+    category: \"Productivity - Gamification\",\n+    description: \"RPG-style habit and task management with engagement mechanics\",\n+  },\n+  {\n+    name: \"Beeminder\",\n+    appId: \"517020213\",\n+    category: \"Accountability - Stakes\",\n+    description: \"Commitment tracking with financial stakes for accountability\",\n+  },\n+  {\n+    name: \"StickK\",\n+    appId: \"1530265766\",\n+    category: \"Accountability - Stakes\",\n+    description: \"Commitment app with stakes and accountability partners\",\n+  },\n+  {\n+    name: \"Strong\",\n+    appId: \"1465572019\",\n+    category: \"Fitness - Engagement\",\n+    description: \"Detailed workout logging with engagement mechanics\",\n+  },\n+  {\n+    name: \"Apple Clock\",\n+    appId: \"494632996\",\n+    category: \"Alarm - Native\",\n+    description: \"Native iOS clock app for baseline comparison\",\n+  },\n+  {\n+    name: \"Timely\",\n+    appId: \"1312651975\",\n+    category: \"Alarm - Premium\",\n+    description: \"Premium alarm with gradual wake-up and smart features\",\n+  },\n+  {\n+    name: \"Twilight\",\n+    appId: \"1019845208\",\n+    category: \"Sleep - Blue Light\",\n+    description: \"Blue light filter and sleep health tracking\",\n+  },\n+  {\n+    name: \"Forest\",\n+    appId: \"1032603313\",\n+    category: \"Focus - Engagement\",\n+    description: \"Focus timer with tree-growing gamification for engagement\",\n+  },\n+];\n+\n+const report = {\n+  timestamp: new Date().toISOString(),\n+  app_type: \"alarm clock apps that require a task or engagement before dismissal\",\n+  target_audience: \"US iPhone users who oversleep, snooze repeatedly, or need high-friction wake-up accountability\",\n+  candidate_apps: candidateApps,\n+  research_method: \"Apify App Store scraper\",\n+  evidence_quality: \"pending\",\n+  errors: [],\n+  results: [],\n+};\n+\n+async function runResearch() {\n+  console.log(`Starting App Store research for ${candidateApps.length} candidate apps...`);\n+\n+  for (const app of candidateApps) {\n+    try {\n+      console.log(`Researching ${app.name} (${app.category})...`);\n+\n+      // Use Apify App Store scraper\n+      // Actor: apify/app-store-scraper\n+      const result = await runApifyActor(\"apify/app-store-scraper\", {\n+        appIds: [String(app.appId)],\n+        country: \"US\",\n+        language: \"en\",\n+      });\n+\n+      const appData = Array.isArray(result) ? result[0] : result;\n+\n+      if (appData) {\n+        report.results.push({\n+          app_name: app.name,\n+          app_id: app.appId,\n+          category: app.category,\n+          description: app.description,\n+          app_store_data: {\n+            title: appData.title || appData.name,\n+            icon: appData.icon,\n+            rating: appData.rating,\n+            ratingCount: appData.ratingCount,\n+            url: appData.url,\n+            price: appData.price,\n+            version: appData.version,\n+            updated: appData.updated,\n+            reviews: (appData.reviews || []).slice(0, 20), // First 20 reviews\n+          },\n+          evidence_quality: \"live\",\n+        });\n+\n+        console.log(`  ✓ Got data: ${appData.title}, rating ${appData.rating}, ${appData.ratingCount} reviews`);\n+      }\n+    } catch (error) {\n+      console.error(`  ✗ Error researching ${app.name}: ${error.message}`);\n+      report.errors.push({\n+        app: app.name,\n+        error: error.message,\n+      });\n+\n+      if (!allowFallback) {\n+        throw error;\n+      }\n+\n+      report.results.push({\n+        app_name: app.name,\n+        app_id: app.appId,\n+        category: app.category,\n+        description: app.description,\n+        evidence_quality: \"limited\",\n+        note: \"Apify scraper unavailable or timed out; fallback to manual research\",\n+      });\n+    }\n+\n+    // Rate limiting: 1 second between requests\n+    await new Promise((resolve) => setTimeout(resolve, 1000));\n+  }\n+\n+  report.evidence_quality = report.errors.length === 0 ? \"live\" : \"partial\";\n+\n+  const outPath = resolve(outDir, \"app-store-research-raw.json\");\n+  writeFileSync(outPath, JSON.stringify(report, null, 2) + \"\\n\");\n+\n+  console.log(\n+    `\\nResearch complete. Results: ${report.results.length} apps, ${report.errors.length} errors`\n+  );\n+  console.log(`Output: ${outPath}`);\n+\n+  return report;\n+}\n+\n+try {\n+  const result = await runResearch();\n+  console.log(\n+    JSON.stringify(\n+      {\n+        ok: true,\n+        results_count: result.results.length,\n+        evidence_quality: result.evidence_quality,\n+        errors: result.errors.length,\n+      },\n+      null,\n+      2\n+    )\n+  );\n+} catch (error) {\n+  console.error(\n+    JSON.stringify(\n+      {\n+        ok: false,\n+        error: error.message,\n+      },\n+      null,\n+      2\n+    )\n+  );\n+  process.exit(1);\n+}\n",
+        "summary": {
+          "files_changed": 1,
+          "additions": 277,
+          "deletions": 0
+        }
+      }
+    },
+    {
+      "seq": 0,
+      "checkpoint": {
+        "timestamp": "2026-05-14T07:44:11.392467Z",
+        "current_node": "research_join",
+        "completed_nodes": [
+          "start",
+          "bootstrap",
+          "prompt_quality_gate",
+          "research_fanout",
+          "research_join"
+        ],
+        "node_retries": {},
+        "context_values": {
           "failure_class": "",
           "graph.default_max_retries": "2",
           "internal.retry_count.research_fanout": 0,
           "parallel.branch_count": 4,
           "internal.fidelity": "compact",
           "graph.goal": "Build a differentiated iPhone app from a researched app opportunity using SwiftAIBoilerplatePro",
-          "current_node": "research_fanout",
+          "current_node": "research_join",
           "internal.node_visit_count": 1,
           "internal.retry_count.prompt_quality_gate": 0,
+          "thread.research_fanout.current_node": "research_join",
           "failure_signature": "",
           "graph.retry_target": "spec_consensus",
           "internal.retry_count.start": 0,
           "internal.work_dir": "/home/daytona/workspace",
           "internal.run_id": "01KRJP0G480E26DDSHGFZXT99F",
           "graph.rankdir": "LR",
+          "parallel.fan_in.best_head_sha": "13cfb7972664267d6474ae391788a94bbc2ec549",
           "outcome": "succeeded",
-          "internal.thread_id": "prompt_quality_gate",
+          "internal.thread_id": "research_fanout",
           "graph.outputs": "research_pack,spec,architecture,swift_app,ios_quality_report,appium_report,release_handoff",
           "thread.prompt_quality_gate.current_node": "research_fanout",
           "graph.fallback_retry_target": "architecture_consensus",
+          "internal.retry_count.research_join": 0,
           "graph.persona": "iphone-app-factory",
           "command.output": "blob://sha256/9b2a77fe59958e8595d282ea81daa0689ed1589522e56db099654d7b8832ec52",
           "thread.start.current_node": "bootstrap",
           "internal.retry_count.bootstrap": 0,
+          "parallel.fan_in.best_outcome": "succeeded",
           "thread.bootstrap.current_node": "prompt_quality_gate",
+          "parallel.fan_in.best_id": "app_store_research",
           "graph.inputs": "app_type,target_audience,app_name,bundle_id,app_dir,spec_kitty_feature,boilerplate_repo,max_competitors,use_mobbin,ios_validation_mode,allow_macos_deferred",
           "graph.secret_policy": "never print environment variables or credential values; credential checks must be presence-only true/false checks; do not run environment dump commands.",
           "graph.model_stylesheet": "\n            *                  { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: low; }\n            .research          { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: high; }\n            .design            { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: high; }\n            .spec              { provider: openrouter; model: google/gemini-3.1-pro-preview; reasoning_effort: high; }\n            .architecture      { provider: openrouter; model: qwen/qwen3.6-plus; reasoning_effort: high; }\n            .coding            { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            .review            { provider: openrouter; model: google/gemini-3.1-pro-preview; reasoning_effort: high; }\n            .verify            { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: medium; }\n            .security          { provider: openrouter; model: google/gemini-3.1-pro-preview; reasoning_effort: high; }\n            .simplify          { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            .macos             { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            #spec_codex        { provider: openrouter; model: google/gemini-3.1-pro-preview; reasoning_effort: high; }\n            #spec_claude       { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: high; }\n            #spec_kimi         { provider: openrouter; model: moonshotai/kimi-k2.6; reasoning_effort: high; }\n            #spec_deepseek     { provider: openrouter; model: deepseek/deepseek-v4-pro; reasoning_effort: high; }\n            #arch_codex        { provider: openrouter; model: qwen/qwen3.6-plus; reasoning_effort: high; }\n            #arch_claude       { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: high; }\n        ",
@@ -3493,13 +3609,24 @@
             },
             "notes": "Script completed: node scripts/iphone-app-factory/promptfoo-prompt-quality.mjs --config evals/iphone-app-factory/prompt-quality.yaml --registry evals/iphone-app-factory/prompt-registry.json --out .workflow/iphone-app-factory/evals/prompt-quality.json --allow-fallback true",
             "usage": null
+          },
+          "research_join": {
+            "status": "succeeded",
+            "context_updates": {
+              "parallel.fan_in.best_outcome": "succeeded",
+              "parallel.fan_in.best_head_sha": "13cfb7972664267d6474ae391788a94bbc2ec549",
+              "parallel.fan_in.best_id": "app_store_research"
+            },
+            "notes": "Selected best candidate: app_store_research",
+            "usage": null
           }
         },
-        "next_node_id": "research_join",
+        "next_node_id": "research_synthesis",
         "node_visits": {
           "start": 1,
           "bootstrap": 1,
           "research_fanout": 1,
+          "research_join": 1,
           "prompt_quality_gate": 1
         }
       },
@@ -3545,6 +3672,29 @@
       "model": {
         "provider": "openrouter",
         "model_id": "anthropic/claude-4.5-haiku-20251001"
+      },
+      "state": "running"
+    },
+    "research_join@1": {
+      "first_event_seq": 615,
+      "prompt": null,
+      "response": null,
+      "completion": null,
+      "provider_used": null,
+      "diff": null,
+      "script_invocation": null,
+      "script_timing": null,
+      "parallel_results": null,
+      "output": null,
+      "started_at": "2026-05-14T07:44:11.212067Z",
+      "handler": "parallel.fan_in",
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "total_tokens": 0,
+        "reasoning_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
       },
       "state": "running"
     },
@@ -3699,7 +3849,12 @@
       "first_event_seq": 44,
       "prompt": null,
       "response": null,
-      "completion": null,
+      "completion": {
+        "outcome": "succeeded",
+        "notes": "Parallel node dispatched 4 branches (4 succeeded, 0 failed)",
+        "failure_reason": null,
+        "timestamp": "2026-05-14T07:44:07.319498Z"
+      },
       "provider_used": {
         "mode": "agent",
         "provider": "openrouter",
@@ -3733,6 +3888,7 @@
       "output": null,
       "started_at": "2026-05-14T07:27:01.182331Z",
       "handler": "parallel",
+      "duration_ms": 1025818,
       "usage": {
         "input_tokens": 638762,
         "output_tokens": 6934,
@@ -3746,7 +3902,7 @@
         "provider": "openrouter",
         "model_id": "anthropic/claude-haiku-4-5"
       },
-      "state": "running"
+      "state": "succeeded"
     },
     "bootstrap@1": {
       "first_event_seq": 20,
