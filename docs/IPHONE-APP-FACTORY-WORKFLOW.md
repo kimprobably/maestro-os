@@ -66,6 +66,8 @@ Mobbin can be used when `use_mobbin=true` and `MOBBIN_EMAIL` / `MOBBIN_PASSWORD`
 
 Mobbin credentials must remain environment variables or an interactive browser session. Do not write them to prompts, reports, app code, or committed config.
 
+Research agents must not run environment dump commands such as `env`, `printenv`, `set`, `export`, or `declare -x`. Daytona bootstrap installs redacting wrappers for common env-dump binaries as a runtime backstop, but prompt compliance is still required.
+
 ## Prompt Tracking
 
 Workflow prompts live under `prompts/iphone-app-factory/` and are tracked by `evals/iphone-app-factory/prompt-registry.json`. The registry records required markers, dataset version, and rubric version.
