@@ -49,6 +49,22 @@ public struct WakeAlarm: Identifiable, Codable, Sendable, Equatable {
     }
 }
 
+public struct WakeAlarmDraft: Sendable, Equatable {
+    public var title: String
+    public var hour: Int
+    public var minute: Int
+    public var strictness: WakeStrictness
+    public var firstTaskTitle: String
+
+    public init(title: String, hour: Int, minute: Int, strictness: WakeStrictness, firstTaskTitle: String) {
+        self.title = title
+        self.hour = hour
+        self.minute = minute
+        self.strictness = strictness
+        self.firstTaskTitle = firstTaskTitle
+    }
+}
+
 public struct WakeMission: Identifiable, Codable, Sendable, Equatable {
     public let id: UUID
     public let modality: WakeMissionModality

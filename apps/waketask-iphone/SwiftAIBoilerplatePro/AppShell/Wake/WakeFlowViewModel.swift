@@ -48,44 +48,43 @@ public final class WakeFlowViewModel {
     }
 
     public func createAlarm(title: String, hour: Int, minute: Int, strictness: WakeStrictness, firstTaskTitle: String) async {
-        await upsertAlarm(
-            id: UUID(),
+        let draft = WakeAlarmDraft(
             title: title,
             hour: hour,
             minute: minute,
-            enabled: true,
             strictness: strictness,
-            firstTaskTitle: firstTaskTitle,
+            firstTaskTitle: firstTaskTitle
+        )
+        await createAlarm(draft)
+    }
+
+    public func createAlarm(_ draft: WakeAlarmDraft) async {
+        await upsertAlarm(
+            id: UUID(),
+            draft: draft,
+            enabled: true,
             createdAt: now()
         )
     }
 
-    public func updateAlarm(id: UUID, title: String, hour: Int, minute: Int, strictness: WakeStrictness, firstTaskTitle: String) async {
+    public func updateAlarm(id: UUID, draft: WakeAlarmDraft) async {
         guard let existing = alarms.first(where: { $0.id == id }) else { return }
         await upsertAlarm(
             id: id,
-            title: title,
-            hour: hour,
-            minute: minute,
+            draft: draft,
             enabled: existing.enabled,
-            strictness: strictness,
-            firstTaskTitle: firstTaskTitle,
             createdAt: existing.createdAt
         )
     }
 
     private func upsertAlarm(
         id: UUID,
-        title: String,
-        hour: Int,
-        minute: Int,
+        draft: WakeAlarmDraft,
         enabled: Bool,
-        strictness: WakeStrictness,
-        firstTaskTitle: String,
         createdAt: Date
     ) async {
         let window: TimeInterval
-        switch strictness {
+        switch draft.strictness {
         case .relaxed: window = 180
         case .balanced: window = 120
         case .strict: window = 60
@@ -93,13 +92,13 @@ public final class WakeFlowViewModel {
 
         let alarm = WakeAlarm(
             id: id,
-            title: title,
-            hour: hour,
-            minute: minute,
+            title: draft.title,
+            hour: draft.hour,
+            minute: draft.minute,
             enabled: enabled,
-            strictness: strictness,
+            strictness: draft.strictness,
             wakeCheckWindowSeconds: window,
-            firstTaskTitle: firstTaskTitle,
+            firstTaskTitle: draft.firstTaskTitle,
             createdAt: createdAt,
             updatedAt: now()
         )

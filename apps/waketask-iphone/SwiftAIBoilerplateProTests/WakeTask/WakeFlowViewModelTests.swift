@@ -130,11 +130,13 @@ final class WakeFlowViewModelTests: XCTestCase {
         await viewModel.load()
         await viewModel.updateAlarm(
             id: alarm.id,
-            title: "Weekday",
-            hour: 6,
-            minute: 45,
-            strictness: .strict,
-            firstTaskTitle: "Drink water"
+            draft: WakeAlarmDraft(
+                title: "Weekday",
+                hour: 6,
+                minute: 45,
+                strictness: .strict,
+                firstTaskTitle: "Drink water"
+            )
         )
 
         XCTAssertEqual(viewModel.alarms.first?.id, alarm.id)

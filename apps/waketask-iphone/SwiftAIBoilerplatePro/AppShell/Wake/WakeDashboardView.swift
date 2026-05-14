@@ -73,7 +73,9 @@ struct WakeDashboardView: View {
             )
         }
     }
+}
 
+private extension WakeDashboardView {
     private var consistencySection: some View {
         Section {
             HStack {
@@ -305,25 +307,17 @@ struct WakeDashboardView: View {
 
     private func saveAlarm() async {
         let components = Calendar.current.dateComponents([.hour, .minute], from: draftTime)
-        let title = draftTitle.trimmingCharacters(in: .whitespacesAndNewlines)
-        let firstTask = draftFirstTask.trimmingCharacters(in: .whitespacesAndNewlines)
+        let draft = WakeAlarmDraft(
+            title: draftTitle.trimmingCharacters(in: .whitespacesAndNewlines),
+            hour: components.hour ?? 7,
+            minute: components.minute ?? 0,
+            strictness: draftStrictness,
+            firstTaskTitle: draftFirstTask.trimmingCharacters(in: .whitespacesAndNewlines)
+        )
         if let draftAlarmID {
-            await viewModel.updateAlarm(
-                id: draftAlarmID,
-                title: title,
-                hour: components.hour ?? 7,
-                minute: components.minute ?? 0,
-                strictness: draftStrictness,
-                firstTaskTitle: firstTask
-            )
+            await viewModel.updateAlarm(id: draftAlarmID, draft: draft)
         } else {
-            await viewModel.createAlarm(
-                title: title,
-                hour: components.hour ?? 7,
-                minute: components.minute ?? 0,
-                strictness: draftStrictness,
-                firstTaskTitle: firstTask
-            )
+            await viewModel.createAlarm(draft)
         }
         resetDraft()
         showCreateAlarm = false
