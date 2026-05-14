@@ -1,24 +1,36 @@
+import SwiftUI
 import XCTest
 @testable import SwiftAIBoilerplatePro
 
 @MainActor
 final class AppShellSnapshotTests: XCTestCase {
-    
-    /// Placeholder for snapshot tests
-    /// 
-    /// To implement real snapshot testing:
-    /// 1. Add SnapshotTesting package: https://github.com/pointfreeco/swift-snapshot-testing
-    /// 2. Use assertSnapshot(matching: view, as: .image(layout: .device(config: .iPhone13)))
-    ///
-    /// For now, these are basic smoke tests to ensure views can be created.
-    
-    func testExample() {
-        // Basic test to ensure test target works
-        XCTAssertTrue(true)
-    }
-    
+
     func testHomeContentCanBeInitialized() {
         let view = HomeContent()
-        XCTAssertNotNil(view)
+        XCTAssertEqual(String(describing: type(of: view)), "HomeContent")
+    }
+
+    func testMainTabMetadataReflectsWakeTaskRunsSurface() {
+        XCTAssertEqual(MainTabView.Tab.home.title, "Home")
+        XCTAssertEqual(MainTabView.Tab.chat.title, "Runs")
+        XCTAssertEqual(MainTabView.Tab.chat.icon, "alarm.fill")
+        XCTAssertEqual(MainTabView.Tab.profile.title, "Profile")
+    }
+
+    func testMainTabViewCanBeInitializedWithWakeDependencies() {
+        let view = MainTabView(
+            selectedTab: .constant(.chat),
+            homeViewModel: HomeViewModel(
+                conversationRepository: PreviewMocks.MockConversationRepository()
+            ),
+            wakeFlowViewModel: PreviewComposition.wakeFlowVM(),
+            settingsViewModel: PreviewComposition.settingsVM(),
+            profileViewModel: ProfileViewModel(
+                authClient: PreviewMocks.MockAuthClient(),
+                paymentsClient: PreviewMocks.MockPaymentsClient()
+            )
+        )
+
+        XCTAssertEqual(String(describing: type(of: view)), "MainTabView")
     }
 }
