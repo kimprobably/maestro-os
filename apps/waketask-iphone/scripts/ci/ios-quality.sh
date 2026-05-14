@@ -34,17 +34,11 @@ require_required_secrets_if_enabled() {
   fi
 }
 
-run_optional_gate() {
-  local gate_name="$1"
-  local cmd="$2"
-  local status_var="$3"
-  if command -v "${cmd%% *}" >/dev/null 2>&1; then
-    echo "[ios-quality] ${gate_name}"
-    eval "$cmd"
-    printf -v "$status_var" "true"
-  else
-    echo "[ios-quality] ${gate_name} skipped (tool not installed)"
-    printf -v "$status_var" "false"
+require_tool() {
+  local tool="$1"
+  if ! command -v "$tool" >/dev/null 2>&1; then
+    echo "[ios-quality] Required tool unavailable: $tool"
+    exit 1
   fi
 }
 
@@ -84,6 +78,13 @@ run_secret_scan() {
   fi
 }
 
+require_tool xcodebuild
+require_tool rg
+require_tool strings
+require_tool swiftlint
+require_tool swiftformat
+require_tool qlty
+
 echo "[ios-quality] Resolve package dependencies"
 xcodebuild -resolvePackageDependencies -project "$PROJECT"
 
@@ -106,12 +107,15 @@ xcodebuild \
   CODE_SIGNING_ALLOWED=NO \
   test
 
-swiftlint_ran="false"
-swiftformat_ran="false"
-qlty_ran="false"
-run_optional_gate "SwiftLint" "swiftlint lint --strict" swiftlint_ran
-run_optional_gate "SwiftFormat" "swiftformat . --lint" swiftformat_ran
-run_optional_gate "Qlty" "qlty check" qlty_ran
+echo "[ios-quality] SwiftLint"
+swiftlint lint --strict
+
+echo "[ios-quality] SwiftFormat"
+swiftformat . --lint
+
+echo "[ios-quality] Qlty"
+qlty check --all
+
 require_required_secrets_if_enabled
 run_secret_scan
 run_app_store_string_audit
@@ -125,9 +129,9 @@ cat > "$REPORT_PATH" <<JSON
   "checks": {
     "xcodebuild_build": true,
     "xcodebuild_test": true,
-    "swiftlint": $swiftlint_ran,
-    "swiftformat": $swiftformat_ran,
-    "qlty": $qlty_ran,
+    "swiftlint": true,
+    "swiftformat": true,
+    "qlty": true,
     "secret_scan": true,
     "app_store_string_audit": true
   },
