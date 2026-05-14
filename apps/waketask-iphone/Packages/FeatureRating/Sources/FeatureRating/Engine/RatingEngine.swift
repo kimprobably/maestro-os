@@ -66,8 +66,9 @@ public final class RatingEngine: @unchecked Sendable {
         // Reset yearly counter if we crossed into a new year
         resetYearlyCounterIfNeeded(now: now)
 
+        let totalActionCount = storage.totalActionCount()
         AppLogger.debug(
-            "Rating: recorded '\(action.id)' (\(action.sentiment.rawValue), w=\(action.weight)). Score: \(String(format: "%.2f", newScore)), actions: \(storage.totalActionCount())",
+            "Rating: recorded '\(action.id)' (\(action.sentiment.rawValue), w=\(action.weight)). Score: \(String(format: "%.2f", newScore)), actions: \(totalActionCount)",
             category: AppLogger.ui
         )
 
@@ -120,7 +121,8 @@ public final class RatingEngine: @unchecked Sendable {
         // Reset score to avoid re-prompting quickly
         storage.setSentimentScore(0)
 
-        AppLogger.info("Rating: user accepted prompt (hasRated=true). Prompts this year: \(storage.promptsThisYear())", category: AppLogger.ui)
+        let promptsThisYear = storage.promptsThisYear()
+        AppLogger.info("Rating: user accepted prompt (hasRated=true). Prompts this year: \(promptsThisYear)", category: AppLogger.ui)
     }
 
     /// Mark that a prompt was shown and the user declined
