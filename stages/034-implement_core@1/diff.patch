@@ -1,0 +1,1011 @@
+diff --git a/apps/waketask-iphone/Packages/Core/Sources/Core/WakeTask/DefaultWakeMissionRotationEngine.swift b/apps/waketask-iphone/Packages/Core/Sources/Core/WakeTask/DefaultWakeMissionRotationEngine.swift
+new file mode 100644
+index 0000000..a958bee
+--- /dev/null
++++ b/apps/waketask-iphone/Packages/Core/Sources/Core/WakeTask/DefaultWakeMissionRotationEngine.swift
+@@ -0,0 +1,72 @@
++import Foundation
++
++public struct DefaultWakeMissionRotationEngine: WakeMissionRotationEngine {
++    private let randomIndex: @Sendable (Int) -> Int
++
++    public init(randomIndex: @escaping @Sendable (Int) -> Int = { upperBound in
++        guard upperBound > 0 else { return 0 }
++        return Int.random(in: 0..<upperBound)
++    }) {
++        self.randomIndex = randomIndex
++    }
++
++    public func missions(for alarm: WakeAlarm, previousRuns: [WakeRun], missionCount: Int) -> [WakeMission] {
++        let count = max(1, missionCount)
++        let recentModalities = recentWindowModalities(from: previousRuns, strictness: alarm.strictness)
++        var ordered = WakeMissionModality.allCases
++
++        if let firstIndex = ordered.firstIndex(where: { !recentModalities.contains($0) }) {
++            ordered.swapAt(0, firstIndex)
++        }
++
++        if ordered.count > 1 {
++            let shuffleIndex = min(randomIndex(ordered.count), ordered.count - 1)
++            ordered.swapAt(0, shuffleIndex)
++        }
++
++        var generated: [WakeMission] = []
++        for index in 0..<count {
++            let modality = ordered[index % ordered.count]
++            generated.append(
++                WakeMission(modality: modality, prompt: prompt(for: modality, strictness: alarm.strictness))
++            )
++        }
++
++        return generated
++    }
++
++    private func recentWindowModalities(from runs: [WakeRun], strictness: WakeStrictness) -> Set<WakeMissionModality> {
++        let window: Int
++        switch strictness {
++        case .relaxed: window = 1
++        case .balanced: window = 2
++        case .strict: window = 3
++        }
++
++        let recentRuns = runs.sorted { $0.scheduledAt > $1.scheduledAt }.prefix(window)
++        return Set(recentRuns.flatMap { $0.missions.map(\.modality) })
++    }
++
++    private func prompt(for modality: WakeMissionModality, strictness: WakeStrictness) -> String {
++        switch (modality, strictness) {
++        case (.cognitive, .relaxed):
++            return "Solve a quick pattern: 7 + 5 - 3"
++        case (.cognitive, .balanced):
++            return "Reverse these numbers out loud: 8, 3, 1"
++        case (.cognitive, .strict):
++            return "Count backward by 7 from 84"
++        case (.movement, .relaxed):
++            return "Take 8 steps away from your bed"
++        case (.movement, .balanced):
++            return "Do 12 marching steps with your phone"
++        case (.movement, .strict):
++            return "Complete 15 quick squats"
++        case (.scanPhoto, .relaxed):
++            return "Photograph the sink area"
++        case (.scanPhoto, .balanced):
++            return "Photograph your bathroom mirror"
++        case (.scanPhoto, .strict):
++            return "Photograph your kitchen counter"
++        }
++    }
++}
+diff --git a/apps/waketask-iphone/Packages/Core/Sources/Core/WakeTask/WakeContractEvaluator.swift b/apps/waketask-iphone/Packages/Core/Sources/Core/WakeTask/WakeContractEvaluator.swift
+new file mode 100644
+index 0000000..ef33e8f
+--- /dev/null
++++ b/apps/waketask-iphone/Packages/Core/Sources/Core/WakeTask/WakeContractEvaluator.swift
+@@ -0,0 +1,51 @@
++import Foundation
++
++public struct WakeContractEvaluator {
++    public init() {}
++
++    public func dismiss(_ run: WakeRun, at now: Date, wakeCheckWindow: TimeInterval) -> WakeRun {
++        var updated = run
++        updated.state = .dismissedAwaitingCheck
++        updated.wakeCheckDeadline = now.addingTimeInterval(wakeCheckWindow)
++        updated.events.append(WakeRunEvent(occurredAt: now, kind: .alarmDismissed))
++        return updated
++    }
++
++    public func completeWakeCheck(_ run: WakeRun, at now: Date) -> WakeRun {
++        var updated = run
++        updated.state = .verified
++        updated.wakeCheckCompletedAt = now
++        updated.events.append(WakeRunEvent(occurredAt: now, kind: .wakeCheckPassed))
++        return updated
++    }
++
++    public func evaluateEscalation(_ run: WakeRun, now: Date) -> WakeRun {
++        guard run.state == .dismissedAwaitingCheck,
++              let deadline = run.wakeCheckDeadline,
++              now > deadline,
++              run.wakeCheckCompletedAt == nil else {
++            return run
++        }
++
++        var updated = run
++        updated.state = .escalated
++        updated.escalationTriggeredAt = now
++        updated.events.append(
++            WakeRunEvent(occurredAt: now, kind: .escalationTriggered, reason: "Wake check missed")
++        )
++        return updated
++    }
++
++    public func completeFirstTask(_ run: WakeRun, at now: Date) -> WakeRun {
++        var updated = run
++        updated.firstTaskCompletedAt = now
++        updated.events.append(WakeRunEvent(occurredAt: now, kind: .firstTaskCompleted))
++
++        if updated.state == .verified {
++            updated.state = .completed
++            updated.events.append(WakeRunEvent(occurredAt: now, kind: .runCompleted))
++        }
++
++        return updated
++    }
++}
+diff --git a/apps/waketask-iphone/Packages/Core/Sources/Core/WakeTask/WakeTaskModels.swift b/apps/waketask-iphone/Packages/Core/Sources/Core/WakeTask/WakeTaskModels.swift
+new file mode 100644
+index 0000000..9a352ad
+--- /dev/null
++++ b/apps/waketask-iphone/Packages/Core/Sources/Core/WakeTask/WakeTaskModels.swift
+@@ -0,0 +1,143 @@
++import Foundation
++
++public enum WakeStrictness: String, Codable, Sendable, CaseIterable {
++    case relaxed
++    case balanced
++    case strict
++}
++
++public enum WakeMissionModality: String, Codable, Sendable, CaseIterable {
++    case cognitive
++    case movement
++    case scanPhoto
++}
++
++public struct WakeAlarm: Identifiable, Codable, Sendable, Equatable {
++    public let id: UUID
++    public var title: String
++    public var hour: Int
++    public var minute: Int
++    public var enabled: Bool
++    public var strictness: WakeStrictness
++    public var wakeCheckWindowSeconds: TimeInterval
++    public var firstTaskTitle: String
++    public var createdAt: Date
++    public var updatedAt: Date
++
++    public init(
++        id: UUID = UUID(),
++        title: String,
++        hour: Int,
++        minute: Int,
++        enabled: Bool = true,
++        strictness: WakeStrictness,
++        wakeCheckWindowSeconds: TimeInterval,
++        firstTaskTitle: String,
++        createdAt: Date = Date(),
++        updatedAt: Date = Date()
++    ) {
++        self.id = id
++        self.title = title
++        self.hour = hour
++        self.minute = minute
++        self.enabled = enabled
++        self.strictness = strictness
++        self.wakeCheckWindowSeconds = wakeCheckWindowSeconds
++        self.firstTaskTitle = firstTaskTitle
++        self.createdAt = createdAt
++        self.updatedAt = updatedAt
++    }
++}
++
++public struct WakeMission: Identifiable, Codable, Sendable, Equatable {
++    public let id: UUID
++    public let modality: WakeMissionModality
++    public let prompt: String
++
++    public init(id: UUID = UUID(), modality: WakeMissionModality, prompt: String) {
++        self.id = id
++        self.modality = modality
++        self.prompt = prompt
++    }
++}
++
++public enum WakeRunState: String, Codable, Sendable {
++    case triggered
++    case dismissedAwaitingCheck
++    case verified
++    case escalated
++    case completed
++}
++
++public struct WakeRunEvent: Identifiable, Codable, Sendable, Equatable {
++    public enum Kind: String, Codable, Sendable {
++        case scheduled
++        case alarmTriggered
++        case missionCompleted
++        case alarmDismissed
++        case wakeCheckPassed
++        case escalationTriggered
++        case firstTaskCompleted
++        case runCompleted
++    }
++
++    public let id: UUID
++    public let occurredAt: Date
++    public let kind: Kind
++    public let reason: String?
++
++    public init(id: UUID = UUID(), occurredAt: Date, kind: Kind, reason: String? = nil) {
++        self.id = id
++        self.occurredAt = occurredAt
++        self.kind = kind
++        self.reason = reason
++    }
++}
++
++public struct WakeRun: Identifiable, Codable, Sendable, Equatable {
++    public let id: UUID
++    public let alarmID: UUID
++    public let scheduledAt: Date
++    public var state: WakeRunState
++    public var wakeCheckDeadline: Date?
++    public var wakeCheckCompletedAt: Date?
++    public var escalationTriggeredAt: Date?
++    public var firstTaskCompletedAt: Date?
++    public var missions: [WakeMission]
++    public var completedMissionIDs: Set<UUID>
++    public var events: [WakeRunEvent]
++
++    public init(
++        id: UUID = UUID(),
++        alarmID: UUID,
++        scheduledAt: Date,
++        state: WakeRunState = .triggered,
++        wakeCheckDeadline: Date? = nil,
++        wakeCheckCompletedAt: Date? = nil,
++        escalationTriggeredAt: Date? = nil,
++        firstTaskCompletedAt: Date? = nil,
++        missions: [WakeMission],
++        completedMissionIDs: Set<UUID> = [],
++        events: [WakeRunEvent]
++    ) {
++        self.id = id
++        self.alarmID = alarmID
++        self.scheduledAt = scheduledAt
++        self.state = state
++        self.wakeCheckDeadline = wakeCheckDeadline
++        self.wakeCheckCompletedAt = wakeCheckCompletedAt
++        self.escalationTriggeredAt = escalationTriggeredAt
++        self.firstTaskCompletedAt = firstTaskCompletedAt
++        self.missions = missions
++        self.completedMissionIDs = completedMissionIDs
++        self.events = events
++    }
++
++    public var allMissionsCompleted: Bool {
++        !missions.isEmpty && missions.allSatisfy { completedMissionIDs.contains($0.id) }
++    }
++
++    public var isFirstTaskCompleted: Bool {
++        firstTaskCompletedAt != nil
++    }
++}
+diff --git a/apps/waketask-iphone/Packages/Core/Sources/Core/WakeTask/WakeTaskProtocols.swift b/apps/waketask-iphone/Packages/Core/Sources/Core/WakeTask/WakeTaskProtocols.swift
+new file mode 100644
+index 0000000..398f10b
+--- /dev/null
++++ b/apps/waketask-iphone/Packages/Core/Sources/Core/WakeTask/WakeTaskProtocols.swift
+@@ -0,0 +1,17 @@
++import Foundation
++
++public protocol WakeAlarmRepository: Sendable {
++    func listAlarms() async throws -> [WakeAlarm]
++    func upsertAlarm(_ alarm: WakeAlarm) async throws
++    func deleteAlarm(id: UUID) async throws
++}
++
++public protocol WakeRunRepository: Sendable {
++    func saveRun(_ run: WakeRun) async throws
++    func loadRun(id: UUID) async throws -> WakeRun?
++    func listRuns(alarmID: UUID?, limit: Int) async throws -> [WakeRun]
++}
++
++public protocol WakeMissionRotationEngine: Sendable {
++    func missions(for alarm: WakeAlarm, previousRuns: [WakeRun], missionCount: Int) -> [WakeMission]
++}
+diff --git a/apps/waketask-iphone/Packages/Core/Tests/CoreTests/WakeTask/MissionRotationEngineTests.swift b/apps/waketask-iphone/Packages/Core/Tests/CoreTests/WakeTask/MissionRotationEngineTests.swift
+new file mode 100644
+index 0000000..d59fc1d
+--- /dev/null
++++ b/apps/waketask-iphone/Packages/Core/Tests/CoreTests/WakeTask/MissionRotationEngineTests.swift
+@@ -0,0 +1,45 @@
++import XCTest
++@testable import Core
++
++final class MissionRotationEngineTests: XCTestCase {
++    func testStrictModeAvoidsRecentModalitiesWhenPossible() {
++        let alarm = WakeAlarm(
++            title: "Weekday",
++            hour: 7,
++            minute: 0,
++            strictness: .strict,
++            wakeCheckWindowSeconds: 60,
++            firstTaskTitle: "Drink water"
++        )
++
++        let recentRun = WakeRun(
++            alarmID: alarm.id,
++            scheduledAt: Date(),
++            missions: [WakeMission(modality: .movement, prompt: "x")],
++            events: []
++        )
++
++        let engine = DefaultWakeMissionRotationEngine(randomIndex: { _ in 0 })
++        let missions = engine.missions(for: alarm, previousRuns: [recentRun], missionCount: 1)
++
++        XCTAssertEqual(missions.count, 1)
++        XCTAssertNotEqual(missions[0].modality, .movement)
++    }
++
++    func testBalancedModeGeneratesRequestedMissionCount() {
++        let alarm = WakeAlarm(
++            title: "Weekday",
++            hour: 7,
++            minute: 0,
++            strictness: .balanced,
++            wakeCheckWindowSeconds: 120,
++            firstTaskTitle: "Open blinds"
++        )
++
++        let engine = DefaultWakeMissionRotationEngine(randomIndex: { _ in 0 })
++        let missions = engine.missions(for: alarm, previousRuns: [], missionCount: 3)
++
++        XCTAssertEqual(missions.count, 3)
++        XCTAssertFalse(missions.map(\.prompt).contains(where: { $0.isEmpty }))
++    }
++}
+diff --git a/apps/waketask-iphone/Packages/Core/Tests/CoreTests/WakeTask/WakeContractEvaluatorTests.swift b/apps/waketask-iphone/Packages/Core/Tests/CoreTests/WakeTask/WakeContractEvaluatorTests.swift
+new file mode 100644
+index 0000000..ccc890e
+--- /dev/null
++++ b/apps/waketask-iphone/Packages/Core/Tests/CoreTests/WakeTask/WakeContractEvaluatorTests.swift
+@@ -0,0 +1,42 @@
++import XCTest
++@testable import Core
++
++final class WakeContractEvaluatorTests: XCTestCase {
++    func testMissedWakeCheckEscalates() {
++        let evaluator = WakeContractEvaluator()
++        let now = Date()
++
++        var run = WakeRun(
++            alarmID: UUID(),
++            scheduledAt: now,
++            missions: [WakeMission(modality: .cognitive, prompt: "x")],
++            events: []
++        )
++
++        run = evaluator.dismiss(run, at: now, wakeCheckWindow: 60)
++        let escalated = evaluator.evaluateEscalation(run, now: now.addingTimeInterval(61))
++
++        XCTAssertEqual(escalated.state, .escalated)
++        XCTAssertNotNil(escalated.escalationTriggeredAt)
++        XCTAssertTrue(escalated.events.contains(where: { $0.kind == .escalationTriggered }))
++    }
++
++    func testVerifiedThenFirstTaskCompletesRun() {
++        let evaluator = WakeContractEvaluator()
++        let now = Date()
++
++        var run = WakeRun(
++            alarmID: UUID(),
++            scheduledAt: now,
++            missions: [WakeMission(modality: .movement, prompt: "x")],
++            events: []
++        )
++
++        run = evaluator.completeWakeCheck(run, at: now)
++        run = evaluator.completeFirstTask(run, at: now.addingTimeInterval(5))
++
++        XCTAssertEqual(run.state, .completed)
++        XCTAssertNotNil(run.firstTaskCompletedAt)
++        XCTAssertTrue(run.events.contains(where: { $0.kind == .runCompleted }))
++    }
++}
+diff --git a/apps/waketask-iphone/Packages/Storage/Sources/Storage/Repositories/WakeTask/LocalWakeTaskRepositories.swift b/apps/waketask-iphone/Packages/Storage/Sources/Storage/Repositories/WakeTask/LocalWakeTaskRepositories.swift
+new file mode 100644
+index 0000000..d406b1d
+--- /dev/null
++++ b/apps/waketask-iphone/Packages/Storage/Sources/Storage/Repositories/WakeTask/LocalWakeTaskRepositories.swift
+@@ -0,0 +1,87 @@
++import Foundation
++import Core
++
++public struct WakeTaskStoreLocation: Sendable {
++    public let fileURL: URL
++
++    public init(fileURL: URL) {
++        self.fileURL = fileURL
++    }
++
++    public static func `default`() -> WakeTaskStoreLocation {
++        let base = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first
++            ?? URL(fileURLWithPath: NSTemporaryDirectory())
++        return WakeTaskStoreLocation(fileURL: base.appendingPathComponent("waketask/wake-task-store.json"))
++    }
++}
++
++public final class LocalWakeAlarmRepository: WakeAlarmRepository, @unchecked Sendable {
++    private let store: WakeTaskLocalStore
++
++    public init(location: WakeTaskStoreLocation = .default()) {
++        self.store = WakeTaskLocalStore(fileURL: location.fileURL)
++    }
++
++    public func listAlarms() async throws -> [WakeAlarm] {
++        let snapshot = try await store.load()
++        return snapshot.alarms.sorted { lhs, rhs in
++            if lhs.hour == rhs.hour {
++                return lhs.minute < rhs.minute
++            }
++            return lhs.hour < rhs.hour
++        }
++    }
++
++    public func upsertAlarm(_ alarm: WakeAlarm) async throws {
++        var snapshot = try await store.load()
++        if let index = snapshot.alarms.firstIndex(where: { $0.id == alarm.id }) {
++            snapshot.alarms[index] = alarm
++        } else {
++            snapshot.alarms.append(alarm)
++        }
++        try await store.save(snapshot)
++    }
++
++    public func deleteAlarm(id: UUID) async throws {
++        var snapshot = try await store.load()
++        snapshot.alarms.removeAll { $0.id == id }
++        snapshot.runs.removeAll { $0.alarmID == id }
++        try await store.save(snapshot)
++    }
++}
++
++public final class LocalWakeRunRepository: WakeRunRepository, @unchecked Sendable {
++    private let store: WakeTaskLocalStore
++
++    public init(location: WakeTaskStoreLocation = .default()) {
++        self.store = WakeTaskLocalStore(fileURL: location.fileURL)
++    }
++
++    public func saveRun(_ run: WakeRun) async throws {
++        var snapshot = try await store.load()
++        if let index = snapshot.runs.firstIndex(where: { $0.id == run.id }) {
++            snapshot.runs[index] = run
++        } else {
++            snapshot.runs.append(run)
++        }
++        try await store.save(snapshot)
++    }
++
++    public func loadRun(id: UUID) async throws -> WakeRun? {
++        let snapshot = try await store.load()
++        return snapshot.runs.first(where: { $0.id == id })
++    }
++
++    public func listRuns(alarmID: UUID?, limit: Int) async throws -> [WakeRun] {
++        let snapshot = try await store.load()
++        let filtered = snapshot.runs.filter { run in
++            guard let alarmID else { return true }
++            return run.alarmID == alarmID
++        }
++
++        return filtered
++            .sorted(by: { $0.scheduledAt > $1.scheduledAt })
++            .prefix(max(1, limit))
++            .map { $0 }
++    }
++}
+diff --git a/apps/waketask-iphone/Packages/Storage/Sources/Storage/Repositories/WakeTask/WakeTaskLocalStore.swift b/apps/waketask-iphone/Packages/Storage/Sources/Storage/Repositories/WakeTask/WakeTaskLocalStore.swift
+new file mode 100644
+index 0000000..9a5ecb4
+--- /dev/null
++++ b/apps/waketask-iphone/Packages/Storage/Sources/Storage/Repositories/WakeTask/WakeTaskLocalStore.swift
+@@ -0,0 +1,39 @@
++import Foundation
++import Core
++
++struct WakeTaskStoreSnapshot: Codable, Sendable {
++    var alarms: [WakeAlarm]
++    var runs: [WakeRun]
++
++    static let empty = WakeTaskStoreSnapshot(alarms: [], runs: [])
++}
++
++actor WakeTaskLocalStore {
++    private let fileURL: URL
++    private let encoder: JSONEncoder
++    private let decoder: JSONDecoder
++
++    init(fileURL: URL) {
++        self.fileURL = fileURL
++        self.encoder = JSONEncoder()
++        self.decoder = JSONDecoder()
++        self.encoder.dateEncodingStrategy = .iso8601
++        self.decoder.dateDecodingStrategy = .iso8601
++    }
++
++    func load() throws -> WakeTaskStoreSnapshot {
++        guard FileManager.default.fileExists(atPath: fileURL.path) else {
++            return .empty
++        }
++
++        let data = try Data(contentsOf: fileURL)
++        return try decoder.decode(WakeTaskStoreSnapshot.self, from: data)
++    }
++
++    func save(_ snapshot: WakeTaskStoreSnapshot) throws {
++        let directory = fileURL.deletingLastPathComponent()
++        try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
++        let data = try encoder.encode(snapshot)
++        try data.write(to: fileURL, options: .atomic)
++    }
++}
+diff --git a/apps/waketask-iphone/Packages/Storage/Tests/StorageTests/WakeTask/LocalWakeTaskRepositoriesTests.swift b/apps/waketask-iphone/Packages/Storage/Tests/StorageTests/WakeTask/LocalWakeTaskRepositoriesTests.swift
+new file mode 100644
+index 0000000..68ed676
+--- /dev/null
++++ b/apps/waketask-iphone/Packages/Storage/Tests/StorageTests/WakeTask/LocalWakeTaskRepositoriesTests.swift
+@@ -0,0 +1,62 @@
++import XCTest
++@testable import Storage
++import Core
++
++final class LocalWakeTaskRepositoriesTests: XCTestCase {
++    private var tempURL: URL!
++
++    override func setUp() {
++        super.setUp()
++        tempURL = FileManager.default.temporaryDirectory
++            .appendingPathComponent(UUID().uuidString)
++            .appendingPathExtension("json")
++    }
++
++    override func tearDown() {
++        if let tempURL {
++            try? FileManager.default.removeItem(at: tempURL)
++        }
++        super.tearDown()
++    }
++
++    func testAlarmUpsertAndListPersistAcrossInstances() async throws {
++        let location = WakeTaskStoreLocation(fileURL: tempURL)
++        let repoA = LocalWakeAlarmRepository(location: location)
++        let repoB = LocalWakeAlarmRepository(location: location)
++
++        let alarm = WakeAlarm(
++            title: "Morning",
++            hour: 6,
++            minute: 45,
++            strictness: .balanced,
++            wakeCheckWindowSeconds: 120,
++            firstTaskTitle: "Hydrate"
++        )
++
++        try await repoA.upsertAlarm(alarm)
++        let alarms = try await repoB.listAlarms()
++
++        XCTAssertEqual(alarms.count, 1)
++        XCTAssertEqual(alarms[0].title, "Morning")
++    }
++
++    func testRunRepositoryStoresAndLoadsLedgerEvents() async throws {
++        let location = WakeTaskStoreLocation(fileURL: tempURL)
++        let runRepo = LocalWakeRunRepository(location: location)
++        let alarmID = UUID()
++
++        let run = WakeRun(
++            alarmID: alarmID,
++            scheduledAt: Date(),
++            missions: [WakeMission(modality: .scanPhoto, prompt: "Bathroom mirror")],
++            events: [WakeRunEvent(occurredAt: Date(), kind: .alarmTriggered)]
++        )
++
++        try await runRepo.saveRun(run)
++        let loaded = try await runRepo.loadRun(id: run.id)
++
++        XCTAssertNotNil(loaded)
++        XCTAssertEqual(loaded?.events.count, 1)
++        XCTAssertEqual(loaded?.events.first?.kind, .alarmTriggered)
++    }
++}
+diff --git a/apps/waketask-iphone/SwiftAIBoilerplatePro/AppShell/Wake/WakeFlowViewModel.swift b/apps/waketask-iphone/SwiftAIBoilerplatePro/AppShell/Wake/WakeFlowViewModel.swift
+new file mode 100644
+index 0000000..91a8b93
+--- /dev/null
++++ b/apps/waketask-iphone/SwiftAIBoilerplatePro/AppShell/Wake/WakeFlowViewModel.swift
+@@ -0,0 +1,172 @@
++import Foundation
++import Observation
++import Core
++
++@MainActor
++@Observable
++public final class WakeFlowViewModel {
++    public private(set) var alarms: [WakeAlarm] = []
++    public private(set) var activeRun: WakeRun?
++    public private(set) var weeklyConsistency: Double = 0
++    public private(set) var isLoading = false
++    public private(set) var errorMessage: String?
++
++    private let alarmRepository: any WakeAlarmRepository
++    private let runRepository: any WakeRunRepository
++    private let missionEngine: any WakeMissionRotationEngine
++    private let contractEvaluator: WakeContractEvaluator
++    private let now: @Sendable () -> Date
++
++    public init(
++        alarmRepository: any WakeAlarmRepository,
++        runRepository: any WakeRunRepository,
++        missionEngine: any WakeMissionRotationEngine,
++        contractEvaluator: WakeContractEvaluator = WakeContractEvaluator(),
++        now: @escaping @Sendable () -> Date = Date.init
++    ) {
++        self.alarmRepository = alarmRepository
++        self.runRepository = runRepository
++        self.missionEngine = missionEngine
++        self.contractEvaluator = contractEvaluator
++        self.now = now
++    }
++
++    public func load() async {
++        isLoading = true
++        errorMessage = nil
++        defer { isLoading = false }
++
++        do {
++            alarms = try await alarmRepository.listAlarms()
++            weeklyConsistency = try await computeWeeklyConsistency()
++        } catch {
++            errorMessage = "Failed to load wake data"
++            AppLogger.error("Wake load failed: \(AppLogger.redacted(error.localizedDescription))", category: AppLogger.feature)
++        }
++    }
++
++    public func createAlarm(title: String, hour: Int, minute: Int, strictness: WakeStrictness, firstTaskTitle: String) async {
++        let window: TimeInterval
++        switch strictness {
++        case .relaxed: window = 180
++        case .balanced: window = 120
++        case .strict: window = 60
++        }
++
++        let alarm = WakeAlarm(
++            title: title,
++            hour: hour,
++            minute: minute,
++            strictness: strictness,
++            wakeCheckWindowSeconds: window,
++            firstTaskTitle: firstTaskTitle,
++            createdAt: now(),
++            updatedAt: now()
++        )
++
++        do {
++            try await alarmRepository.upsertAlarm(alarm)
++            alarms = try await alarmRepository.listAlarms()
++        } catch {
++            errorMessage = "Failed to save alarm"
++        }
++    }
++
++    public func setAlarmEnabled(id: UUID, enabled: Bool) async {
++        guard var alarm = alarms.first(where: { $0.id == id }) else { return }
++        alarm.enabled = enabled
++        alarm.updatedAt = now()
++
++        do {
++            try await alarmRepository.upsertAlarm(alarm)
++            alarms = try await alarmRepository.listAlarms()
++        } catch {
++            errorMessage = "Failed to update alarm"
++        }
++    }
++
++    public func triggerAlarm(alarmID: UUID) async {
++        guard let alarm = alarms.first(where: { $0.id == alarmID }) else { return }
++
++        do {
++            let previousRuns = try await runRepository.listRuns(alarmID: alarmID, limit: 7)
++            let missions = missionEngine.missions(for: alarm, previousRuns: previousRuns, missionCount: 3)
++            let run = WakeRun(
++                alarmID: alarmID,
++                scheduledAt: now(),
++                missions: missions,
++                events: [
++                    WakeRunEvent(occurredAt: now(), kind: .scheduled),
++                    WakeRunEvent(occurredAt: now(), kind: .alarmTriggered)
++                ]
++            )
++            try await runRepository.saveRun(run)
++            activeRun = run
++        } catch {
++            errorMessage = "Failed to start alarm"
++        }
++    }
++
++    public func completeMission(missionID: UUID) async {
++        guard var run = activeRun else { return }
++        run.completedMissionIDs.insert(missionID)
++        run.events.append(WakeRunEvent(occurredAt: now(), kind: .missionCompleted))
++
++        do {
++            try await runRepository.saveRun(run)
++            activeRun = run
++        } catch {
++            errorMessage = "Failed to update mission"
++        }
++    }
++
++    public func dismissAlarm() async {
++        guard let run = activeRun,
++              let alarm = alarms.first(where: { $0.id == run.alarmID }) else { return }
++
++        let updated = contractEvaluator.dismiss(run, at: now(), wakeCheckWindow: alarm.wakeCheckWindowSeconds)
++        await persistActiveRun(updated)
++    }
++
++    public func completeWakeCheck() async {
++        guard let run = activeRun else { return }
++        let updated = contractEvaluator.completeWakeCheck(run, at: now())
++        await persistActiveRun(updated)
++    }
++
++    public func completeFirstTask() async {
++        guard let run = activeRun else { return }
++        let updated = contractEvaluator.completeFirstTask(run, at: now())
++        await persistActiveRun(updated)
++        do {
++            weeklyConsistency = try await computeWeeklyConsistency()
++        } catch {
++            errorMessage = "Failed to update consistency"
++        }
++    }
++
++    public func evaluateEscalationIfNeeded() async {
++        guard let run = activeRun else { return }
++        let updated = contractEvaluator.evaluateEscalation(run, now: now())
++        await persistActiveRun(updated)
++    }
++
++    private func persistActiveRun(_ run: WakeRun) async {
++        do {
++            try await runRepository.saveRun(run)
++            activeRun = run
++        } catch {
++            errorMessage = "Failed to update run"
++        }
++    }
++
++    private func computeWeeklyConsistency() async throws -> Double {
++        let runs = try await runRepository.listRuns(alarmID: nil, limit: 50)
++        let oneWeekAgo = now().addingTimeInterval(-7 * 24 * 60 * 60)
++        let weekly = runs.filter { $0.scheduledAt >= oneWeekAgo }
++        guard !weekly.isEmpty else { return 0 }
++
++        let completed = weekly.filter { $0.state == .completed }.count
++        return Double(completed) / Double(weekly.count)
++    }
++}
+diff --git a/apps/waketask-iphone/SwiftAIBoilerplatePro/Composition/CompositionRoot+Factories.swift b/apps/waketask-iphone/SwiftAIBoilerplatePro/Composition/CompositionRoot+Factories.swift
+index d473621..65b7d2e 100644
+--- a/apps/waketask-iphone/SwiftAIBoilerplatePro/Composition/CompositionRoot+Factories.swift
++++ b/apps/waketask-iphone/SwiftAIBoilerplatePro/Composition/CompositionRoot+Factories.swift
+@@ -78,6 +78,15 @@ extension CompositionRoot {
+         )
+     }
+ 
++    /// Create WakeFlowViewModel with injected dependencies.
++    public func makeWakeFlowViewModel() -> WakeFlowViewModel {
++        WakeFlowViewModel(
++            alarmRepository: wakeAlarmRepository,
++            runRepository: wakeRunRepository,
++            missionEngine: wakeMissionEngine
++        )
++    }
++
+     /// Create ProfileViewModel with injected dependencies.
+     public func makeProfileViewModel() -> ProfileViewModel {
+         ProfileViewModel(
+diff --git a/apps/waketask-iphone/SwiftAIBoilerplatePro/Composition/CompositionRoot.swift b/apps/waketask-iphone/SwiftAIBoilerplatePro/Composition/CompositionRoot.swift
+index d690b11..3b3d4c6 100644
+--- a/apps/waketask-iphone/SwiftAIBoilerplatePro/Composition/CompositionRoot.swift
++++ b/apps/waketask-iphone/SwiftAIBoilerplatePro/Composition/CompositionRoot.swift
+@@ -53,6 +53,9 @@ public final class CompositionRoot {
+     public let conversationRepository: any ConversationRepository
+     public let messageRepository: any MessageRepository
+     public let settingsRepository: any SettingsRepository
++    public let wakeAlarmRepository: any WakeAlarmRepository
++    public let wakeRunRepository: any WakeRunRepository
++    public let wakeMissionEngine: any WakeMissionRotationEngine
+ 
+     /// Profile photo storage client (optional — Supabase or mock)
+     public let profilePhotoStorageClient: (any ProfilePhotoStorageClient)?
+@@ -134,6 +137,10 @@ public final class CompositionRoot {
+         let localConversationRepo = ConversationRepositoryImpl(modelContext: mainContext)
+         let localMessageRepo = MessageRepositoryImpl(modelContext: mainContext)
+         self.settingsRepository = SettingsRepositoryImpl(modelContext: mainContext)
++        let wakeStoreLocation = WakeTaskStoreLocation.default()
++        self.wakeAlarmRepository = LocalWakeAlarmRepository(location: wakeStoreLocation)
++        self.wakeRunRepository = LocalWakeRunRepository(location: wakeStoreLocation)
++        self.wakeMissionEngine = DefaultWakeMissionRotationEngine()
+ 
+         // 5. Auth: real Supabase+Apple+Email or MockAuthClient in DEBUG
+         #if DEBUG
+diff --git a/apps/waketask-iphone/SwiftAIBoilerplateProTests/WakeTask/WakeFlowViewModelTests.swift b/apps/waketask-iphone/SwiftAIBoilerplateProTests/WakeTask/WakeFlowViewModelTests.swift
+new file mode 100644
+index 0000000..c0f91f7
+--- /dev/null
++++ b/apps/waketask-iphone/SwiftAIBoilerplateProTests/WakeTask/WakeFlowViewModelTests.swift
+@@ -0,0 +1,133 @@
++import XCTest
++@testable import SwiftAIBoilerplatePro
++import Core
++
++@MainActor
++final class WakeFlowViewModelTests: XCTestCase {
++    func testTriggerDismissEscalationFlow() async {
++        let alarmRepo = InMemoryWakeAlarmRepository()
++        let runRepo = InMemoryWakeRunRepository()
++        let now = TestClock(start: Date())
++
++        let alarm = WakeAlarm(
++            title: "Alarm",
++            hour: 7,
++            minute: 0,
++            strictness: .strict,
++            wakeCheckWindowSeconds: 60,
++            firstTaskTitle: "Hydrate"
++        )
++        await alarmRepo.seed(alarm)
++
++        let viewModel = WakeFlowViewModel(
++            alarmRepository: alarmRepo,
++            runRepository: runRepo,
++            missionEngine: DefaultWakeMissionRotationEngine(randomIndex: { _ in 0 }),
++            now: now.now
++        )
++
++        await viewModel.load()
++        await viewModel.triggerAlarm(alarmID: alarm.id)
++        await viewModel.dismissAlarm()
++
++        XCTAssertEqual(viewModel.activeRun?.state, .dismissedAwaitingCheck)
++
++        now.advance(seconds: 61)
++        await viewModel.evaluateEscalationIfNeeded()
++        XCTAssertEqual(viewModel.activeRun?.state, .escalated)
++    }
++
++    func testCompletionRequiresWakeCheckAndFirstTaskForConsistency() async {
++        let alarmRepo = InMemoryWakeAlarmRepository()
++        let runRepo = InMemoryWakeRunRepository()
++        let now = TestClock(start: Date())
++
++        let alarm = WakeAlarm(
++            title: "Alarm",
++            hour: 7,
++            minute: 0,
++            strictness: .balanced,
++            wakeCheckWindowSeconds: 120,
++            firstTaskTitle: "Open blinds"
++        )
++        await alarmRepo.seed(alarm)
++
++        let viewModel = WakeFlowViewModel(
++            alarmRepository: alarmRepo,
++            runRepository: runRepo,
++            missionEngine: DefaultWakeMissionRotationEngine(randomIndex: { _ in 0 }),
++            now: now.now
++        )
++
++        await viewModel.load()
++        await viewModel.triggerAlarm(alarmID: alarm.id)
++        await viewModel.completeWakeCheck()
++        XCTAssertEqual(viewModel.activeRun?.state, .verified)
++
++        await viewModel.completeFirstTask()
++        XCTAssertEqual(viewModel.activeRun?.state, .completed)
++        XCTAssertEqual(viewModel.weeklyConsistency, 1)
++    }
++}
++
++private actor InMemoryWakeAlarmRepository: WakeAlarmRepository {
++    private var alarms: [WakeAlarm] = []
++
++    func seed(_ alarm: WakeAlarm) {
++        alarms.append(alarm)
++    }
++
++    func listAlarms() async throws -> [WakeAlarm] {
++        alarms
++    }
++
++    func upsertAlarm(_ alarm: WakeAlarm) async throws {
++        if let idx = alarms.firstIndex(where: { $0.id == alarm.id }) {
++            alarms[idx] = alarm
++        } else {
++            alarms.append(alarm)
++        }
++    }
++
++    func deleteAlarm(id: UUID) async throws {
++        alarms.removeAll { $0.id == id }
++    }
++}
++
++private actor InMemoryWakeRunRepository: WakeRunRepository {
++    private var runs: [WakeRun] = []
++
++    func saveRun(_ run: WakeRun) async throws {
++        if let idx = runs.firstIndex(where: { $0.id == run.id }) {
++            runs[idx] = run
++        } else {
++            runs.append(run)
++        }
++    }
++
++    func loadRun(id: UUID) async throws -> WakeRun? {
++        runs.first(where: { $0.id == id })
++    }
++
++    func listRuns(alarmID: UUID?, limit: Int) async throws -> [WakeRun] {
++        runs
++            .filter { alarmID == nil || $0.alarmID == alarmID }
++            .sorted(by: { $0.scheduledAt > $1.scheduledAt })
++            .prefix(limit)
++            .map { $0 }
++    }
++}
++
++private final class TestClock: @unchecked Sendable {
++    private var value: Date
++
++    init(start: Date) {
++        self.value = start
++    }
++
++    func now() -> Date { value }
++
++    func advance(seconds: TimeInterval) {
++        value = value.addingTimeInterval(seconds)
++    }
++}
+diff --git a/apps/waketask-iphone/reports/ios/appium-exploratory-report.json b/apps/waketask-iphone/reports/ios/appium-exploratory-report.json
+index 26b69d9..ae0a7cb 100644
+--- a/apps/waketask-iphone/reports/ios/appium-exploratory-report.json
++++ b/apps/waketask-iphone/reports/ios/appium-exploratory-report.json
+@@ -5,6 +5,6 @@
+   "crashes": 0,
+   "failures": 1,
+   "failures_detail": [
+-    "Appium exploratory skeleton present, but real simulator run is not configured yet."
++    "Foundation Appium placeholder only. Hosted macOS simulator traversal has not run, and allow_macos_deferred=false forbids treating this as pass evidence."
+   ]
+ }
+diff --git a/apps/waketask-iphone/scripts/qa/appium-exploratory-tapper.sh b/apps/waketask-iphone/scripts/qa/appium-exploratory-tapper.sh
+index 99e4f23..c21bc62 100755
+--- a/apps/waketask-iphone/scripts/qa/appium-exploratory-tapper.sh
++++ b/apps/waketask-iphone/scripts/qa/appium-exploratory-tapper.sh
+@@ -2,11 +2,11 @@
+ set -euo pipefail
+ 
+ REPORT_PATH="reports/ios/appium-exploratory-report.json"
+-mkdir -p "."
++mkdir -p "$(dirname "$REPORT_PATH")"
+ 
+ # Foundation placeholder only. This must never write a passing report.
+ # The real hosted macOS Appium/XCUITest traversal must replace this skeleton in the iOS validation phase.
+-cat > "" <<JSON
++cat > "$REPORT_PATH" <<JSON
+ {
+   "ok": false,
+   "buttons_tapped": 0,
+@@ -19,5 +19,5 @@ cat > "" <<JSON
+ }
+ JSON
+ 
+-echo "Appium placeholder wrote non-passing report at "
++echo "Appium placeholder wrote non-passing report at $REPORT_PATH"
+ exit 0
