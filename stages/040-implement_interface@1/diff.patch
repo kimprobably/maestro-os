@@ -1,0 +1,612 @@
+diff --git a/apps/waketask-iphone/Packages/Localization/Sources/Localization/L10n+Wake.swift b/apps/waketask-iphone/Packages/Localization/Sources/Localization/L10n+Wake.swift
+new file mode 100644
+index 0000000..1a86640
+--- /dev/null
++++ b/apps/waketask-iphone/Packages/Localization/Sources/Localization/L10n+Wake.swift
+@@ -0,0 +1,68 @@
++import Foundation
++
++public extension L10n {
++    enum Wake {
++        public static var title: String { String(localized: "wake.title", bundle: bundle) }
++        public static var addAlarm: String { String(localized: "wake.addAlarm", bundle: bundle) }
++        public static var alarms: String { String(localized: "wake.alarms", bundle: bundle) }
++        public static var activeRun: String { String(localized: "wake.activeRun", bundle: bundle) }
++        public static var noAlarms: String { String(localized: "wake.noAlarms", bundle: bundle) }
++        public static var thisWeek: String { String(localized: "wake.thisWeek", bundle: bundle) }
++        public static var consistency: String { String(localized: "wake.consistency", bundle: bundle) }
++        public static var startRun: String { String(localized: "wake.startRun", bundle: bundle) }
++        public static var completeWakeCheck: String { String(localized: "wake.completeWakeCheck", bundle: bundle) }
++        public static var completeFirstTask: String { String(localized: "wake.completeFirstTask", bundle: bundle) }
++        public static var dismissAlarm: String { String(localized: "wake.dismissAlarm", bundle: bundle) }
++        public static var newAlarm: String { String(localized: "wake.newAlarm", bundle: bundle) }
++        public static var alarmName: String { String(localized: "wake.alarmName", bundle: bundle) }
++        public static var time: String { String(localized: "wake.time", bundle: bundle) }
++        public static var strictnessLabel: String { String(localized: "wake.strictnessLabel", bundle: bundle) }
++        public static var firstTask: String { String(localized: "wake.firstTask", bundle: bundle) }
++        public static var relaxed: String { String(localized: "wake.relaxed", bundle: bundle) }
++        public static var balanced: String { String(localized: "wake.balanced", bundle: bundle) }
++        public static var strict: String { String(localized: "wake.strict", bundle: bundle) }
++        public static var errorTitle: String { String(localized: "wake.errorTitle", bundle: bundle) }
++
++        public static func strictness(_ value: String) -> String {
++            String(format: String(localized: "wake.strictness %@", bundle: bundle), value)
++        }
++
++        public static func runState(_ value: String) -> String {
++            String(format: String(localized: "wake.runState %@", bundle: bundle), value)
++        }
++    }
++}
++
++public extension L10n.Wake {
++    enum A11y {
++        public static var addAlarmLabel: String { String(localized: "wake.a11y.addAlarmLabel", bundle: L10n.bundle) }
++        public static var addAlarmHint: String { String(localized: "wake.a11y.addAlarmHint", bundle: L10n.bundle) }
++        public static var startRunHint: String { String(localized: "wake.a11y.startRunHint", bundle: L10n.bundle) }
++        public static var completeWakeCheckLabel: String { String(localized: "wake.a11y.completeWakeCheckLabel", bundle: L10n.bundle) }
++        public static var completeWakeCheckHint: String { String(localized: "wake.a11y.completeWakeCheckHint", bundle: L10n.bundle) }
++        public static var completeFirstTaskLabel: String { String(localized: "wake.a11y.completeFirstTaskLabel", bundle: L10n.bundle) }
++        public static var completeFirstTaskHint: String { String(localized: "wake.a11y.completeFirstTaskHint", bundle: L10n.bundle) }
++        public static var dismissAlarmLabel: String { String(localized: "wake.a11y.dismissAlarmLabel", bundle: L10n.bundle) }
++        public static var dismissAlarmHint: String { String(localized: "wake.a11y.dismissAlarmHint", bundle: L10n.bundle) }
++        public static var alarmNameField: String { String(localized: "wake.a11y.alarmNameField", bundle: L10n.bundle) }
++        public static var alarmTimeField: String { String(localized: "wake.a11y.alarmTimeField", bundle: L10n.bundle) }
++        public static var strictnessPicker: String { String(localized: "wake.a11y.strictnessPicker", bundle: L10n.bundle) }
++        public static var firstTaskField: String { String(localized: "wake.a11y.firstTaskField", bundle: L10n.bundle) }
++
++        public static func weeklyConsistency(_ value: String) -> String {
++            String(format: String(localized: "wake.a11y.weeklyConsistency %@", bundle: L10n.bundle), value)
++        }
++
++        public static func startRun(_ title: String) -> String {
++            String(format: String(localized: "wake.a11y.startRun %@", bundle: L10n.bundle), title)
++        }
++
++        public static func enableAlarm(_ title: String) -> String {
++            String(format: String(localized: "wake.a11y.enableAlarm %@", bundle: L10n.bundle), title)
++        }
++
++        public static func completeMission(_ title: String) -> String {
++            String(format: String(localized: "wake.a11y.completeMission %@", bundle: L10n.bundle), title)
++        }
++    }
++}
+diff --git a/apps/waketask-iphone/Packages/Localization/Sources/Localization/Resources/en.lproj/Localizable.strings b/apps/waketask-iphone/Packages/Localization/Sources/Localization/Resources/en.lproj/Localizable.strings
+index 7c1674b..ad692b9 100644
+--- a/apps/waketask-iphone/Packages/Localization/Sources/Localization/Resources/en.lproj/Localizable.strings
++++ b/apps/waketask-iphone/Packages/Localization/Sources/Localization/Resources/en.lproj/Localizable.strings
+@@ -118,6 +118,47 @@
+ "error.loadFailed" = "Failed to load data";
+ "error.saveFailed" = "Failed to save changes";
+ 
++// MARK: - Wake
++"wake.title" = "Wake";
++"wake.addAlarm" = "Add Alarm";
++"wake.alarms" = "Alarms";
++"wake.activeRun" = "Active Run";
++"wake.noAlarms" = "No alarms yet. Add your first wake contract.";
++"wake.thisWeek" = "This Week";
++"wake.consistency" = "Consistency";
++"wake.startRun" = "Start Run";
++"wake.completeWakeCheck" = "Complete Wake Check";
++"wake.completeFirstTask" = "Complete First Task";
++"wake.dismissAlarm" = "Dismiss Alarm";
++"wake.newAlarm" = "New Alarm";
++"wake.alarmName" = "Alarm Name";
++"wake.time" = "Time";
++"wake.strictnessLabel" = "Strictness";
++"wake.firstTask" = "First Task";
++"wake.relaxed" = "Relaxed";
++"wake.balanced" = "Balanced";
++"wake.strict" = "Strict";
++"wake.errorTitle" = "Wake Error";
++"wake.strictness %@" = "Strictness: %@";
++"wake.runState %@" = "State: %@";
++"wake.a11y.addAlarmLabel" = "Add wake alarm";
++"wake.a11y.addAlarmHint" = "Double tap to create a new alarm contract";
++"wake.a11y.weeklyConsistency %@" = "Weekly consistency %@";
++"wake.a11y.startRun %@" = "Start run for %@";
++"wake.a11y.startRunHint" = "Double tap to trigger this alarm and begin missions";
++"wake.a11y.enableAlarm %@" = "Enable or disable alarm %@";
++"wake.a11y.completeMission %@" = "Mark mission complete: %@";
++"wake.a11y.completeWakeCheckLabel" = "Complete wake check";
++"wake.a11y.completeWakeCheckHint" = "Double tap when you are fully awake";
++"wake.a11y.completeFirstTaskLabel" = "Complete first task";
++"wake.a11y.completeFirstTaskHint" = "Double tap after finishing your first deliberate task";
++"wake.a11y.dismissAlarmLabel" = "Dismiss alarm";
++"wake.a11y.dismissAlarmHint" = "Double tap to dismiss and start the wake check timer";
++"wake.a11y.alarmNameField" = "Alarm name";
++"wake.a11y.alarmTimeField" = "Alarm time";
++"wake.a11y.strictnessPicker" = "Strictness level";
++"wake.a11y.firstTaskField" = "First task text";
++
+ // MARK: - Accessibility
+ "a11y.sendMessage" = "Send message";
+ "a11y.sendMessageHint" = "Double tap to send your message";
+diff --git a/apps/waketask-iphone/Packages/Localization/Sources/Localization/Resources/es.lproj/Localizable.strings b/apps/waketask-iphone/Packages/Localization/Sources/Localization/Resources/es.lproj/Localizable.strings
+index 58a3cae..da56d63 100644
+--- a/apps/waketask-iphone/Packages/Localization/Sources/Localization/Resources/es.lproj/Localizable.strings
++++ b/apps/waketask-iphone/Packages/Localization/Sources/Localization/Resources/es.lproj/Localizable.strings
+@@ -125,3 +125,44 @@
+ "a11y.signInAppleHint" = "Toca dos veces para iniciar sesión con tu Apple ID";
+ "a11y.profilePhoto" = "Foto de perfil";
+ "a11y.profilePhotoHint" = "Toca dos veces para cambiar tu foto de perfil";
++
++// MARK: - Wake
++"wake.title" = "Despertar";
++"wake.addAlarm" = "Agregar alarma";
++"wake.alarms" = "Alarmas";
++"wake.activeRun" = "Sesión activa";
++"wake.noAlarms" = "Aún no hay alarmas. Agrega tu primer contrato de despertar.";
++"wake.thisWeek" = "Esta semana";
++"wake.consistency" = "Consistencia";
++"wake.startRun" = "Iniciar sesión";
++"wake.completeWakeCheck" = "Completar verificación";
++"wake.completeFirstTask" = "Completar primera tarea";
++"wake.dismissAlarm" = "Descartar alarma";
++"wake.newAlarm" = "Nueva alarma";
++"wake.alarmName" = "Nombre de alarma";
++"wake.time" = "Hora";
++"wake.strictnessLabel" = "Rigor";
++"wake.firstTask" = "Primera tarea";
++"wake.relaxed" = "Flexible";
++"wake.balanced" = "Equilibrado";
++"wake.strict" = "Estricto";
++"wake.errorTitle" = "Error de despertar";
++"wake.strictness %@" = "Rigor: %@";
++"wake.runState %@" = "Estado: %@";
++"wake.a11y.addAlarmLabel" = "Agregar alarma de despertar";
++"wake.a11y.addAlarmHint" = "Toca dos veces para crear un nuevo contrato de alarma";
++"wake.a11y.weeklyConsistency %@" = "Consistencia semanal %@";
++"wake.a11y.startRun %@" = "Iniciar sesión para %@";
++"wake.a11y.startRunHint" = "Toca dos veces para activar esta alarma e iniciar misiones";
++"wake.a11y.enableAlarm %@" = "Activar o desactivar alarma %@";
++"wake.a11y.completeMission %@" = "Marcar misión como completada: %@";
++"wake.a11y.completeWakeCheckLabel" = "Completar verificación de despertar";
++"wake.a11y.completeWakeCheckHint" = "Toca dos veces cuando estés completamente despierto";
++"wake.a11y.completeFirstTaskLabel" = "Completar primera tarea";
++"wake.a11y.completeFirstTaskHint" = "Toca dos veces después de terminar tu primera tarea deliberada";
++"wake.a11y.dismissAlarmLabel" = "Descartar alarma";
++"wake.a11y.dismissAlarmHint" = "Toca dos veces para descartar e iniciar el temporizador de verificación";
++"wake.a11y.alarmNameField" = "Nombre de alarma";
++"wake.a11y.alarmTimeField" = "Hora de la alarma";
++"wake.a11y.strictnessPicker" = "Nivel de rigor";
++"wake.a11y.firstTaskField" = "Texto de primera tarea";
+diff --git a/apps/waketask-iphone/SwiftAIBoilerplatePro/AppShell/AppRootView.swift b/apps/waketask-iphone/SwiftAIBoilerplatePro/AppShell/AppRootView.swift
+index 1931bfe..869b7bd 100644
+--- a/apps/waketask-iphone/SwiftAIBoilerplatePro/AppShell/AppRootView.swift
++++ b/apps/waketask-iphone/SwiftAIBoilerplatePro/AppShell/AppRootView.swift
+@@ -45,7 +45,7 @@ struct AppRootView: View {
+                 MainTabView(
+                     selectedTab: $selectedTab,
+                     homeViewModel: environment.compositionRoot.makeHomeViewModel(),
+-                    chatHistoryViewModel: environment.compositionRoot.makeChatHistoryViewModel(),
++                    wakeFlowViewModel: environment.compositionRoot.makeWakeFlowViewModel(),
+                     settingsViewModel: environment.compositionRoot.makeSettingsViewModel(),
+                     profileViewModel: environment.compositionRoot.makeProfileViewModel()
+                 )
+diff --git a/apps/waketask-iphone/SwiftAIBoilerplatePro/AppShell/MainTabView.swift b/apps/waketask-iphone/SwiftAIBoilerplatePro/AppShell/MainTabView.swift
+index 1e2138c..9920d07 100644
+--- a/apps/waketask-iphone/SwiftAIBoilerplatePro/AppShell/MainTabView.swift
++++ b/apps/waketask-iphone/SwiftAIBoilerplatePro/AppShell/MainTabView.swift
+@@ -38,21 +38,21 @@ struct MainTabView: View {
+     }
+     
+     let homeViewModel: HomeViewModel
+-    let chatHistoryViewModel: ChatHistoryViewModel
++    let wakeFlowViewModel: WakeFlowViewModel
+     let settingsViewModel: SettingsViewModel
+     let profileViewModel: ProfileViewModel
+     
+     init(
+         selectedTab: Binding<Tab>,
+         homeViewModel: HomeViewModel,
+-        chatHistoryViewModel: ChatHistoryViewModel,
++        wakeFlowViewModel: WakeFlowViewModel,
+         settingsViewModel: SettingsViewModel,
+         profileViewModel: ProfileViewModel,
+         onTabChange: @escaping (Tab) -> Void = { _ in }
+     ) {
+         self._selectedTab = selectedTab
+         self.homeViewModel = homeViewModel
+-        self.chatHistoryViewModel = chatHistoryViewModel
++        self.wakeFlowViewModel = wakeFlowViewModel
+         self.settingsViewModel = settingsViewModel
+         self.profileViewModel = profileViewModel
+         self.onTabChange = onTabChange
+@@ -82,12 +82,14 @@ struct MainTabView: View {
+                     selectedTab = .chat
+                 }
+             )
++                .accessibilityIdentifier("homeTabRoot")
+                 .tabItem {
+                     Label(Tab.home.title, systemImage: Tab.home.icon)
+                 }
+                 .tag(Tab.home)
+             
+-            ChatHistoryView(viewModel: chatHistoryViewModel)
++            WakeDashboardView(viewModel: wakeFlowViewModel)
++                .accessibilityIdentifier("wakeTabRoot")
+                 .tabItem {
+                     Label(Tab.chat.title, systemImage: Tab.chat.icon)
+                 }
+@@ -103,6 +105,7 @@ struct MainTabView: View {
+                     showSettings = true
+                 }
+             )
++                .accessibilityIdentifier("profileTabRoot")
+                 .tabItem {
+                     Label(Tab.profile.title, systemImage: Tab.profile.icon)
+                 }
+@@ -142,7 +145,7 @@ struct MainTabView: View {
+         MainTabView(
+             selectedTab: $selectedTab,
+             homeViewModel: homeVM,
+-            chatHistoryViewModel: PreviewComposition.chatHistoryVM(),
++            wakeFlowViewModel: PreviewComposition.wakeFlowVM(),
+             settingsViewModel: PreviewComposition.settingsVM(),
+             profileViewModel: profileVM
+         )
+diff --git a/apps/waketask-iphone/SwiftAIBoilerplatePro/AppShell/Wake/WakeDashboardView.swift b/apps/waketask-iphone/SwiftAIBoilerplatePro/AppShell/Wake/WakeDashboardView.swift
+new file mode 100644
+index 0000000..bec6663
+--- /dev/null
++++ b/apps/waketask-iphone/SwiftAIBoilerplatePro/AppShell/Wake/WakeDashboardView.swift
+@@ -0,0 +1,271 @@
++import SwiftUI
++import Core
++import DesignSystem
++import Localization
++
++@MainActor
++struct WakeDashboardView: View {
++    @State private var viewModel: WakeFlowViewModel
++    @State private var showCreateAlarm = false
++
++    @State private var draftTitle = ""
++    @State private var draftFirstTask = ""
++    @State private var draftTime = Date()
++    @State private var draftStrictness: WakeStrictness = .balanced
++
++    init(viewModel: WakeFlowViewModel) {
++        self.viewModel = viewModel
++    }
++
++    var body: some View {
++        NavigationStack {
++            List {
++                consistencySection
++                alarmsSection
++                if let run = viewModel.activeRun {
++                    activeRunSection(run)
++                }
++            }
++            .listStyle(.insetGrouped)
++            .dynamicTypeSize(...DynamicTypeSize.accessibility3)
++            .navigationTitle(L10n.Wake.title)
++            .toolbar {
++                ToolbarItem(placement: .topBarTrailing) {
++                    Button {
++                        showCreateAlarm = true
++                    } label: {
++                        Label(L10n.Wake.addAlarm, systemImage: "plus")
++                    }
++                    .accessibilityLabel(L10n.Wake.A11y.addAlarmLabel)
++                    .accessibilityHint(L10n.Wake.A11y.addAlarmHint)
++                    .accessibilityIdentifier("wakeAddAlarmButton")
++                }
++            }
++            .task {
++                await viewModel.load()
++            }
++            .refreshable {
++                await viewModel.load()
++            }
++            .sheet(isPresented: $showCreateAlarm) {
++                createAlarmSheet
++            }
++            .alert(
++                L10n.Wake.errorTitle,
++                isPresented: Binding(
++                    get: { viewModel.errorMessage != nil },
++                    set: { _ in }
++                ),
++                actions: {
++                    Button(L10n.Common.ok) {}
++                },
++                message: {
++                    Text(viewModel.errorMessage ?? L10n.Error.generic)
++                }
++            )
++        }
++    }
++
++    private var consistencySection: some View {
++        Section {
++            HStack {
++                Text(L10n.Wake.consistency)
++                Spacer()
++                Text(consistencyPercent)
++                    .font(DSTypography.bodySemibold)
++                    .foregroundStyle(DSColors.primary)
++            }
++            .accessibilityElement(children: .combine)
++            .accessibilityLabel(L10n.Wake.A11y.weeklyConsistency(consistencyPercent))
++            .accessibilityIdentifier("wakeConsistencyRow")
++        } header: {
++            Text(L10n.Wake.thisWeek)
++        }
++    }
++
++    private var alarmsSection: some View {
++        Section {
++            if viewModel.alarms.isEmpty {
++                Text(L10n.Wake.noAlarms)
++                    .foregroundStyle(DSColors.textSecondary)
++                    .accessibilityIdentifier("wakeNoAlarmsText")
++            } else {
++                ForEach(viewModel.alarms) { alarm in
++                    VStack(alignment: .leading, spacing: DSSpacing.xs) {
++                        HStack {
++                            VStack(alignment: .leading, spacing: 4) {
++                                Text(alarm.title)
++                                    .font(DSTypography.bodySemibold)
++                                Text(timeString(for: alarm))
++                                    .font(DSTypography.caption)
++                                    .foregroundStyle(DSColors.textSecondary)
++                            }
++                            Spacer()
++                            Toggle("", isOn: Binding(
++                                get: { alarm.enabled },
++                                set: { isOn in
++                                    Task { await viewModel.setAlarmEnabled(id: alarm.id, enabled: isOn) }
++                                }
++                            ))
++                            .labelsHidden()
++                            .accessibilityLabel(L10n.Wake.A11y.enableAlarm(alarm.title))
++                            .accessibilityIdentifier("wakeAlarmToggle-\(alarm.id.uuidString)")
++                        }
++
++                        HStack {
++                            Text(L10n.Wake.strictness(alarm.strictness.rawValue.capitalized))
++                                .font(DSTypography.caption)
++                                .foregroundStyle(DSColors.textSecondary)
++                            Spacer()
++                            Button(L10n.Wake.startRun) {
++                                Task { await viewModel.triggerAlarm(alarmID: alarm.id) }
++                            }
++                            .buttonStyle(.borderedProminent)
++                            .accessibilityLabel(L10n.Wake.A11y.startRun(alarm.title))
++                            .accessibilityHint(L10n.Wake.A11y.startRunHint)
++                            .accessibilityIdentifier("wakeStartRunButton-\(alarm.id.uuidString)")
++                        }
++                    }
++                    .padding(.vertical, DSSpacing.xs)
++                    .accessibilityElement(children: .contain)
++                    .accessibilityIdentifier("wakeAlarmCell-\(alarm.id.uuidString)")
++                }
++            }
++        } header: {
++            Text(L10n.Wake.alarms)
++        }
++    }
++
++    private func activeRunSection(_ run: WakeRun) -> some View {
++        Section {
++            Text(L10n.Wake.runState(run.state.rawValue.capitalized))
++                .font(DSTypography.bodySemibold)
++                .accessibilityIdentifier("wakeRunStateText")
++
++            ForEach(run.missions) { mission in
++                Button {
++                    Task { await viewModel.completeMission(missionID: mission.id) }
++                } label: {
++                    HStack {
++                        Image(systemName: run.completedMissionIDs.contains(mission.id) ? "checkmark.circle.fill" : "circle")
++                        VStack(alignment: .leading, spacing: 2) {
++                            Text(mission.prompt)
++                            Text(mission.modality.rawValue.capitalized)
++                                .font(DSTypography.caption)
++                                .foregroundStyle(DSColors.textSecondary)
++                        }
++                        Spacer()
++                    }
++                }
++                .disabled(run.completedMissionIDs.contains(mission.id))
++                .accessibilityLabel(L10n.Wake.A11y.completeMission(mission.prompt))
++                .accessibilityIdentifier("wakeMissionButton-\(mission.id.uuidString)")
++            }
++
++            Button(L10n.Wake.completeWakeCheck) {
++                Task { await viewModel.completeWakeCheck() }
++            }
++            .buttonStyle(.bordered)
++            .accessibilityLabel(L10n.Wake.A11y.completeWakeCheckLabel)
++            .accessibilityHint(L10n.Wake.A11y.completeWakeCheckHint)
++            .accessibilityIdentifier("wakeCompleteWakeCheckButton")
++
++            Button(L10n.Wake.completeFirstTask) {
++                Task { await viewModel.completeFirstTask() }
++            }
++            .buttonStyle(.borderedProminent)
++            .accessibilityLabel(L10n.Wake.A11y.completeFirstTaskLabel)
++            .accessibilityHint(L10n.Wake.A11y.completeFirstTaskHint)
++            .accessibilityIdentifier("wakeCompleteFirstTaskButton")
++
++            Button(L10n.Wake.dismissAlarm) {
++                Task { await viewModel.dismissAlarm() }
++            }
++            .buttonStyle(.bordered)
++            .tint(DSColors.statusError)
++            .accessibilityLabel(L10n.Wake.A11y.dismissAlarmLabel)
++            .accessibilityHint(L10n.Wake.A11y.dismissAlarmHint)
++            .accessibilityIdentifier("wakeDismissAlarmButton")
++        } header: {
++            Text(L10n.Wake.activeRun)
++        }
++    }
++
++    private var createAlarmSheet: some View {
++        NavigationStack {
++            Form {
++                Section {
++                    TextField(L10n.Wake.alarmName, text: $draftTitle)
++                        .textInputAutocapitalization(.words)
++                        .accessibilityLabel(L10n.Wake.A11y.alarmNameField)
++                        .accessibilityIdentifier("wakeAlarmNameField")
++                    DatePicker(L10n.Wake.time, selection: $draftTime, displayedComponents: .hourAndMinute)
++                        .accessibilityLabel(L10n.Wake.A11y.alarmTimeField)
++                        .accessibilityIdentifier("wakeAlarmTimePicker")
++                    Picker(L10n.Wake.strictnessLabel, selection: $draftStrictness) {
++                        Text(L10n.Wake.relaxed).tag(WakeStrictness.relaxed)
++                        Text(L10n.Wake.balanced).tag(WakeStrictness.balanced)
++                        Text(L10n.Wake.strict).tag(WakeStrictness.strict)
++                    }
++                    .accessibilityLabel(L10n.Wake.A11y.strictnessPicker)
++                    .accessibilityIdentifier("wakeStrictnessPicker")
++                    TextField(L10n.Wake.firstTask, text: $draftFirstTask)
++                        .textInputAutocapitalization(.sentences)
++                        .accessibilityLabel(L10n.Wake.A11y.firstTaskField)
++                        .accessibilityIdentifier("wakeFirstTaskField")
++                }
++            }
++            .navigationTitle(L10n.Wake.newAlarm)
++            .toolbar {
++                ToolbarItem(placement: .cancellationAction) {
++                    Button(L10n.Common.cancel) {
++                        resetDraft()
++                        showCreateAlarm = false
++                    }
++                    .accessibilityIdentifier("wakeAlarmCancelButton")
++                }
++                ToolbarItem(placement: .confirmationAction) {
++                    Button(L10n.Common.save) {
++                        Task { await saveAlarm() }
++                    }
++                    .disabled(draftTitle.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || draftFirstTask.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
++                    .accessibilityIdentifier("wakeAlarmSaveButton")
++                }
++            }
++        }
++    }
++
++    private var consistencyPercent: String {
++        "\(Int((viewModel.weeklyConsistency * 100).rounded()))%"
++    }
++
++    private func timeString(for alarm: WakeAlarm) -> String {
++        let components = DateComponents(hour: alarm.hour, minute: alarm.minute)
++        let calendar = Calendar.current
++        guard let date = calendar.date(from: components) else {
++            return String(format: "%02d:%02d", alarm.hour, alarm.minute)
++        }
++
++        return date.formatted(date: .omitted, time: .shortened)
++    }
++
++    private func saveAlarm() async {
++        let components = Calendar.current.dateComponents([.hour, .minute], from: draftTime)
++        await viewModel.createAlarm(
++            title: draftTitle.trimmingCharacters(in: .whitespacesAndNewlines),
++            hour: components.hour ?? 7,
++            minute: components.minute ?? 0,
++            strictness: draftStrictness,
++            firstTaskTitle: draftFirstTask.trimmingCharacters(in: .whitespacesAndNewlines)
++        )
++        resetDraft()
++        showCreateAlarm = false
++    }
++
++    private func resetDraft() {
++        draftTitle = ""
++        draftFirstTask = ""
++        draftTime = Date()
++        draftStrictness = .balanced
++    }
++}
+diff --git a/apps/waketask-iphone/SwiftAIBoilerplatePro/Previews/PreviewComposition.swift b/apps/waketask-iphone/SwiftAIBoilerplatePro/Previews/PreviewComposition.swift
+index 3621741..9ff2acc 100644
+--- a/apps/waketask-iphone/SwiftAIBoilerplatePro/Previews/PreviewComposition.swift
++++ b/apps/waketask-iphone/SwiftAIBoilerplatePro/Previews/PreviewComposition.swift
+@@ -5,6 +5,7 @@ import FeatureChat
+ import FeatureSettings
+ import Auth
+ import Storage
++import Core
+ 
+ /// Composition helpers for SwiftUI previews
+ @MainActor
+@@ -45,6 +46,14 @@ enum PreviewComposition {
+         )
+     }
+ 
++    static func wakeFlowVM() -> WakeFlowViewModel {
++        WakeFlowViewModel(
++            alarmRepository: PreviewMocks.MockWakeAlarmRepository(),
++            runRepository: PreviewMocks.MockWakeRunRepository(),
++            missionEngine: PreviewMocks.MockWakeMissionEngine()
++        )
++    }
++
+     /// Create mock AuthClient for previews
+     static func mockAuthClient() -> AuthClient {
+         PreviewMocks.MockAuthClient()
+diff --git a/apps/waketask-iphone/SwiftAIBoilerplatePro/Previews/PreviewMocks.swift b/apps/waketask-iphone/SwiftAIBoilerplatePro/Previews/PreviewMocks.swift
+index 61e7e47..0c6d9da 100644
+--- a/apps/waketask-iphone/SwiftAIBoilerplatePro/Previews/PreviewMocks.swift
++++ b/apps/waketask-iphone/SwiftAIBoilerplatePro/Previews/PreviewMocks.swift
+@@ -4,6 +4,7 @@ import Storage
+ import Auth
+ import Payments
+ import FeatureChat
++import Core
+ 
+ /// Minimal mocks for SwiftUI previews
+ /// These conform to public protocols and return static/empty data
+@@ -66,6 +67,40 @@ enum PreviewMocks {
+             ]
+         }
+     }
++
++    final class MockWakeAlarmRepository: WakeAlarmRepository, @unchecked Sendable {
++        func listAlarms() async throws -> [WakeAlarm] {
++            [
++                WakeAlarm(
++                    title: "Workday Start",
++                    hour: 7,
++                    minute: 0,
++                    enabled: true,
++                    strictness: .balanced,
++                    wakeCheckWindowSeconds: 120,
++                    firstTaskTitle: "Review top 3 priorities"
++                )
++            ]
++        }
++
++        func upsertAlarm(_ alarm: WakeAlarm) async throws {}
++    }
++
++    final class MockWakeRunRepository: WakeRunRepository, @unchecked Sendable {
++        func saveRun(_ run: WakeRun) async throws {}
++        func loadRun(id: UUID) async throws -> WakeRun? { nil }
++        func listRuns(alarmID: UUID?, limit: Int) async throws -> [WakeRun] { [] }
++    }
++
++    struct MockWakeMissionEngine: WakeMissionRotationEngine, Sendable {
++        func missions(for alarm: WakeAlarm, previousRuns: [WakeRun], missionCount: Int) -> [WakeMission] {
++            [
++                WakeMission(modality: .cognitive, prompt: "Say tomorrow's first meeting out loud"),
++                WakeMission(modality: .movement, prompt: "Do 20 seconds of shoulder mobility"),
++                WakeMission(modality: .scanPhoto, prompt: "Scan your bathroom sink area")
++            ]
++        }
++    }
+     
+     // MARK: - Auth Mock
+     
+@@ -230,4 +265,3 @@ enum PreviewMocks {
+     }
+ }
+ #endif
+-
