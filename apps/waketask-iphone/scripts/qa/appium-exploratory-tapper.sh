@@ -2,11 +2,11 @@
 set -euo pipefail
 
 REPORT_PATH="reports/ios/appium-exploratory-report.json"
-mkdir -p "$(dirname "$REPORT_PATH")"
+mkdir -p "."
 
-# Skeleton only: replace with real Appium driver setup and traversal in implementation phase.
-if [ "${APPIUM_ENABLED:-0}" != "1" ]; then
-  cat > "$REPORT_PATH" <<'JSON'
+# Foundation placeholder only. This must never write a passing report.
+# The real hosted macOS Appium/XCUITest traversal must replace this skeleton in the iOS validation phase.
+cat > "" <<JSON
 {
   "ok": false,
   "buttons_tapped": 0,
@@ -14,23 +14,10 @@ if [ "${APPIUM_ENABLED:-0}" != "1" ]; then
   "crashes": 0,
   "failures": 1,
   "failures_detail": [
-    "Appium exploratory skeleton present, but real simulator run is not configured yet."
+    "Foundation Appium placeholder only. Hosted macOS simulator traversal has not run, and allow_macos_deferred=false forbids treating this as pass evidence."
   ]
 }
 JSON
-  echo "Appium skeleton wrote placeholder report at $REPORT_PATH"
-  exit 0
-fi
 
-cat > "$REPORT_PATH" <<'JSON'
-{
-  "ok": true,
-  "buttons_tapped": 1,
-  "screens_visited": ["SkeletonSmokeScreen"],
-  "crashes": 0,
-  "failures": 0,
-  "failures_detail": []
-}
-JSON
-
-echo "Appium skeleton run complete: $REPORT_PATH"
+echo "Appium placeholder wrote non-passing report at "
+exit 0
