@@ -1,0 +1,6 @@
+{
+  "outcome": "succeeded",
+  "notes": "Script completed: node -e \"const fs=require('fs'); const report=JSON.parse(fs.readFileSync('.workflow/fabro/daytona-environment-smoke.json','utf8')); const lines=['# Daytona Environment Smoke','', 'ok=' + report.ok, '', '## Tools', ...report.checks.map((check)=>'- ' + check.cmd + ' status=' + check.status + (check.stdout ? ' output=' + check.stdout.split('\\n')[0] : '')), '', '## Env', ...Object.entries(report.env).map(([key,value])=>'- ' + key + '=' + value)]; fs.writeFileSync('.workflow/fabro/daytona-environment-smoke.md', lines.join('\\n')+'\\n'); console.log(lines.join('\\n')); if(!report.ok) process.exit(1);\"",
+  "failure_reason": null,
+  "timestamp": "2026-05-14T00:45:55.494104Z"
+}
