@@ -78,6 +78,15 @@ extension CompositionRoot {
         )
     }
 
+    /// Create WakeFlowViewModel with injected dependencies.
+    public func makeWakeFlowViewModel() -> WakeFlowViewModel {
+        WakeFlowViewModel(
+            alarmRepository: wakeAlarmRepository,
+            runRepository: wakeRunRepository,
+            missionEngine: wakeMissionEngine
+        )
+    }
+
     /// Create ProfileViewModel with injected dependencies.
     public func makeProfileViewModel() -> ProfileViewModel {
         ProfileViewModel(

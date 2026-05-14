@@ -53,6 +53,9 @@ public final class CompositionRoot {
     public let conversationRepository: any ConversationRepository
     public let messageRepository: any MessageRepository
     public let settingsRepository: any SettingsRepository
+    public let wakeAlarmRepository: any WakeAlarmRepository
+    public let wakeRunRepository: any WakeRunRepository
+    public let wakeMissionEngine: any WakeMissionRotationEngine
 
     /// Profile photo storage client (optional — Supabase or mock)
     public let profilePhotoStorageClient: (any ProfilePhotoStorageClient)?
@@ -134,6 +137,10 @@ public final class CompositionRoot {
         let localConversationRepo = ConversationRepositoryImpl(modelContext: mainContext)
         let localMessageRepo = MessageRepositoryImpl(modelContext: mainContext)
         self.settingsRepository = SettingsRepositoryImpl(modelContext: mainContext)
+        let wakeStoreLocation = WakeTaskStoreLocation.default()
+        self.wakeAlarmRepository = LocalWakeAlarmRepository(location: wakeStoreLocation)
+        self.wakeRunRepository = LocalWakeRunRepository(location: wakeStoreLocation)
+        self.wakeMissionEngine = DefaultWakeMissionRotationEngine()
 
         // 5. Auth: real Supabase+Apple+Email or MockAuthClient in DEBUG
         #if DEBUG

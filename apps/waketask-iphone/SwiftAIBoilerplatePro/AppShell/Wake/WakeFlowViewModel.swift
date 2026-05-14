@@ -1,0 +1,172 @@
+import Foundation
+import Observation
+import Core
+
+@MainActor
+@Observable
+public final class WakeFlowViewModel {
+    public private(set) var alarms: [WakeAlarm] = []
+    public private(set) var activeRun: WakeRun?
+    public private(set) var weeklyConsistency: Double = 0
+    public private(set) var isLoading = false
+    public private(set) var errorMessage: String?
+
+    private let alarmRepository: any WakeAlarmRepository
+    private let runRepository: any WakeRunRepository
+    private let missionEngine: any WakeMissionRotationEngine
+    private let contractEvaluator: WakeContractEvaluator
+    private let now: @Sendable () -> Date
+
+    public init(
+        alarmRepository: any WakeAlarmRepository,
+        runRepository: any WakeRunRepository,
+        missionEngine: any WakeMissionRotationEngine,
+        contractEvaluator: WakeContractEvaluator = WakeContractEvaluator(),
+        now: @escaping @Sendable () -> Date = Date.init
+    ) {
+        self.alarmRepository = alarmRepository
+        self.runRepository = runRepository
+        self.missionEngine = missionEngine
+        self.contractEvaluator = contractEvaluator
+        self.now = now
+    }
+
+    public func load() async {
+        isLoading = true
+        errorMessage = nil
+        defer { isLoading = false }
+
+        do {
+            alarms = try await alarmRepository.listAlarms()
+            weeklyConsistency = try await computeWeeklyConsistency()
+        } catch {
+            errorMessage = "Failed to load wake data"
+            AppLogger.error("Wake load failed: \(AppLogger.redacted(error.localizedDescription))", category: AppLogger.feature)
+        }
+    }
+
+    public func createAlarm(title: String, hour: Int, minute: Int, strictness: WakeStrictness, firstTaskTitle: String) async {
+        let window: TimeInterval
+        switch strictness {
+        case .relaxed: window = 180
+        case .balanced: window = 120
+        case .strict: window = 60
+        }
+
+        let alarm = WakeAlarm(
+            title: title,
+            hour: hour,
+            minute: minute,
+            strictness: strictness,
+            wakeCheckWindowSeconds: window,
+            firstTaskTitle: firstTaskTitle,
+            createdAt: now(),
+            updatedAt: now()
+        )
+
+        do {
+            try await alarmRepository.upsertAlarm(alarm)
+            alarms = try await alarmRepository.listAlarms()
+        } catch {
+            errorMessage = "Failed to save alarm"
+        }
+    }
+
+    public func setAlarmEnabled(id: UUID, enabled: Bool) async {
+        guard var alarm = alarms.first(where: { $0.id == id }) else { return }
+        alarm.enabled = enabled
+        alarm.updatedAt = now()
+
+        do {
+            try await alarmRepository.upsertAlarm(alarm)
+            alarms = try await alarmRepository.listAlarms()
+        } catch {
+            errorMessage = "Failed to update alarm"
+        }
+    }
+
+    public func triggerAlarm(alarmID: UUID) async {
+        guard let alarm = alarms.first(where: { $0.id == alarmID }) else { return }
+
+        do {
+            let previousRuns = try await runRepository.listRuns(alarmID: alarmID, limit: 7)
+            let missions = missionEngine.missions(for: alarm, previousRuns: previousRuns, missionCount: 3)
+            let run = WakeRun(
+                alarmID: alarmID,
+                scheduledAt: now(),
+                missions: missions,
+                events: [
+                    WakeRunEvent(occurredAt: now(), kind: .scheduled),
+                    WakeRunEvent(occurredAt: now(), kind: .alarmTriggered)
+                ]
+            )
+            try await runRepository.saveRun(run)
+            activeRun = run
+        } catch {
+            errorMessage = "Failed to start alarm"
+        }
+    }
+
+    public func completeMission(missionID: UUID) async {
+        guard var run = activeRun else { return }
+        run.completedMissionIDs.insert(missionID)
+        run.events.append(WakeRunEvent(occurredAt: now(), kind: .missionCompleted))
+
+        do {
+            try await runRepository.saveRun(run)
+            activeRun = run
+        } catch {
+            errorMessage = "Failed to update mission"
+        }
+    }
+
+    public func dismissAlarm() async {
+        guard let run = activeRun,
+              let alarm = alarms.first(where: { $0.id == run.alarmID }) else { return }
+
+        let updated = contractEvaluator.dismiss(run, at: now(), wakeCheckWindow: alarm.wakeCheckWindowSeconds)
+        await persistActiveRun(updated)
+    }
+
+    public func completeWakeCheck() async {
+        guard let run = activeRun else { return }
+        let updated = contractEvaluator.completeWakeCheck(run, at: now())
+        await persistActiveRun(updated)
+    }
+
+    public func completeFirstTask() async {
+        guard let run = activeRun else { return }
+        let updated = contractEvaluator.completeFirstTask(run, at: now())
+        await persistActiveRun(updated)
+        do {
+            weeklyConsistency = try await computeWeeklyConsistency()
+        } catch {
+            errorMessage = "Failed to update consistency"
+        }
+    }
+
+    public func evaluateEscalationIfNeeded() async {
+        guard let run = activeRun else { return }
+        let updated = contractEvaluator.evaluateEscalation(run, now: now())
+        await persistActiveRun(updated)
+    }
+
+    private func persistActiveRun(_ run: WakeRun) async {
+        do {
+            try await runRepository.saveRun(run)
+            activeRun = run
+        } catch {
+            errorMessage = "Failed to update run"
+        }
+    }
+
+    private func computeWeeklyConsistency() async throws -> Double {
+        let runs = try await runRepository.listRuns(alarmID: nil, limit: 50)
+        let oneWeekAgo = now().addingTimeInterval(-7 * 24 * 60 * 60)
+        let weekly = runs.filter { $0.scheduledAt >= oneWeekAgo }
+        guard !weekly.isEmpty else { return 0 }
+
+        let completed = weekly.filter { $0.state == .completed }.count
+        return Double(completed) / Double(weekly.count)
+    }
+}
