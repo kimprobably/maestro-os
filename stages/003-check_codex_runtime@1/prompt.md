@@ -1,0 +1,35 @@
+Goal: Verify Claude Code and Codex CLI auth work inside a fresh Daytona sandbox
+
+## Completed stages
+- **check_claude_runtime**: succeeded
+  - Script: `mkdir -p .workflow/fabro; node -e "const fs=require('fs'); const {spawnSync}=require('child_process'); const clean=(value)=>String(value||'').replace(/sk-[A-Za-z0-9_-]+/g,'[redacted]').trim().slice(0,800); const usable=(key)=>{const value=process.env[key]||''; const unresolved=value.charCodeAt(0)===123 && value.charCodeAt(1)===123; return Boolean(value && !unresolved);}; const run=(cmd,args,timeout=120000)=>{const r=spawnSync(cmd,args,{encoding:'utf8',timeout,env:{...process.env,CI:'1'}}); return {cmd:[cmd,...args].join(' '), status:r.status, signal:r.signal||null, stdout:clean(r.stdout), stderr:clean(r.stderr)};}; const env={CLAUDE_CODE_OAUTH_TOKEN:usable('CLAUDE_CODE_OAUTH_TOKEN')}; const checks=[run('claude',['--version'],45000), run('claude',['-p','Reply with exactly OK.'],120000)]; const missing=Object.entries(env).filter(([,ok])=>!ok).map(([key])=>key); const failed=checks.filter((check)=>check.status!==0); const report={ok:missing.length===0 && failed.length===0, env, missing, checks, failed}; fs.writeFileSync('.workflow/fabro/daytona-cli-auth-runtime-smoke.json', JSON.stringify(report,null,2)+'\n'); console.log(JSON.stringify(report,null,2)); if(!report.ok) process.exit(1);"`
+  - Output:
+    ```
+    {
+      "ok": true,
+      "env": {
+        "CLAUDE_CODE_OAUTH_TOKEN": true
+      },
+      "missing": [],
+      "checks": [
+        {
+          "cmd": "claude --version",
+          "status": 0,
+          "signal": null,
+          "stdout": "2.1.140 (Claude Code)",
+          "stderr": ""
+        },
+        {
+          "cmd": "claude -p Reply with exactly OK.",
+          "status": 0,
+          "signal": null,
+          "stdout": "OK.",
+          "stderr": ""
+        }
+      ],
+      "failed": []
+    }
+    ```
+
+
+Reply with exactly OK.
