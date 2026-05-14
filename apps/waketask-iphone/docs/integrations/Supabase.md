@@ -210,7 +210,7 @@ PROXY_PATH = /ai
 # (Dashboard → SQL Editor → Quick Start → Get JWT)
 
 curl -X POST https://YOUR_PROJECT_REF.supabase.co/functions/v1/ai \
-  -H "Authorization: Bearer YOUR_JWT_TOKEN" \
+  -H "$(printf 'Authorization: Bearer %s' "$JWT_FOR_LOCAL_TEST")" \
   -H "Content-Type: application/json" \
   -d '{
     "model": "openai/gpt-4o-mini",
@@ -401,4 +401,3 @@ Edit in `supabase/functions/ai/index.ts` or pass from app.
 ---
 
 **Questions?** Check logs first, then create an issue.
-

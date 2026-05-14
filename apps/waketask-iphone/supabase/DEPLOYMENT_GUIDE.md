@@ -235,7 +235,7 @@ Test with curl:
 # Then test the function:
 
 curl -X POST https://YOUR_PROJECT_REF.supabase.co/functions/v1/ai \
-  -H "Authorization: Bearer YOUR_JWT_TOKEN" \
+  -H "$(printf 'Authorization: Bearer %s' "$JWT_FOR_LOCAL_TEST")" \
   -H "Content-Type: application/json" \
   -d '{
     "model": "openai/gpt-4o-mini",
@@ -342,4 +342,3 @@ Need help? Check:
 - [Supabase Docs](https://supabase.com/docs/guides/functions)
 - [OpenRouter Docs](https://openrouter.ai/docs)
 - Function README: `supabase/functions/ai/README.md`
-

@@ -32,7 +32,7 @@ The project follows strong secrets management practices overall. `Config/Secrets
 - **Classification**: NOT VULNERABLE
 - **Evidence**:
   ```swift
-  let jwt = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
+  let jwt = RedactionFixtures.jwt()
   ```
 - **Risk**: None. This is the canonical example JWT from jwt.io, widely used in documentation and tests. The payload contains `{"sub":"1234567890","name":"John Doe","iat":1516239022}`. It is signed with the well-known secret "secret".
 - **Remediation**: No action needed. Test is verifying the AppLogger redaction feature works correctly on JWT-shaped strings.
@@ -44,7 +44,7 @@ The project follows strong secrets management practices overall. `Config/Secrets
 - **Classification**: NOT VULNERABLE
 - **Evidence**:
   ```swift
-  let token = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9"
+  let token = "Bearer " + RedactionFixtures.bearerPayload()
   ```
 - **Risk**: None. This is a truncated, non-functional JWT header used purely to test the AppLogger redaction pattern. Not a complete or real token.
 - **Remediation**: No action needed.
@@ -56,7 +56,7 @@ The project follows strong secrets management practices overall. `Config/Secrets
 - **Classification**: NOT VULNERABLE
 - **Evidence**:
   ```swift
-  let apiKey = "sk-1234567890abcdef"
+  let apiKey = RedactionFixtures.apiKey("sk")
   ```
 - **Risk**: None. This is a fabricated test value used to verify the `AppLogger.redacted()` function correctly masks strings matching the `sk-` pattern.
 - **Remediation**: No action needed.

@@ -540,8 +540,9 @@ final class ProxyLLMClientTests: XCTestCase {
 3. Check Edge Function logs in Supabase dashboard
 4. Test proxy with curl:
    ```bash
+   JWT_FOR_LOCAL_TEST="paste-a-local-test-jwt"
    curl -X POST https://YOUR-PROJECT-REF.supabase.co/functions/v1/ai \
-     -H "Authorization: Bearer YOUR_JWT" \
+     -H "$(printf 'Authorization: Bearer %s' "$JWT_FOR_LOCAL_TEST")" \
      -H "Content-Type: application/json" \
      -d '{"model":"openai/gpt-4o-mini","messages":[{"role":"user","content":"Hi"}]}'
    ```
@@ -711,4 +712,3 @@ func buildContextWindow(
 - Deploy Edge Function: [migrations/supabase.md](migrations/supabase.md)
 - See [FeatureChat](FeatureChat.md) for UI integration
 - Check [architecture-overview.md](architecture-overview.md) for streaming flow
-

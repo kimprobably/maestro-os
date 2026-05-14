@@ -66,7 +66,7 @@ Test with curl:
 
 ```bash
 curl -X POST https://your-project-ref.supabase.co/functions/v1/ai \
-  -H "Authorization: Bearer YOUR_SUPABASE_JWT_TOKEN" \
+  -H "$(printf 'Authorization: Bearer %s' "$JWT_FOR_LOCAL_TEST")" \
   -H "Content-Type: application/json" \
   -d '{
     "model": "openai/gpt-4o-mini",
@@ -139,4 +139,3 @@ View logs in Supabase Dashboard:
 **Streaming not working**
 - Ensure your client supports SSE (Server-Sent Events)
 - Check CORS settings if calling from browser
-
