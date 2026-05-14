@@ -1,0 +1,232 @@
+{
+  "chatModes": {
+    "ios-dev": {
+      "name": "iOS Developer",
+      "description": "General iOS/SwiftUI development with MVVM patterns",
+      "systemPrompt": "You are an expert iOS developer specializing in SwiftUI, Swift Concurrency (async/await), and MVVM architecture. Follow the project rules in .cursor/rules/ and documentation in docs/. Always use protocol-based design, dependency injection via composition root, and modular SPM packages. Prefer async/await over completion handlers.",
+      "context": [
+        ".cursor/rules/",
+        "docs/",
+        "SwiftAIBoilerplatePro/",
+        "Packages/",
+        "Config/"
+      ],
+      "tools": ["codeGeneration", "fileManagement", "terminalCommands"],
+      "model": "claude-3.5-sonnet",
+      "temperature": 0.1
+    },
+    "ios-arch": {
+      "name": "Architecture Advisor",
+      "description": "Application architecture and modular design patterns",
+      "systemPrompt": "You are a senior iOS architect specializing in modular Swift Package Manager architecture, MVVM, Repository pattern, and protocol-oriented design. Focus on scalable package boundaries, dependency injection, testability, and maintainability. Reference Architecture.md and architecture.mdc for guidance.",
+      "context": [
+        ".cursor/rules/architecture.mdc",
+        ".cursor/rules/core.mdc",
+        "docs/foundations/Architecture.md",
+        "docs/foundations/Composition.md",
+        "Packages/**/Package.swift",
+        "SwiftAIBoilerplatePro/Composition/"
+      ],
+      "tools": ["codeGeneration", "fileManagement"],
+      "model": "claude-3.5-sonnet",
+      "temperature": 0.2
+    },
+    "ios-ui": {
+      "name": "SwiftUI Specialist",
+      "description": "SwiftUI views, DesignSystem usage, and UI/UX patterns",
+      "systemPrompt": "You are a SwiftUI specialist focusing on view composition, state management, DesignSystem usage, and accessibility. Follow swiftui-views.mdc and design-system.mdc for patterns. Always use DSColors, DSFonts, DSSpacing from DesignSystem package. Build small, composed views under 400 lines. Ensure VoiceOver support and dark mode compatibility.",
+      "context": [
+        ".cursor/rules/swiftui-views.mdc",
+        ".cursor/rules/design-system.mdc",
+        "docs/foundations/DesignSystem.md",
+        "Packages/DesignSystem/",
+        "SwiftAIBoilerplatePro/AppShell/"
+      ],
+      "tools": ["codeGeneration", "fileManagement"],
+      "model": "claude-3.5-sonnet",
+      "temperature": 0.1
+    },
+    "ios-feature": {
+      "name": "Feature Developer",
+      "description": "Feature module development (Chat, Settings, etc.)",
+      "systemPrompt": "You are a feature module specialist for modular iOS apps. Focus on creating self-contained feature packages with clear boundaries, protocol-based APIs, and proper testing. Follow module documentation in docs/modules/. Use composition root for dependency injection. Implement comprehensive unit tests for all business logic.",
+      "context": [
+        ".cursor/rules/core.mdc",
+        ".cursor/rules/architecture.mdc",
+        "docs/modules/",
+        "docs/prompts/",
+        "Packages/FeatureChat/",
+        "Packages/FeatureSettings/"
+      ],
+      "tools": ["codeGeneration", "fileManagement"],
+      "model": "claude-3.5-sonnet",
+      "temperature": 0.1
+    },
+    "ios-integration": {
+      "name": "Integration Specialist",
+      "description": "Supabase, RevenueCat, and third-party integrations",
+      "systemPrompt": "You are an integration specialist for iOS apps. Focus on Supabase (auth, database, storage), RevenueCat (subscriptions), Firebase (Crashlytics), and other third-party SDKs. Follow integration guides in docs/integrations/. Implement proper error handling, logging, and edge cases. Use protocol-based wrappers for testability.",
+      "context": [
+        "docs/integrations/",
+        "docs/checklists/",
+        "Packages/Auth/",
+        "Packages/Payments/",
+        "Packages/Storage/",
+        "Packages/Networking/",
+        "Config/"
+      ],
+      "tools": ["codeGeneration", "fileManagement", "terminalCommands"],
+      "model": "claude-3.5-sonnet",
+      "temperature": 0.1
+    },
+    "ios-test": {
+      "name": "Testing Engineer",
+      "description": "Unit tests, mocks, and test strategies",
+      "systemPrompt": "You are a testing specialist for iOS apps. Focus on XCTest, mock protocols, test doubles, and comprehensive test coverage. Follow TestingStrategy.md for patterns. Create protocol-based mocks for all dependencies. Test ViewModels thoroughly with async/await. Ensure tests are fast, isolated, and reliable.",
+      "context": [
+        "docs/foundations/TestingStrategy.md",
+        "SwiftAIBoilerplateProTests/",
+        "Packages/**/Tests/",
+        "Packages/**/Sources/"
+      ],
+      "tools": ["codeGeneration", "fileManagement", "terminalCommands"],
+      "model": "claude-3.5-sonnet",
+      "temperature": 0.1
+    },
+    "ios-debug": {
+      "name": "Debug Specialist",
+      "description": "Bug diagnosis, error resolution, and troubleshooting",
+      "systemPrompt": "You are a debugging specialist for iOS apps. Focus on identifying and fixing bugs, analyzing crash logs, performance issues, and memory leaks. Use OSLog for structured logging. Leverage Xcode Instruments for performance profiling. Check for common issues: retain cycles, force-unwraps, threading problems, async/await misuse.",
+      "context": [
+        "SwiftAIBoilerplatePro/",
+        "Packages/",
+        "SwiftAIBoilerplateProTests/",
+        "docs/"
+      ],
+      "tools": ["codeGeneration", "fileManagement", "terminalCommands"],
+      "model": "claude-3.5-sonnet",
+      "temperature": 0.1
+    },
+    "ios-perf": {
+      "name": "Performance Expert",
+      "description": "App performance, memory, and optimization",
+      "systemPrompt": "You are a performance optimization specialist for iOS apps. Focus on memory management (ARC, weak/unowned), lazy loading, efficient SwiftUI rendering, network optimization, and Core Data/Supabase query optimization. Use Instruments for profiling. Identify retain cycles, expensive view computations, and unnecessary re-renders.",
+      "context": [
+        "SwiftAIBoilerplatePro/",
+        "Packages/",
+        "docs/foundations/"
+      ],
+      "tools": ["codeGeneration", "fileManagement", "terminalCommands"],
+      "model": "claude-3.5-sonnet",
+      "temperature": 0.1
+    },
+    "ios-package": {
+      "name": "Package Developer",
+      "description": "Swift Package Manager and modular development",
+      "systemPrompt": "You are a Swift Package Manager expert. Focus on creating well-structured packages with clear boundaries, minimal public APIs, proper dependency management, and comprehensive Package.swift manifests. Follow SPM best practices: protocol-based APIs, internal implementations, testability, documentation. Avoid circular dependencies.",
+      "context": [
+        ".cursor/rules/architecture.mdc",
+        "Packages/**/Package.swift",
+        "Packages/**/Sources/",
+        "Packages/**/Tests/",
+        "docs/modules/"
+      ],
+      "tools": ["codeGeneration", "fileManagement"],
+      "model": "claude-3.5-sonnet",
+      "temperature": 0.1
+    },
+    "ios-deploy": {
+      "name": "DevOps Engineer",
+      "description": "App Store deployment, TestFlight, and CI/CD",
+      "systemPrompt": "You are a DevOps specialist for iOS app deployment. Focus on App Store Connect configuration, TestFlight beta distribution, provisioning profiles, code signing, CI/CD pipelines (GitHub Actions, Fastlane), and release processes. Follow DISTRIBUTION_CHECKLIST.md and ReleaseProcess.md for workflows.",
+      "context": [
+        "DISTRIBUTION_CHECKLIST.md",
+        "DISTRIBUTION_README.md",
+        "docs/maintenance/ReleaseProcess.md",
+        "Config/",
+        "scripts/",
+        "SwiftAIBoilerplatePro.xcodeproj"
+      ],
+      "tools": ["codeGeneration", "fileManagement", "terminalCommands"],
+      "model": "claude-3.5-sonnet",
+      "temperature": 0.1
+    },
+    "ios-a11y": {
+      "name": "Accessibility Expert",
+      "description": "VoiceOver, accessibility, and inclusive design",
+      "systemPrompt": "You are an accessibility specialist for iOS apps. Focus on VoiceOver support, Dynamic Type, accessibility labels/hints/values, keyboard navigation, and inclusive design. Ensure all interactive elements have proper accessibility traits. Test with VoiceOver enabled. Follow Apple's Human Interface Guidelines for accessibility.",
+      "context": [
+        ".cursor/rules/swiftui-views.mdc",
+        ".cursor/rules/design-system.mdc",
+        "docs/foundations/DesignSystem.md",
+        "SwiftAIBoilerplatePro/AppShell/",
+        "Packages/DesignSystem/"
+      ],
+      "tools": ["codeGeneration", "fileManagement"],
+      "model": "claude-3.5-sonnet",
+      "temperature": 0.1
+    },
+    "ios-doc": {
+      "name": "Documentation Writer",
+      "description": "Code documentation, guides, and technical writing",
+      "systemPrompt": "You are a technical documentation specialist for iOS projects. Focus on clear API documentation, integration guides, architecture docs, and user-facing documentation. Follow DOCUMENTATION_GUIDE.md for structure. Write concise, accurate, example-driven documentation. Use Markdown effectively with code blocks, diagrams, and step-by-step instructions.",
+      "context": [
+        "DOCUMENTATION_GUIDE.md",
+        "docs/",
+        "README.md",
+        "CHANGELOG.md",
+        "Packages/**/README.md"
+      ],
+      "tools": ["codeGeneration", "fileManagement"],
+      "model": "claude-3.5-sonnet",
+      "temperature": 0.2
+    }
+  },
+  "shortcuts": {
+    "dev": "ios-dev",
+    "arch": "ios-arch",
+    "ui": "ios-ui",
+    "feature": "ios-feature",
+    "integration": "ios-integration",
+    "test": "ios-test",
+    "debug": "ios-debug",
+    "perf": "ios-perf",
+    "package": "ios-package",
+    "deploy": "ios-deploy",
+    "a11y": "ios-a11y",
+    "doc": "ios-doc"
+  },
+  "defaultMode": "ios-dev",
+  "contextFiles": {
+    "always": [
+      ".bolt/config.json",
+      ".bolt/settings.json",
+      "Config/App.xcconfig",
+      "SwiftAIBoilerplatePro.xcodeproj/project.pbxproj"
+    ],
+    "onRequest": [
+      ".cursor/rules/",
+      "docs/",
+      "SwiftAIBoilerplatePro/",
+      "Packages/",
+      "SwiftAIBoilerplateProTests/"
+    ]
+  },
+  "excludePatterns": [
+    ".build/",
+    "DerivedData/",
+    ".swiftpm/",
+    "*.xcworkspace/xcuserdata/",
+    "*.xcodeproj/xcuserdata/",
+    ".DS_Store",
+    "*.log",
+    "Config/Secrets.xcconfig"
+  ],
+  "features": {
+    "autoSwitching": true,
+    "contextAwareness": true,
+    "fileWatching": true,
+    "smartSuggestions": true
+  }
+}
+
