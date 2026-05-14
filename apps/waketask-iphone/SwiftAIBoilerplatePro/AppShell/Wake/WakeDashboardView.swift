@@ -80,7 +80,8 @@ struct WakeDashboardView: View {
                 Text(L10n.Wake.consistency)
                 Spacer()
                 Text(consistencyPercent)
-                    .font(DSTypography.bodySemibold)
+                    .font(DSTypography.body)
+                    .fontWeight(.semibold)
                     .foregroundStyle(DSColors.primary)
             }
             .accessibilityElement(children: .combine)
@@ -103,7 +104,8 @@ struct WakeDashboardView: View {
                         HStack {
                             VStack(alignment: .leading, spacing: 4) {
                                 Text(alarm.title)
-                                    .font(DSTypography.bodySemibold)
+                                    .font(DSTypography.body)
+                                    .fontWeight(.semibold)
                                 Text(timeString(for: alarm))
                                     .font(DSTypography.caption)
                                     .foregroundStyle(DSColors.textSecondary)
@@ -161,7 +163,8 @@ struct WakeDashboardView: View {
                     HStack(alignment: .firstTextBaseline) {
                         VStack(alignment: .leading, spacing: 4) {
                             Text(run.scheduledAt.formatted(date: .abbreviated, time: .shortened))
-                                .font(DSTypography.bodySemibold)
+                                .font(DSTypography.body)
+                                .fontWeight(.semibold)
                             Text(L10n.Wake.runState(run.state.rawValue.capitalized))
                                 .font(DSTypography.caption)
                                 .foregroundStyle(DSColors.textSecondary)
@@ -186,7 +189,8 @@ struct WakeDashboardView: View {
     private func activeRunSection(_ run: WakeRun) -> some View {
         Section {
             Text(L10n.Wake.runState(run.state.rawValue.capitalized))
-                .font(DSTypography.bodySemibold)
+                .font(DSTypography.body)
+                .fontWeight(.semibold)
                 .accessibilityIdentifier("wakeRunStateText")
 
             ForEach(run.missions) { mission in
