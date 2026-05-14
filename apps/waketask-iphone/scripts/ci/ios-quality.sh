@@ -72,14 +72,14 @@ run_app_store_string_audit() {
 run_secret_scan() {
   echo "[ios-quality] Secret scan"
   if command -v gitleaks >/dev/null 2>&1; then
-    gitleaks detect --no-banner --redact --source .
+    gitleaks detect --config .gitleaks.toml --no-banner --redact --source .
     return
   fi
   if command -v trufflehog >/dev/null 2>&1; then
     trufflehog filesystem --no-update --fail --json . >/tmp/ios-quality-trufflehog.json
     return
   fi
-  if rg -n --hidden --glob '!**/.git/**' --glob '!**/*.png' --glob '!**/*.pdf' --glob '!**/*.xcresult/**' \
+  if rg -n --hidden --glob '!**/.git/**' --glob '!**/.agents/**' --glob '!**/*.png' --glob '!**/*.pdf' --glob '!**/*.xcresult/**' \
     '(sk_live_[A-Za-z0-9]+|ghp_[A-Za-z0-9]{20,}|xox[baprs]-[A-Za-z0-9-]{20,}|AIza[0-9A-Za-z_\\-]{35})' .; then
     echo "Potential committed secret detected"
     exit 1

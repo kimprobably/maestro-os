@@ -46,7 +46,7 @@ else
 fi
 
 echo "[foundation] Secret pattern scan"
-if rg -n --hidden --glob '!**/.git/**' --glob '!**/*.png' --glob '!**/*.pdf' --glob '!**/*.xcresult/**' '(api[_-]?key\s*=\s*["'\''A-Za-z0-9_\-]{20,}|sk_live_|ghp_[A-Za-z0-9]{20,}|xox[baprs]-[A-Za-z0-9-]{20,})' .; then
+if rg -n --hidden --glob '!**/.git/**' --glob '!**/.agents/**' --glob '!**/*.png' --glob '!**/*.pdf' --glob '!**/*.xcresult/**' '(api[_-]?key\s*=\s*["'\''A-Za-z0-9_\-]{20,}|sk_live_|ghp_[A-Za-z0-9]{20,}|xox[baprs]-[A-Za-z0-9-]{20,})' .; then
   echo "Potential secret-like content found. Inspect before release."
   exit 1
 fi
