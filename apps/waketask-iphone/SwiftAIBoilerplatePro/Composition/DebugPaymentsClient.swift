@@ -4,15 +4,12 @@
 
     /// Deterministic payments client for DEBUG builds and hosted CI.
     final class DebugPaymentsClient: PaymentsClient, @unchecked Sendable {
-        private let lock = NSLock()
-        private var configuredEntitlementID = "premium"
-        private var state = PaymentsState.free
+        private nonisolated(unsafe) var configuredEntitlementID = "premium"
+        private nonisolated(unsafe) var state = PaymentsState.free
 
         func configure(_ config: PaymentsConfig) {
-            lock.lock()
             configuredEntitlementID = config.entitlementID
             state = PaymentsState.free
-            lock.unlock()
         }
 
         func states() -> AsyncStream<PaymentsState> {
@@ -28,13 +25,11 @@
         }
 
         func purchase(productID: String) async throws {
-            lock.lock()
             state = PaymentsState(
                 isSubscribed: true,
                 activeEntitlementIDs: [configuredEntitlementID],
                 productID: productID
             )
-            lock.unlock()
         }
 
         @discardableResult
@@ -64,9 +59,7 @@
         }
 
         private func currentStateSnapshot() -> PaymentsState {
-            lock.lock()
-            defer { lock.unlock() }
-            return state
+            state
         }
     }
 #endif
