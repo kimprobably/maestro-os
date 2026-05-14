@@ -11,6 +11,7 @@ final class IntegrationWakeExploratoryUITests: XCTestCase {
         app = XCUIApplication()
         app.launchEnvironment["AUTH_BYPASS"] = "1"
         app.launch()
+        dismissOnboardingIfNeeded()
         telemetry.visit("Home")
     }
 
@@ -103,6 +104,25 @@ final class IntegrationWakeExploratoryUITests: XCTestCase {
         }
 
         return element.exists && element.isEnabled
+    }
+
+    private func dismissOnboardingIfNeeded(timeout: TimeInterval = 10) {
+        let deadline = Date().addingTimeInterval(timeout)
+        let runsTab = app.tabBars.buttons["Runs"]
+        let skipOnboardingButton = app.buttons["Skip onboarding"]
+
+        while Date() < deadline {
+            if runsTab.exists {
+                return
+            }
+
+            if skipOnboardingButton.exists, skipOnboardingButton.isHittable {
+                telemetry.tap(skipOnboardingButton, id: "Skip onboarding")
+                return
+            }
+
+            waitForUIUpdate()
+        }
     }
 
     private func waitForUIUpdate() {
