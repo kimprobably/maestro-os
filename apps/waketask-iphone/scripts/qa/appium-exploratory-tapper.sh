@@ -2,11 +2,11 @@
 set -euo pipefail
 
 REPORT_PATH="reports/ios/appium-exploratory-report.json"
-mkdir -p "."
+mkdir -p "$(dirname "$REPORT_PATH")"
 
 # Foundation placeholder only. This must never write a passing report.
 # The real hosted macOS Appium/XCUITest traversal must replace this skeleton in the iOS validation phase.
-cat > "" <<JSON
+cat > "$REPORT_PATH" <<JSON
 {
   "ok": false,
   "buttons_tapped": 0,
@@ -19,5 +19,5 @@ cat > "" <<JSON
 }
 JSON
 
-echo "Appium placeholder wrote non-passing report at "
+echo "Appium placeholder wrote non-passing report at $REPORT_PATH"
 exit 0
