@@ -40,7 +40,7 @@ fi
 
 if command -v qlty >/dev/null 2>&1; then
   echo "[foundation] Qlty checks"
-  qlty check --jobs 2 --no-progress --summary --no-upgrade-check
+  scripts/ci/run-app-qlty.sh
 else
   echo "[foundation] Qlty skipped (not installed on runner image)"
 fi

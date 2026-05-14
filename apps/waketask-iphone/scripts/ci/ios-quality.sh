@@ -123,7 +123,7 @@ echo "[ios-quality] SwiftFormat"
 swiftformat SwiftAIBoilerplatePro Packages --lint --cache ignore
 
 echo "[ios-quality] Qlty"
-qlty check --all --jobs 2 --no-progress --summary --no-upgrade-check
+scripts/ci/run-app-qlty.sh
 
 require_required_secrets_if_enabled
 run_secret_scan
