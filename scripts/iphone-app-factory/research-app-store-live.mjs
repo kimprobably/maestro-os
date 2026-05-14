@@ -1,0 +1,277 @@
+#!/usr/bin/env node
+
+/**
+ * Research App Store reviews for alarm and task-based engagement apps
+ * Uses Apify App Store scraper to collect live data
+ * Focuses on apps requiring engagement before dismissal
+ */
+
+import { writeFileSync, mkdirSync } from "node:fs";
+import { dirname, resolve } from "node:path";
+
+function argValue(name, fallback) {
+  const index = process.argv.indexOf(name);
+  if (index === -1) return fallback;
+  const value = process.argv[index + 1];
+  if (!value || value.startsWith("--")) throw new Error(`Missing value for ${name}`);
+  return value;
+}
+
+async function runApifyActor(actorId, input) {
+  const token = process.env.APIFY_TOKEN;
+  if (!token || token.includes("{{")) {
+    throw new Error("APIFY_TOKEN is not configured");
+  }
+
+  const actorPath = String(actorId || "").replace("/", "~");
+  const start = await fetch(
+    `https://api.apify.com/v2/acts/${actorPath}/runs?token=${encodeURIComponent(token)}`,
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(input || {}),
+    }
+  );
+
+  if (!start.ok) {
+    throw new Error(`Apify actor start failed: ${start.status}`);
+  }
+
+  const started = await start.json();
+  const runId = started?.data?.id;
+
+  if (!runId) {
+    throw new Error("No run ID returned from Apify");
+  }
+
+  const deadline = Date.now() + 180000; // 3 minute timeout
+
+  while (Date.now() < deadline) {
+    await new Promise((resolve) => setTimeout(resolve, 3500));
+
+    const status = await fetch(
+      `https://api.apify.com/v2/actor-runs/${runId}?token=${encodeURIComponent(token)}`
+    );
+
+    const statusPayload = await status.json();
+    const state = statusPayload?.data?.status;
+
+    if (state === "SUCCEEDED") {
+      const datasetId = statusPayload.data.defaultDatasetId;
+      const dataset = await fetch(
+        `https://api.apify.com/v2/datasets/${datasetId}/items?clean=true&format=json&token=${encodeURIComponent(
+          token
+        )}`
+      );
+
+      if (!dataset.ok) {
+        throw new Error(`Apify dataset fetch failed: ${dataset.status}`);
+      }
+
+      return dataset.json();
+    }
+
+    if (["FAILED", "ABORTED", "TIMED-OUT"].includes(state)) {
+      throw new Error(`Apify actor ended with status ${state}`);
+    }
+  }
+
+  throw new Error("Apify actor timed out");
+}
+
+const outDir = resolve(argValue("--out-dir", ".workflow/iphone-app-factory/research"));
+const allowFallback = argValue("--allow-fallback", "true") === "true";
+
+mkdirSync(outDir, { recursive: true });
+
+// Candidate apps: mix of alarm apps, task-based wake-up apps, and gamified productivity
+const candidateApps = [
+  {
+    name: "Alarmy",
+    appId: "1163786766",
+    category: "Alarm - Task-Required",
+    description: "Sleep heavy sleepers alarm that requires tasks before dismissal",
+  },
+  {
+    name: "Puzzle Alarm",
+    appId: "1444832313",
+    category: "Alarm - Puzzle",
+    description: "Math puzzle or memory game required before alarm dismissal",
+  },
+  {
+    name: "Sleeptown",
+    appId: "1511908439",
+    category: "Sleep - Gamification",
+    description: "Gamified sleep app with town building accountability",
+  },
+  {
+    name: "Rise",
+    appId: "1530087078",
+    category: "Alarm - Smart",
+    description: "Smart alarm with wake-up challenges and sleep coaching",
+  },
+  {
+    name: "Habitica",
+    appId: "994882113",
+    category: "Productivity - Gamification",
+    description: "RPG-style habit and task management with engagement mechanics",
+  },
+  {
+    name: "Beeminder",
+    appId: "517020213",
+    category: "Accountability - Stakes",
+    description: "Commitment tracking with financial stakes for accountability",
+  },
+  {
+    name: "StickK",
+    appId: "1530265766",
+    category: "Accountability - Stakes",
+    description: "Commitment app with stakes and accountability partners",
+  },
+  {
+    name: "Strong",
+    appId: "1465572019",
+    category: "Fitness - Engagement",
+    description: "Detailed workout logging with engagement mechanics",
+  },
+  {
+    name: "Apple Clock",
+    appId: "494632996",
+    category: "Alarm - Native",
+    description: "Native iOS clock app for baseline comparison",
+  },
+  {
+    name: "Timely",
+    appId: "1312651975",
+    category: "Alarm - Premium",
+    description: "Premium alarm with gradual wake-up and smart features",
+  },
+  {
+    name: "Twilight",
+    appId: "1019845208",
+    category: "Sleep - Blue Light",
+    description: "Blue light filter and sleep health tracking",
+  },
+  {
+    name: "Forest",
+    appId: "1032603313",
+    category: "Focus - Engagement",
+    description: "Focus timer with tree-growing gamification for engagement",
+  },
+];
+
+const report = {
+  timestamp: new Date().toISOString(),
+  app_type: "alarm clock apps that require a task or engagement before dismissal",
+  target_audience: "US iPhone users who oversleep, snooze repeatedly, or need high-friction wake-up accountability",
+  candidate_apps: candidateApps,
+  research_method: "Apify App Store scraper",
+  evidence_quality: "pending",
+  errors: [],
+  results: [],
+};
+
+async function runResearch() {
+  console.log(`Starting App Store research for ${candidateApps.length} candidate apps...`);
+
+  for (const app of candidateApps) {
+    try {
+      console.log(`Researching ${app.name} (${app.category})...`);
+
+      // Use Apify App Store scraper
+      // Actor: apify/app-store-scraper
+      const result = await runApifyActor("apify/app-store-scraper", {
+        appIds: [String(app.appId)],
+        country: "US",
+        language: "en",
+      });
+
+      const appData = Array.isArray(result) ? result[0] : result;
+
+      if (appData) {
+        report.results.push({
+          app_name: app.name,
+          app_id: app.appId,
+          category: app.category,
+          description: app.description,
+          app_store_data: {
+            title: appData.title || appData.name,
+            icon: appData.icon,
+            rating: appData.rating,
+            ratingCount: appData.ratingCount,
+            url: appData.url,
+            price: appData.price,
+            version: appData.version,
+            updated: appData.updated,
+            reviews: (appData.reviews || []).slice(0, 20), // First 20 reviews
+          },
+          evidence_quality: "live",
+        });
+
+        console.log(`  ✓ Got data: ${appData.title}, rating ${appData.rating}, ${appData.ratingCount} reviews`);
+      }
+    } catch (error) {
+      console.error(`  ✗ Error researching ${app.name}: ${error.message}`);
+      report.errors.push({
+        app: app.name,
+        error: error.message,
+      });
+
+      if (!allowFallback) {
+        throw error;
+      }
+
+      report.results.push({
+        app_name: app.name,
+        app_id: app.appId,
+        category: app.category,
+        description: app.description,
+        evidence_quality: "limited",
+        note: "Apify scraper unavailable or timed out; fallback to manual research",
+      });
+    }
+
+    // Rate limiting: 1 second between requests
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+  }
+
+  report.evidence_quality = report.errors.length === 0 ? "live" : "partial";
+
+  const outPath = resolve(outDir, "app-store-research-raw.json");
+  writeFileSync(outPath, JSON.stringify(report, null, 2) + "\n");
+
+  console.log(
+    `\nResearch complete. Results: ${report.results.length} apps, ${report.errors.length} errors`
+  );
+  console.log(`Output: ${outPath}`);
+
+  return report;
+}
+
+try {
+  const result = await runResearch();
+  console.log(
+    JSON.stringify(
+      {
+        ok: true,
+        results_count: result.results.length,
+        evidence_quality: result.evidence_quality,
+        errors: result.errors.length,
+      },
+      null,
+      2
+    )
+  );
+} catch (error) {
+  console.error(
+    JSON.stringify(
+      {
+        ok: false,
+        error: error.message,
+      },
+      null,
+      2
+    )
+  );
+  process.exit(1);
+}
