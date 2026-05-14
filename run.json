@@ -385,14 +385,110 @@
     }
   },
   "web_url": "http://127.0.0.1:32276/runs/01KRHZ48SXRN9CT23FZ5D51EQ7",
-  "start": null,
-  "status": {
-    "kind": "starting"
+  "start": {
+    "start_time": "2026-05-14T00:45:35.642051Z",
+    "run_branch": "fabro/run/01KRHZ48SXRN9CT23FZ5D51EQ7",
+    "base_sha": "d3d684849632cc4899da2dca4e123db65815a93d"
   },
-  "status_updated_at": "2026-05-14T00:45:31.957815Z",
-  "last_event_at": "2026-05-14T00:45:34.714126Z",
+  "status": {
+    "kind": "running"
+  },
+  "status_updated_at": "2026-05-14T00:45:35.642100Z",
+  "last_event_at": "2026-05-14T00:45:42.433170Z",
   "pending_control": null,
-  "checkpoints": [],
+  "checkpoints": [
+    {
+      "seq": 19,
+      "checkpoint": {
+        "timestamp": "2026-05-14T00:45:37.025637Z",
+        "current_node": "start",
+        "completed_nodes": [
+          "start"
+        ],
+        "node_retries": {},
+        "context_values": {
+          "graph.model_stylesheet": "\n            *       { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: low; }\n            .coding { provider: openrouter; model: qwen/qwen3.6-plus; reasoning_effort: medium; }\n            .review { provider: openrouter; model: google/gemini-3.1-pro-preview; reasoning_effort: medium; }\n        ",
+          "internal.thread_id": null,
+          "current_node": "start",
+          "outcome": "succeeded",
+          "failure_class": "",
+          "graph.inputs": "none",
+          "graph.goal": "Verify the shared Daytona code-factory environment boots with the expected tools",
+          "graph.outputs": "environment_report",
+          "graph.persona": "workflow-registry",
+          "internal.fidelity": "compact",
+          "internal.run_id": "01KRHZ48SXRN9CT23FZ5D51EQ7",
+          "internal.work_dir": "/home/daytona/workspace",
+          "internal.node_visit_count": 1,
+          "failure_signature": "",
+          "internal.retry_count.start": 0
+        },
+        "node_outcomes": {
+          "start": {
+            "status": "succeeded",
+            "usage": null
+          }
+        },
+        "next_node_id": "check_environment",
+        "node_visits": {
+          "start": 1
+        }
+      },
+      "diff": {}
+    },
+    {
+      "seq": 0,
+      "checkpoint": {
+        "timestamp": "2026-05-14T00:45:42.926845Z",
+        "current_node": "check_environment",
+        "completed_nodes": [
+          "start",
+          "check_environment"
+        ],
+        "node_retries": {},
+        "context_values": {
+          "thread.start.current_node": "check_environment",
+          "graph.inputs": "none",
+          "internal.work_dir": "/home/daytona/workspace",
+          "internal.thread_id": "start",
+          "current_node": "check_environment",
+          "internal.fidelity": "compact",
+          "command.output": "blob://sha256/d4abee7aa719273d3266bd74d5d3b0d1bdd82116f30c9510a8fc9c4948d55e0c",
+          "graph.outputs": "environment_report",
+          "failure_class": "",
+          "graph.persona": "workflow-registry",
+          "internal.retry_count.start": 0,
+          "internal.node_visit_count": 1,
+          "graph.model_stylesheet": "\n            *       { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: low; }\n            .coding { provider: openrouter; model: qwen/qwen3.6-plus; reasoning_effort: medium; }\n            .review { provider: openrouter; model: google/gemini-3.1-pro-preview; reasoning_effort: medium; }\n        ",
+          "internal.retry_count.check_environment": 0,
+          "failure_signature": "",
+          "internal.run_id": "01KRHZ48SXRN9CT23FZ5D51EQ7",
+          "graph.goal": "Verify the shared Daytona code-factory environment boots with the expected tools",
+          "outcome": "succeeded"
+        },
+        "node_outcomes": {
+          "check_environment": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/d4abee7aa719273d3266bd74d5d3b0d1bdd82116f30c9510a8fc9c4948d55e0c"
+            },
+            "notes": "Script completed: mkdir -p .workflow/fabro; node -e \"const fs=require('fs'); const {spawnSync}=require('child_process'); const run=(cmd,args=[])=>{const r=spawnSync(cmd,args,{encoding:'utf8',timeout:45000}); return {cmd:[cmd,...args].join(' '), status:r.status, stdout:(r.stdout||'').trim().slice(0,400), stderr:(r.stderr||'').trim().slice(0,400)};}; const toolRuns=[run('node',['--version']),run('npm',['--version']),run('bun',['--version']),run('qlty',['--version']),run('spec-kitty',['--version']),run('promptfoo',['--version']),run('fabro',['--version']),run('claude',['--version']),run('codex',['--version']),run('curl',['-fsS','--max-time','20','https://api.github.com/rate_limit'])]; const env=['OPENROUTER_API_KEY','DAYTONA_API_KEY','LINEAR_API_KEY','FABRO_SLACK_BOT_TOKEN','FABRO_SLACK_CHANNEL_ID','APIFY_TOKEN'].reduce((acc,key)=>{const value=process.env[key]||''; const unresolved=value.charCodeAt(0)===123 && value.charCodeAt(1)===123; acc[key]=Boolean(value && !unresolved); return acc;},{}); const required=['node --version','npm --version','bun --version','qlty --version','spec-kitty --version','promptfoo --version','fabro --version','curl -fsS --max-time 20 https://api.github.com/rate_limit']; const failed=toolRuns.filter((check)=>required.includes(check.cmd) && check.status!==0); const report={ok:failed.length===0, failed, checks:toolRuns, env}; fs.writeFileSync('.workflow/fabro/daytona-environment-smoke.json', JSON.stringify(report,null,2)+'\\n'); console.log(JSON.stringify(report,null,2)); if(!report.ok) process.exit(1);\"",
+            "usage": null
+          },
+          "start": {
+            "status": "succeeded",
+            "usage": null
+          }
+        },
+        "next_node_id": "check_cli_auth_env",
+        "node_visits": {
+          "start": 1,
+          "check_environment": 1
+        }
+      },
+      "diff": {}
+    }
+  ],
   "conclusion": null,
   "sandbox": {
     "provider": "daytona",
@@ -409,5 +505,72 @@
   "pull_request": null,
   "superseded_by": null,
   "pending_interviews": {},
-  "stages": {}
+  "stages": {
+    "check_environment@1": {
+      "first_event_seq": 20,
+      "prompt": null,
+      "response": null,
+      "completion": null,
+      "provider_used": null,
+      "diff": null,
+      "script_invocation": {
+        "script": "mkdir -p .workflow/fabro; node -e \"const fs=require('fs'); const {spawnSync}=require('child_process'); const run=(cmd,args=[])=>{const r=spawnSync(cmd,args,{encoding:'utf8',timeout:45000}); return {cmd:[cmd,...args].join(' '), status:r.status, stdout:(r.stdout||'').trim().slice(0,400), stderr:(r.stderr||'').trim().slice(0,400)};}; const toolRuns=[run('node',['--version']),run('npm',['--version']),run('bun',['--version']),run('qlty',['--version']),run('spec-kitty',['--version']),run('promptfoo',['--version']),run('fabro',['--version']),run('claude',['--version']),run('codex',['--version']),run('curl',['-fsS','--max-time','20','https://api.github.com/rate_limit'])]; const env=['OPENROUTER_API_KEY','DAYTONA_API_KEY','LINEAR_API_KEY','FABRO_SLACK_BOT_TOKEN','FABRO_SLACK_CHANNEL_ID','APIFY_TOKEN'].reduce((acc,key)=>{const value=process.env[key]||''; const unresolved=value.charCodeAt(0)===123 && value.charCodeAt(1)===123; acc[key]=Boolean(value && !unresolved); return acc;},{}); const required=['node --version','npm --version','bun --version','qlty --version','spec-kitty --version','promptfoo --version','fabro --version','curl -fsS --max-time 20 https://api.github.com/rate_limit']; const failed=toolRuns.filter((check)=>required.includes(check.cmd) && check.status!==0); const report={ok:failed.length===0, failed, checks:toolRuns, env}; fs.writeFileSync('.workflow/fabro/daytona-environment-smoke.json', JSON.stringify(report,null,2)+'\\n'); console.log(JSON.stringify(report,null,2)); if(!report.ok) process.exit(1);\"",
+        "command": "exec 2>&1\nmkdir -p .workflow/fabro; node -e \"const fs=require('fs'); const {spawnSync}=require('child_process'); const run=(cmd,args=[])=>{const r=spawnSync(cmd,args,{encoding:'utf8',timeout:45000}); return {cmd:[cmd,...args].join(' '), status:r.status, stdout:(r.stdout||'').trim().slice(0,400), stderr:(r.stderr||'').trim().slice(0,400)};}; const toolRuns=[run('node',['--version']),run('npm',['--version']),run('bun',['--version']),run('qlty',['--version']),run('spec-kitty',['--version']),run('promptfoo',['--version']),run('fabro',['--version']),run('claude',['--version']),run('codex',['--version']),run('curl',['-fsS','--max-time','20','https://api.github.com/rate_limit'])]; const env=['OPENROUTER_API_KEY','DAYTONA_API_KEY','LINEAR_API_KEY','FABRO_SLACK_BOT_TOKEN','FABRO_SLACK_CHANNEL_ID','APIFY_TOKEN'].reduce((acc,key)=>{const value=process.env[key]||''; const unresolved=value.charCodeAt(0)===123 && value.charCodeAt(1)===123; acc[key]=Boolean(value && !unresolved); return acc;},{}); const required=['node --version','npm --version','bun --version','qlty --version','spec-kitty --version','promptfoo --version','fabro --version','curl -fsS --max-time 20 https://api.github.com/rate_limit']; const failed=toolRuns.filter((check)=>required.includes(check.cmd) && check.status!==0); const report={ok:failed.length===0, failed, checks:toolRuns, env}; fs.writeFileSync('.workflow/fabro/daytona-environment-smoke.json', JSON.stringify(report,null,2)+'\\n'); console.log(JSON.stringify(report,null,2)); if(!report.ok) process.exit(1);\"",
+        "language": "shell"
+      },
+      "script_timing": {
+        "output": "blob://sha256/d4abee7aa719273d3266bd74d5d3b0d1bdd82116f30c9510a8fc9c4948d55e0c",
+        "exit_code": 0,
+        "duration_ms": 5402,
+        "termination": "exited",
+        "output_bytes": 2397,
+        "live_streaming": true
+      },
+      "parallel_results": null,
+      "output": null,
+      "output_bytes": 2397,
+      "live_streaming": true,
+      "termination": "exited",
+      "started_at": "2026-05-14T00:45:37.025881Z",
+      "handler": "command",
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "total_tokens": 0,
+        "reasoning_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "state": "running"
+    },
+    "start@1": {
+      "first_event_seq": 16,
+      "prompt": null,
+      "response": null,
+      "completion": {
+        "outcome": "succeeded",
+        "notes": null,
+        "failure_reason": null,
+        "timestamp": "2026-05-14T00:45:37.025352Z"
+      },
+      "provider_used": null,
+      "diff": null,
+      "script_invocation": null,
+      "script_timing": null,
+      "parallel_results": null,
+      "output": null,
+      "started_at": "2026-05-14T00:45:36.774415Z",
+      "handler": "start",
+      "duration_ms": 0,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "total_tokens": 0,
+        "reasoning_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "state": "succeeded"
+    }
+  }
 }
