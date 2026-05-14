@@ -3297,7 +3297,7 @@
     "kind": "running"
   },
   "status_updated_at": "2026-05-14T06:49:03.983228Z",
-  "last_event_at": "2026-05-14T07:09:04.569630Z",
+  "last_event_at": "2026-05-14T07:09:06.605563Z",
   "pending_control": null,
   "checkpoints": [
     {
@@ -3485,9 +3485,9 @@
       }
     },
     {
-      "seq": 0,
+      "seq": 571,
       "checkpoint": {
-        "timestamp": "2026-05-14T07:09:04.600948Z",
+        "timestamp": "2026-05-14T07:09:06.603493Z",
         "current_node": "research_fanout",
         "completed_nodes": [
           "start",
@@ -3497,6 +3497,117 @@
         ],
         "node_retries": {},
         "context_values": {
+          "internal.fidelity": "compact",
+          "outcome": "succeeded",
+          "graph.secret_policy": "never print environment variables or credential values; credential checks must be presence-only true/false checks; do not run environment dump commands.",
+          "internal.retry_count.research_fanout": 0,
+          "graph.rankdir": "LR",
+          "failure_class": "",
+          "graph.model_stylesheet": "\n            *                  { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: low; }\n            .research          { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: high; }\n            .design            { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: high; }\n            .spec              { backend: cli; provider: anthropic; model: claude-sonnet-4-5; reasoning_effort: high; }\n            .architecture      { backend: cli; provider: anthropic; model: claude-sonnet-4-5; reasoning_effort: high; }\n            .coding            { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            .review            { backend: cli; provider: anthropic; model: claude-sonnet-4-5; reasoning_effort: high; }\n            .verify            { backend: cli; provider: anthropic; model: claude-sonnet-4-5; reasoning_effort: medium; }\n            .security          { backend: cli; provider: anthropic; model: claude-sonnet-4-5; reasoning_effort: high; }\n            .simplify          { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            .macos             { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            #spec_codex        { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            #spec_claude       { backend: cli; provider: anthropic; model: claude-sonnet-4-5; reasoning_effort: high; }\n            #spec_kimi         { provider: openrouter; model: moonshotai/kimi-k2.6; reasoning_effort: high; }\n            #spec_deepseek     { provider: openrouter; model: deepseek/deepseek-v4-pro; reasoning_effort: high; }\n            #arch_codex        { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            #arch_claude       { backend: cli; provider: anthropic; model: claude-sonnet-4-5; reasoning_effort: high; }\n        ",
+          "internal.retry_count.bootstrap": 0,
+          "graph.inputs": "app_type,target_audience,app_name,bundle_id,app_dir,spec_kitty_feature,boilerplate_repo,max_competitors,use_mobbin,ios_validation_mode,allow_macos_deferred",
+          "internal.retry_count.prompt_quality_gate": 0,
+          "internal.retry_count.start": 0,
+          "thread.bootstrap.current_node": "prompt_quality_gate",
+          "current_node": "research_fanout",
+          "command.output": "blob://sha256/8f0f729667b04657279fe5cd06c791bc394e3a761aaf961b49039ca0ca541fc0",
+          "graph.default_max_retries": "2",
+          "graph.goal": "Build a differentiated iPhone app from a researched app opportunity using SwiftAIBoilerplatePro",
+          "internal.thread_id": "prompt_quality_gate",
+          "internal.run_id": "01KRJKXWDAMEG4SYJ72YYK839H",
+          "parallel.results": [
+            {
+              "id": "app_store_research",
+              "status": "succeeded",
+              "head_sha": "8d0f482312f0b1f5c79831442b3bceb20a1a36e4"
+            },
+            {
+              "id": "reddit_research",
+              "status": "succeeded",
+              "head_sha": "79551ed393b8064e0ef1acfb69752726d2824507"
+            },
+            {
+              "id": "competitor_research",
+              "status": "succeeded",
+              "head_sha": "b771da8ddc8a17fe52698a0ef24ae1c9a6c4928a"
+            },
+            {
+              "id": "design_pattern_research",
+              "status": "succeeded",
+              "head_sha": "f7373066c42253d596f01789e3f8edb677e59246"
+            }
+          ],
+          "graph.outputs": "research_pack,spec,architecture,swift_app,ios_quality_report,appium_report,release_handoff",
+          "thread.prompt_quality_gate.current_node": "research_fanout",
+          "failure_signature": "",
+          "graph.fallback_retry_target": "architecture_consensus",
+          "internal.node_visit_count": 1,
+          "graph.retry_target": "spec_consensus",
+          "graph.persona": "iphone-app-factory",
+          "internal.work_dir": "/home/daytona/workspace",
+          "parallel.branch_count": 4,
+          "thread.start.current_node": "bootstrap"
+        },
+        "node_outcomes": {
+          "start": {
+            "status": "succeeded",
+            "usage": null
+          },
+          "bootstrap": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/5ffbb7dc1aaa52eba86cb6aa1cd6f26051bc1515a7cde4281e759508274a8e26"
+            },
+            "notes": "Script completed: node scripts/iphone-app-factory/bootstrap.mjs --app-dir 'apps/waketask-iphone' --app-name 'WakeTask' --bundle-id 'com.keen.waketask' --boilerplate-repo 'SwiftAIBoilerplatePro/SwiftAIBoilerplatePro-Distribution'",
+            "usage": null
+          },
+          "research_fanout": {
+            "status": "succeeded",
+            "jump_to_node": "research_join",
+            "notes": "Parallel node dispatched 4 branches (4 succeeded, 0 failed)",
+            "usage": null
+          },
+          "prompt_quality_gate": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/8f0f729667b04657279fe5cd06c791bc394e3a761aaf961b49039ca0ca541fc0"
+            },
+            "notes": "Script completed: node scripts/iphone-app-factory/promptfoo-prompt-quality.mjs --config evals/iphone-app-factory/prompt-quality.yaml --registry evals/iphone-app-factory/prompt-registry.json --out .workflow/iphone-app-factory/evals/prompt-quality.json --allow-fallback true",
+            "usage": null
+          }
+        },
+        "next_node_id": "research_join",
+        "git_commit_sha": "4fb88d52f203f5e190391d5c4c37c638f77714eb",
+        "node_visits": {
+          "bootstrap": 1,
+          "research_fanout": 1,
+          "prompt_quality_gate": 1,
+          "start": 1
+        }
+      },
+      "diff": {
+        "summary": {
+          "files_changed": 0,
+          "additions": 0,
+          "deletions": 0
+        }
+      }
+    },
+    {
+      "seq": 0,
+      "checkpoint": {
+        "timestamp": "2026-05-14T07:09:06.673719Z",
+        "current_node": "research_join",
+        "completed_nodes": [
+          "start",
+          "bootstrap",
+          "prompt_quality_gate",
+          "research_fanout",
+          "research_join"
+        ],
+        "node_retries": {},
+        "context_values": {
+          "parallel.fan_in.best_id": "app_store_research",
           "graph.persona": "iphone-app-factory",
           "parallel.results": [
             {
@@ -3524,11 +3635,14 @@
           "outcome": "succeeded",
           "failure_signature": "",
           "failure_class": "",
+          "internal.retry_count.research_join": 0,
           "graph.model_stylesheet": "\n            *                  { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: low; }\n            .research          { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: high; }\n            .design            { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: high; }\n            .spec              { backend: cli; provider: anthropic; model: claude-sonnet-4-5; reasoning_effort: high; }\n            .architecture      { backend: cli; provider: anthropic; model: claude-sonnet-4-5; reasoning_effort: high; }\n            .coding            { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            .review            { backend: cli; provider: anthropic; model: claude-sonnet-4-5; reasoning_effort: high; }\n            .verify            { backend: cli; provider: anthropic; model: claude-sonnet-4-5; reasoning_effort: medium; }\n            .security          { backend: cli; provider: anthropic; model: claude-sonnet-4-5; reasoning_effort: high; }\n            .simplify          { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            .macos             { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            #spec_codex        { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            #spec_claude       { backend: cli; provider: anthropic; model: claude-sonnet-4-5; reasoning_effort: high; }\n            #spec_kimi         { provider: openrouter; model: moonshotai/kimi-k2.6; reasoning_effort: high; }\n            #spec_deepseek     { provider: openrouter; model: deepseek/deepseek-v4-pro; reasoning_effort: high; }\n            #arch_codex        { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            #arch_claude       { backend: cli; provider: anthropic; model: claude-sonnet-4-5; reasoning_effort: high; }\n        ",
           "graph.outputs": "research_pack,spec,architecture,swift_app,ios_quality_report,appium_report,release_handoff",
           "graph.secret_policy": "never print environment variables or credential values; credential checks must be presence-only true/false checks; do not run environment dump commands.",
+          "parallel.fan_in.best_head_sha": "8d0f482312f0b1f5c79831442b3bceb20a1a36e4",
           "graph.fallback_retry_target": "architecture_consensus",
           "graph.retry_target": "spec_consensus",
+          "thread.research_fanout.current_node": "research_join",
           "thread.bootstrap.current_node": "prompt_quality_gate",
           "graph.rankdir": "LR",
           "graph.inputs": "app_type,target_audience,app_name,bundle_id,app_dir,spec_kitty_feature,boilerplate_repo,max_competitors,use_mobbin,ios_validation_mode,allow_macos_deferred",
@@ -3536,12 +3650,13 @@
           "internal.run_id": "01KRJKXWDAMEG4SYJ72YYK839H",
           "thread.prompt_quality_gate.current_node": "research_fanout",
           "internal.node_visit_count": 1,
-          "current_node": "research_fanout",
+          "current_node": "research_join",
           "internal.retry_count.start": 0,
           "internal.fidelity": "compact",
           "internal.retry_count.prompt_quality_gate": 0,
           "internal.retry_count.research_fanout": 0,
-          "internal.thread_id": "prompt_quality_gate",
+          "parallel.fan_in.best_outcome": "succeeded",
+          "internal.thread_id": "research_fanout",
           "internal.retry_count.bootstrap": 0,
           "internal.work_dir": "/home/daytona/workspace",
           "thread.start.current_node": "bootstrap",
@@ -3565,6 +3680,16 @@
             "notes": "Script completed: node scripts/iphone-app-factory/promptfoo-prompt-quality.mjs --config evals/iphone-app-factory/prompt-quality.yaml --registry evals/iphone-app-factory/prompt-registry.json --out .workflow/iphone-app-factory/evals/prompt-quality.json --allow-fallback true",
             "usage": null
           },
+          "research_join": {
+            "status": "succeeded",
+            "context_updates": {
+              "parallel.fan_in.best_id": "app_store_research",
+              "parallel.fan_in.best_outcome": "succeeded",
+              "parallel.fan_in.best_head_sha": "8d0f482312f0b1f5c79831442b3bceb20a1a36e4"
+            },
+            "notes": "Selected best candidate: app_store_research",
+            "usage": null
+          },
           "start": {
             "status": "succeeded",
             "usage": null
@@ -3576,12 +3701,13 @@
             "usage": null
           }
         },
-        "next_node_id": "research_join",
+        "next_node_id": "research_synthesis",
         "node_visits": {
           "start": 1,
           "prompt_quality_gate": 1,
           "bootstrap": 1,
-          "research_fanout": 1
+          "research_fanout": 1,
+          "research_join": 1
         }
       },
       "diff": {}
@@ -3662,7 +3788,12 @@
       "first_event_seq": 44,
       "prompt": null,
       "response": null,
-      "completion": null,
+      "completion": {
+        "outcome": "succeeded",
+        "notes": "Parallel node dispatched 4 branches (4 succeeded, 0 failed)",
+        "failure_reason": null,
+        "timestamp": "2026-05-14T07:09:04.600774Z"
+      },
       "provider_used": {
         "mode": "agent",
         "provider": "openrouter",
@@ -3696,6 +3827,7 @@
       "output": null,
       "started_at": "2026-05-14T06:50:19.128728Z",
       "handler": "parallel",
+      "duration_ms": 1125403,
       "usage": {
         "input_tokens": 655796,
         "output_tokens": 10505,
@@ -3708,6 +3840,29 @@
       "model": {
         "provider": "openrouter",
         "model_id": "anthropic/claude-haiku-4-5"
+      },
+      "state": "succeeded"
+    },
+    "research_join@1": {
+      "first_event_seq": 574,
+      "prompt": null,
+      "response": null,
+      "completion": null,
+      "provider_used": null,
+      "diff": null,
+      "script_invocation": null,
+      "script_timing": null,
+      "parallel_results": null,
+      "output": null,
+      "started_at": "2026-05-14T07:09:06.605563Z",
+      "handler": "parallel.fan_in",
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "total_tokens": 0,
+        "reasoning_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
       },
       "state": "running"
     },
