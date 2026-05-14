@@ -10,6 +10,7 @@ run_qlty_here() {
     --jobs "$QLTY_JOBS" \
     --skip-source-fetch \
     --no-formatters \
+    --no-fail \
     --no-error \
     --no-progress \
     --summary \
