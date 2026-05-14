@@ -6,9 +6,15 @@ SCHEME="${SCHEME:-SwiftAIBoilerplatePro}"
 PROJECT="${PROJECT:-SwiftAIBoilerplatePro.xcodeproj}"
 DESTINATION="${DESTINATION:-platform=iOS Simulator,name=iPhone 17 Pro,OS=26.2}"
 DERIVED_DATA_PATH="${DERIVED_DATA_PATH:-.build/DerivedData}"
+RESULT_BUNDLE_PATH="${RESULT_BUNDLE_PATH:-$DERIVED_DATA_PATH/WakeTaskExploratory.xcresult}"
+TELEMETRY_PATH="${TELEMETRY_PATH:-$DERIVED_DATA_PATH/waketask-exploratory-telemetry.json}"
 mkdir -p "$(dirname "$REPORT_PATH")"
 
 mkdir -p "$DERIVED_DATA_PATH"
+rm -rf "$RESULT_BUNDLE_PATH"
+rm -f "$TELEMETRY_PATH"
+export WAKE_EXPLORATORY_TELEMETRY_PATH="$TELEMETRY_PATH"
+export REPORT_PATH DESTINATION RESULT_BUNDLE_PATH TELEMETRY_PATH
 
 echo "[appium-exploratory] Running exploratory UI traversal test"
 xcodebuild \
@@ -16,23 +22,42 @@ xcodebuild \
   -scheme "$SCHEME" \
   -destination "$DESTINATION" \
   -derivedDataPath "$DERIVED_DATA_PATH" \
+  -resultBundlePath "$RESULT_BUNDLE_PATH" \
   CODE_SIGNING_ALLOWED=NO \
   test \
   -only-testing:SwiftAIBoilerplateProUITests/IntegrationWakeExploratoryUITests
 
-cat > "$REPORT_PATH" <<JSON
-{
-  "ok": true,
-  "generated_at_utc": "$(date -u +"%Y-%m-%dT%H:%M:%SZ")",
-  "automation_engine": "xcodebuild-xcuitest-exploratory",
-  "suite": "IntegrationWakeExploratoryUITests",
-  "destination": "$DESTINATION",
-  "buttons_tapped": 8,
-  "screens_visited": ["Home", "Runs", "WakeCreateAlarm", "Profile"],
-  "crashes": 0,
-  "failures": 0,
-  "failures_detail": []
+node <<'NODE'
+const fs = require("fs");
+
+const reportPath = process.env.REPORT_PATH;
+const telemetryPath = process.env.TELEMETRY_PATH;
+const resultBundlePath = process.env.RESULT_BUNDLE_PATH;
+const destination = process.env.DESTINATION;
+
+if (!fs.existsSync(telemetryPath)) {
+  console.error(`[appium-exploratory] Missing telemetry file: ${telemetryPath}`);
+  process.exit(1);
 }
-JSON
+
+const telemetry = JSON.parse(fs.readFileSync(telemetryPath, "utf8"));
+const report = {
+  ok: true,
+  generated_at_utc: new Date().toISOString(),
+  automation_engine: "xcodebuild-xcuitest-exploratory",
+  suite: "IntegrationWakeExploratoryUITests",
+  destination,
+  result_bundle_path: resultBundlePath,
+  buttons_tapped: telemetry.buttonsTapped.length,
+  buttons_tapped_detail: telemetry.buttonsTapped,
+  text_fields_edited: telemetry.textFieldsEdited,
+  screens_visited: telemetry.screensVisited,
+  crashes: 0,
+  failures: 0,
+  failures_detail: []
+};
+
+fs.writeFileSync(reportPath, JSON.stringify(report, null, 2) + "\n");
+NODE
 
 echo "[appium-exploratory] Report written to $REPORT_PATH"

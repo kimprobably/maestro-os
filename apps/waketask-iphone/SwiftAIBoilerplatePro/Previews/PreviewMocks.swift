@@ -84,6 +84,7 @@ enum PreviewMocks {
         }
 
         func upsertAlarm(_ alarm: WakeAlarm) async throws {}
+        func deleteAlarm(id: UUID) async throws {}
     }
 
     final class MockWakeRunRepository: WakeRunRepository, @unchecked Sendable {
