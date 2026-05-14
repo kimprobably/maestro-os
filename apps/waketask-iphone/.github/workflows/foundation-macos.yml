@@ -1,0 +1,38 @@
+name: Foundation macOS CI
+
+on:
+  pull_request:
+    paths:
+      - 'SwiftAIBoilerplatePro/**'
+      - 'Packages/**'
+      - 'Config/**'
+      - 'scripts/**'
+      - '.github/workflows/foundation-macos.yml'
+  workflow_dispatch:
+
+jobs:
+  foundation-gates:
+    runs-on: macos-15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Select Xcode
+        run: sudo xcode-select -s /Applications/Xcode_26.2.app || sudo xcode-select -s "$(ls -d /Applications/Xcode_*.app | sort -V | tail -1)"
+
+      - name: Install optional quality tools
+        run: |
+          brew install swiftlint swiftformat || true
+
+      - name: Foundation gates
+        run: ./scripts/ci/run-foundation-gates.sh
+
+      - name: Appium exploratory skeleton
+        run: ./scripts/qa/appium-exploratory-tapper.sh
+
+      - name: Upload exploratory report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: appium-exploratory-report
+          path: reports/ios/appium-exploratory-report.json
