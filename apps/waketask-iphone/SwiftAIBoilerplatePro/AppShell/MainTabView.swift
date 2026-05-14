@@ -63,10 +63,7 @@ struct MainTabView: View {
             HomeView(
                 viewModel: homeViewModel,
                 onNewChat: {
-                    Task {
-                        await chatHistoryViewModel.createNewConversation()
-                        selectedTab = .chat
-                    }
+                    selectedTab = .chat
                 },
                 onShowHistory: {
                     selectedTab = .chat
