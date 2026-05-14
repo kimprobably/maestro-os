@@ -1,17 +1,18 @@
 import XCTest
 @testable import SwiftAIBoilerplatePro
+import Storage
 
+@MainActor
 final class SwiftAIBoilerplateProTests: XCTestCase {
-    
-    func testExample() throws {
-        // This is a basic placeholder test
-        // Real tests are in CompositionRootTests.swift and other test files
-        XCTAssertTrue(true)
+
+    func testMainTabOrderKeepsWakeRunsBetweenHomeAndProfile() {
+        XCTAssertEqual(MainTabView.Tab.allCases.map(\.title), ["Home", "Runs", "Profile"])
     }
-    
-    func testPerformance() throws {
-        measure {
-            // Put the code you want to measure the time of here.
-        }
+
+    func testWakeTaskStoreLocationUsesDedicatedApplicationSupportFile() {
+        let location = WakeTaskStoreLocation.default()
+
+        XCTAssertEqual(location.fileURL.lastPathComponent, "wake-task-store.json")
+        XCTAssertEqual(location.fileURL.deletingLastPathComponent().lastPathComponent, "waketask")
     }
 }

@@ -218,21 +218,7 @@ final class ChatFlowUITests: XCTestCase {
         }
     }
     
-    func testChatHistory_canDeleteConversation() throws {
-        // This requires implementing swipe-to-delete or edit mode
-        // Placeholder for when feature exists
-    }
-    
     // MARK: - Error Handling
-    
-    func testChat_handlesNetworkError() throws {
-        // This would require mocking network failure
-        // Placeholder for integration with network stub
-    }
-    
-    func testChat_retryAfterError() throws {
-        // Placeholder for retry functionality test
-    }
     
     // MARK: - Helpers
     

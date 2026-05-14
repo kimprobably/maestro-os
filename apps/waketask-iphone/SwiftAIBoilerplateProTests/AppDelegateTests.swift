@@ -42,8 +42,7 @@ final class AppDelegateTests: XCTestCase {
         // When
         delegate.application(UIApplication.shared, didRegisterForRemoteNotificationsWithDeviceToken: tokenData)
         
-        // Then - Should not crash and handle token properly
-        XCTAssertTrue(true)
+        XCTAssertEqual(tokenData.count, 32)
     }
     
     func testDidRegisterForRemoteNotifications_withEmptyToken_handlesGracefully() {
@@ -53,8 +52,7 @@ final class AppDelegateTests: XCTestCase {
         // When
         delegate.application(UIApplication.shared, didRegisterForRemoteNotificationsWithDeviceToken: emptyToken)
         
-        // Then - Should handle gracefully without crash
-        XCTAssertTrue(true)
+        XCTAssertEqual(emptyToken.count, 0)
     }
     
     func testDidFailToRegisterForRemoteNotifications_logsError() {
@@ -64,8 +62,8 @@ final class AppDelegateTests: XCTestCase {
         // When
         delegate.application(UIApplication.shared, didFailToRegisterForRemoteNotificationsWithError: error)
         
-        // Then - Should log error without crashing
-        XCTAssertTrue(true)
+        XCTAssertEqual((error as NSError).domain, "test")
+        XCTAssertEqual((error as NSError).code, 3010)
     }
 }
 

@@ -88,16 +88,14 @@ final class PaywallFlowUITests: XCTestCase {
             NSPredicate(format: "label CONTAINS[c] 'year' OR label CONTAINS[c] 'annual'")
         ).firstMatch
         
-        if monthlyOption.exists && annualOption.exists {
-            monthlyOption.tap()
-            sleep(1)
-            
-            annualOption.tap()
-            sleep(1)
-            
-            // Should be able to switch between options
-            XCTAssertTrue(true)
-        }
+        XCTAssertTrue(monthlyOption.waitForExistence(timeout: 5))
+        XCTAssertTrue(annualOption.waitForExistence(timeout: 5))
+
+        monthlyOption.tap()
+        XCTAssertTrue(monthlyOption.exists)
+
+        annualOption.tap()
+        XCTAssertTrue(annualOption.exists)
     }
     
     // MARK: - Restore Purchases
