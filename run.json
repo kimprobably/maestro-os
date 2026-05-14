@@ -3405,7 +3405,7 @@
     "kind": "running"
   },
   "status_updated_at": "2026-05-14T10:40:41.620927Z",
-  "last_event_at": "2026-05-14T10:51:49.001201Z",
+  "last_event_at": "2026-05-14T10:51:53.574259Z",
   "pending_control": null,
   "checkpoints": [
     {
@@ -3529,9 +3529,9 @@
       }
     },
     {
-      "seq": 0,
+      "seq": 93,
       "checkpoint": {
-        "timestamp": "2026-05-14T10:51:49.415270Z",
+        "timestamp": "2026-05-14T10:51:53.571411Z",
         "current_node": "research_fanout",
         "completed_nodes": [
           "start",
@@ -3541,19 +3541,132 @@
         ],
         "node_retries": {},
         "context_values": {
+          "internal.work_dir": "/home/daytona/workspace",
+          "internal.retry_count.bootstrap": 0,
+          "internal.run_id": "01KRK15YVT2214YB2CZ78HWJJM",
+          "parallel.branch_count": 4,
+          "internal.thread_id": "prompt_quality_gate",
+          "parallel.results": [
+            {
+              "id": "app_store_research",
+              "status": "succeeded",
+              "head_sha": "637cedc1f99ae162c37ba49f8b55306140de518e"
+            },
+            {
+              "id": "reddit_research",
+              "status": "succeeded",
+              "head_sha": "e0048456ae221d975bb975261455b6b8356e05bb"
+            },
+            {
+              "id": "competitor_research",
+              "status": "succeeded",
+              "head_sha": "189c7babdf1f492aff52c28b7702cf96ce27ab8b"
+            },
+            {
+              "id": "design_pattern_research",
+              "status": "succeeded",
+              "head_sha": "31586ddc5937d688a6ce0fc7899165a66a2e643a"
+            }
+          ],
+          "graph.persona": "iphone-app-factory",
+          "internal.retry_count.prompt_quality_gate": 0,
+          "command.output": "blob://sha256/d99837be75a9872643e3c63f4b5feee850140e06899892eb7d6763a9320f39f2",
           "graph.outputs": "research_pack,spec,architecture,swift_app,ios_quality_report,appium_report,release_handoff",
+          "graph.fallback_retry_target": "architecture_consensus",
+          "graph.retry_target": "spec_consensus",
+          "failure_signature": "",
+          "graph.model_stylesheet": "\n            *                  { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: low; }\n            .research          { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            .design            { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            .spec              { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            .architecture      { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            .coding            { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            .review            { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            .verify            { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: medium; }\n            .security          { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            .simplify          { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            .macos             { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            #spec_codex        { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            #spec_claude       { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            #spec_kimi         { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            #spec_deepseek     { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            #arch_codex        { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            #arch_claude       { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n        ",
+          "graph.secret_policy": "never print environment variables or credential values; credential checks must be presence-only true/false checks; do not run environment dump commands.",
+          "graph.rankdir": "LR",
+          "thread.prompt_quality_gate.current_node": "research_fanout",
+          "current_node": "research_fanout",
+          "internal.node_visit_count": 1,
+          "internal.fidelity": "compact",
           "internal.retry_count.start": 0,
+          "thread.start.current_node": "bootstrap",
+          "outcome": "succeeded",
+          "failure_class": "",
+          "graph.goal": "Build a differentiated iPhone app from a researched app opportunity using SwiftAIBoilerplatePro",
+          "thread.bootstrap.current_node": "prompt_quality_gate",
+          "graph.default_max_retries": "2",
+          "graph.inputs": "app_type,target_audience,app_name,bundle_id,app_dir,spec_kitty_feature,boilerplate_repo,max_competitors,use_mobbin,ios_validation_mode,allow_macos_deferred",
+          "internal.retry_count.research_fanout": 0
+        },
+        "node_outcomes": {
+          "bootstrap": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/66b6c6d86164b03c97192d43da200a46e8f3c2e79c7d7af912ce945bde25fecb"
+            },
+            "notes": "Script completed: node scripts/iphone-app-factory/bootstrap.mjs --app-dir 'apps/waketask-iphone' --app-name 'WakeTask' --bundle-id 'com.keen.waketask' --boilerplate-repo 'SwiftAIBoilerplatePro/SwiftAIBoilerplatePro-Distribution'",
+            "usage": null
+          },
+          "research_fanout": {
+            "status": "succeeded",
+            "jump_to_node": "research_join",
+            "notes": "Parallel node dispatched 4 branches (4 succeeded, 0 failed)",
+            "usage": null
+          },
+          "prompt_quality_gate": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/d99837be75a9872643e3c63f4b5feee850140e06899892eb7d6763a9320f39f2"
+            },
+            "notes": "Script completed: node scripts/iphone-app-factory/promptfoo-prompt-quality.mjs --config evals/iphone-app-factory/prompt-quality.yaml --registry evals/iphone-app-factory/prompt-registry.json --out .workflow/iphone-app-factory/evals/prompt-quality.json --allow-fallback true",
+            "usage": null
+          },
+          "start": {
+            "status": "succeeded",
+            "usage": null
+          }
+        },
+        "next_node_id": "research_join",
+        "git_commit_sha": "ff1130b2b2f5be54a2639d76c7f8979a723b528b",
+        "node_visits": {
+          "bootstrap": 1,
+          "research_fanout": 1,
+          "start": 1,
+          "prompt_quality_gate": 1
+        }
+      },
+      "diff": {
+        "summary": {
+          "files_changed": 10363,
+          "additions": 347765,
+          "deletions": 0
+        }
+      }
+    },
+    {
+      "seq": 0,
+      "checkpoint": {
+        "timestamp": "2026-05-14T10:51:53.961265Z",
+        "current_node": "research_join",
+        "completed_nodes": [
+          "start",
+          "bootstrap",
+          "prompt_quality_gate",
+          "research_fanout",
+          "research_join"
+        ],
+        "node_retries": {},
+        "context_values": {
+          "internal.retry_count.research_join": 0,
+          "graph.outputs": "research_pack,spec,architecture,swift_app,ios_quality_report,appium_report,release_handoff",
+          "parallel.fan_in.best_head_sha": "637cedc1f99ae162c37ba49f8b55306140de518e",
+          "internal.retry_count.start": 0,
+          "parallel.fan_in.best_id": "app_store_research",
           "graph.goal": "Build a differentiated iPhone app from a researched app opportunity using SwiftAIBoilerplatePro",
           "graph.model_stylesheet": "\n            *                  { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: low; }\n            .research          { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            .design            { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            .spec              { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            .architecture      { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            .coding            { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            .review            { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            .verify            { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: medium; }\n            .security          { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            .simplify          { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            .macos             { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            #spec_codex        { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            #spec_claude       { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            #spec_kimi         { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            #spec_deepseek     { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            #arch_codex        { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            #arch_claude       { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n        ",
           "failure_class": "",
           "thread.start.current_node": "bootstrap",
           "internal.retry_count.prompt_quality_gate": 0,
-          "current_node": "research_fanout",
+          "current_node": "research_join",
           "internal.node_visit_count": 1,
           "internal.fidelity": "compact",
           "graph.fallback_retry_target": "architecture_consensus",
           "graph.retry_target": "spec_consensus",
-          "internal.thread_id": "prompt_quality_gate",
+          "internal.thread_id": "research_fanout",
           "graph.inputs": "app_type,target_audience,app_name,bundle_id,app_dir,spec_kitty_feature,boilerplate_repo,max_competitors,use_mobbin,ios_validation_mode,allow_macos_deferred",
           "thread.bootstrap.current_node": "prompt_quality_gate",
           "internal.retry_count.bootstrap": 0,
@@ -3582,7 +3695,9 @@
             }
           ],
           "graph.persona": "iphone-app-factory",
+          "thread.research_fanout.current_node": "research_join",
           "thread.prompt_quality_gate.current_node": "research_fanout",
+          "parallel.fan_in.best_outcome": "succeeded",
           "graph.secret_policy": "never print environment variables or credential values; credential checks must be presence-only true/false checks; do not run environment dump commands.",
           "parallel.branch_count": 4,
           "internal.work_dir": "/home/daytona/workspace",
@@ -3603,6 +3718,16 @@
             "status": "succeeded",
             "usage": null
           },
+          "research_join": {
+            "status": "succeeded",
+            "context_updates": {
+              "parallel.fan_in.best_outcome": "succeeded",
+              "parallel.fan_in.best_id": "app_store_research",
+              "parallel.fan_in.best_head_sha": "637cedc1f99ae162c37ba49f8b55306140de518e"
+            },
+            "notes": "Selected best candidate: app_store_research",
+            "usage": null
+          },
           "prompt_quality_gate": {
             "status": "succeeded",
             "context_updates": {
@@ -3620,9 +3745,10 @@
             "usage": null
           }
         },
-        "next_node_id": "research_join",
+        "next_node_id": "research_synthesis",
         "node_visits": {
           "research_fanout": 1,
+          "research_join": 1,
           "bootstrap": 1,
           "start": 1,
           "prompt_quality_gate": 1
@@ -3695,7 +3821,12 @@
       "first_event_seq": 43,
       "prompt": null,
       "response": null,
-      "completion": null,
+      "completion": {
+        "outcome": "succeeded",
+        "notes": "Parallel node dispatched 4 branches (4 succeeded, 0 failed)",
+        "failure_reason": null,
+        "timestamp": "2026-05-14T10:51:49.415132Z"
+      },
       "provider_used": {
         "mode": "cli",
         "provider": "openai",
@@ -3730,6 +3861,7 @@
       "output": null,
       "started_at": "2026-05-14T10:42:15.187820Z",
       "handler": "parallel",
+      "duration_ms": 573814,
       "usage": {
         "input_tokens": 320508,
         "output_tokens": 4054,
@@ -3743,7 +3875,7 @@
         "provider": "openai",
         "model_id": "gpt-5.3-codex"
       },
-      "state": "running"
+      "state": "succeeded"
     },
     "bootstrap@1": {
       "first_event_seq": 20,
@@ -3897,6 +4029,29 @@
         "cache_write_tokens": 0
       },
       "state": "succeeded"
+    },
+    "research_join@1": {
+      "first_event_seq": 96,
+      "prompt": null,
+      "response": null,
+      "completion": null,
+      "provider_used": null,
+      "diff": null,
+      "script_invocation": null,
+      "script_timing": null,
+      "parallel_results": null,
+      "output": null,
+      "started_at": "2026-05-14T10:51:53.574259Z",
+      "handler": "parallel.fan_in",
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "total_tokens": 0,
+        "reasoning_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "state": "running"
     },
     "app_store_research@1": {
       "first_event_seq": 56,
