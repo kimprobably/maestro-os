@@ -40,7 +40,8 @@ public enum AppLogger {
     ///   - message: Debug message to log
     ///   - category: Logger category (defaults to .ui)
     public static func debug(_ message: @autoclosure () -> String, category: Logger = AppLogger.ui) {
-        category.debug("\(message())")
+        let evaluatedMessage = message()
+        category.debug("\(evaluatedMessage)")
     }
 
     /// Log info message
@@ -48,7 +49,8 @@ public enum AppLogger {
     ///   - message: Info message to log
     ///   - category: Logger category (defaults to .ui)
     public static func info(_ message: @autoclosure () -> String, category: Logger = AppLogger.ui) {
-        category.info("\(message())")
+        let evaluatedMessage = message()
+        category.info("\(evaluatedMessage)")
     }
 
     /// Log error message
@@ -56,7 +58,8 @@ public enum AppLogger {
     ///   - message: Error message to log
     ///   - category: Logger category (defaults to .ui)
     public static func error(_ message: @autoclosure () -> String, category: Logger = AppLogger.ui) {
-        category.error("\(message())")
+        let evaluatedMessage = message()
+        category.error("\(evaluatedMessage)")
     }
 
     // MARK: - Redaction Helpers
