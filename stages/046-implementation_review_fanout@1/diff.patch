@@ -1,0 +1,257 @@
+diff --git a/apps/waketask-iphone/.github/workflows/ios-quality.yml b/apps/waketask-iphone/.github/workflows/ios-quality.yml
+index 2800438..f61f2e7 100644
+--- a/apps/waketask-iphone/.github/workflows/ios-quality.yml
++++ b/apps/waketask-iphone/.github/workflows/ios-quality.yml
+@@ -20,9 +20,13 @@ jobs:
+       - name: Select Xcode
+         run: sudo xcode-select -s /Applications/Xcode_26.2.app || sudo xcode-select -s "$(ls -d /Applications/Xcode_*.app | sort -V | tail -1)"
+ 
+-      - name: Install quality tools
++      - name: Install Swift quality tools
+         run: |
+-          brew install swiftlint swiftformat qlty || true
++          brew update
++          brew install swiftlint swiftformat ripgrep
++
++      - name: Install Qlty CLI
++        uses: qltysh/qlty-action/install@v2
+ 
+       - name: iOS quality gates
+         env:
+diff --git a/apps/waketask-iphone/.gitignore b/apps/waketask-iphone/.gitignore
+index a078921..85afb66 100644
+--- a/apps/waketask-iphone/.gitignore
++++ b/apps/waketask-iphone/.gitignore
+@@ -56,3 +56,5 @@ BackendProxy/**/.python-version
+ # Not for end users / buyers of the boilerplate.
+ docs/release/
+ 
++# Generated CI reports
++reports/ios/*.json
+diff --git a/apps/waketask-iphone/.qlty/qlty.toml b/apps/waketask-iphone/.qlty/qlty.toml
+new file mode 100644
+index 0000000..a7c8633
+--- /dev/null
++++ b/apps/waketask-iphone/.qlty/qlty.toml
+@@ -0,0 +1,24 @@
++config_version = "0"
++
++exclude_patterns = [
++  "**/.build/**",
++  "**/DerivedData/**",
++  "**/*.xcresult/**",
++  "**/vendor/**"
++]
++
++test_patterns = [
++  "**/*Tests/**",
++  "**/*UITests/**",
++  "**/*Tests.swift"
++]
++
++[[source]]
++name = "default"
++default = true
++
++[[plugin]]
++name = "swiftlint"
++
++[[plugin]]
++name = "swiftformat"
+diff --git a/apps/waketask-iphone/SwiftAIBoilerplateProTests/AppShellSnapshotTests.swift b/apps/waketask-iphone/SwiftAIBoilerplateProTests/AppShellSnapshotTests.swift
+index c7de02b..334364c 100644
+--- a/apps/waketask-iphone/SwiftAIBoilerplateProTests/AppShellSnapshotTests.swift
++++ b/apps/waketask-iphone/SwiftAIBoilerplateProTests/AppShellSnapshotTests.swift
+@@ -1,24 +1,36 @@
++import SwiftUI
+ import XCTest
+ @testable import SwiftAIBoilerplatePro
+ 
+ @MainActor
+ final class AppShellSnapshotTests: XCTestCase {
+-    
+-    /// Placeholder for snapshot tests
+-    /// 
+-    /// To implement real snapshot testing:
+-    /// 1. Add SnapshotTesting package: https://github.com/pointfreeco/swift-snapshot-testing
+-    /// 2. Use assertSnapshot(matching: view, as: .image(layout: .device(config: .iPhone13)))
+-    ///
+-    /// For now, these are basic smoke tests to ensure views can be created.
+-    
+-    func testExample() {
+-        // Basic test to ensure test target works
+-        XCTAssertTrue(true)
+-    }
+-    
++
+     func testHomeContentCanBeInitialized() {
+         let view = HomeContent()
+-        XCTAssertNotNil(view)
++        XCTAssertEqual(String(describing: type(of: view)), "HomeContent")
++    }
++
++    func testMainTabMetadataReflectsWakeTaskRunsSurface() {
++        XCTAssertEqual(MainTabView.Tab.home.title, "Home")
++        XCTAssertEqual(MainTabView.Tab.chat.title, "Runs")
++        XCTAssertEqual(MainTabView.Tab.chat.icon, "alarm.fill")
++        XCTAssertEqual(MainTabView.Tab.profile.title, "Profile")
++    }
++
++    func testMainTabViewCanBeInitializedWithWakeDependencies() {
++        let view = MainTabView(
++            selectedTab: .constant(.chat),
++            homeViewModel: HomeViewModel(
++                conversationRepository: PreviewMocks.MockConversationRepository()
++            ),
++            wakeFlowViewModel: PreviewComposition.wakeFlowVM(),
++            settingsViewModel: PreviewComposition.settingsVM(),
++            profileViewModel: ProfileViewModel(
++                authClient: PreviewMocks.MockAuthClient(),
++                paymentsClient: PreviewMocks.MockPaymentsClient()
++            )
++        )
++
++        XCTAssertEqual(String(describing: type(of: view)), "MainTabView")
+     }
+ }
+diff --git a/apps/waketask-iphone/SwiftAIBoilerplateProUITests/SwiftAIBoilerplateProUITests.swift b/apps/waketask-iphone/SwiftAIBoilerplateProUITests/SwiftAIBoilerplateProUITests.swift
+index 1f66cca..166c787 100644
+--- a/apps/waketask-iphone/SwiftAIBoilerplateProUITests/SwiftAIBoilerplateProUITests.swift
++++ b/apps/waketask-iphone/SwiftAIBoilerplateProUITests/SwiftAIBoilerplateProUITests.swift
+@@ -3,32 +3,28 @@ import XCTest
+ final class SwiftAIBoilerplateProUITests: XCTestCase {
+ 
+     override func setUpWithError() throws {
+-        // Put setup code here. This method is called before the invocation of each test method in the class.
+-
+-        // In UI tests it is usually best to stop immediately when a failure occurs.
++        try super.setUpWithError()
+         continueAfterFailure = false
+-
+-        // In UI tests it's important to set the initial state - such as interface orientation - required for your tests before they run. The setUp method is a good place to do this.
+-    }
+-
+-    override func tearDownWithError() throws {
+-        // Put teardown code here. This method is called after the invocation of each test method in the class.
+     }
+ 
+-    func testExample() throws {
+-        // UI tests must launch the application that they test.
++    func testLaunchShowsWakeTaskTabs() throws {
+         let app = XCUIApplication()
++        app.launchEnvironment["AUTH_BYPASS"] = "1"
+         app.launch()
+ 
+-        // Use XCTAssert and related functions to verify your tests produce the correct results.
+-        XCTAssertTrue(true)
++        let tabBar = app.tabBars.firstMatch
++        XCTAssertTrue(tabBar.waitForExistence(timeout: 10))
++        XCTAssertTrue(tabBar.buttons["Home"].exists)
++        XCTAssertTrue(tabBar.buttons["Runs"].exists)
++        XCTAssertTrue(tabBar.buttons["Profile"].exists)
+     }
+ 
+-    func testPerformanceExample() throws {
++    func testLaunchPerformance() throws {
+         if #available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 7.0, *) {
+-            // This measures how long it takes to launch your application.
+             measure(metrics: [XCTApplicationLaunchMetric()]) {
+-                XCUIApplication().launch()
++                let app = XCUIApplication()
++                app.launchEnvironment["AUTH_BYPASS"] = "1"
++                app.launch()
+             }
+         }
+     }
+diff --git a/apps/waketask-iphone/reports/ios/appium-exploratory-report.json b/apps/waketask-iphone/reports/ios/appium-exploratory-report.json
+deleted file mode 100644
+index ae0a7cb..0000000
+--- a/apps/waketask-iphone/reports/ios/appium-exploratory-report.json
++++ /dev/null
+@@ -1,10 +0,0 @@
+-{
+-  "ok": false,
+-  "buttons_tapped": 0,
+-  "screens_visited": [],
+-  "crashes": 0,
+-  "failures": 1,
+-  "failures_detail": [
+-    "Foundation Appium placeholder only. Hosted macOS simulator traversal has not run, and allow_macos_deferred=false forbids treating this as pass evidence."
+-  ]
+-}
+diff --git a/apps/waketask-iphone/scripts/ci/ios-quality.sh b/apps/waketask-iphone/scripts/ci/ios-quality.sh
+index 772123a..f0d6854 100755
+--- a/apps/waketask-iphone/scripts/ci/ios-quality.sh
++++ b/apps/waketask-iphone/scripts/ci/ios-quality.sh
+@@ -34,17 +34,11 @@ require_required_secrets_if_enabled() {
+   fi
+ }
+ 
+-run_optional_gate() {
+-  local gate_name="$1"
+-  local cmd="$2"
+-  local status_var="$3"
+-  if command -v "${cmd%% *}" >/dev/null 2>&1; then
+-    echo "[ios-quality] ${gate_name}"
+-    eval "$cmd"
+-    printf -v "$status_var" "true"
+-  else
+-    echo "[ios-quality] ${gate_name} skipped (tool not installed)"
+-    printf -v "$status_var" "false"
++require_tool() {
++  local tool="$1"
++  if ! command -v "$tool" >/dev/null 2>&1; then
++    echo "[ios-quality] Required tool unavailable: $tool"
++    exit 1
+   fi
+ }
+ 
+@@ -84,6 +78,13 @@ run_secret_scan() {
+   fi
+ }
+ 
++require_tool xcodebuild
++require_tool rg
++require_tool strings
++require_tool swiftlint
++require_tool swiftformat
++require_tool qlty
++
+ echo "[ios-quality] Resolve package dependencies"
+ xcodebuild -resolvePackageDependencies -project "$PROJECT"
+ 
+@@ -106,12 +107,15 @@ xcodebuild \
+   CODE_SIGNING_ALLOWED=NO \
+   test
+ 
+-swiftlint_ran="false"
+-swiftformat_ran="false"
+-qlty_ran="false"
+-run_optional_gate "SwiftLint" "swiftlint lint --strict" swiftlint_ran
+-run_optional_gate "SwiftFormat" "swiftformat . --lint" swiftformat_ran
+-run_optional_gate "Qlty" "qlty check" qlty_ran
++echo "[ios-quality] SwiftLint"
++swiftlint lint --strict
++
++echo "[ios-quality] SwiftFormat"
++swiftformat . --lint
++
++echo "[ios-quality] Qlty"
++qlty check --all
++
+ require_required_secrets_if_enabled
+ run_secret_scan
+ run_app_store_string_audit
+@@ -125,9 +129,9 @@ cat > "$REPORT_PATH" <<JSON
+   "checks": {
+     "xcodebuild_build": true,
+     "xcodebuild_test": true,
+-    "swiftlint": $swiftlint_ran,
+-    "swiftformat": $swiftformat_ran,
+-    "qlty": $qlty_ran,
++    "swiftlint": true,
++    "swiftformat": true,
++    "qlty": true,
+     "secret_scan": true,
+     "app_store_string_audit": true
+   },
