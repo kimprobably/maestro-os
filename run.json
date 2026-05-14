@@ -1,0 +1,432 @@
+{
+  "title": "Verify Claude Code and Codex CLI auth work inside a fresh Daytona sandbox",
+  "spec": {
+    "run_id": "01KRHZMAVEDMMW5N684F9FXAKF",
+    "settings": {
+      "project": {
+        "name": "maestro-os",
+        "description": null,
+        "metadata": {}
+      },
+      "workflow": {
+        "name": null,
+        "description": null,
+        "graph": "workflow.fabro",
+        "metadata": {}
+      },
+      "run": {
+        "goal": {
+          "type": "inline",
+          "value": "Verify Claude Code and Codex CLI auth work inside a fresh Daytona sandbox"
+        },
+        "working_dir": null,
+        "metadata": {},
+        "inputs": {},
+        "model": {
+          "provider": "openai",
+          "name": "gpt-5.4",
+          "fallbacks": [],
+          "controls": {
+            "reasoning_effort": null,
+            "speed": null
+          }
+        },
+        "git": {
+          "author": null
+        },
+        "prepare": {
+          "commands": [],
+          "timeout_ms": 300000
+        },
+        "execution": {
+          "mode": "normal",
+          "approval": "prompt"
+        },
+        "checkpoint": {
+          "exclude_globs": []
+        },
+        "clone": {
+          "enabled": true
+        },
+        "run_branch": {
+          "enabled": true,
+          "push": true
+        },
+        "meta_branch": {
+          "enabled": true,
+          "push": true
+        },
+        "sandbox": {
+          "provider": "daytona",
+          "preserve": false,
+          "stop_on_terminal": true,
+          "devcontainer": false,
+          "env": {
+            "APIFY_INSTAGRAM_ACTOR": "apify/instagram-scraper",
+            "OPENROUTER_API_KEY": "{{ env.OPENROUTER_API_KEY }}",
+            "APIFY_TOKEN": "{{ env.APIFY_TOKEN }}",
+            "LINEAR_API_KEY": "{{ env.LINEAR_API_KEY }}",
+            "LINEAR_API_URL": "{{ env.LINEAR_API_URL }}",
+            "APIFY_APPSTORE_ACTOR": "crawlerbros/appstore-scraper",
+            "DAYTONA_API_URL": "{{ env.DAYTONA_API_URL }}",
+            "FABRO_SERVER": "{{ env.FABRO_SERVER }}",
+            "OPENAI_API_KEY": "{{ env.OPENAI_API_KEY }}",
+            "FABRO_DEV_TOKEN": "{{ env.FABRO_DEV_TOKEN }}",
+            "PROMPTFOO_DISABLE_TELEMETRY": "1",
+            "FABRO_SLACK_CHANNEL_ID": "{{ env.FABRO_SLACK_CHANNEL_ID }}",
+            "DAYTONA_API_KEY": "{{ env.DAYTONA_API_KEY }}",
+            "APIFY_TIKTOK_ACTOR": "clockworks/tiktok-scraper",
+            "FABRO_SLACK_BOT_TOKEN": "{{ env.FABRO_SLACK_BOT_TOKEN }}",
+            "CLAUDE_CODE_OAUTH_TOKEN": "{{ env.CLAUDE_CODE_OAUTH_TOKEN }}"
+          },
+          "docker": {
+            "image": "buildpack-deps:noble",
+            "network_mode": null,
+            "memory_limit": 4000000000,
+            "cpu_quota": 200000,
+            "env_vars": {}
+          },
+          "daytona": {
+            "auto_stop_interval": 30,
+            "labels": {
+              "purpose": "code-factory",
+              "project": "maestro-os"
+            },
+            "snapshot": {
+              "name": "maestro-code-factory-v5",
+              "cpu": 2,
+              "memory_gb": 4,
+              "disk_gb": 10,
+              "dockerfile": {
+                "type": "inline",
+                "value": "FROM ubuntu:24.04\n\nENV DEBIAN_FRONTEND=noninteractive\nENV BUN_INSTALL=/root/.bun\nENV PATH=\"/root/.fabro/bin:/root/.bun/bin:/root/.local/bin:/root/.qlty/bin:${PATH}\"\nWORKDIR /home/daytona\n\nRUN apt-get update && apt-get install -y --no-install-recommends bash ca-certificates curl git jq openssh-client python3 python3-pip pipx ripgrep shellcheck unzip xz-utils && rm -rf /var/lib/apt/lists/*\n\nRUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash - && apt-get update && apt-get install -y --no-install-recommends nodejs && npm install -g @anthropic-ai/claude-code @openai/codex promptfoo && npm cache clean --force && rm -rf /var/lib/apt/lists/*\n\nRUN curl -fsSL https://bun.sh/install | bash -s \"bun-v1.2.22\" && ln -sf /root/.bun/bin/bun /usr/local/bin/bun\n\nRUN pipx install spec-kitty-cli==3.1.8 && curl -fsSL https://qlty.sh | sh && ln -sf /root/.qlty/bin/qlty /usr/local/bin/qlty\n\nRUN set -eux; target=\"x86_64-unknown-linux-gnu\"; asset=\"fabro-${target}.tar.gz\"; url=\"$(curl -fsSL https://api.github.com/repos/fabro-sh/fabro/releases/latest | jq -r --arg asset \"$asset\" '.assets[] | select(.name == $asset) | .browser_download_url')\"; test -n \"$url\"; curl -fsSL \"$url\" -o /tmp/fabro.tar.gz; tar -xzf /tmp/fabro.tar.gz -C /tmp; install -m 0755 \"/tmp/fabro-${target}/fabro\" /usr/local/bin/fabro; rm -rf /tmp/fabro.tar.gz \"/tmp/fabro-${target}\"; fabro --version\n\nCMD [\"/bin/bash\"]\n"
+              }
+            },
+            "network": "allow_all"
+          }
+        },
+        "notifications": {},
+        "interviews": {
+          "provider": null,
+          "slack": null
+        },
+        "agent": {
+          "permissions": "full",
+          "mcps": {}
+        },
+        "hooks": [],
+        "scm": {
+          "provider": null,
+          "owner": null,
+          "repository": null,
+          "github": null
+        },
+        "pull_request": null,
+        "artifacts": {
+          "include": [
+            ".workflow/**",
+            "reports/**",
+            "evals/output/**",
+            "apps/generated-*/README.md",
+            "apps/generated-*/.workflow-build.json",
+            "apps/generated-*/fixtures/**",
+            "apps/generated-*/public/**",
+            "apps/generated-*/src/**",
+            "apps/generated-*/tests/**"
+          ]
+        },
+        "integrations": {
+          "github": {
+            "permissions": {
+              "contents": "write",
+              "pull_requests": "write",
+              "issues": "write",
+              "metadata": "read",
+              "actions": "read"
+            }
+          }
+        }
+      }
+    },
+    "graph": {
+      "name": "DaytonaCliAuthRuntimeSmoke",
+      "nodes": {
+        "check_claude_runtime": {
+          "id": "check_claude_runtime",
+          "attrs": {
+            "script": {
+              "String": "mkdir -p .workflow/fabro; node -e \"const fs=require('fs'); const {spawnSync}=require('child_process'); const clean=(value)=>String(value||'').replace(/sk-[A-Za-z0-9_-]+/g,'[redacted]').trim().slice(0,800); const usable=(key)=>{const value=process.env[key]||''; const unresolved=value.charCodeAt(0)===123 && value.charCodeAt(1)===123; return Boolean(value && !unresolved);}; const run=(cmd,args,timeout=120000)=>{const r=spawnSync(cmd,args,{encoding:'utf8',timeout,env:{...process.env,CI:'1'}}); return {cmd:[cmd,...args].join(' '), status:r.status, signal:r.signal||null, stdout:clean(r.stdout), stderr:clean(r.stderr)};}; const env={CLAUDE_CODE_OAUTH_TOKEN:usable('CLAUDE_CODE_OAUTH_TOKEN')}; const checks=[run('claude',['--version'],45000), run('claude',['-p','Reply with exactly OK.'],120000)]; const missing=Object.entries(env).filter(([,ok])=>!ok).map(([key])=>key); const failed=checks.filter((check)=>check.status!==0); const report={ok:missing.length===0 && failed.length===0, env, missing, checks, failed}; fs.writeFileSync('.workflow/fabro/daytona-cli-auth-runtime-smoke.json', JSON.stringify(report,null,2)+'\\n'); console.log(JSON.stringify(report,null,2)); if(!report.ok) process.exit(1);\""
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "label": {
+              "String": "Check Claude Runtime"
+            },
+            "model": {
+              "String": "anthropic/claude-haiku-4-5"
+            },
+            "type": {
+              "String": "command"
+            },
+            "provider": {
+              "String": "openrouter"
+            }
+          }
+        },
+        "write_report": {
+          "id": "write_report",
+          "attrs": {
+            "type": {
+              "String": "command"
+            },
+            "script": {
+              "String": "node -e \"const fs=require('fs'); const report=JSON.parse(fs.readFileSync('.workflow/fabro/daytona-cli-auth-runtime-smoke.json','utf8')); const lines=['# Daytona CLI Auth Runtime Smoke','', 'ok=' + report.ok, '', '## Env', ...Object.entries(report.env).map(([key,value])=>'- ' + key + '=' + value), '', '## Checks', ...report.checks.map((check)=>'- ' + check.cmd + ' status=' + check.status + (check.signal ? ' signal=' + check.signal : '') + (check.stdout ? ' output=' + check.stdout.split('\\n')[0] : '') + (check.stderr ? ' stderr=' + check.stderr.split('\\n')[0] : ''))]; fs.writeFileSync('.workflow/fabro/daytona-cli-auth-runtime-smoke.md', lines.join('\\n')+'\\n'); console.log(lines.join('\\n')); if(!report.ok) process.exit(1);\""
+            },
+            "provider": {
+              "String": "openrouter"
+            },
+            "label": {
+              "String": "Write Report"
+            },
+            "model": {
+              "String": "anthropic/claude-haiku-4-5"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            }
+          }
+        },
+        "start": {
+          "id": "start",
+          "attrs": {
+            "label": {
+              "String": "Start"
+            },
+            "shape": {
+              "String": "Mdiamond"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "model": {
+              "String": "anthropic/claude-haiku-4-5"
+            },
+            "provider": {
+              "String": "openrouter"
+            }
+          }
+        },
+        "check_codex_runtime": {
+          "id": "check_codex_runtime",
+          "attrs": {
+            "class": {
+              "String": "codex"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "model": {
+              "String": "gpt-5.3-codex-spark"
+            },
+            "prompt": {
+              "String": "Reply with exactly OK."
+            },
+            "backend": {
+              "String": "cli"
+            },
+            "label": {
+              "String": "Check Codex Runtime"
+            },
+            "provider": {
+              "String": "openai"
+            }
+          },
+          "classes": [
+            "codex"
+          ]
+        },
+        "fail_runtime": {
+          "id": "fail_runtime",
+          "attrs": {
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "model": {
+              "String": "anthropic/claude-haiku-4-5"
+            },
+            "type": {
+              "String": "command"
+            },
+            "label": {
+              "String": "Fail Runtime"
+            },
+            "provider": {
+              "String": "openrouter"
+            },
+            "script": {
+              "String": "node -e \"const fs=require('fs'); const body=fs.existsSync('.workflow/fabro/daytona-cli-auth-runtime-smoke.json') ? fs.readFileSync('.workflow/fabro/daytona-cli-auth-runtime-smoke.json','utf8') : '{}'; console.error(body); process.exit(1);\""
+            }
+          }
+        },
+        "exit": {
+          "id": "exit",
+          "attrs": {
+            "provider": {
+              "String": "openrouter"
+            },
+            "shape": {
+              "String": "Msquare"
+            },
+            "model": {
+              "String": "anthropic/claude-haiku-4-5"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "label": {
+              "String": "Exit"
+            }
+          }
+        }
+      },
+      "edges": [
+        {
+          "from": "start",
+          "to": "check_claude_runtime",
+          "attrs": {}
+        },
+        {
+          "from": "check_claude_runtime",
+          "to": "check_codex_runtime",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "check_claude_runtime",
+          "to": "fail_runtime",
+          "attrs": {
+            "label": {
+              "String": "Fail"
+            }
+          }
+        },
+        {
+          "from": "check_codex_runtime",
+          "to": "write_report",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "check_codex_runtime",
+          "to": "fail_runtime",
+          "attrs": {
+            "label": {
+              "String": "Fail"
+            }
+          }
+        },
+        {
+          "from": "write_report",
+          "to": "exit",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "write_report",
+          "to": "fail_runtime",
+          "attrs": {
+            "label": {
+              "String": "Fail"
+            }
+          }
+        }
+      ],
+      "attrs": {
+        "inputs": {
+          "String": "none"
+        },
+        "goal": {
+          "String": "Verify Claude Code and Codex CLI auth work inside a fresh Daytona sandbox"
+        },
+        "model_stylesheet": {
+          "String": "\n            *      { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: low; }\n            .codex { backend: cli; provider: openai; model: gpt-5.3-codex-spark; reasoning_effort: low; }\n        "
+        },
+        "outputs": {
+          "String": "cli_auth_runtime_report"
+        },
+        "persona": {
+          "String": "cli-auth-smoke"
+        }
+      }
+    },
+    "graph_source": "digraph DaytonaCliAuthRuntimeSmoke {\n    graph [\n        goal=\"Verify Claude Code and Codex CLI auth work inside a fresh Daytona sandbox\",\n        persona=\"cli-auth-smoke\",\n        inputs=\"none\",\n        outputs=\"cli_auth_runtime_report\",\n        model_stylesheet=\"\n            *      { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: low; }\n            .codex { backend: cli; provider: openai; model: gpt-5.3-codex-spark; reasoning_effort: low; }\n        \"\n    ]\n\n    start [shape=Mdiamond, label=\"Start\"]\n    exit [shape=Msquare, label=\"Exit\"]\n\n    check_claude_runtime [\n        label=\"Check Claude Runtime\",\n        type=\"command\",\n        script=\"mkdir -p .workflow/fabro; node -e \\\"const fs=require('fs'); const {spawnSync}=require('child_process'); const clean=(value)=>String(value||'').replace(/sk-[A-Za-z0-9_-]+/g,'[redacted]').trim().slice(0,800); const usable=(key)=>{const value=process.env[key]||''; const unresolved=value.charCodeAt(0)===123 && value.charCodeAt(1)===123; return Boolean(value && !unresolved);}; const run=(cmd,args,timeout=120000)=>{const r=spawnSync(cmd,args,{encoding:'utf8',timeout,env:{...process.env,CI:'1'}}); return {cmd:[cmd,...args].join(' '), status:r.status, signal:r.signal||null, stdout:clean(r.stdout), stderr:clean(r.stderr)};}; const env={CLAUDE_CODE_OAUTH_TOKEN:usable('CLAUDE_CODE_OAUTH_TOKEN')}; const checks=[run('claude',['--version'],45000), run('claude',['-p','Reply with exactly OK.'],120000)]; const missing=Object.entries(env).filter(([,ok])=>!ok).map(([key])=>key); const failed=checks.filter((check)=>check.status!==0); const report={ok:missing.length===0 && failed.length===0, env, missing, checks, failed}; fs.writeFileSync('.workflow/fabro/daytona-cli-auth-runtime-smoke.json', JSON.stringify(report,null,2)+'\\\\n'); console.log(JSON.stringify(report,null,2)); if(!report.ok) process.exit(1);\\\"\"\n    ]\n\n    check_codex_runtime [\n        label=\"Check Codex Runtime\",\n        class=\"codex\",\n        prompt=\"Reply with exactly OK.\"\n    ]\n\n    write_report [\n        label=\"Write Report\",\n        type=\"command\",\n        script=\"node -e \\\"const fs=require('fs'); const report=JSON.parse(fs.readFileSync('.workflow/fabro/daytona-cli-auth-runtime-smoke.json','utf8')); const lines=['# Daytona CLI Auth Runtime Smoke','', 'ok=' + report.ok, '', '## Env', ...Object.entries(report.env).map(([key,value])=>'- ' + key + '=' + value), '', '## Checks', ...report.checks.map((check)=>'- ' + check.cmd + ' status=' + check.status + (check.signal ? ' signal=' + check.signal : '') + (check.stdout ? ' output=' + check.stdout.split('\\\\n')[0] : '') + (check.stderr ? ' stderr=' + check.stderr.split('\\\\n')[0] : ''))]; fs.writeFileSync('.workflow/fabro/daytona-cli-auth-runtime-smoke.md', lines.join('\\\\n')+'\\\\n'); console.log(lines.join('\\\\n')); if(!report.ok) process.exit(1);\\\"\"\n    ]\n\n    fail_runtime [\n        label=\"Fail Runtime\",\n        type=\"command\",\n        script=\"node -e \\\"const fs=require('fs'); const body=fs.existsSync('.workflow/fabro/daytona-cli-auth-runtime-smoke.json') ? fs.readFileSync('.workflow/fabro/daytona-cli-auth-runtime-smoke.json','utf8') : '{}'; console.error(body); process.exit(1);\\\"\"\n    ]\n\n    start -> check_claude_runtime\n    check_claude_runtime -> check_codex_runtime [condition=\"outcome=succeeded\"]\n    check_claude_runtime -> fail_runtime [label=\"Fail\"]\n    check_codex_runtime -> write_report [condition=\"outcome=succeeded\"]\n    check_codex_runtime -> fail_runtime [label=\"Fail\"]\n    write_report -> exit [condition=\"outcome=succeeded\"]\n    write_report -> fail_runtime [label=\"Fail\"]\n}\n",
+    "workflow_slug": "daytona-cli-auth-runtime-smoke",
+    "source_directory": "/Users/timlife/Documents/claude code/maestro-os",
+    "provenance": {
+      "server": {
+        "version": "0.232.0-nightly.0"
+      },
+      "client": {
+        "user_agent": "fabro-cli/0.232.0-nightly.0",
+        "name": "fabro-cli",
+        "version": "0.232.0-nightly.0"
+      },
+      "subject": {
+        "kind": "user",
+        "identity": {
+          "issuer": "fabro:dev",
+          "subject": "dev"
+        },
+        "login": "dev",
+        "auth_method": "dev_token"
+      }
+    },
+    "manifest_blob": "f1e6f2a2bec14ee58980746ec4d59720abc0b58a15fed89c0d579e278066a975",
+    "definition_blob": "9e4f2b9f036a50a9d5925bf9b743209dd2ec803d9a03fb243f6c68ec1248bf9e",
+    "git": {
+      "origin_url": "https://github.com/kimprobably/maestro-os",
+      "branch": "spike/fabro-code-factory-v5",
+      "sha": "d3d684849632cc4899da2dca4e123db65815a93d",
+      "dirty": "dirty",
+      "push_outcome": {
+        "type": "not_attempted"
+      }
+    }
+  },
+  "web_url": "http://127.0.0.1:32276/runs/01KRHZMAVEDMMW5N684F9FXAKF",
+  "start": null,
+  "status": {
+    "kind": "starting"
+  },
+  "status_updated_at": "2026-05-14T00:54:18.270023Z",
+  "last_event_at": "2026-05-14T00:54:20.740517Z",
+  "pending_control": null,
+  "checkpoints": [],
+  "conclusion": null,
+  "sandbox": {
+    "provider": "daytona",
+    "image": "buildpack-deps:noble",
+    "snapshot": "maestro-code-factory-v5",
+    "runtime": {
+      "id": "fabro-01KRHZMAVEDMMW5N684F9FXAKF",
+      "working_directory": "/home/daytona/workspace",
+      "repo_cloned": true,
+      "clone_origin_url": "https://github.com/kimprobably/maestro-os",
+      "clone_branch": "spike/fabro-code-factory-v5"
+    }
+  },
+  "pull_request": null,
+  "superseded_by": null,
+  "pending_interviews": {},
+  "stages": {}
+}
