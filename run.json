@@ -414,7 +414,7 @@
     "kind": "running"
   },
   "status_updated_at": "2026-05-14T01:22:08.408186Z",
-  "last_event_at": "2026-05-14T01:22:29.492563Z",
+  "last_event_at": "2026-05-14T01:22:35.437215Z",
   "pending_control": null,
   "checkpoints": [
     {
@@ -516,9 +516,9 @@
       }
     },
     {
-      "seq": 0,
+      "seq": 40,
       "checkpoint": {
-        "timestamp": "2026-05-14T01:22:29.825227Z",
+        "timestamp": "2026-05-14T01:22:33.466823Z",
         "current_node": "check_codex_runtime",
         "completed_nodes": [
           "start",
@@ -527,18 +527,114 @@
         ],
         "node_retries": {},
         "context_values": {
+          "internal.fidelity": "compact",
+          "internal.work_dir": "/home/daytona/workspace",
+          "command.output": "blob://sha256/b3fbb3a7972301bf2bf67180f8a7cef5b6d1e895aeb8b818cbbc78bdfaa628ca",
+          "graph.inputs": "none",
+          "outcome": "succeeded",
+          "response.check_codex_runtime": "OK.",
+          "graph.persona": "cli-auth-smoke",
+          "thread.codex.current_node": "check_codex_runtime",
+          "internal.retry_count.start": 0,
+          "internal.retry_count.check_claude_runtime": 0,
+          "internal.run_id": "01KRJ176TVKB9ZP36JRTC2VDAS",
+          "internal.thread_id": "codex",
+          "thread.start.current_node": "check_claude_runtime",
+          "internal.retry_count.check_codex_runtime": 0,
+          "graph.goal": "Verify Claude Code and Codex CLI auth work inside a fresh Daytona sandbox",
+          "current_node": "check_codex_runtime",
+          "failure_signature": "",
+          "last_response": "OK.",
+          "failure_class": "",
+          "graph.outputs": "cli_auth_runtime_report",
+          "internal.node_visit_count": 1,
+          "last_stage": "check_codex_runtime",
+          "graph.model_stylesheet": "\n            *      { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: low; }\n            .codex { backend: cli; provider: openai; model: gpt-5.3-codex-spark; reasoning_effort: low; }\n        "
+        },
+        "node_outcomes": {
+          "check_claude_runtime": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/b3fbb3a7972301bf2bf67180f8a7cef5b6d1e895aeb8b818cbbc78bdfaa628ca"
+            },
+            "notes": "Script completed: mkdir -p .workflow/fabro; node -e \"const fs=require('fs'); const {spawnSync}=require('child_process'); const clean=(value)=>String(value||'').replace(/sk-[A-Za-z0-9_-]+/g,'[redacted]').trim().slice(0,800); const usable=(key)=>{const value=process.env[key]||''; const unresolved=value.charCodeAt(0)===123 && value.charCodeAt(1)===123; return Boolean(value && !unresolved);}; const run=(cmd,args,timeout=120000)=>{const r=spawnSync(cmd,args,{encoding:'utf8',timeout,env:{...process.env,CI:'1'}}); return {cmd:[cmd,...args].join(' '), status:r.status, signal:r.signal||null, stdout:clean(r.stdout), stderr:clean(r.stderr)};}; const env={CLAUDE_CODE_OAUTH_TOKEN:usable('CLAUDE_CODE_OAUTH_TOKEN')}; const checks=[run('claude',['--version'],45000), run('claude',['-p','Reply with exactly OK.'],120000)]; const missing=Object.entries(env).filter(([,ok])=>!ok).map(([key])=>key); const failed=checks.filter((check)=>check.status!==0); const report={ok:missing.length===0 && failed.length===0, env, missing, checks, failed}; fs.writeFileSync('.workflow/fabro/daytona-cli-auth-runtime-smoke.json', JSON.stringify(report,null,2)+'\\n'); console.log(JSON.stringify(report,null,2)); if(!report.ok) process.exit(1);\"",
+            "usage": null
+          },
+          "check_codex_runtime": {
+            "status": "succeeded",
+            "context_updates": {
+              "last_stage": "check_codex_runtime",
+              "last_response": "OK.",
+              "response.check_codex_runtime": "OK."
+            },
+            "notes": "Stage completed: check_codex_runtime",
+            "usage": {
+              "input": {
+                "usage": {
+                  "model": {
+                    "provider": "openai",
+                    "model_id": "gpt-5.3-codex-spark"
+                  },
+                  "tokens": {
+                    "input_tokens": 21559,
+                    "output_tokens": 237,
+                    "reasoning_tokens": 0,
+                    "cache_read_tokens": 0,
+                    "cache_write_tokens": 0
+                  }
+                },
+                "facts": {
+                  "provider": "open_ai"
+                }
+              }
+            }
+          },
+          "start": {
+            "status": "succeeded",
+            "usage": null
+          }
+        },
+        "next_node_id": "write_report",
+        "git_commit_sha": "db10f7eef2830517c1b00c812bacdb88449f2090",
+        "node_visits": {
+          "start": 1,
+          "check_codex_runtime": 1,
+          "check_claude_runtime": 1
+        }
+      },
+      "diff": {
+        "summary": {
+          "files_changed": 0,
+          "additions": 0,
+          "deletions": 0
+        }
+      }
+    },
+    {
+      "seq": 0,
+      "checkpoint": {
+        "timestamp": "2026-05-14T01:22:35.775535Z",
+        "current_node": "write_report",
+        "completed_nodes": [
+          "start",
+          "check_claude_runtime",
+          "check_codex_runtime",
+          "write_report"
+        ],
+        "node_retries": {},
+        "context_values": {
           "internal.work_dir": "/home/daytona/workspace",
           "graph.goal": "Verify Claude Code and Codex CLI auth work inside a fresh Daytona sandbox",
-          "internal.thread_id": "codex",
+          "internal.thread_id": "check_codex_runtime",
           "internal.retry_count.start": 0,
           "outcome": "succeeded",
           "internal.node_visit_count": 1,
           "failure_signature": "",
-          "command.output": "blob://sha256/b3fbb3a7972301bf2bf67180f8a7cef5b6d1e895aeb8b818cbbc78bdfaa628ca",
+          "command.output": "blob://sha256/93213b34cc5285264dd5eecbec60356bdc94ecfa01e59b46acfdd7918d09033c",
           "internal.retry_count.check_claude_runtime": 0,
           "thread.codex.current_node": "check_codex_runtime",
           "graph.model_stylesheet": "\n            *      { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: low; }\n            .codex { backend: cli; provider: openai; model: gpt-5.3-codex-spark; reasoning_effort: low; }\n        ",
-          "current_node": "check_codex_runtime",
+          "current_node": "write_report",
           "internal.fidelity": "compact",
           "last_stage": "check_codex_runtime",
           "last_response": "OK.",
@@ -549,6 +645,8 @@
           "failure_class": "",
           "graph.outputs": "cli_auth_runtime_report",
           "thread.start.current_node": "check_claude_runtime",
+          "internal.retry_count.write_report": 0,
+          "thread.check_codex_runtime.current_node": "write_report",
           "internal.retry_count.check_codex_runtime": 0
         },
         "node_outcomes": {
@@ -592,13 +690,22 @@
                 }
               }
             }
+          },
+          "write_report": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/93213b34cc5285264dd5eecbec60356bdc94ecfa01e59b46acfdd7918d09033c"
+            },
+            "notes": "Script completed: node -e \"const fs=require('fs'),os=require('os'),path=require('path'); const report=JSON.parse(fs.readFileSync('.workflow/fabro/daytona-cli-auth-runtime-smoke.json','utf8')); const codexAuthFile=fs.existsSync(path.join(os.homedir(),'.codex','auth.json')); const lines=['# Daytona CLI Auth Runtime Smoke','', 'ok=' + report.ok, 'fabro_codex_backend_stage=succeeded', 'codex_auth_file=' + codexAuthFile, '', '## Env', ...Object.entries(report.env).map(([key,value])=>'- ' + key + '=' + value), '', '## Checks', ...report.checks.map((check)=>'- ' + check.cmd + ' status=' + check.status + (check.signal ? ' signal=' + check.signal : '') + (check.stdout ? ' output=' + check.stdout.split('\\n')[0] : '') + (check.stderr ? ' stderr=' + check.stderr.split('\\n')[0] : ''))]; fs.writeFileSync('.workflow/fabro/daytona-cli-auth-runtime-smoke.md', lines.join('\\n')+'\\n'); console.log(lines.join('\\n')); if(!report.ok || !codexAuthFile) process.exit(1);\"",
+            "usage": null
           }
         },
-        "next_node_id": "write_report",
+        "next_node_id": "exit",
         "node_visits": {
           "start": 1,
           "check_claude_runtime": 1,
-          "check_codex_runtime": 1
+          "check_codex_runtime": 1,
+          "write_report": 1
         }
       },
       "diff": {}
@@ -625,7 +732,12 @@
       "first_event_seq": 31,
       "prompt": null,
       "response": null,
-      "completion": null,
+      "completion": {
+        "outcome": "succeeded",
+        "notes": "Stage completed: check_codex_runtime",
+        "failure_reason": null,
+        "timestamp": "2026-05-14T01:22:29.823137Z"
+      },
       "provider_used": {
         "mode": "cli",
         "provider": "openai",
@@ -645,6 +757,7 @@
       "termination": "exited",
       "started_at": "2026-05-14T01:22:20.778644Z",
       "handler": "agent",
+      "duration_ms": 8944,
       "usage": {
         "input_tokens": 21559,
         "output_tokens": 237,
@@ -656,35 +769,6 @@
       "model": {
         "provider": "openai",
         "model_id": "gpt-5.3-codex-spark"
-      },
-      "state": "running"
-    },
-    "start@1": {
-      "first_event_seq": 16,
-      "prompt": null,
-      "response": null,
-      "completion": {
-        "outcome": "succeeded",
-        "notes": null,
-        "failure_reason": null,
-        "timestamp": "2026-05-14T01:22:10.271348Z"
-      },
-      "provider_used": null,
-      "diff": null,
-      "script_invocation": null,
-      "script_timing": null,
-      "parallel_results": null,
-      "output": null,
-      "started_at": "2026-05-14T01:22:09.935248Z",
-      "handler": "start",
-      "duration_ms": 0,
-      "usage": {
-        "input_tokens": 0,
-        "output_tokens": 0,
-        "total_tokens": 0,
-        "reasoning_tokens": 0,
-        "cache_read_tokens": 0,
-        "cache_write_tokens": 0
       },
       "state": "succeeded"
     },
@@ -721,6 +805,72 @@
       "started_at": "2026-05-14T01:22:10.272255Z",
       "handler": "command",
       "duration_ms": 6339,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "total_tokens": 0,
+        "reasoning_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "state": "succeeded"
+    },
+    "write_report@1": {
+      "first_event_seq": 43,
+      "prompt": null,
+      "response": null,
+      "completion": null,
+      "provider_used": null,
+      "diff": null,
+      "script_invocation": {
+        "script": "node -e \"const fs=require('fs'),os=require('os'),path=require('path'); const report=JSON.parse(fs.readFileSync('.workflow/fabro/daytona-cli-auth-runtime-smoke.json','utf8')); const codexAuthFile=fs.existsSync(path.join(os.homedir(),'.codex','auth.json')); const lines=['# Daytona CLI Auth Runtime Smoke','', 'ok=' + report.ok, 'fabro_codex_backend_stage=succeeded', 'codex_auth_file=' + codexAuthFile, '', '## Env', ...Object.entries(report.env).map(([key,value])=>'- ' + key + '=' + value), '', '## Checks', ...report.checks.map((check)=>'- ' + check.cmd + ' status=' + check.status + (check.signal ? ' signal=' + check.signal : '') + (check.stdout ? ' output=' + check.stdout.split('\\n')[0] : '') + (check.stderr ? ' stderr=' + check.stderr.split('\\n')[0] : ''))]; fs.writeFileSync('.workflow/fabro/daytona-cli-auth-runtime-smoke.md', lines.join('\\n')+'\\n'); console.log(lines.join('\\n')); if(!report.ok || !codexAuthFile) process.exit(1);\"",
+        "command": "exec 2>&1\nnode -e \"const fs=require('fs'),os=require('os'),path=require('path'); const report=JSON.parse(fs.readFileSync('.workflow/fabro/daytona-cli-auth-runtime-smoke.json','utf8')); const codexAuthFile=fs.existsSync(path.join(os.homedir(),'.codex','auth.json')); const lines=['# Daytona CLI Auth Runtime Smoke','', 'ok=' + report.ok, 'fabro_codex_backend_stage=succeeded', 'codex_auth_file=' + codexAuthFile, '', '## Env', ...Object.entries(report.env).map(([key,value])=>'- ' + key + '=' + value), '', '## Checks', ...report.checks.map((check)=>'- ' + check.cmd + ' status=' + check.status + (check.signal ? ' signal=' + check.signal : '') + (check.stdout ? ' output=' + check.stdout.split('\\n')[0] : '') + (check.stderr ? ' stderr=' + check.stderr.split('\\n')[0] : ''))]; fs.writeFileSync('.workflow/fabro/daytona-cli-auth-runtime-smoke.md', lines.join('\\n')+'\\n'); console.log(lines.join('\\n')); if(!report.ok || !codexAuthFile) process.exit(1);\"",
+        "language": "shell"
+      },
+      "script_timing": {
+        "output": "blob://sha256/93213b34cc5285264dd5eecbec60356bdc94ecfa01e59b46acfdd7918d09033c",
+        "exit_code": 0,
+        "duration_ms": 1962,
+        "termination": "exited",
+        "output_bytes": 261,
+        "live_streaming": true
+      },
+      "parallel_results": null,
+      "output": null,
+      "output_bytes": 261,
+      "live_streaming": true,
+      "termination": "exited",
+      "started_at": "2026-05-14T01:22:33.469094Z",
+      "handler": "command",
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "total_tokens": 0,
+        "reasoning_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "state": "running"
+    },
+    "start@1": {
+      "first_event_seq": 16,
+      "prompt": null,
+      "response": null,
+      "completion": {
+        "outcome": "succeeded",
+        "notes": null,
+        "failure_reason": null,
+        "timestamp": "2026-05-14T01:22:10.271348Z"
+      },
+      "provider_used": null,
+      "diff": null,
+      "script_invocation": null,
+      "script_timing": null,
+      "parallel_results": null,
+      "output": null,
+      "started_at": "2026-05-14T01:22:09.935248Z",
+      "handler": "start",
+      "duration_ms": 0,
       "usage": {
         "input_tokens": 0,
         "output_tokens": 0,
