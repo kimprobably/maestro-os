@@ -3405,7 +3405,7 @@
     "kind": "running"
   },
   "status_updated_at": "2026-05-14T09:50:09.888736Z",
-  "last_event_at": "2026-05-14T10:11:01.478717Z",
+  "last_event_at": "2026-05-14T10:11:04.557437Z",
   "pending_control": null,
   "checkpoints": [
     {
@@ -4108,9 +4108,9 @@
       }
     },
     {
-      "seq": 0,
+      "seq": 177,
       "checkpoint": {
-        "timestamp": "2026-05-14T10:11:01.748057Z",
+        "timestamp": "2026-05-14T10:11:04.552687Z",
         "current_node": "research_fanout",
         "completed_nodes": [
           "start",
@@ -4124,6 +4124,190 @@
         ],
         "node_retries": {},
         "context_values": {
+          "graph.fallback_retry_target": "architecture_consensus",
+          "graph.model_stylesheet": "\n            *                  { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: low; }\n            .research          { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            .design            { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            .spec              { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            .architecture      { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            .coding            { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            .review            { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            .verify            { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: medium; }\n            .security          { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            .simplify          { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            .macos             { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            #spec_codex        { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            #spec_claude       { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            #spec_kimi         { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            #spec_deepseek     { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            #arch_codex        { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            #arch_claude       { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n        ",
+          "graph.retry_target": "spec_consensus",
+          "failure_class": "",
+          "graph.secret_policy": "never print environment variables or credential values; credential checks must be presence-only true/false checks; do not run environment dump commands.",
+          "thread.research_fanout.current_node": "research_join",
+          "graph.rankdir": "LR",
+          "internal.retry_count.research_join": 0,
+          "internal.run_id": "01KRJY9F9PKV1P01YH46A57WTS",
+          "parallel.branch_count": 4,
+          "parallel.fan_in.best_id": "app_store_research",
+          "internal.work_dir": "/home/daytona/workspace",
+          "parallel.fan_in.best_outcome": "succeeded",
+          "internal.retry_count.research_evidence_gate": 0,
+          "command.output": "blob://sha256/e161e52337ebb43bd21f12af0a8b3b6ef355453444e65bd56df910a1269f4b14",
+          "thread.bootstrap.current_node": "prompt_quality_gate",
+          "thread.prompt_quality_gate.current_node": "research_fanout",
+          "internal.retry_count.research_fanout": 0,
+          "graph.default_max_retries": "2",
+          "graph.inputs": "app_type,target_audience,app_name,bundle_id,app_dir,spec_kitty_feature,boilerplate_repo,max_competitors,use_mobbin,ios_validation_mode,allow_macos_deferred",
+          "graph.persona": "iphone-app-factory",
+          "thread.research_evidence_gate.current_node": "research_fanout",
+          "thread.start.current_node": "bootstrap",
+          "internal.node_visit_count": 2,
+          "internal.retry_count.research_synthesis": 0,
+          "internal.thread_id": "research_evidence_gate",
+          "failure_signature": "",
+          "parallel.results": [
+            {
+              "id": "app_store_research",
+              "status": "succeeded",
+              "head_sha": "0d18b8bf6f2fecd1dae7c1242226aa32faa27e10"
+            },
+            {
+              "id": "reddit_research",
+              "status": "succeeded",
+              "head_sha": "5ca99f4d4b4156be123ead56d59dadfb1ba5ddda"
+            },
+            {
+              "id": "competitor_research",
+              "status": "succeeded",
+              "head_sha": "e454bd72df26c7fb370988e2595e7a300476152b"
+            },
+            {
+              "id": "design_pattern_research",
+              "status": "succeeded",
+              "head_sha": "c8ce299040576429b82076b19099a9a28f9442e1"
+            }
+          ],
+          "last_stage": "research_synthesis",
+          "thread.research.current_node": "research_synthesis",
+          "thread.research_synthesis.current_node": "research_evidence_gate",
+          "parallel.fan_in.best_head_sha": "1020a9f0bcc8408a3e89413582d523d13f4c0e7d",
+          "internal.fidelity": "compact",
+          "response.research_synthesis": "Blocked by missing source artifacts.\n\nI could not find any of the required input files:\n- `.workflow/iphone-app-factory/research/app-store.md`\n- `.workflow/iphone-app-factory/research/reddit.md`\n- `.workflow/iphone-app-factory/research/competitors.md`\n- `.workflow/iphone-app-factory/research/design-patterns.md`\n\nWhat exists right now is only:\n- `.workflow/iphone-app-factory/context.md`\n- `.workflow/iphone-app-factory/quality-bar.json`\n- prompt templates under `prompts/iphone-app-factory/…` (not research results)\n\nBecause your requested outputs must summarize evidence and quotes from those research docs, I can’t generate a valid synthesis without them.\n\nPlease provide one of:\n1. The correct paths to the generated research files, or  \n2. The file contents pasted here, or  \n3. Permission to proceed from fallback sources (prompt templates / inferred assumptions), and I’ll clearly mark it as non-evidence-backed.",
+          "internal.retry_count.prompt_quality_gate": 0,
+          "internal.retry_count.start": 0,
+          "last_response": "Blocked by missing source artifacts.\n\nI could not find any of the required input files:\n- `.workflow/iphone-app-factory/research/app-store.md`\n- `.workflow/iphone-app-factory/research/reddit.md`\n- `.w",
+          "outcome": "succeeded",
+          "current_node": "research_fanout",
+          "internal.retry_count.bootstrap": 0,
+          "graph.outputs": "research_pack,spec,architecture,swift_app,ios_quality_report,appium_report,release_handoff",
+          "graph.goal": "Build a differentiated iPhone app from a researched app opportunity using SwiftAIBoilerplatePro"
+        },
+        "node_outcomes": {
+          "start": {
+            "status": "succeeded",
+            "usage": null
+          },
+          "prompt_quality_gate": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/a7045ac266fa6f08cd86ba8d865c8a8a0a02c085fee7c709b92cbb71fc8df94a"
+            },
+            "notes": "Script completed: node scripts/iphone-app-factory/promptfoo-prompt-quality.mjs --config evals/iphone-app-factory/prompt-quality.yaml --registry evals/iphone-app-factory/prompt-registry.json --out .workflow/iphone-app-factory/evals/prompt-quality.json --allow-fallback true",
+            "usage": null
+          },
+          "bootstrap": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/cc8a3ceaedfc7fbd242babab964d7a27d36cdfbf4ece82f1095bb3e6b2f39642"
+            },
+            "notes": "Script completed: node scripts/iphone-app-factory/bootstrap.mjs --app-dir 'apps/waketask-iphone' --app-name 'WakeTask' --bundle-id 'com.keen.waketask' --boilerplate-repo 'SwiftAIBoilerplatePro/SwiftAIBoilerplatePro-Distribution'",
+            "usage": null
+          },
+          "research_synthesis": {
+            "status": "succeeded",
+            "context_updates": {
+              "response.research_synthesis": "Blocked by missing source artifacts.\n\nI could not find any of the required input files:\n- `.workflow/iphone-app-factory/research/app-store.md`\n- `.workflow/iphone-app-factory/research/reddit.md`\n- `.workflow/iphone-app-factory/research/competitors.md`\n- `.workflow/iphone-app-factory/research/design-patterns.md`\n\nWhat exists right now is only:\n- `.workflow/iphone-app-factory/context.md`\n- `.workflow/iphone-app-factory/quality-bar.json`\n- prompt templates under `prompts/iphone-app-factory/…` (not research results)\n\nBecause your requested outputs must summarize evidence and quotes from those research docs, I can’t generate a valid synthesis without them.\n\nPlease provide one of:\n1. The correct paths to the generated research files, or  \n2. The file contents pasted here, or  \n3. Permission to proceed from fallback sources (prompt templates / inferred assumptions), and I’ll clearly mark it as non-evidence-backed.",
+              "last_stage": "research_synthesis",
+              "last_response": "Blocked by missing source artifacts.\n\nI could not find any of the required input files:\n- `.workflow/iphone-app-factory/research/app-store.md`\n- `.workflow/iphone-app-factory/research/reddit.md`\n- `.w"
+            },
+            "notes": "Stage completed: research_synthesis",
+            "usage": {
+              "input": {
+                "usage": {
+                  "model": {
+                    "provider": "openai",
+                    "model_id": "gpt-5.3-codex"
+                  },
+                  "tokens": {
+                    "input_tokens": 322040,
+                    "output_tokens": 2177,
+                    "reasoning_tokens": 0,
+                    "cache_read_tokens": 0,
+                    "cache_write_tokens": 0
+                  }
+                },
+                "facts": {
+                  "provider": "open_ai"
+                }
+              },
+              "total_usd_micros": 594048
+            }
+          },
+          "research_evidence_gate": {
+            "status": "failed",
+            "context_updates": {
+              "command.output": "blob://sha256/e161e52337ebb43bd21f12af0a8b3b6ef355453444e65bd56df910a1269f4b14"
+            },
+            "failure": {
+              "message": "Script failed with exit code: 1\n\n## output\n{\n  \"ok\": false,\n  \"failures\": [\n    \"missing .workflow/iphone-app-factory/research/app-store.md\",\n    \"missing .workflow/iphone-app-factory/research/reddit.md\",\n    \"missing .workflow/iphone-app-factory/research/competitors.md\",\n    \"missing .workflow/iphone-app-factory/research/design-patterns.md\",\n    \"missing .workflow/iphone-app-factory/research-synthesis.md\",\n    \"missing .workflow/iphone-app-factory/opportunity-matrix.json\",\n    \"research synthesis missing required term: target user\",\n    \"research synthesis missing required term: jobs-to-be-done\",\n    \"research synthesis missing required term: competitor\",\n    \"research synthesis missing required term: App Store\",\n    \"research synthesis missing required term: design\",\n    \"research synthesis missing required term: MVP\",\n    \"research synthesis missing required term: risk\",\n    \"opportunity matrix must contain at least one opportunity\"\n  ],\n  \"required_files\": [\n    \".workflow/iphone-app-factory/research/app-store.md\",\n    \".workflow/iphone-app-factory/research/reddit.md\",\n    \".workflow/iphone-app-factory/research/competitors.md\",\n    \".workflow/iphone-app-factory/research/design-patterns.md\",\n    \".workflow/iphone-app-factory/research-synthesis.md\",\n    \".workflow/iphone-app-factory/opportunity-matrix.json\"\n  ]\n}\n",
+              "failure_class": "deterministic"
+            },
+            "usage": null
+          },
+          "research_join": {
+            "status": "succeeded",
+            "context_updates": {
+              "parallel.fan_in.best_head_sha": "1020a9f0bcc8408a3e89413582d523d13f4c0e7d",
+              "parallel.fan_in.best_id": "app_store_research",
+              "parallel.fan_in.best_outcome": "succeeded"
+            },
+            "notes": "Selected best candidate: app_store_research",
+            "usage": null
+          },
+          "research_fanout": {
+            "status": "succeeded",
+            "jump_to_node": "research_join",
+            "notes": "Parallel node dispatched 4 branches (4 succeeded, 0 failed)",
+            "usage": null
+          }
+        },
+        "next_node_id": "research_join",
+        "git_commit_sha": "7e2ca27a763360de3646353c6e784bee8d0e1904",
+        "loop_failure_signatures": {
+          "research_evidence_gate|deterministic|script failed with exit code: <n> ## output { \"ok\": false,\"failures\": [ \"missing .workflow/iphone-app-factory/research/app-store.md\",\"missing .workflow/iphone-app-factory/research/reddit.md\",\"missing .workflow/iphone-app-factory/research/co": 1
+        },
+        "node_visits": {
+          "research_synthesis": 1,
+          "research_fanout": 2,
+          "prompt_quality_gate": 1,
+          "research_evidence_gate": 1,
+          "bootstrap": 1,
+          "start": 1,
+          "research_join": 1
+        }
+      },
+      "diff": {
+        "summary": {
+          "files_changed": 10363,
+          "additions": 347765,
+          "deletions": 0
+        }
+      }
+    },
+    {
+      "seq": 0,
+      "checkpoint": {
+        "timestamp": "2026-05-14T10:11:04.721478Z",
+        "current_node": "research_join",
+        "completed_nodes": [
+          "start",
+          "bootstrap",
+          "prompt_quality_gate",
+          "research_fanout",
+          "research_join",
+          "research_synthesis",
+          "research_evidence_gate",
+          "research_fanout",
+          "research_join"
+        ],
+        "node_retries": {},
+        "context_values": {
           "last_response": "Blocked by missing source artifacts.\n\nI could not find any of the required input files:\n- `.workflow/iphone-app-factory/research/app-store.md`\n- `.workflow/iphone-app-factory/research/reddit.md`\n- `.w",
           "internal.retry_count.research_synthesis": 0,
           "thread.research_evidence_gate.current_node": "research_fanout",
@@ -4132,7 +4316,7 @@
           "graph.goal": "Build a differentiated iPhone app from a researched app opportunity using SwiftAIBoilerplatePro",
           "thread.research_synthesis.current_node": "research_evidence_gate",
           "graph.model_stylesheet": "\n            *                  { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: low; }\n            .research          { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            .design            { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            .spec              { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            .architecture      { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            .coding            { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            .review            { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            .verify            { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: medium; }\n            .security          { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            .simplify          { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            .macos             { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            #spec_codex        { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            #spec_claude       { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            #spec_kimi         { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            #spec_deepseek     { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            #arch_codex        { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            #arch_claude       { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n        ",
-          "parallel.fan_in.best_head_sha": "1020a9f0bcc8408a3e89413582d523d13f4c0e7d",
+          "parallel.fan_in.best_head_sha": "0d18b8bf6f2fecd1dae7c1242226aa32faa27e10",
           "internal.retry_count.research_join": 0,
           "graph.secret_policy": "never print environment variables or credential values; credential checks must be presence-only true/false checks; do not run environment dump commands.",
           "failure_class": "",
@@ -4180,10 +4364,10 @@
           "parallel.branch_count": 4,
           "graph.rankdir": "LR",
           "internal.fidelity": "compact",
-          "internal.thread_id": "research_evidence_gate",
+          "internal.thread_id": "research_fanout",
           "command.output": "blob://sha256/e161e52337ebb43bd21f12af0a8b3b6ef355453444e65bd56df910a1269f4b14",
           "graph.fallback_retry_target": "architecture_consensus",
-          "current_node": "research_fanout",
+          "current_node": "research_join",
           "parallel.fan_in.best_outcome": "succeeded",
           "last_stage": "research_synthesis",
           "failure_signature": ""
@@ -4218,8 +4402,8 @@
           "research_join": {
             "status": "succeeded",
             "context_updates": {
-              "parallel.fan_in.best_head_sha": "1020a9f0bcc8408a3e89413582d523d13f4c0e7d",
               "parallel.fan_in.best_id": "app_store_research",
+              "parallel.fan_in.best_head_sha": "0d18b8bf6f2fecd1dae7c1242226aa32faa27e10",
               "parallel.fan_in.best_outcome": "succeeded"
             },
             "notes": "Selected best candidate: app_store_research",
@@ -4267,14 +4451,14 @@
             "usage": null
           }
         },
-        "next_node_id": "research_join",
+        "next_node_id": "research_synthesis",
         "node_visits": {
           "bootstrap": 1,
           "research_synthesis": 1,
           "research_fanout": 2,
           "prompt_quality_gate": 1,
           "research_evidence_gate": 1,
-          "research_join": 1,
+          "research_join": 2,
           "start": 1
         }
       },
@@ -4374,7 +4558,12 @@
       "first_event_seq": 126,
       "prompt": null,
       "response": null,
-      "completion": null,
+      "completion": {
+        "outcome": "succeeded",
+        "notes": "Parallel node dispatched 4 branches (4 succeeded, 0 failed)",
+        "failure_reason": null,
+        "timestamp": "2026-05-14T10:11:01.747917Z"
+      },
       "provider_used": {
         "mode": "cli",
         "provider": "openai",
@@ -4409,6 +4598,7 @@
       "output": null,
       "started_at": "2026-05-14T10:03:07.022424Z",
       "handler": "parallel",
+      "duration_ms": 474472,
       "usage": {
         "input_tokens": 359776,
         "output_tokens": 3882,
@@ -4422,7 +4612,7 @@
         "provider": "openai",
         "model_id": "gpt-5.3-codex"
       },
-      "state": "running"
+      "state": "succeeded"
     },
     "reddit_research@1": {
       "first_event_seq": 65,
@@ -4511,6 +4701,29 @@
       "parallel_results": null,
       "output": null,
       "termination": "exited",
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "total_tokens": 0,
+        "reasoning_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "state": "running"
+    },
+    "research_join@2": {
+      "first_event_seq": 180,
+      "prompt": null,
+      "response": null,
+      "completion": null,
+      "provider_used": null,
+      "diff": null,
+      "script_invocation": null,
+      "script_timing": null,
+      "parallel_results": null,
+      "output": null,
+      "started_at": "2026-05-14T10:11:04.557437Z",
+      "handler": "parallel.fan_in",
       "usage": {
         "input_tokens": 0,
         "output_tokens": 0,
