@@ -120,7 +120,7 @@ echo "[ios-quality] SwiftLint"
 swiftlint lint --strict
 
 echo "[ios-quality] SwiftFormat"
-swiftformat . --lint
+swiftformat . --lint --cache ignore
 
 echo "[ios-quality] Qlty"
 qlty check --all

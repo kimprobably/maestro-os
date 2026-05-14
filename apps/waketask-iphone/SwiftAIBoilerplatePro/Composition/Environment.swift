@@ -52,7 +52,7 @@ public struct AppEnvironment {
 }
 
 public extension EnvironmentValues {
-    // Access app environment from SwiftUI views
+    /// Access app environment from SwiftUI views
     @Entry var appEnv: AppEnvironment?
 }
 
