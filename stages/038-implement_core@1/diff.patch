@@ -1,0 +1,450 @@
+diff --git a/apps/waketask-iphone/Packages/Core/Sources/Core/WakeTaskCore.swift b/apps/waketask-iphone/Packages/Core/Sources/Core/WakeTaskCore.swift
+new file mode 100644
+index 0000000..5df9090
+--- /dev/null
++++ b/apps/waketask-iphone/Packages/Core/Sources/Core/WakeTaskCore.swift
+@@ -0,0 +1,223 @@
++import Foundation
++import Observation
++
++public enum WakeMissionType: String, Codable, Sendable, CaseIterable {
++    case math
++    case memory
++    case motion
++    case scan
++
++    public var isAlwaysAvailableFallback: Bool {
++        self != .scan
++    }
++}
++
++public struct WakeMissionChain: Codable, Sendable, Equatable {
++    public let primary: WakeMissionType
++    public let fallback: WakeMissionType
++
++    public init(primary: WakeMissionType, fallback: WakeMissionType) {
++        self.primary = primary
++        self.fallback = fallback
++    }
++
++    public var supportsFallbackSafety: Bool {
++        fallback.isAlwaysAvailableFallback
++    }
++}
++
++public enum WakeProfile: String, Codable, Sendable, CaseIterable {
++    case weekday
++    case weekend
++    case travel
++}
++
++public enum WakeCheckOutcome: String, Codable, Sendable, Equatable {
++    case passed
++    case failed
++    case missed
++}
++
++public struct WakeCheckResult: Codable, Sendable, Equatable {
++    public let offsetMinutes: Int
++    public let outcome: WakeCheckOutcome
++    public let checkedAt: Date
++
++    public init(offsetMinutes: Int, outcome: WakeCheckOutcome, checkedAt: Date) {
++        self.offsetMinutes = offsetMinutes
++        self.outcome = outcome
++        self.checkedAt = checkedAt
++    }
++}
++
++public struct AlarmReliabilityRecord: Codable, Sendable, Equatable, Identifiable {
++    public let id: UUID
++    public let alarmScheduledAt: Date
++    public var alarmFiredAt: Date?
++    public var dismissedAt: Date?
++    public var wakeCheckResults: [WakeCheckResult]
++    public var fallbackUsed: Bool
++    public let profileUsed: WakeProfile
++    public let missionChain: WakeMissionChain
++
++    public init(
++        id: UUID = UUID(),
++        alarmScheduledAt: Date,
++        alarmFiredAt: Date? = nil,
++        dismissedAt: Date? = nil,
++        wakeCheckResults: [WakeCheckResult] = [],
++        fallbackUsed: Bool = false,
++        profileUsed: WakeProfile,
++        missionChain: WakeMissionChain
++    ) {
++        self.id = id
++        self.alarmScheduledAt = alarmScheduledAt
++        self.alarmFiredAt = alarmFiredAt
++        self.dismissedAt = dismissedAt
++        self.wakeCheckResults = wakeCheckResults
++        self.fallbackUsed = fallbackUsed
++        self.profileUsed = profileUsed
++        self.missionChain = missionChain
++    }
++
++    public var didRequireEscalation: Bool {
++        wakeCheckResults.contains { $0.outcome != .passed }
++    }
++
++    public var didPassAllWakeChecks: Bool {
++        let plannedOffsets = Set(WakeCheckSchedulePlanner.defaultOffsetsMinutes)
++        let passedOffsets = Set(wakeCheckResults.filter { $0.outcome == .passed }.map(\.offsetMinutes))
++        return plannedOffsets.isSubset(of: passedOffsets)
++    }
++}
++
++public enum WakeTaskDomainError: LocalizedError, Equatable {
++    case fallbackMissionUnavailable
++    case noActiveSession
++    case wakeCheckBeforeDismissal
++
++    public var errorDescription: String? {
++        switch self {
++        case .fallbackMissionUnavailable:
++            return "Fallback mission must be a non-scan mission."
++        case .noActiveSession:
++            return "No active wake session was found."
++        case .wakeCheckBeforeDismissal:
++            return "Wake checks can only be recorded after dismissal."
++        }
++    }
++}
++
++public protocol WakeTaskSessionRepository: Sendable {
++    func upsert(record: AlarmReliabilityRecord) async throws
++    func fetch(id: UUID) async throws -> AlarmReliabilityRecord?
++    func listRecent(limit: Int) async throws -> [AlarmReliabilityRecord]
++}
++
++public enum WakeCheckSchedulePlanner {
++    public static let defaultOffsetsMinutes = [3, 7, 12]
++
++    public static func checkOffsets(for profile: WakeProfile) -> [Int] {
++        // MVP keeps timing deterministic across profiles; profile affects mission strictness.
++        defaultOffsetsMinutes
++    }
++}
++
++@MainActor
++@Observable
++public final class WakeTaskSessionViewModel {
++    public private(set) var currentRecord: AlarmReliabilityRecord?
++    public private(set) var isLoading = false
++    public private(set) var errorMessage: String?
++
++    private let repository: any WakeTaskSessionRepository
++
++    public init(repository: any WakeTaskSessionRepository) {
++        self.repository = repository
++    }
++
++    public func startSession(scheduledAt: Date, profile: WakeProfile, missionChain: WakeMissionChain) async {
++        guard missionChain.supportsFallbackSafety else {
++            errorMessage = WakeTaskDomainError.fallbackMissionUnavailable.localizedDescription
++            return
++        }
++
++        isLoading = true
++        errorMessage = nil
++        defer { isLoading = false }
++
++        do {
++            let record = AlarmReliabilityRecord(
++                alarmScheduledAt: scheduledAt,
++                profileUsed: profile,
++                missionChain: missionChain
++            )
++            try await repository.upsert(record: record)
++            currentRecord = record
++        } catch {
++            errorMessage = "Failed to create wake session"
++            AppLogger.error("Failed to start wake session: \(error)", category: AppLogger.storage)
++        }
++    }
++
++    public func markAlarmFired(at date: Date = Date()) async {
++        await mutateCurrentRecord {
++            $0.alarmFiredAt = date
++        }
++    }
++
++    public func markDismissed(at date: Date = Date(), fallbackUsed: Bool) async {
++        await mutateCurrentRecord {
++            $0.dismissedAt = date
++            $0.fallbackUsed = fallbackUsed
++        }
++    }
++
++    public func recordWakeCheck(offsetMinutes: Int, outcome: WakeCheckOutcome, checkedAt: Date = Date()) async {
++        guard let record = currentRecord else {
++            errorMessage = WakeTaskDomainError.noActiveSession.localizedDescription
++            return
++        }
++
++        guard record.dismissedAt != nil else {
++            errorMessage = WakeTaskDomainError.wakeCheckBeforeDismissal.localizedDescription
++            return
++        }
++
++        await mutateCurrentRecord { record in
++            let updated = WakeCheckResult(offsetMinutes: offsetMinutes, outcome: outcome, checkedAt: checkedAt)
++            record.wakeCheckResults.removeAll { $0.offsetMinutes == offsetMinutes }
++            record.wakeCheckResults.append(updated)
++            record.wakeCheckResults.sort { $0.offsetMinutes < $1.offsetMinutes }
++        }
++    }
++
++    public var requiresEscalation: Bool {
++        currentRecord?.didRequireEscalation ?? false
++    }
++
++    public var isSessionSuccessful: Bool {
++        currentRecord?.didPassAllWakeChecks ?? false
++    }
++
++    private func mutateCurrentRecord(_ transform: (inout AlarmReliabilityRecord) -> Void) async {
++        guard var record = currentRecord else {
++            errorMessage = WakeTaskDomainError.noActiveSession.localizedDescription
++            return
++        }
++
++        isLoading = true
++        errorMessage = nil
++        defer { isLoading = false }
++
++        transform(&record)
++
++        do {
++            try await repository.upsert(record: record)
++            currentRecord = record
++        } catch {
++            errorMessage = "Failed to update wake session"
++            AppLogger.error("Failed to update wake session: \(error)", category: AppLogger.storage)
++        }
++    }
++}
+diff --git a/apps/waketask-iphone/Packages/Core/Tests/CoreTests/WakeTaskSessionViewModelTests.swift b/apps/waketask-iphone/Packages/Core/Tests/CoreTests/WakeTaskSessionViewModelTests.swift
+new file mode 100644
+index 0000000..f0c664f
+--- /dev/null
++++ b/apps/waketask-iphone/Packages/Core/Tests/CoreTests/WakeTaskSessionViewModelTests.swift
+@@ -0,0 +1,80 @@
++import XCTest
++@testable import Core
++
++@MainActor
++final class WakeTaskSessionViewModelTests: XCTestCase {
++    func testStartSessionRejectsScanFallback() async {
++        let repo = InMemoryWakeTaskSessionRepository()
++        let viewModel = WakeTaskSessionViewModel(repository: repo)
++
++        await viewModel.startSession(
++            scheduledAt: Date(),
++            profile: .weekday,
++            missionChain: WakeMissionChain(primary: .scan, fallback: .scan)
++        )
++
++        XCTAssertNil(viewModel.currentRecord)
++        XCTAssertEqual(viewModel.errorMessage, WakeTaskDomainError.fallbackMissionUnavailable.localizedDescription)
++    }
++
++    func testRecordWakeCheckRequiresDismissal() async {
++        let repo = InMemoryWakeTaskSessionRepository()
++        let viewModel = WakeTaskSessionViewModel(repository: repo)
++
++        await viewModel.startSession(
++            scheduledAt: Date(),
++            profile: .weekday,
++            missionChain: WakeMissionChain(primary: .math, fallback: .motion)
++        )
++
++        await viewModel.recordWakeCheck(offsetMinutes: 3, outcome: .passed)
++
++        XCTAssertEqual(viewModel.errorMessage, WakeTaskDomainError.wakeCheckBeforeDismissal.localizedDescription)
++    }
++
++    func testWakeChecksSetSuccessAndEscalation() async {
++        let repo = InMemoryWakeTaskSessionRepository()
++        let viewModel = WakeTaskSessionViewModel(repository: repo)
++        let scheduled = Date()
++
++        await viewModel.startSession(
++            scheduledAt: scheduled,
++            profile: .travel,
++            missionChain: WakeMissionChain(primary: .scan, fallback: .memory)
++        )
++        await viewModel.markAlarmFired(at: scheduled.addingTimeInterval(1))
++        await viewModel.markDismissed(at: scheduled.addingTimeInterval(2), fallbackUsed: true)
++
++        await viewModel.recordWakeCheck(offsetMinutes: 3, outcome: .passed)
++        await viewModel.recordWakeCheck(offsetMinutes: 7, outcome: .failed)
++
++        XCTAssertTrue(viewModel.requiresEscalation)
++        XCTAssertFalse(viewModel.isSessionSuccessful)
++
++        await viewModel.recordWakeCheck(offsetMinutes: 7, outcome: .passed)
++        await viewModel.recordWakeCheck(offsetMinutes: 12, outcome: .passed)
++
++        XCTAssertFalse(viewModel.requiresEscalation)
++        XCTAssertTrue(viewModel.isSessionSuccessful)
++
++        let persisted = try? await repo.listRecent(limit: 1).first
++        XCTAssertEqual(persisted?.fallbackUsed, true)
++        XCTAssertEqual(persisted?.profileUsed, .travel)
++    }
++}
++
++private actor InMemoryWakeTaskSessionRepository: WakeTaskSessionRepository {
++    private var records: [UUID: AlarmReliabilityRecord] = [:]
++
++    func upsert(record: AlarmReliabilityRecord) async throws {
++        records[record.id] = record
++    }
++
++    func fetch(id: UUID) async throws -> AlarmReliabilityRecord? {
++        records[id]
++    }
++
++    func listRecent(limit: Int) async throws -> [AlarmReliabilityRecord] {
++        Array(records.values.sorted { $0.alarmScheduledAt > $1.alarmScheduledAt }.prefix(limit))
++    }
++}
+diff --git a/apps/waketask-iphone/Packages/Storage/Sources/Storage/Repositories/WakeTaskSessionRepository.swift b/apps/waketask-iphone/Packages/Storage/Sources/Storage/Repositories/WakeTaskSessionRepository.swift
+new file mode 100644
+index 0000000..ae6f452
+--- /dev/null
++++ b/apps/waketask-iphone/Packages/Storage/Sources/Storage/Repositories/WakeTaskSessionRepository.swift
+@@ -0,0 +1,67 @@
++import Foundation
++import Core
++
++public actor LocalWakeTaskSessionRepository: WakeTaskSessionRepository {
++    private let userDefaults: UserDefaults
++    private let storageKey: String
++    private let maxRecords: Int
++
++    public init(
++        userDefaults: UserDefaults = .standard,
++        storageKey: String = "waketask.reliability.records.v1",
++        maxRecords: Int = 120
++    ) {
++        self.userDefaults = userDefaults
++        self.storageKey = storageKey
++        self.maxRecords = maxRecords
++    }
++
++    public func upsert(record: AlarmReliabilityRecord) async throws {
++        var records = try loadRecords()
++
++        if let index = records.firstIndex(where: { $0.id == record.id }) {
++            records[index] = record
++        } else {
++            records.append(record)
++        }
++
++        records.sort { $0.alarmScheduledAt > $1.alarmScheduledAt }
++        if records.count > maxRecords {
++            records = Array(records.prefix(maxRecords))
++        }
++
++        try persist(records)
++    }
++
++    public func fetch(id: UUID) async throws -> AlarmReliabilityRecord? {
++        try loadRecords().first { $0.id == id }
++    }
++
++    public func listRecent(limit: Int) async throws -> [AlarmReliabilityRecord] {
++        let records = try loadRecords().sorted { $0.alarmScheduledAt > $1.alarmScheduledAt }
++        return Array(records.prefix(max(0, limit)))
++    }
++
++    private func loadRecords() throws -> [AlarmReliabilityRecord] {
++        guard let data = userDefaults.data(forKey: storageKey) else {
++            return []
++        }
++
++        do {
++            return try JSONDecoder().decode([AlarmReliabilityRecord].self, from: data)
++        } catch {
++            AppLogger.error("Failed to decode wake session records", category: AppLogger.storage)
++            throw StorageError.underlying(error)
++        }
++    }
++
++    private func persist(_ records: [AlarmReliabilityRecord]) throws {
++        do {
++            let data = try JSONEncoder().encode(records)
++            userDefaults.set(data, forKey: storageKey)
++        } catch {
++            AppLogger.error("Failed to encode wake session records", category: AppLogger.storage)
++            throw StorageError.underlying(error)
++        }
++    }
++}
+diff --git a/apps/waketask-iphone/Packages/Storage/Tests/StorageTests/WakeTaskSessionRepositoryTests.swift b/apps/waketask-iphone/Packages/Storage/Tests/StorageTests/WakeTaskSessionRepositoryTests.swift
+new file mode 100644
+index 0000000..97f090d
+--- /dev/null
++++ b/apps/waketask-iphone/Packages/Storage/Tests/StorageTests/WakeTaskSessionRepositoryTests.swift
+@@ -0,0 +1,56 @@
++import XCTest
++@testable import Storage
++import Core
++
++final class WakeTaskSessionRepositoryTests: XCTestCase {
++    func testUpsertAndFetch() async throws {
++        let suiteName = "WakeTaskSessionRepositoryTests.\(UUID().uuidString)"
++        let defaults = UserDefaults(suiteName: suiteName)!
++        defer { defaults.removePersistentDomain(forName: suiteName) }
++
++        let repository = LocalWakeTaskSessionRepository(
++            userDefaults: defaults,
++            storageKey: "test.records",
++            maxRecords: 5
++        )
++
++        let record = AlarmReliabilityRecord(
++            alarmScheduledAt: Date(),
++            profileUsed: .weekday,
++            missionChain: WakeMissionChain(primary: .math, fallback: .memory)
++        )
++
++        try await repository.upsert(record: record)
++        let fetched = try await repository.fetch(id: record.id)
++
++        XCTAssertEqual(fetched?.id, record.id)
++        XCTAssertEqual(fetched?.profileUsed, .weekday)
++    }
++
++    func testListRecentIsOrderedAndPruned() async throws {
++        let suiteName = "WakeTaskSessionRepositoryTests.\(UUID().uuidString)"
++        let defaults = UserDefaults(suiteName: suiteName)!
++        defer { defaults.removePersistentDomain(forName: suiteName) }
++
++        let repository = LocalWakeTaskSessionRepository(
++            userDefaults: defaults,
++            storageKey: "test.records",
++            maxRecords: 2
++        )
++
++        let base = Date()
++        for offset in [0.0, 120.0, 240.0] {
++            let record = AlarmReliabilityRecord(
++                alarmScheduledAt: base.addingTimeInterval(offset),
++                profileUsed: .weekend,
++                missionChain: WakeMissionChain(primary: .motion, fallback: .math)
++            )
++            try await repository.upsert(record: record)
++        }
++
++        let records = try await repository.listRecent(limit: 10)
++
++        XCTAssertEqual(records.count, 2)
++        XCTAssertGreaterThan(records[0].alarmScheduledAt, records[1].alarmScheduledAt)
++    }
++}
