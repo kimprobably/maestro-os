@@ -1,0 +1,60 @@
+name: iOS CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+
+jobs:
+  build-and-test:
+    runs-on: macos-15
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Select Xcode 26.2
+        run: sudo xcode-select -s /Applications/Xcode_26.2.app || sudo xcode-select -s "$(ls -d /Applications/Xcode_*.app | sort -V | tail -1)"
+
+      - name: Cache SPM
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/Library/Developer/Xcode/DerivedData
+            ~/Library/Caches/org.swift.swiftpm
+            ~/.swiftpm
+          key: ${{ runner.os }}-spm-${{ hashFiles('**/Package.resolved') }}
+
+      - name: Resolve packages
+        run: xcodebuild -resolvePackageDependencies -project SwiftAIBoilerplatePro.xcodeproj
+
+      - name: Build (Debug)
+        run: |
+          set -o pipefail
+          xcodebuild \
+            -project SwiftAIBoilerplatePro.xcodeproj \
+            -scheme SwiftAIBoilerplatePro \
+            -configuration Debug \
+            -sdk iphonesimulator \
+            -destination 'platform=iOS Simulator,name=iPhone 17 Pro,OS=26.2' \
+            CODE_SIGNING_ALLOWED=NO \
+            build | xcpretty
+
+      - name: Test (Unit)
+        run: |
+          set -o pipefail
+          xcodebuild \
+            -project SwiftAIBoilerplatePro.xcodeproj \
+            -scheme SwiftAIBoilerplatePro \
+            -sdk iphonesimulator \
+            -destination 'platform=iOS Simulator,name=iPhone 17 Pro,OS=26.2' \
+            CODE_SIGNING_ALLOWED=NO \
+            test | xcpretty --color
+
+      - name: Store logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: xcode-logs
+          path: |
+            ~/Library/Developer/Xcode/DerivedData/**/Logs/Test/*
