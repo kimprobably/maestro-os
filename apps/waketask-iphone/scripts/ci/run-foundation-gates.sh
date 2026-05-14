@@ -33,7 +33,7 @@ fi
 
 if command -v swiftformat >/dev/null 2>&1; then
   echo "[foundation] SwiftFormat lint"
-  swiftformat . --lint --cache ignore
+  swiftformat SwiftAIBoilerplatePro Packages --lint --cache ignore
 else
   echo "[foundation] SwiftFormat skipped (not installed on runner image)"
 fi
