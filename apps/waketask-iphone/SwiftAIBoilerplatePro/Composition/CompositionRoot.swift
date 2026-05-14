@@ -195,10 +195,24 @@ public final class CompositionRoot {
             profilePhotoStorageClient = MockProfilePhotoStorageClient()
         }
 
-        // 6. Payments: RevenueCat
-        let revenueCatClient = Payments.RevenueCatClient()
-        revenueCatClient.configure(paymentsConfig)
-        paymentsClient = revenueCatClient
+        // 6. Payments: RevenueCat in production, deterministic client in DEBUG by default
+        #if DEBUG
+            let paymentsBypassValue = ProcessInfo.processInfo.environment["PAYMENTS_BYPASS"]
+            if paymentsBypassValue != "0" {
+                AppLogger.info("DEBUG build: Using DebugPaymentsClient", category: AppLogger.payments)
+                let debugPaymentsClient = DebugPaymentsClient()
+                debugPaymentsClient.configure(paymentsConfig)
+                paymentsClient = debugPaymentsClient
+            } else {
+                let revenueCatClient = Payments.RevenueCatClient()
+                revenueCatClient.configure(paymentsConfig)
+                paymentsClient = revenueCatClient
+            }
+        #else
+            let revenueCatClient = Payments.RevenueCatClient()
+            revenueCatClient.configure(paymentsConfig)
+            paymentsClient = revenueCatClient
+        #endif
 
         // 7. LLM client: Proxy or Echo, decided by PROXY_BASE_URL
         llmClient = createLLMClient(httpClient: httpClient)
