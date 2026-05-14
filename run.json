@@ -366,7 +366,7 @@
     "kind": "running"
   },
   "status_updated_at": "2026-05-14T00:49:54.564170Z",
-  "last_event_at": "2026-05-14T00:50:16.054166Z",
+  "last_event_at": "2026-05-14T00:50:22.869097Z",
   "pending_control": null,
   "checkpoints": [
     {
@@ -409,9 +409,9 @@
       "diff": {}
     },
     {
-      "seq": 0,
+      "seq": 28,
       "checkpoint": {
-        "timestamp": "2026-05-14T00:50:16.360099Z",
+        "timestamp": "2026-05-14T00:50:20.437127Z",
         "current_node": "check_cli_auth_runtime",
         "completed_nodes": [
           "start",
@@ -419,26 +419,105 @@
         ],
         "node_retries": {},
         "context_values": {
+          "internal.work_dir": "/home/daytona/workspace",
+          "outcome": "failed",
+          "failure_signature": "check_cli_auth_runtime|deterministic|script failed with exit code: <n> ## output { \"ok\": false,\"env\": { \"openai_api_key\": false,\"claude_code_oauth_token\": false },\"missing\": [ \"openai_api_key\",\"claude_code_oauth_token\" ],\"checks\": [ { \"cmd\": \"claude --version\",\"status\": <n>,\"s",
+          "current_node": "check_cli_auth_runtime",
+          "internal.run_id": "01KRHZC53DTSTDZ6TZHV59Y482",
+          "internal.node_visit_count": 1,
+          "failure_class": "deterministic",
+          "internal.thread_id": "start",
+          "graph.model_stylesheet": "\n            * { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: low; }\n        ",
+          "thread.start.current_node": "check_cli_auth_runtime",
+          "internal.fidelity": "compact",
+          "internal.retry_count.check_cli_auth_runtime": 0,
+          "graph.goal": "Verify Claude Code and Codex CLI auth work inside a fresh Daytona sandbox",
+          "command.output": "blob://sha256/140461fc5543ddcebdae1c17f85953777d531da542db0816cb30935e9249e0dd",
+          "graph.inputs": "none",
+          "graph.outputs": "cli_auth_runtime_report",
+          "graph.persona": "cli-auth-smoke",
+          "internal.retry_count.start": 0
+        },
+        "node_outcomes": {
+          "start": {
+            "status": "succeeded",
+            "usage": null
+          },
+          "check_cli_auth_runtime": {
+            "status": "failed",
+            "context_updates": {
+              "command.output": "blob://sha256/140461fc5543ddcebdae1c17f85953777d531da542db0816cb30935e9249e0dd"
+            },
+            "failure": {
+              "message": "Script failed with exit code: 1\n\n## output\n{\n  \"ok\": false,\n  \"env\": {\n    \"OPENAI_API_KEY\": false,\n    \"CLAUDE_CODE_OAUTH_TOKEN\": false\n  },\n  \"missing\": [\n    \"OPENAI_API_KEY\",\n    \"CLAUDE_CODE_OAUTH_TOKEN\"\n  ],\n  \"checks\": [\n    {\n      \"cmd\": \"claude --version\",\n      \"status\": 0,\n      \"signal\": null,\n      \"stdout\": \"2.1.140 (Claude Code)\",\n      \"stderr\": \"\"\n    },\n    {\n      \"cmd\": \"codex --version\",\n      \"status\": 0,\n      \"signal\": null,\n      \"stdout\": \"codex-cli 0.130.0\",\n      \"stderr\": \"\"\n    },\n    {\n      \"cmd\": \"claude -p Reply with exactly OK.\",\n      \"status\": 1,\n      \"signal\": null,\n      \"stdout\": \"Failed to authenticate. API Error: 401 Invalid bearer token\",\n      \"stderr\": \"\"\n    },\n    {\n      \"cmd\": \"codex exec --skip-git-repo-check Reply with exactly OK.\",\n      \"status\": 1,\n      \"signal\": null,\n      \"stdout\": \"\",\n      \"stderr\": \"Reading additional input from stdin...\\nOpenAI Codex v0.130.0\\n--------\\nworkdir: /home/daytona/workspace\\nmodel: gpt-5.5\\nprovider: openai\\napproval: never\\nsandbox: read-only\\nreasoning effort: none\\nreasoning summaries: none\\nsession id: 019e23f6-37c7-7f60-b163-a7706e8455c8\\n--------\\nuser\\nReply with exactly OK.\\nwarning: Codex could not find bubblewrap on PATH. Install bubblewrap with your OS package manager. See the sandbox prerequisites: https://developers.openai.com/codex/concepts/sandboxing#prerequisites. Codex will use the bundled bubblewrap in the meantime.\\n2026-05-14T00:49:59.580181Z ERROR codex_api::endpoint::responses_websocket: failed to connect to websocket: HTTP error: 401 Unauthorized, url: wss://api.openai.com/v1/responses\\n2026-05-14T00:49:59.902597Z ERROR codex_api::endpoint::respons\"\n    }\n  ],\n  \"failed\": [\n    {\n      \"cmd\": \"claude -p Reply with exactly OK.\",\n      \"status\": 1,\n      \"signal\": null,\n      \"stdout\": \"Failed to authenticate. API Error: 401 Invalid bearer token\",\n      \"stderr\": \"\"\n    },\n    {\n      \"cmd\": \"codex exec --skip-git-repo-check Reply with exactly OK.\",\n      \"status\": 1,\n      \"signal\": null,\n      \"stdout\": \"\",\n      \"stderr\": \"Reading additional input from stdin...\\nOpenAI Codex v0.130.0\\n--------\\nworkdir: /home/daytona/workspace\\nmodel: gpt-5.5\\nprovider: openai\\napproval: never\\nsandbox: read-only\\nreasoning effort: none\\nreasoning summaries: none\\nsession id: 019e23f6-37c7-7f60-b163-a7706e8455c8\\n--------\\nuser\\nReply with exactly OK.\\nwarning: Codex could not find bubblewrap on PATH. Install bubblewrap with your OS package manager. See the sandbox prerequisites: https://developers.openai.com/codex/concepts/sandboxing#prerequisites. Codex will use the bundled bubblewrap in the meantime.\\n2026-05-14T00:49:59.580181Z ERROR codex_api::endpoint::responses_websocket: failed to connect to websocket: HTTP error: 401 Unauthorized, url: wss://api.openai.com/v1/responses\\n2026-05-14T00:49:59.902597Z ERROR codex_api::endpoint::respons\"\n    }\n  ]\n}\n",
+              "failure_class": "deterministic"
+            },
+            "usage": null
+          }
+        },
+        "next_node_id": "fail_runtime",
+        "git_commit_sha": "22cee3bff415bf86cdddb0fd1b948f7fbf9fc10f",
+        "loop_failure_signatures": {
+          "check_cli_auth_runtime|deterministic|script failed with exit code: <n> ## output { \"ok\": false,\"env\": { \"openai_api_key\": false,\"claude_code_oauth_token\": false },\"missing\": [ \"openai_api_key\",\"claude_code_oauth_token\" ],\"checks\": [ { \"cmd\": \"claude --version\",\"status\": <n>,\"s": 1
+        },
+        "node_visits": {
+          "check_cli_auth_runtime": 1,
+          "start": 1
+        }
+      },
+      "diff": {
+        "summary": {
+          "files_changed": 0,
+          "additions": 0,
+          "deletions": 0
+        }
+      }
+    },
+    {
+      "seq": 0,
+      "checkpoint": {
+        "timestamp": "2026-05-14T00:50:22.990764Z",
+        "current_node": "fail_runtime",
+        "completed_nodes": [
+          "start",
+          "check_cli_auth_runtime",
+          "fail_runtime"
+        ],
+        "node_retries": {},
+        "context_values": {
           "internal.retry_count.start": 0,
           "graph.model_stylesheet": "\n            * { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: low; }\n        ",
+          "internal.retry_count.fail_runtime": 0,
           "outcome": "failed",
           "internal.node_visit_count": 1,
           "internal.retry_count.check_cli_auth_runtime": 0,
           "graph.inputs": "none",
           "graph.persona": "cli-auth-smoke",
           "failure_class": "deterministic",
-          "failure_signature": "check_cli_auth_runtime|deterministic|script failed with exit code: <n> ## output { \"ok\": false,\"env\": { \"openai_api_key\": false,\"claude_code_oauth_token\": false },\"missing\": [ \"openai_api_key\",\"claude_code_oauth_token\" ],\"checks\": [ { \"cmd\": \"claude --version\",\"status\": <n>,\"s",
-          "current_node": "check_cli_auth_runtime",
+          "failure_signature": "fail_runtime|deterministic|script failed with exit code: <n> ## output { \"ok\": false,\"env\": { \"openai_api_key\": false,\"claude_code_oauth_token\": false },\"missing\": [ \"openai_api_key\",\"claude_code_oauth_token\" ],\"checks\": [ { \"cmd\": \"claude --version\",\"status\": <n>,\"s",
+          "current_node": "fail_runtime",
           "thread.start.current_node": "check_cli_auth_runtime",
-          "command.output": "blob://sha256/140461fc5543ddcebdae1c17f85953777d531da542db0816cb30935e9249e0dd",
+          "command.output": "blob://sha256/7744d64140429454b71e86b67d24e5308a94cfe59c2a064996d2aa6071ab066a",
           "graph.outputs": "cli_auth_runtime_report",
-          "internal.thread_id": "start",
+          "internal.thread_id": "check_cli_auth_runtime",
+          "thread.check_cli_auth_runtime.current_node": "fail_runtime",
           "internal.run_id": "01KRHZC53DTSTDZ6TZHV59Y482",
           "internal.fidelity": "compact",
           "graph.goal": "Verify Claude Code and Codex CLI auth work inside a fresh Daytona sandbox",
           "internal.work_dir": "/home/daytona/workspace"
         },
         "node_outcomes": {
+          "fail_runtime": {
+            "status": "failed",
+            "context_updates": {
+              "command.output": "blob://sha256/7744d64140429454b71e86b67d24e5308a94cfe59c2a064996d2aa6071ab066a"
+            },
+            "failure": {
+              "message": "Script failed with exit code: 1\n\n## output\n{\n  \"ok\": false,\n  \"env\": {\n    \"OPENAI_API_KEY\": false,\n    \"CLAUDE_CODE_OAUTH_TOKEN\": false\n  },\n  \"missing\": [\n    \"OPENAI_API_KEY\",\n    \"CLAUDE_CODE_OAUTH_TOKEN\"\n  ],\n  \"checks\": [\n    {\n      \"cmd\": \"claude --version\",\n      \"status\": 0,\n      \"signal\": null,\n      \"stdout\": \"2.1.140 (Claude Code)\",\n      \"stderr\": \"\"\n    },\n    {\n      \"cmd\": \"codex --version\",\n      \"status\": 0,\n      \"signal\": null,\n      \"stdout\": \"codex-cli 0.130.0\",\n      \"stderr\": \"\"\n    },\n    {\n      \"cmd\": \"claude -p Reply with exactly OK.\",\n      \"status\": 1,\n      \"signal\": null,\n      \"stdout\": \"Failed to authenticate. API Error: 401 Invalid bearer token\",\n      \"stderr\": \"\"\n    },\n    {\n      \"cmd\": \"codex exec --skip-git-repo-check Reply with exactly OK.\",\n      \"status\": 1,\n      \"signal\": null,\n      \"stdout\": \"\",\n      \"stderr\": \"Reading additional input from stdin...\\nOpenAI Codex v0.130.0\\n--------\\nworkdir: /home/daytona/workspace\\nmodel: gpt-5.5\\nprovider: openai\\napproval: never\\nsandbox: read-only\\nreasoning effort: none\\nreasoning summaries: none\\nsession id: 019e23f6-37c7-7f60-b163-a7706e8455c8\\n--------\\nuser\\nReply with exactly OK.\\nwarning: Codex could not find bubblewrap on PATH. Install bubblewrap with your OS package manager. See the sandbox prerequisites: https://developers.openai.com/codex/concepts/sandboxing#prerequisites. Codex will use the bundled bubblewrap in the meantime.\\n2026-05-14T00:49:59.580181Z ERROR codex_api::endpoint::responses_websocket: failed to connect to websocket: HTTP error: 401 Unauthorized, url: wss://api.openai.com/v1/responses\\n2026-05-14T00:49:59.902597Z ERROR codex_api::endpoint::respons\"\n    }\n  ],\n  \"failed\": [\n    {\n      \"cmd\": \"claude -p Reply with exactly OK.\",\n      \"status\": 1,\n      \"signal\": null,\n      \"stdout\": \"Failed to authenticate. API Error: 401 Invalid bearer token\",\n      \"stderr\": \"\"\n    },\n    {\n      \"cmd\": \"codex exec --skip-git-repo-check Reply with exactly OK.\",\n      \"status\": 1,\n      \"signal\": null,\n      \"stdout\": \"\",\n      \"stderr\": \"Reading additional input from stdin...\\nOpenAI Codex v0.130.0\\n--------\\nworkdir: /home/daytona/workspace\\nmodel: gpt-5.5\\nprovider: openai\\napproval: never\\nsandbox: read-only\\nreasoning effort: none\\nreasoning summaries: none\\nsession id: 019e23f6-37c7-7f60-b163-a7706e8455c8\\n--------\\nuser\\nReply with exactly OK.\\nwarning: Codex could not find bubblewrap on PATH. Install bubblewrap with your OS package manager. See the sandbox prerequisites: https://developers.openai.com/codex/concepts/sandboxing#prerequisites. Codex will use the bundled bubblewrap in the meantime.\\n2026-05-14T00:49:59.580181Z ERROR codex_api::endpoint::responses_websocket: failed to connect to websocket: HTTP error: 401 Unauthorized, url: wss://api.openai.com/v1/responses\\n2026-05-14T00:49:59.902597Z ERROR codex_api::endpoint::respons\"\n    }\n  ]\n}\n\n",
+              "failure_class": "deterministic"
+            },
+            "usage": null
+          },
           "check_cli_auth_runtime": {
             "status": "failed",
             "context_updates": {
@@ -455,10 +534,10 @@
             "usage": null
           }
         },
-        "next_node_id": "fail_runtime",
         "node_visits": {
           "start": 1,
-          "check_cli_auth_runtime": 1
+          "check_cli_auth_runtime": 1,
+          "fail_runtime": 1
         }
       },
       "diff": {}
@@ -514,7 +593,12 @@
       "first_event_seq": 20,
       "prompt": null,
       "response": null,
-      "completion": null,
+      "completion": {
+        "outcome": "failed",
+        "notes": null,
+        "failure_reason": "Script failed with exit code: 1\n\n## output\n{\n  \"ok\": false,\n  \"env\": {\n    \"OPENAI_API_KEY\": false,\n    \"CLAUDE_CODE_OAUTH_TOKEN\": false\n  },\n  \"missing\": [\n    \"OPENAI_API_KEY\",\n    \"CLAUDE_CODE_OAUTH_TOKEN\"\n  ],\n  \"checks\": [\n    {\n      \"cmd\": \"claude --version\",\n      \"status\": 0,\n      \"signal\": null,\n      \"stdout\": \"2.1.140 (Claude Code)\",\n      \"stderr\": \"\"\n    },\n    {\n      \"cmd\": \"codex --version\",\n      \"status\": 0,\n      \"signal\": null,\n      \"stdout\": \"codex-cli 0.130.0\",\n      \"stderr\": \"\"\n    },\n    {\n      \"cmd\": \"claude -p Reply with exactly OK.\",\n      \"status\": 1,\n      \"signal\": null,\n      \"stdout\": \"Failed to authenticate. API Error: 401 Invalid bearer token\",\n      \"stderr\": \"\"\n    },\n    {\n      \"cmd\": \"codex exec --skip-git-repo-check Reply with exactly OK.\",\n      \"status\": 1,\n      \"signal\": null,\n      \"stdout\": \"\",\n      \"stderr\": \"Reading additional input from stdin...\\nOpenAI Codex v0.130.0\\n--------\\nworkdir: /home/daytona/workspace\\nmodel: gpt-5.5\\nprovider: openai\\napproval: never\\nsandbox: read-only\\nreasoning effort: none\\nreasoning summaries: none\\nsession id: 019e23f6-37c7-7f60-b163-a7706e8455c8\\n--------\\nuser\\nReply with exactly OK.\\nwarning: Codex could not find bubblewrap on PATH. Install bubblewrap with your OS package manager. See the sandbox prerequisites: https://developers.openai.com/codex/concepts/sandboxing#prerequisites. Codex will use the bundled bubblewrap in the meantime.\\n2026-05-14T00:49:59.580181Z ERROR codex_api::endpoint::responses_websocket: failed to connect to websocket: HTTP error: 401 Unauthorized, url: wss://api.openai.com/v1/responses\\n2026-05-14T00:49:59.902597Z ERROR codex_api::endpoint::respons\"\n    }\n  ],\n  \"failed\": [\n    {\n      \"cmd\": \"claude -p Reply with exactly OK.\",\n      \"status\": 1,\n      \"signal\": null,\n      \"stdout\": \"Failed to authenticate. API Error: 401 Invalid bearer token\",\n      \"stderr\": \"\"\n    },\n    {\n      \"cmd\": \"codex exec --skip-git-repo-check Reply with exactly OK.\",\n      \"status\": 1,\n      \"signal\": null,\n      \"stdout\": \"\",\n      \"stderr\": \"Reading additional input from stdin...\\nOpenAI Codex v0.130.0\\n--------\\nworkdir: /home/daytona/workspace\\nmodel: gpt-5.5\\nprovider: openai\\napproval: never\\nsandbox: read-only\\nreasoning effort: none\\nreasoning summaries: none\\nsession id: 019e23f6-37c7-7f60-b163-a7706e8455c8\\n--------\\nuser\\nReply with exactly OK.\\nwarning: Codex could not find bubblewrap on PATH. Install bubblewrap with your OS package manager. See the sandbox prerequisites: https://developers.openai.com/codex/concepts/sandboxing#prerequisites. Codex will use the bundled bubblewrap in the meantime.\\n2026-05-14T00:49:59.580181Z ERROR codex_api::endpoint::responses_websocket: failed to connect to websocket: HTTP error: 401 Unauthorized, url: wss://api.openai.com/v1/responses\\n2026-05-14T00:49:59.902597Z ERROR codex_api::endpoint::respons\"\n    }\n  ]\n}\n",
+        "timestamp": "2026-05-14T00:50:16.359149Z"
+      },
       "provider_used": null,
       "diff": null,
       "script_invocation": {
@@ -536,6 +620,44 @@
       "live_streaming": true,
       "termination": "exited",
       "started_at": "2026-05-14T00:49:55.915282Z",
+      "handler": "command",
+      "duration_ms": 20139,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "total_tokens": 0,
+        "reasoning_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "state": "failed"
+    },
+    "fail_runtime@1": {
+      "first_event_seq": 31,
+      "prompt": null,
+      "response": null,
+      "completion": null,
+      "provider_used": null,
+      "diff": null,
+      "script_invocation": {
+        "script": "node -e \"const fs=require('fs'); const body=fs.existsSync('.workflow/fabro/daytona-cli-auth-runtime-smoke.json') ? fs.readFileSync('.workflow/fabro/daytona-cli-auth-runtime-smoke.json','utf8') : '{}'; console.error(body); process.exit(1);\"",
+        "command": "exec 2>&1\nnode -e \"const fs=require('fs'); const body=fs.existsSync('.workflow/fabro/daytona-cli-auth-runtime-smoke.json') ? fs.readFileSync('.workflow/fabro/daytona-cli-auth-runtime-smoke.json','utf8') : '{}'; console.error(body); process.exit(1);\"",
+        "language": "shell"
+      },
+      "script_timing": {
+        "output": "blob://sha256/7744d64140429454b71e86b67d24e5308a94cfe59c2a064996d2aa6071ab066a",
+        "exit_code": 1,
+        "duration_ms": 2425,
+        "termination": "exited",
+        "output_bytes": 2862,
+        "live_streaming": true
+      },
+      "parallel_results": null,
+      "output": null,
+      "output_bytes": 2862,
+      "live_streaming": true,
+      "termination": "exited",
+      "started_at": "2026-05-14T00:50:20.439036Z",
       "handler": "command",
       "usage": {
         "input_tokens": 0,
