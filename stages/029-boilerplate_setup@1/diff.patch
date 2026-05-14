@@ -1,0 +1,457 @@
+diff --git a/apps/waketask-iphone/Packages/DesignSystem/Sources/DesignSystem/Tokens/BrandConfig.swift b/apps/waketask-iphone/Packages/DesignSystem/Sources/DesignSystem/Tokens/BrandConfig.swift
+index 2e907b8..70e2f18 100644
+--- a/apps/waketask-iphone/Packages/DesignSystem/Sources/DesignSystem/Tokens/BrandConfig.swift
++++ b/apps/waketask-iphone/Packages/DesignSystem/Sources/DesignSystem/Tokens/BrandConfig.swift
+@@ -7,7 +7,7 @@ import SwiftUI
+ public struct BrandConfig {
+     
+     /// App display name shown in UI
+-    public static let appDisplayName = "SwiftAI Pro"
++    public static let appDisplayName = "WakeTask"
+     
+     /// Accent color for highlights and CTAs
+     public static let accentColor: Color = DSColors.primary
+diff --git a/apps/waketask-iphone/Packages/Localization/Sources/Localization/Resources/en.lproj/Localizable.strings b/apps/waketask-iphone/Packages/Localization/Sources/Localization/Resources/en.lproj/Localizable.strings
+index bf5e759..7c1674b 100644
+--- a/apps/waketask-iphone/Packages/Localization/Sources/Localization/Resources/en.lproj/Localizable.strings
++++ b/apps/waketask-iphone/Packages/Localization/Sources/Localization/Resources/en.lproj/Localizable.strings
+@@ -16,7 +16,7 @@
+ */
+ 
+ // MARK: - Auth
+-"auth.tagline" = "Your AI assistant";
++"auth.tagline" = "Wake reliability, built for real mornings";
+ "auth.signIn.apple" = "Sign in with Apple";
+ "auth.signIn.google" = "Continue with Google";
+ "auth.useEmail" = "Use email instead";
+diff --git a/apps/waketask-iphone/Packages/Localization/Sources/Localization/Resources/es.lproj/Localizable.strings b/apps/waketask-iphone/Packages/Localization/Sources/Localization/Resources/es.lproj/Localizable.strings
+index f720d81..58a3cae 100644
+--- a/apps/waketask-iphone/Packages/Localization/Sources/Localization/Resources/es.lproj/Localizable.strings
++++ b/apps/waketask-iphone/Packages/Localization/Sources/Localization/Resources/es.lproj/Localizable.strings
+@@ -13,7 +13,7 @@
+ */
+ 
+ // MARK: - Auth
+-"auth.tagline" = "Tu asistente de IA";
++"auth.tagline" = "Confiabilidad al despertar para ma�anas reales";
+ "auth.signIn.apple" = "Iniciar sesión con Apple";
+ "auth.signIn.google" = "Continuar con Google";
+ "auth.useEmail" = "Usar correo electrónico";
+diff --git a/apps/waketask-iphone/SwiftAIBoilerplatePro/AppShell/HomeContent.swift b/apps/waketask-iphone/SwiftAIBoilerplatePro/AppShell/HomeContent.swift
+index c04f84b..6ab959e 100644
+--- a/apps/waketask-iphone/SwiftAIBoilerplatePro/AppShell/HomeContent.swift
++++ b/apps/waketask-iphone/SwiftAIBoilerplatePro/AppShell/HomeContent.swift
+@@ -67,8 +67,8 @@ public struct HomeContent {
+     public let quickActions: [QuickAction]
+     
+     public init(
+-        welcomeTitle: String = "Welcome Back",
+-        welcomeSubtitle: String = "What would you like to explore today?",
++        welcomeTitle: String = "Ready For A Reliable Morning?",
++        welcomeSubtitle: String = "Set your next alarm run and lock in your first task before bed.",
+         featuredItems: [FeatureItem] = FeatureItem.defaults,
+         quickActions: [QuickAction] = QuickAction.defaults
+     ) {
+@@ -87,27 +87,27 @@ extension HomeContent.FeatureItem {
+     /// Buyers should customize these for their specific app
+     public static let defaults: [HomeContent.FeatureItem] = [
+         HomeContent.FeatureItem(
+-            title: "GPT-4 Powered",
+-            description: "Experience the most advanced AI model for natural conversations",
+-            systemImage: "cpu.fill",
+-            accentColor: "purple"
++            title: "Adaptive Mission Rotation",
++            description: "WakeTask rotates cognitive, movement, and scan-style missions to prevent autopilot dismissals.",
++            systemImage: "arrow.triangle.2.circlepath.circle.fill",
++            accentColor: "orange"
+         ),
+         HomeContent.FeatureItem(
+-            title: "Lightning Fast",
+-            description: "Get instant responses with our optimized streaming technology",
+-            systemImage: "bolt.fill",
+-            accentColor: "orange"
++            title: "Post-Dismiss Wake Check",
++            description: "A timed wake-check confirms you're still up. Miss it and escalation rules kick in automatically.",
++            systemImage: "timer",
++            accentColor: "red"
+         ),
+         HomeContent.FeatureItem(
+-            title: "Private & Secure",
+-            description: "Your conversations are encrypted and never shared",
+-            systemImage: "lock.shield.fill",
++            title: "Reliability Ledger",
++            description: "See each alarm outcome with clear reasons so you can tune strictness and stop relapse patterns.",
++            systemImage: "chart.line.uptrend.xyaxis",
+             accentColor: "green"
+         ),
+         HomeContent.FeatureItem(
+-            title: "Multi-Device Sync",
+-            description: "Access your chats from any device, anytime",
+-            systemImage: "icloud.fill",
++            title: "First-Task Bridge",
++            description: "Finish one deliberate micro-task after wake verification before your morning run is marked complete.",
++            systemImage: "checkmark.seal.fill",
+             accentColor: "blue"
+         )
+     ]
+@@ -119,21 +119,21 @@ extension HomeContent.QuickAction {
+     /// Buyers can customize or add more actions
+     public static let defaults: [HomeContent.QuickAction] = [
+         HomeContent.QuickAction(
+-            title: "New Chat",
+-            systemImage: "plus.message.fill",
+-            accentColor: "blue",
++            title: "Start Wake Run",
++            systemImage: "alarm.badge.checkmark",
++            accentColor: "orange",
+             action: .newChat
+         ),
+         HomeContent.QuickAction(
+-            title: "History",
+-            systemImage: "clock.fill",
+-            accentColor: "purple",
++            title: "Reliability Log",
++            systemImage: "list.bullet.clipboard",
++            accentColor: "indigo",
+             action: .history
+         ),
+         HomeContent.QuickAction(
+-            title: "Upgrade",
+-            systemImage: "star.fill",
+-            accentColor: "orange",
++            title: "WakeTask Pro",
++            systemImage: "crown.fill",
++            accentColor: "yellow",
+             action: .upgrade
+         ),
+         HomeContent.QuickAction(
+@@ -144,4 +144,3 @@ extension HomeContent.QuickAction {
+         )
+     ]
+ }
+-
+diff --git a/apps/waketask-iphone/SwiftAIBoilerplatePro/AppShell/HomeView.swift b/apps/waketask-iphone/SwiftAIBoilerplatePro/AppShell/HomeView.swift
+index d71ac4e..b3745d2 100644
+--- a/apps/waketask-iphone/SwiftAIBoilerplatePro/AppShell/HomeView.swift
++++ b/apps/waketask-iphone/SwiftAIBoilerplatePro/AppShell/HomeView.swift
+@@ -62,7 +62,7 @@ struct HomeView: View {
+             .task {
+                 await viewModel.loadData()
+             }
+-            .navigationTitle("Home")
++            .navigationTitle("WakeTask")
+             .navigationBarTitleDisplayMode(.large)
+         }
+     }
+@@ -115,7 +115,7 @@ struct HomeView: View {
+     
+     private var featuredSection: some View {
+         VStack(alignment: .leading, spacing: 0) {
+-            DSSectionHeader(title: "Featured")
++            DSSectionHeader(title: "Wake System")
+                 .padding(.bottom, DSSpacing.xs)
+             
+             ScrollView(.horizontal, showsIndicators: false) {
+@@ -137,7 +137,7 @@ struct HomeView: View {
+         VStack(alignment: .leading, spacing: 0) {
+             // Section header with trailing action
+             HStack(alignment: .center) {
+-                DSSectionHeader(title: "Recent Chats", showDivider: false)
++                DSSectionHeader(title: "Recent Runs", showDivider: false)
+                 
+                 Spacer()
+                 
+@@ -177,7 +177,7 @@ struct HomeView: View {
+     private func recentConversationRow(_ conversation: ConversationDTO) -> some View {
+         // Apply shadow to outer wrapper to prevent clipping
+         HStack(spacing: DSSpacing.md) {
+-            Image(systemName: "message.fill")
++            Image(systemName: "alarm.fill")
+                 .font(.title3)
+                 .foregroundStyle(DSColors.accentPrimary)
+                 .frame(width: 40, height: 40)
+@@ -256,4 +256,3 @@ struct HomeView: View {
+     }
+ }
+ #endif
+-
+diff --git a/apps/waketask-iphone/SwiftAIBoilerplatePro/AppShell/MainTabView.swift b/apps/waketask-iphone/SwiftAIBoilerplatePro/AppShell/MainTabView.swift
+index c9341b2..1e2138c 100644
+--- a/apps/waketask-iphone/SwiftAIBoilerplatePro/AppShell/MainTabView.swift
++++ b/apps/waketask-iphone/SwiftAIBoilerplatePro/AppShell/MainTabView.swift
+@@ -23,7 +23,7 @@ struct MainTabView: View {
+         var title: String {
+             switch self {
+             case .home: return "Home"
+-            case .chat: return "Chat"
++            case .chat: return "Runs"
+             case .profile: return "Profile"
+             }
+         }
+@@ -31,7 +31,7 @@ struct MainTabView: View {
+         var icon: String {
+             switch self {
+             case .home: return "house.fill"
+-            case .chat: return "message.fill"
++            case .chat: return "alarm.fill"
+             case .profile: return "person.fill"
+             }
+         }
+diff --git a/apps/waketask-iphone/SwiftAIBoilerplatePro/AppShell/OnboardingPage.swift b/apps/waketask-iphone/SwiftAIBoilerplatePro/AppShell/OnboardingPage.swift
+index bb0f901..e724a3e 100644
+--- a/apps/waketask-iphone/SwiftAIBoilerplatePro/AppShell/OnboardingPage.swift
++++ b/apps/waketask-iphone/SwiftAIBoilerplatePro/AppShell/OnboardingPage.swift
+@@ -35,23 +35,22 @@ extension OnboardingPage {
+     /// Buyers should customize these for their specific app
+     static let defaultPages: [OnboardingPage] = [
+         OnboardingPage(
+-            title: "AI-Powered Conversations",
+-            description: "Have natural conversations with advanced AI. Get answers, ideas, and assistance instantly.",
+-            systemImage: "brain.head.profile",
+-            accentColor: "blue"
++            title: "Wake With Intent",
++            description: "Build alarms with strictness, mission stacks, and a wake-check that keeps you moving after dismissal.",
++            systemImage: "alarm.fill",
++            accentColor: "orange"
+         ),
+         OnboardingPage(
+-            title: "Your Data, Secure",
+-            description: "All conversations are encrypted and stored securely. Your privacy is our priority.",
+-            systemImage: "lock.shield",
++            title: "Proof You Actually Woke Up",
++            description: "Every alarm run is logged in a reliability timeline: trigger, mission completion, wake-check status, and escalation.",
++            systemImage: "checklist.checked",
+             accentColor: "green"
+         ),
+         OnboardingPage(
+-            title: "Seamless Experience",
+-            description: "Pick up where you left off on any device. Your chat history syncs automatically.",
+-            systemImage: "arrow.triangle.2.circlepath",
+-            accentColor: "purple"
++            title: "Private By Default",
++            description: "Wake validation runs on-device for MVP. No ad interruptions appear in the critical wake path.",
++            systemImage: "hand.raised.shield",
++            accentColor: "indigo"
+         )
+     ]
+ }
+-
+diff --git a/apps/waketask-iphone/SwiftAIBoilerplatePro/ContentView.swift b/apps/waketask-iphone/SwiftAIBoilerplatePro/ContentView.swift
+index 66cfb9f..d293f4d 100644
+--- a/apps/waketask-iphone/SwiftAIBoilerplatePro/ContentView.swift
++++ b/apps/waketask-iphone/SwiftAIBoilerplatePro/ContentView.swift
+@@ -6,7 +6,7 @@ struct ContentView: View {
+             VStack(spacing: 16) {
+                 Image(systemName: "bolt.horizontal.circle.fill")
+                     .font(.system(size: 44))
+-                Text("SwiftAI Boilerplate Pro")
++                Text("WakeTask")
+                     .font(.title).bold()
+                 Text("Clean SwiftUI app entry. Packages coming next.")
+                     .foregroundStyle(.secondary)
+diff --git a/apps/waketask-iphone/SwiftAIBoilerplatePro/Launch Screen.storyboard b/apps/waketask-iphone/SwiftAIBoilerplatePro/Launch Screen.storyboard
+index 32b0a1a..46fee94 100644
+--- a/apps/waketask-iphone/SwiftAIBoilerplatePro/Launch Screen.storyboard	
++++ b/apps/waketask-iphone/SwiftAIBoilerplatePro/Launch Screen.storyboard	
+@@ -29,7 +29,7 @@
+                             </imageView>
+                             
+                             <!-- App Name - Clean Typography -->
+-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="AI Boilerplate" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="app-name">
++                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="WakeTask" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="app-name">
+                                 <rect key="frame" x="80" y="472.33333333333331" width="233" height="36"/>
+                                 <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="30"/>
+                                 <color key="textColor" systemColor="labelColor"/>
+@@ -37,7 +37,7 @@
+                             </label>
+                             
+                             <!-- Tagline (Optional) -->
+-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Swift · AI · Native" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="tagline">
++                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Wake · Verify · Act" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="tagline">
+                                 <rect key="frame" x="80" y="518.33333333333331" width="233" height="19.333333333333371"/>
+                                 <fontDescription key="fontDescription" type="system" weight="regular" pointSize="16"/>
+                                 <color key="textColor" systemColor="secondaryLabelColor"/>
+diff --git a/apps/waketask-iphone/SwiftAIBoilerplatePro/Resources/privacy.md b/apps/waketask-iphone/SwiftAIBoilerplatePro/Resources/privacy.md
+index 4cc384e..e1a7456 100644
+--- a/apps/waketask-iphone/SwiftAIBoilerplatePro/Resources/privacy.md
++++ b/apps/waketask-iphone/SwiftAIBoilerplatePro/Resources/privacy.md
+@@ -1,49 +1,45 @@
+ # Privacy Policy
+ 
+-**Last Updated:** October 8, 2025
++**Last Updated:** May 14, 2026
+ 
+-## Information We Collect
+-- Account info (email, name)
+-- Usage data
+-- AI conversations
+-- Device info
++## Overview
++WakeTask helps users reliably wake up by running alarms, wake missions, and post-dismiss wake checks.
+ 
+-## How We Use It
+-- Provide services
+-- Process AI requests
+-- Improve app
+-- Send notifications
++## Data We Collect
++- Account information you provide (such as email when you create an account).
++- Alarm and wake-flow configuration (alarm times, strictness, mission preferences, first-task setup).
++- Reliability activity records (trigger events, mission completion, wake-check outcomes, escalation outcomes).
++- Subscription status and purchase entitlement state.
++- Basic diagnostic events needed to keep the app stable.
+ 
+-## Data Sharing
+-- **AI Providers:** Your prompts go to AI services (OpenAI, Anthropic)
+-- **Analytics:** Anonymous usage stats
+-- **Apple:** Payment processing
++## How We Use Data
++- Deliver alarm and wake verification functionality.
++- Show your reliability timeline and weekly consistency summaries.
++- Maintain account access, sync features (when enabled), and subscription access.
++- Detect errors and improve reliability/performance.
+ 
+-## Your Rights
+-- Access your data
+-- Delete your account
+-- Export conversations
+-- Opt-out of marketing
++## Mission Validation and Sensors
++For MVP, wake mission validation is processed on-device where possible. WakeTask does not use ad SDK interruptions in the critical wake path.
+ 
+-## Security
+-- Encryption in transit
+-- Secure storage
+-- Regular audits
++## Data Sharing
++- Service providers we use to operate the app (for example: authentication, payments, and infrastructure).
++- Legal disclosure when required by law.
+ 
+-## Children
+-Not for users under 13.
++We do not sell your personal information.
+ 
+-## Changes
+-We'll notify you of policy updates.
++## Retention
++We retain data as long as needed to provide the service, comply with legal obligations, resolve disputes, and enforce agreements.
+ 
+-## Contact
+-Email: privacy@yourapp.com
++## Your Choices
++- You can request account deletion.
++- You can request access to your stored data.
++- You can manage notification permissions in iOS Settings.
+ 
+-## GDPR (EU)
+-You have right to data portability, erasure, and complaint filing.
+-
+-## CCPA (California)
+-We don't sell your data. Contact us for data disclosure.
++## Security
++We use reasonable safeguards including encrypted transport and platform security controls, but no system is guaranteed 100% secure.
+ 
+-*Customize this policy with legal counsel.*
++## Children
++WakeTask is not directed to children under 13.
+ 
++## Contact
++For privacy questions: `privacy@waketask.app`
+diff --git a/apps/waketask-iphone/SwiftAIBoilerplatePro/Resources/terms.md b/apps/waketask-iphone/SwiftAIBoilerplatePro/Resources/terms.md
+index 28ad839..82efdf1 100644
+--- a/apps/waketask-iphone/SwiftAIBoilerplatePro/Resources/terms.md
++++ b/apps/waketask-iphone/SwiftAIBoilerplatePro/Resources/terms.md
+@@ -1,39 +1,36 @@
+ # Terms of Service
+ 
+-**Last Updated:** October 8, 2025
++**Last Updated:** May 14, 2026
+ 
+-## 1. Acceptance of Terms
+-By using this app, you agree to these terms.
++## 1. Agreement
++By using WakeTask, you agree to these Terms.
+ 
+-## 2. Use License
+-Personal, non-commercial use only.
++## 2. Service Description
++WakeTask provides alarm, wake mission, wake-check, and reliability tracking tools intended to help users wake and start first-task execution.
+ 
+-## 3. User Accounts
+-You are responsible for your account security.
++## 3. Accounts
++You are responsible for maintaining the confidentiality of your account credentials and for activity on your account.
+ 
+-## 4. AI Content
+-AI-generated content may not always be accurate. Verify important information.
++## 4. Subscriptions and Billing
++Paid features may require a subscription. Subscriptions renew automatically unless canceled at least 24 hours before renewal, subject to Apple billing rules.
+ 
+-## 5. Privacy
+-See our Privacy Policy for data handling practices.
++## 5. Acceptable Use
++You agree not to misuse the app, attempt to disrupt service operation, reverse engineer restricted components, or violate applicable law.
+ 
+-## 6. Prohibited Uses
+-No illegal, harmful, or abusive content generation.
++## 6. Availability
++WakeTask may be updated, changed, or suspended. Alarm reliability depends on device state, permissions, and OS behavior.
+ 
+-## 7. Subscription
+-Subscriptions auto-renew. Fees are non-refundable except as required by law.
++## 7. Disclaimer
++The app is provided "as is" without warranties of uninterrupted operation or fitness for a particular purpose.
+ 
+-## 8. Termination
+-We may terminate accounts for Terms violations.
++## 8. Limitation of Liability
++To the maximum extent permitted by law, WakeTask and its operators are not liable for indirect, incidental, special, consequential, or punitive damages.
+ 
+-## 9. Limitation of Liability
+-We are not liable for damages from app use.
++## 9. Termination
++We may suspend or terminate accounts that violate these Terms.
+ 
+-## 10. Changes
+-We may update these terms. Continued use = acceptance.
+-
+-## Contact
+-Email: support@yourapp.com
+-
+-*Consult legal counsel to customize for your needs.*
++## 10. Changes to Terms
++We may update these Terms. Continued use after updates constitutes acceptance of the revised Terms.
+ 
++## 11. Contact
++For support and legal inquiries: `support@waketask.app`
+diff --git a/apps/waketask-iphone/SwiftAIBoilerplatePro/SwiftAIBoilerplatePro.entitlements b/apps/waketask-iphone/SwiftAIBoilerplatePro/SwiftAIBoilerplatePro.entitlements
+index e21672d..f1f8579 100644
+--- a/apps/waketask-iphone/SwiftAIBoilerplatePro/SwiftAIBoilerplatePro.entitlements
++++ b/apps/waketask-iphone/SwiftAIBoilerplatePro/SwiftAIBoilerplatePro.entitlements
+@@ -6,7 +6,7 @@
+ 	<string>development</string>
+ 	<key>com.apple.security.application-groups</key>
+ 	<array>
+-		<string>group.com.berkin.SwiftAIBoilerplatePro.onesignal</string>
++		<string>group.com.keen.waketask.onesignal</string>
+ 	</array>
+ </dict>
+ </plist>
+diff --git a/apps/waketask-iphone/SwiftAIBoilerplatePro/SwiftAIBoilerplatePro.swift b/apps/waketask-iphone/SwiftAIBoilerplatePro/SwiftAIBoilerplatePro.swift
+index 1b4120b..ceca93c 100644
+--- a/apps/waketask-iphone/SwiftAIBoilerplatePro/SwiftAIBoilerplatePro.swift
++++ b/apps/waketask-iphone/SwiftAIBoilerplatePro/SwiftAIBoilerplatePro.swift
+@@ -188,11 +188,11 @@ struct LaunchScreenStyle: View {
+                     .font(.system(size: 48, weight: .medium))
+                     .foregroundStyle(DSColors.accentPrimary)
+                 
+-                Text("AI Boilerplate")
++                Text("WakeTask")
+                     .font(.system(size: 30, weight: .semibold))
+                     .foregroundStyle(DSColors.textPrimary)
+                 
+-                Text("Swift · AI · Native")
++                Text("Wake · Verify · Act")
+                     .font(.system(size: 16))
+                     .foregroundStyle(DSColors.textSecondary)
+                 
