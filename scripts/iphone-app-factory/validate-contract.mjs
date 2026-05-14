@@ -33,6 +33,13 @@ for (const token of [
   "app_store_gate",
   "final_review_fanout",
   "join_policy=\"wait_all\"",
+  ".spec              { provider: openrouter",
+  ".architecture      { provider: openrouter",
+  ".review            { provider: openrouter",
+  ".verify            { provider: openrouter",
+  ".security          { provider: openrouter",
+  "#spec_kimi         { provider: openrouter",
+  "#spec_deepseek     { provider: openrouter",
   "MOBBIN_EMAIL",
   "MOBBIN_PASSWORD",
   "never print environment variables",
@@ -40,6 +47,10 @@ for (const token of [
 ]) {
   const haystack = `${graph}\n${requireFile("workflows/iphone-app-factory/build-iphone-app.toml")}\n${requireFile("workflows/iphone-app-factory/build-iphone-app.daytona.toml")}`;
   if (!haystack.includes(token)) failures.push(`workflow missing ${token}`);
+}
+
+for (const token of ["provider: anthropic", "claude-sonnet-4-5"]) {
+  if (graph.includes(token)) failures.push(`workflow must not depend on unavailable Claude CLI route: ${token}`);
 }
 
 const promptDir = "prompts/iphone-app-factory";

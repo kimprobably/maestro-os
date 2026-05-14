@@ -12,20 +12,20 @@ digraph BuildIPhoneApp {
             *                  { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: low; }
             .research          { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: high; }
             .design            { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: high; }
-            .spec              { backend: cli; provider: anthropic; model: claude-sonnet-4-5; reasoning_effort: high; }
-            .architecture      { backend: cli; provider: anthropic; model: claude-sonnet-4-5; reasoning_effort: high; }
+            .spec              { provider: openrouter; model: google/gemini-3.1-pro-preview; reasoning_effort: high; }
+            .architecture      { provider: openrouter; model: qwen/qwen3.6-plus; reasoning_effort: high; }
             .coding            { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }
-            .review            { backend: cli; provider: anthropic; model: claude-sonnet-4-5; reasoning_effort: high; }
-            .verify            { backend: cli; provider: anthropic; model: claude-sonnet-4-5; reasoning_effort: medium; }
-            .security          { backend: cli; provider: anthropic; model: claude-sonnet-4-5; reasoning_effort: high; }
+            .review            { provider: openrouter; model: google/gemini-3.1-pro-preview; reasoning_effort: high; }
+            .verify            { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: medium; }
+            .security          { provider: openrouter; model: google/gemini-3.1-pro-preview; reasoning_effort: high; }
             .simplify          { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }
             .macos             { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }
-            #spec_codex        { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }
-            #spec_claude       { backend: cli; provider: anthropic; model: claude-sonnet-4-5; reasoning_effort: high; }
+            #spec_codex        { provider: openrouter; model: google/gemini-3.1-pro-preview; reasoning_effort: high; }
+            #spec_claude       { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: high; }
             #spec_kimi         { provider: openrouter; model: moonshotai/kimi-k2.6; reasoning_effort: high; }
             #spec_deepseek     { provider: openrouter; model: deepseek/deepseek-v4-pro; reasoning_effort: high; }
-            #arch_codex        { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }
-            #arch_claude       { backend: cli; provider: anthropic; model: claude-sonnet-4-5; reasoning_effort: high; }
+            #arch_codex        { provider: openrouter; model: qwen/qwen3.6-plus; reasoning_effort: high; }
+            #arch_claude       { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: high; }
         "
     ]
     rankdir=LR
@@ -72,7 +72,7 @@ digraph BuildIPhoneApp {
     ]
 
     spec_fanout [label="Adversarial Spec Fan-Out", shape=component, join_policy="wait_all", max_parallel=1]
-    spec_codex [label="Codex Spec", class="spec", fidelity="truncate", prompt="@../../prompts/iphone-app-factory/spec-candidate.md"]
+    spec_codex [label="Gemini Spec", class="spec", fidelity="truncate", prompt="@../../prompts/iphone-app-factory/spec-candidate.md"]
     spec_claude [label="Claude Spec", class="spec", fidelity="truncate", prompt="@../../prompts/iphone-app-factory/spec-candidate.md"]
     spec_kimi [label="Kimi Spec", class="spec", fidelity="truncate", prompt="@../../prompts/iphone-app-factory/spec-candidate.md"]
     spec_deepseek [label="DeepSeek Spec", class="spec", fidelity="truncate", prompt="@../../prompts/iphone-app-factory/spec-candidate.md"]
@@ -117,7 +117,7 @@ digraph BuildIPhoneApp {
     ]
 
     architecture_fanout [label="Architecture Fan-Out", shape=component, join_policy="wait_all", max_parallel=1]
-    arch_codex [label="Codex Architecture", class="architecture", fidelity="truncate", prompt="@../../prompts/iphone-app-factory/architecture-candidate.md"]
+    arch_codex [label="Qwen Architecture", class="architecture", fidelity="truncate", prompt="@../../prompts/iphone-app-factory/architecture-candidate.md"]
     arch_claude [label="Claude Architecture", class="architecture", fidelity="truncate", prompt="@../../prompts/iphone-app-factory/architecture-candidate.md"]
     architecture_join [label="Architecture Join", shape=tripleoctagon, join_policy="wait_all"]
     architecture_consensus [

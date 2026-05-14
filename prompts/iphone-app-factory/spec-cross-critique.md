@@ -1,6 +1,6 @@
 # Spec Cross-Critique
 
-You have independent spec candidates in context from Codex, Claude, Kimi, and DeepSeek.
+You have independent spec candidates in context from Gemini, Claude, Kimi, and DeepSeek.
 
 Compare them adversarially:
 
