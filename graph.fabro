@@ -1,0 +1,401 @@
+digraph BuildIPhoneApp {
+    graph [
+        goal="Build a differentiated iPhone app from a researched app opportunity using SwiftAIBoilerplatePro",
+        persona="iphone-app-factory",
+        inputs="app_type,target_audience,app_name,bundle_id,app_dir,spec_kitty_feature,boilerplate_repo,max_competitors,use_mobbin,ios_validation_mode,allow_macos_deferred",
+        outputs="research_pack,spec,architecture,swift_app,ios_quality_report,appium_report,release_handoff",
+        default_max_retries=2,
+        retry_target="spec_consensus",
+        fallback_retry_target="architecture_consensus",
+        model_stylesheet="
+            *                  { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: low; }
+            .research          { provider: openrouter; model: qwen/qwen3.6-plus; reasoning_effort: high; }
+            .design            { provider: openrouter; model: google/gemini-3.1-pro-preview; reasoning_effort: high; }
+            .spec              { backend: cli; provider: anthropic; model: claude-sonnet-4-5; reasoning_effort: high; }
+            .architecture      { backend: cli; provider: anthropic; model: claude-sonnet-4-5; reasoning_effort: high; }
+            .coding            { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }
+            .review            { backend: cli; provider: anthropic; model: claude-sonnet-4-5; reasoning_effort: high; }
+            .verify            { backend: cli; provider: anthropic; model: claude-sonnet-4-5; reasoning_effort: medium; }
+            .security          { backend: cli; provider: anthropic; model: claude-sonnet-4-5; reasoning_effort: high; }
+            .simplify          { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }
+            .macos             { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }
+            #spec_codex        { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }
+            #spec_claude       { backend: cli; provider: anthropic; model: claude-sonnet-4-5; reasoning_effort: high; }
+            #spec_kimi         { provider: openrouter; model: moonshotai/kimi-k2.6; reasoning_effort: high; }
+            #spec_deepseek     { provider: openrouter; model: deepseek/deepseek-v4-pro; reasoning_effort: high; }
+            #arch_codex        { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }
+            #arch_claude       { backend: cli; provider: anthropic; model: claude-sonnet-4-5; reasoning_effort: high; }
+        "
+    ]
+    rankdir=LR
+
+    start [shape=Mdiamond, label="Start"]
+    exit  [shape=Msquare, label="Exit"]
+
+    bootstrap [
+        label="Bootstrap iPhone Factory",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="bootstrap",
+        script="node scripts/iphone-app-factory/bootstrap.mjs --app-dir '{{ inputs.app_dir|default('apps/generated-iphone-app') }}' --app-name '{{ inputs.app_name|default('Generated iPhone App') }}' --bundle-id '{{ inputs.bundle_id|default('com.maestro.generatediphoneapp') }}' --boilerplate-repo '{{ inputs.boilerplate_repo|default('SwiftAIBoilerplatePro/SwiftAIBoilerplatePro-Distribution') }}'"
+    ]
+
+    prompt_quality_gate [
+        label="Prompt Quality Gate",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="prompt_quality_gate",
+        script="node scripts/iphone-app-factory/promptfoo-prompt-quality.mjs --config evals/iphone-app-factory/prompt-quality.yaml --registry evals/iphone-app-factory/prompt-registry.json --out .workflow/iphone-app-factory/evals/prompt-quality.json --allow-fallback true"
+    ]
+
+    research_fanout [label="Research Fan-Out", shape=component, join_policy="wait_all", max_parallel=4]
+    app_store_research [label="App Store Reviews", class="research", prompt="@../../prompts/iphone-app-factory/research-app-store.md"]
+    reddit_research [label="Reddit Pain Mining", class="research", prompt="@../../prompts/iphone-app-factory/research-reddit.md"]
+    competitor_research [label="Competitor Research", class="research", prompt="@../../prompts/iphone-app-factory/research-competitors.md"]
+    design_pattern_research [label="Design Pattern Research", class="design", prompt="@../../prompts/iphone-app-factory/research-design-patterns.md"]
+    research_join [label="Research Join", shape=tripleoctagon, join_policy="wait_all"]
+
+    research_synthesis [
+        label="Research Synthesis",
+        class="research",
+        goal_gate=true,
+        retry_target="research_fanout",
+        prompt="@../../prompts/iphone-app-factory/synthesize-research.md"
+    ]
+
+    spec_fanout [label="Adversarial Spec Fan-Out", shape=component, join_policy="wait_all", max_parallel=4]
+    spec_codex [label="Codex Spec", class="spec", fidelity="truncate", prompt="@../../prompts/iphone-app-factory/spec-candidate.md"]
+    spec_claude [label="Claude Spec", class="spec", fidelity="truncate", prompt="@../../prompts/iphone-app-factory/spec-candidate.md"]
+    spec_kimi [label="Kimi Spec", class="spec", fidelity="truncate", prompt="@../../prompts/iphone-app-factory/spec-candidate.md"]
+    spec_deepseek [label="DeepSeek Spec", class="spec", fidelity="truncate", prompt="@../../prompts/iphone-app-factory/spec-candidate.md"]
+    spec_join [label="Spec Join", shape=tripleoctagon, join_policy="wait_all"]
+
+    spec_cross_critique [
+        label="Spec Cross-Critique",
+        class="review",
+        goal_gate=true,
+        retry_target="spec_fanout",
+        fidelity="full",
+        prompt="@../../prompts/iphone-app-factory/spec-cross-critique.md"
+    ]
+    spec_consensus [
+        label="Spec Consensus",
+        class="spec",
+        goal_gate=true,
+        retry_target="spec_fanout",
+        fidelity="full",
+        prompt="@../../prompts/iphone-app-factory/spec-consensus.md"
+    ]
+    spec_red_team [
+        label="Spec Red Team",
+        class="review",
+        goal_gate=true,
+        retry_target="spec_consensus",
+        prompt="@../../prompts/iphone-app-factory/spec-red-team.md"
+    ]
+    spec_quality_gate [
+        label="Spec Quality Gate",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="spec_consensus",
+        script="node scripts/iphone-app-factory/spec-gate.mjs"
+    ]
+    spec_kitty_gate [
+        label="Spec Kitty Mission",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="spec_consensus",
+        script="FEATURE='{{ inputs.spec_kitty_feature|default('iphone-app-factory') }}'; if command -v spec-kitty >/dev/null 2>&1; then spec-kitty specify \"$FEATURE\" --mission-type software-dev --json > .workflow/iphone-app-factory/spec-kitty.json || spec-kitty verify-setup --json > .workflow/iphone-app-factory/spec-kitty.json; else echo 'spec-kitty is required for this workflow' >&2; exit 1; fi; cat .workflow/iphone-app-factory/spec-kitty.json"
+    ]
+
+    architecture_fanout [label="Architecture Fan-Out", shape=component, join_policy="wait_all", max_parallel=2]
+    arch_codex [label="Codex Architecture", class="architecture", fidelity="truncate", prompt="@../../prompts/iphone-app-factory/architecture-candidate.md"]
+    arch_claude [label="Claude Architecture", class="architecture", fidelity="truncate", prompt="@../../prompts/iphone-app-factory/architecture-candidate.md"]
+    architecture_join [label="Architecture Join", shape=tripleoctagon, join_policy="wait_all"]
+    architecture_consensus [
+        label="Architecture And ADR",
+        class="architecture",
+        goal_gate=true,
+        retry_target="architecture_fanout",
+        fidelity="full",
+        prompt="@../../prompts/iphone-app-factory/architecture-consensus.md"
+    ]
+    architecture_gate [
+        label="Architecture Gate",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="architecture_consensus",
+        script="test -s .workflow/iphone-app-factory/architecture.md; test -s .workflow/iphone-app-factory/adr.md; grep -Eq 'SwiftAIBoilerplatePro|boilerplate|Packages/|DesignSystem|CompositionRoot' .workflow/iphone-app-factory/architecture.md"
+    ]
+
+    boilerplate_setup [
+        label="Clone And Rebrand Boilerplate",
+        class="coding",
+        goal_gate=true,
+        retry_target="boilerplate_setup",
+        prompt="@../../prompts/iphone-app-factory/boilerplate-setup.md"
+    ]
+    boilerplate_gate [
+        label="Boilerplate Contract Gate",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="boilerplate_setup",
+        script="node scripts/iphone-app-factory/boilerplate-contract-gate.mjs '{{ inputs.app_dir|default('apps/generated-iphone-app') }}'"
+    ]
+
+    implement_foundation [label="Implement Foundation", class="coding", goal_gate=true, retry_target="implement_foundation", prompt="@../../prompts/iphone-app-factory/implement-foundation.md"]
+    verify_foundation [label="Verify Foundation", class="verify", goal_gate=true, retry_target="implement_foundation", prompt="@../../prompts/iphone-app-factory/verify-phase.md"]
+    gate_foundation [label="Foundation Gate", shape=parallelogram, goal_gate=true, retry_target="implement_foundation", script="node scripts/iphone-app-factory/phase-evidence-gate.mjs foundation '{{ inputs.app_dir|default('apps/generated-iphone-app') }}'"]
+
+    implement_core [label="Implement Core", class="coding", goal_gate=true, retry_target="implement_core", prompt="@../../prompts/iphone-app-factory/implement-core.md"]
+    verify_core [label="Verify Core", class="verify", goal_gate=true, retry_target="implement_core", prompt="@../../prompts/iphone-app-factory/verify-phase.md"]
+    gate_core [label="Core Gate", shape=parallelogram, goal_gate=true, retry_target="implement_core", script="node scripts/iphone-app-factory/phase-evidence-gate.mjs core '{{ inputs.app_dir|default('apps/generated-iphone-app') }}'"]
+
+    implement_interface [label="Implement Interface", class="coding", goal_gate=true, retry_target="implement_interface", prompt="@../../prompts/iphone-app-factory/implement-interface.md"]
+    verify_interface [label="Verify Interface", class="verify", goal_gate=true, retry_target="implement_interface", prompt="@../../prompts/iphone-app-factory/verify-phase.md"]
+    gate_interface [label="Interface Gate", shape=parallelogram, goal_gate=true, retry_target="implement_interface", script="node scripts/iphone-app-factory/phase-evidence-gate.mjs interface '{{ inputs.app_dir|default('apps/generated-iphone-app') }}'"]
+
+    implement_integration [label="Implement Integration", class="coding", goal_gate=true, retry_target="implement_integration", prompt="@../../prompts/iphone-app-factory/implement-integration.md"]
+    verify_integration [label="Verify Integration", class="verify", goal_gate=true, retry_target="implement_integration", prompt="@../../prompts/iphone-app-factory/verify-phase.md"]
+    gate_integration [label="Integration Gate", shape=parallelogram, goal_gate=true, retry_target="implement_integration", script="node scripts/iphone-app-factory/phase-evidence-gate.mjs integration '{{ inputs.app_dir|default('apps/generated-iphone-app') }}'"]
+
+    implementation_review_fanout [label="Implementation Review Fan-Out", shape=component, join_policy="wait_all", max_parallel=4]
+    implementation_correctness_review [label="Implementation Correctness", class="review", prompt="@../../prompts/iphone-app-factory/review-implementation-correctness.md"]
+    implementation_test_review [label="Implementation Tests", class="review", prompt="@../../prompts/iphone-app-factory/review-implementation-tests.md"]
+    implementation_security_review [label="Implementation Security", class="security", prompt="@../../prompts/iphone-app-factory/review-implementation-security.md"]
+    implementation_boilerplate_review [label="Implementation Boilerplate", class="review", prompt="@../../prompts/iphone-app-factory/review-implementation-boilerplate.md"]
+    implementation_review_join [label="Implementation Review Join", shape=tripleoctagon, join_policy="wait_all"]
+    implementation_review_consensus [
+        label="Implementation Review Consensus",
+        class="review",
+        goal_gate=true,
+        retry_target="implement_integration",
+        fidelity="full",
+        prompt="@../../prompts/iphone-app-factory/review-implementation-consensus.md"
+    ]
+    implementation_review_gate [
+        label="Implementation Review Gate",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="implement_integration",
+        script="./bin/maestro verify text-gate .workflow/iphone-app-factory/reviews/implementation-consensus.md --pass 'VERDICT:\\s*APPROVED' --fail 'VERDICT:\\s*REJECTED|\\bREJECTED\\b'"
+    ]
+
+    simplification [
+        label="Code Simplification",
+        class="simplify",
+        goal_gate=true,
+        retry_target="simplification",
+        prompt="@../../prompts/iphone-app-factory/simplification.md"
+    ]
+    quality_contract_gate [
+        label="Quality Harness Contract",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="simplification",
+        script="node scripts/iphone-app-factory/quality-contract-gate.mjs '{{ inputs.app_dir|default('apps/generated-iphone-app') }}'"
+    ]
+    macos_ci_gate [
+        label="macOS iOS CI Gate",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="implement_integration",
+        timeout="3600s",
+        script="node scripts/iphone-app-factory/ios-ci-gate.mjs '{{ inputs.app_dir|default('apps/generated-iphone-app') }}' --mode '{{ inputs.ios_validation_mode|default('github') }}' --allow-deferred '{{ inputs.allow_macos_deferred|default('false') }}'"
+    ]
+    ai_ui_explorer [
+        label="AI UI Explorer",
+        class="macos",
+        goal_gate=true,
+        retry_target="implement_interface",
+        prompt="@../../prompts/iphone-app-factory/ai-ui-explorer.md"
+    ]
+    appium_gate [
+        label="Appium Exploratory Gate",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="ai_ui_explorer",
+        script="node scripts/iphone-app-factory/appium-report-gate.mjs '{{ inputs.app_dir|default('apps/generated-iphone-app') }}' --allow-deferred '{{ inputs.allow_macos_deferred|default('false') }}'"
+    ]
+    app_store_hardening [
+        label="App Store 4.3 Hardening",
+        class="review",
+        goal_gate=true,
+        retry_target="implement_interface",
+        prompt="@../../prompts/iphone-app-factory/app-store-hardening.md"
+    ]
+    app_store_gate [
+        label="App Store Hardening Gate",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="app_store_hardening",
+        script="node scripts/iphone-app-factory/app-store-hardening-gate.mjs '{{ inputs.app_dir|default('apps/generated-iphone-app') }}'"
+    ]
+
+    final_review_fanout [label="Final Review Fan-Out", shape=component, join_policy="wait_all", max_parallel=6]
+    product_fidelity_review [label="Product Fidelity", class="review", prompt="@../../prompts/iphone-app-factory/review-product-fidelity.md"]
+    ios_architecture_review [label="iOS Architecture", class="review", prompt="@../../prompts/iphone-app-factory/review-ios-architecture.md"]
+    security_privacy_review [label="Security Privacy", class="security", prompt="@../../prompts/iphone-app-factory/review-security-privacy.md"]
+    code_quality_review [label="Code Quality", class="review", prompt="@../../prompts/iphone-app-factory/review-code-quality.md"]
+    release_readiness_review [label="Release Readiness", class="review", prompt="@../../prompts/iphone-app-factory/review-release-readiness.md"]
+    qa_review [label="QA Evidence", class="review", prompt="@../../prompts/iphone-app-factory/review-qa-evidence.md"]
+    final_review_join [label="Final Review Join", shape=tripleoctagon, join_policy="wait_all"]
+    final_consensus [
+        label="Final Consensus",
+        class="review",
+        goal_gate=true,
+        retry_target="simplification",
+        fidelity="full",
+        prompt="@../../prompts/iphone-app-factory/final-consensus.md"
+    ]
+    final_gate [
+        label="Final Verdict Gate",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="simplification",
+        script="./bin/maestro verify text-gate .workflow/iphone-app-factory/final-consensus.md --pass 'VERDICT:\\s*APPROVED' --fail 'VERDICT:\\s*REJECTED|\\bREJECTED\\b'"
+    ]
+    publish_handoff [
+        label="Publish Handoff",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="final_consensus",
+        script="node scripts/iphone-app-factory/publish-handoff.mjs '{{ inputs.app_dir|default('apps/generated-iphone-app') }}'"
+    ]
+    memory_summary [
+        label="Memory Summary",
+        shape=parallelogram,
+        script="printf '{\"kind\":\"iphone_app_factory.completed\",\"payload\":{\"app_dir\":\"{{ inputs.app_dir|default('apps/generated-iphone-app') }}\",\"app_name\":\"{{ inputs.app_name|default('Generated iPhone App') }}\"}}' | ./bin/maestro memory append 'team/iphone-app-factory/builds' >/dev/null; echo memory-updated"
+    ]
+
+    start -> bootstrap
+    bootstrap -> prompt_quality_gate [condition="outcome=succeeded"]
+    bootstrap -> bootstrap [label="Retry", loop_restart=true]
+    prompt_quality_gate -> research_fanout [condition="outcome=succeeded"]
+    prompt_quality_gate -> prompt_quality_gate [label="Retry", loop_restart=true]
+    research_fanout -> app_store_research
+    research_fanout -> reddit_research
+    research_fanout -> competitor_research
+    research_fanout -> design_pattern_research
+    app_store_research -> research_join
+    reddit_research -> research_join
+    competitor_research -> research_join
+    design_pattern_research -> research_join
+    research_join -> research_synthesis
+    research_synthesis -> spec_fanout [condition="outcome=succeeded"]
+    research_synthesis -> research_fanout [label="Retry"]
+
+    spec_fanout -> spec_codex
+    spec_fanout -> spec_claude
+    spec_fanout -> spec_kimi
+    spec_fanout -> spec_deepseek
+    spec_codex -> spec_join
+    spec_claude -> spec_join
+    spec_kimi -> spec_join
+    spec_deepseek -> spec_join
+    spec_join -> spec_cross_critique
+    spec_cross_critique -> spec_consensus [condition="outcome=succeeded"]
+    spec_cross_critique -> spec_fanout [label="Retry"]
+    spec_consensus -> spec_red_team [condition="outcome=succeeded"]
+    spec_consensus -> spec_fanout [label="Retry"]
+    spec_red_team -> spec_quality_gate [condition="outcome=succeeded"]
+    spec_red_team -> spec_consensus [label="Fix"]
+    spec_quality_gate -> spec_kitty_gate [condition="outcome=succeeded"]
+    spec_quality_gate -> spec_consensus [label="Fix"]
+    spec_kitty_gate -> architecture_fanout [condition="outcome=succeeded"]
+    spec_kitty_gate -> spec_consensus [label="Fix"]
+
+    architecture_fanout -> arch_codex
+    architecture_fanout -> arch_claude
+    arch_codex -> architecture_join
+    arch_claude -> architecture_join
+    architecture_join -> architecture_consensus
+    architecture_consensus -> architecture_gate [condition="outcome=succeeded"]
+    architecture_consensus -> architecture_fanout [label="Retry"]
+    architecture_gate -> boilerplate_setup [condition="outcome=succeeded"]
+    architecture_gate -> architecture_consensus [label="Fix"]
+
+    boilerplate_setup -> boilerplate_gate [condition="outcome=succeeded"]
+    boilerplate_setup -> boilerplate_setup [label="Retry", loop_restart=true]
+    boilerplate_gate -> implement_foundation [condition="outcome=succeeded"]
+    boilerplate_gate -> boilerplate_setup [label="Fix"]
+
+    implement_foundation -> verify_foundation [condition="outcome=succeeded"]
+    implement_foundation -> implement_foundation [label="Retry", loop_restart=true]
+    verify_foundation -> gate_foundation [condition="outcome=succeeded"]
+    verify_foundation -> implement_foundation [label="Fix"]
+    gate_foundation -> implement_core [condition="outcome=succeeded"]
+    gate_foundation -> implement_foundation [label="Fix"]
+
+    implement_core -> verify_core [condition="outcome=succeeded"]
+    implement_core -> implement_core [label="Retry", loop_restart=true]
+    verify_core -> gate_core [condition="outcome=succeeded"]
+    verify_core -> implement_core [label="Fix"]
+    gate_core -> implement_interface [condition="outcome=succeeded"]
+    gate_core -> implement_core [label="Fix"]
+
+    implement_interface -> verify_interface [condition="outcome=succeeded"]
+    implement_interface -> implement_interface [label="Retry", loop_restart=true]
+    verify_interface -> gate_interface [condition="outcome=succeeded"]
+    verify_interface -> implement_interface [label="Fix"]
+    gate_interface -> implement_integration [condition="outcome=succeeded"]
+    gate_interface -> implement_interface [label="Fix"]
+
+    implement_integration -> verify_integration [condition="outcome=succeeded"]
+    implement_integration -> implement_integration [label="Retry", loop_restart=true]
+    verify_integration -> gate_integration [condition="outcome=succeeded"]
+    verify_integration -> implement_integration [label="Fix"]
+    gate_integration -> implementation_review_fanout [condition="outcome=succeeded"]
+    gate_integration -> implement_integration [label="Fix"]
+
+    implementation_review_fanout -> implementation_correctness_review
+    implementation_review_fanout -> implementation_test_review
+    implementation_review_fanout -> implementation_security_review
+    implementation_review_fanout -> implementation_boilerplate_review
+    implementation_correctness_review -> implementation_review_join
+    implementation_test_review -> implementation_review_join
+    implementation_security_review -> implementation_review_join
+    implementation_boilerplate_review -> implementation_review_join
+    implementation_review_join -> implementation_review_consensus
+    implementation_review_consensus -> implementation_review_gate [condition="outcome=succeeded"]
+    implementation_review_consensus -> implement_integration [label="Fix"]
+    implementation_review_gate -> simplification [condition="outcome=succeeded"]
+    implementation_review_gate -> implement_integration [label="Fix"]
+
+    simplification -> quality_contract_gate [condition="outcome=succeeded"]
+    simplification -> simplification [label="Retry", loop_restart=true]
+    quality_contract_gate -> macos_ci_gate [condition="outcome=succeeded"]
+    quality_contract_gate -> simplification [label="Fix"]
+    macos_ci_gate -> ai_ui_explorer [condition="outcome=succeeded"]
+    macos_ci_gate -> implement_integration [label="Fix"]
+    ai_ui_explorer -> appium_gate [condition="outcome=succeeded"]
+    ai_ui_explorer -> implement_interface [label="Fix"]
+    appium_gate -> app_store_hardening [condition="outcome=succeeded"]
+    appium_gate -> ai_ui_explorer [label="Fix"]
+    app_store_hardening -> app_store_gate [condition="outcome=succeeded"]
+    app_store_hardening -> implement_interface [label="Fix"]
+    app_store_gate -> final_review_fanout [condition="outcome=succeeded"]
+    app_store_gate -> app_store_hardening [label="Fix"]
+
+    final_review_fanout -> product_fidelity_review
+    final_review_fanout -> ios_architecture_review
+    final_review_fanout -> security_privacy_review
+    final_review_fanout -> code_quality_review
+    final_review_fanout -> release_readiness_review
+    final_review_fanout -> qa_review
+    product_fidelity_review -> final_review_join
+    ios_architecture_review -> final_review_join
+    security_privacy_review -> final_review_join
+    code_quality_review -> final_review_join
+    release_readiness_review -> final_review_join
+    qa_review -> final_review_join
+    final_review_join -> final_consensus
+    final_consensus -> final_gate [condition="outcome=succeeded"]
+    final_consensus -> simplification [label="Fix"]
+    final_gate -> publish_handoff [condition="outcome=succeeded"]
+    final_gate -> simplification [label="Fix"]
+    publish_handoff -> memory_summary [condition="outcome=succeeded"]
+    publish_handoff -> final_consensus [label="Fix"]
+    memory_summary -> exit [condition="outcome=succeeded"]
+    memory_summary -> publish_handoff [label="Fix"]
+}
