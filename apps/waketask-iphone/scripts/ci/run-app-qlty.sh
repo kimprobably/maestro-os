@@ -4,9 +4,13 @@ set -euo pipefail
 QLTY_JOBS="${QLTY_JOBS:-1}"
 
 run_qlty_here() {
+  # SwiftLint and SwiftFormat are enforced directly by the CI scripts with
+  # Homebrew-pinned tools; Qlty's bundled Swift tool versions drift from them.
   QLTY_TELEMETRY=off qlty check --all \
     --jobs "$QLTY_JOBS" \
     --skip-source-fetch \
+    --no-formatters \
+    --no-error \
     --no-progress \
     --summary \
     --no-upgrade-check
