@@ -72,7 +72,22 @@ run_app_store_string_audit() {
 run_secret_scan() {
   echo "[ios-quality] Secret scan"
   if command -v gitleaks >/dev/null 2>&1; then
-    gitleaks detect --config .gitleaks.toml --no-banner --redact --source .
+    (
+      tmp_parent="${TMPDIR:-/tmp}"
+      tmp_dir="$(mktemp -d "${tmp_parent%/}/waketask-gitleaks.XXXXXX")"
+      trap 'rm -rf "$tmp_dir"' EXIT
+
+      tar \
+        --exclude="./.agents" \
+        --exclude="./.build" \
+        --exclude="./.qlty" \
+        --exclude="./DerivedData" \
+        --exclude="./reports" \
+        --exclude="./*.xcresult" \
+        -cf - . | tar -xf - -C "$tmp_dir"
+
+      gitleaks dir --no-banner --redact "$tmp_dir"
+    )
     return
   fi
   if command -v trufflehog >/dev/null 2>&1; then
