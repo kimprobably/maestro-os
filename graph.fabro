@@ -1,0 +1,47 @@
+digraph DaytonaEnvironmentSmoke {
+    graph [
+        goal="Verify the shared Daytona code-factory environment boots with the expected tools",
+        persona="workflow-registry",
+        inputs="none",
+        outputs="environment_report",
+        model_stylesheet="
+            *       { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: low; }
+            .coding { provider: openrouter; model: qwen/qwen3.6-plus; reasoning_effort: medium; }
+            .review { provider: openrouter; model: google/gemini-3.1-pro-preview; reasoning_effort: medium; }
+        "
+    ]
+
+    start [shape=Mdiamond, label="Start"]
+    exit [shape=Msquare, label="Exit"]
+
+    check_environment [
+        label="Check Environment",
+        type="command",
+        script="mkdir -p .workflow/fabro; node -e \"const fs=require('fs'); const {spawnSync}=require('child_process'); const run=(cmd,args=[])=>{const r=spawnSync(cmd,args,{encoding:'utf8',timeout:45000}); return {cmd:[cmd,...args].join(' '), status:r.status, stdout:(r.stdout||'').trim().slice(0,400), stderr:(r.stderr||'').trim().slice(0,400)};}; const toolRuns=[run('node',['--version']),run('npm',['--version']),run('bun',['--version']),run('qlty',['--version']),run('spec-kitty',['--version']),run('promptfoo',['--version']),run('fabro',['--version']),run('claude',['--version']),run('codex',['--version']),run('curl',['-fsS','--max-time','20','https://api.github.com/rate_limit'])]; const env=['OPENROUTER_API_KEY','DAYTONA_API_KEY','LINEAR_API_KEY','FABRO_SLACK_BOT_TOKEN','FABRO_SLACK_CHANNEL_ID','APIFY_TOKEN'].reduce((acc,key)=>{const value=process.env[key]||''; const unresolved=value.charCodeAt(0)===123 && value.charCodeAt(1)===123; acc[key]=Boolean(value && !unresolved); return acc;},{}); const required=['node --version','npm --version','bun --version','qlty --version','spec-kitty --version','promptfoo --version','fabro --version','curl -fsS --max-time 20 https://api.github.com/rate_limit']; const failed=toolRuns.filter((check)=>required.includes(check.cmd) && check.status!==0); const report={ok:failed.length===0, failed, checks:toolRuns, env}; fs.writeFileSync('.workflow/fabro/daytona-environment-smoke.json', JSON.stringify(report,null,2)+'\\n'); console.log(JSON.stringify(report,null,2)); if(!report.ok) process.exit(1);\""
+    ]
+
+    write_report [
+        label="Write Report",
+        type="command",
+        script="node -e \"const fs=require('fs'); const report=JSON.parse(fs.readFileSync('.workflow/fabro/daytona-environment-smoke.json','utf8')); const lines=['# Daytona Environment Smoke','', 'ok=' + report.ok, '', '## Tools', ...report.checks.map((check)=>'- ' + check.cmd + ' status=' + check.status + (check.stdout ? ' output=' + check.stdout.split('\\n')[0] : '')), '', '## Env', ...Object.entries(report.env).map(([key,value])=>'- ' + key + '=' + value)]; fs.writeFileSync('.workflow/fabro/daytona-environment-smoke.md', lines.join('\\n')+'\\n'); console.log(lines.join('\\n')); if(!report.ok) process.exit(1);\""
+    ]
+
+    check_cli_auth_env [
+        label="Check CLI Auth Env",
+        type="command",
+        script="node -e \"const fs=require('fs'); const keys=['OPENROUTER_API_KEY','OPENAI_API_KEY','CLAUDE_CODE_OAUTH_TOKEN']; const env=Object.fromEntries(keys.map((key)=>{const value=process.env[key]||''; const unresolved=value.includes('{{') || value.includes('}}'); return [key, Boolean(value && !unresolved)];})); const report={ok:true, env}; fs.writeFileSync('.workflow/fabro/daytona-cli-auth-env.json', JSON.stringify(report,null,2)+'\\n'); console.log(JSON.stringify(report,null,2));\""
+    ]
+
+    fail_environment [
+        label="Fail Environment",
+        type="command",
+        script="node -e \"const fs=require('fs'); const body=fs.existsSync('.workflow/fabro/daytona-environment-smoke.json') ? fs.readFileSync('.workflow/fabro/daytona-environment-smoke.json','utf8') : '{}'; console.error(body); process.exit(1);\""
+    ]
+
+    start -> check_environment
+    check_environment -> check_cli_auth_env
+    check_cli_auth_env -> write_report [condition="outcome=succeeded"]
+    check_cli_auth_env -> fail_environment [label="Fail"]
+    write_report -> exit [condition="outcome=succeeded"]
+    write_report -> fail_environment [label="Fail"]
+}
