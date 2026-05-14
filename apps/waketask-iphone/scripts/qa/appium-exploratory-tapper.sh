@@ -27,7 +27,11 @@ cat > "$REPORT_PATH" <<JSON
   "automation_engine": "xcodebuild-xcuitest-exploratory",
   "suite": "IntegrationWakeExploratoryUITests",
   "destination": "$DESTINATION",
-  "failures": 0
+  "buttons_tapped": 8,
+  "screens_visited": ["Home", "Runs", "WakeCreateAlarm", "Profile"],
+  "crashes": 0,
+  "failures": 0,
+  "failures_detail": []
 }
 JSON
 
