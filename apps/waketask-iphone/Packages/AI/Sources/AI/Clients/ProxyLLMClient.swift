@@ -1,6 +1,6 @@
+import Core
 import Foundation
 import Networking
-import Core
 
 /// LLM client that streams responses from a backend proxy server.
 ///
@@ -11,7 +11,6 @@ import Core
 /// Operational details, endpoint contracts, and backend requirements are in
 /// `Packages/AI/README.md`.
 public final class ProxyLLMClient: LLMClient {
-
     let baseURL: URL
     let httpClient: any HTTPClient
     let path: String
@@ -79,10 +78,10 @@ public final class ProxyLLMClient: LLMClient {
 
 // MARK: - Legacy protocol entry point
 
-extension ProxyLLMClient {
+public extension ProxyLLMClient {
     /// `LLMClient` protocol requirement — shortcut for the default model +
     /// temperature. Prefer the fully-parameterised overload for new code.
-    public func streamResponse(messages: [LLMMessage]) -> AsyncThrowingStream<String, Error> {
+    func streamResponse(messages: [LLMMessage]) -> AsyncThrowingStream<String, Error> {
         streamResponse(messages: messages, model: nil, temperature: nil)
     }
 }

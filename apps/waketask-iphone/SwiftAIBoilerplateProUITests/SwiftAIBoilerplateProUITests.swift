@@ -1,13 +1,12 @@
 import XCTest
 
 final class SwiftAIBoilerplateProUITests: XCTestCase {
-
     override func setUpWithError() throws {
         try super.setUpWithError()
         continueAfterFailure = false
     }
 
-    func testLaunchShowsWakeTaskTabs() throws {
+    func testLaunchShowsWakeTaskTabs() {
         let app = XCUIApplication()
         app.launchEnvironment["AUTH_BYPASS"] = "1"
         app.launch()
@@ -19,7 +18,7 @@ final class SwiftAIBoilerplateProUITests: XCTestCase {
         XCTAssertTrue(tabBar.buttons["Profile"].exists)
     }
 
-    func testLaunchPerformance() throws {
+    func testLaunchPerformance() {
         if #available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 7.0, *) {
             measure(metrics: [XCTApplicationLaunchMetric()]) {
                 let app = XCUIApplication()

@@ -1,6 +1,6 @@
+import Core
 import Foundation
 import Observation
-import Core
 
 @MainActor
 @Observable
@@ -83,11 +83,10 @@ public final class WakeFlowViewModel {
         enabled: Bool,
         createdAt: Date
     ) async {
-        let window: TimeInterval
-        switch draft.strictness {
-        case .relaxed: window = 180
-        case .balanced: window = 120
-        case .strict: window = 60
+        let window: TimeInterval = switch draft.strictness {
+        case .relaxed: 180
+        case .balanced: 120
+        case .strict: 60
         }
 
         let alarm = WakeAlarm(
@@ -136,7 +135,7 @@ public final class WakeFlowViewModel {
                 missions: missions,
                 events: [
                     WakeRunEvent(occurredAt: now(), kind: .scheduled),
-                    WakeRunEvent(occurredAt: now(), kind: .alarmTriggered)
+                    WakeRunEvent(occurredAt: now(), kind: .alarmTriggered),
                 ]
             )
             try await runRepository.saveRun(run)
@@ -212,7 +211,7 @@ public final class WakeFlowViewModel {
         let weekly = runs.filter { $0.scheduledAt >= oneWeekAgo }
         guard !weekly.isEmpty else { return 0 }
 
-        let completed = weekly.filter { $0.state == .completed }.count
+        let completed = weekly.count(where: { $0.state == .completed })
         return Double(completed) / Double(weekly.count)
     }
 }

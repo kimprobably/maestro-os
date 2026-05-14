@@ -1,16 +1,15 @@
-import SwiftUI
-import DesignSystem
 import Core
+import DesignSystem
 import Storage
+import SwiftUI
 
 /// ChatGPT-style chat interface with centered prompt and full-width responses
 /// Uses the same ChatViewModel as bubble chat - only UI differs
 public struct ChatGPTStyleView: View {
-
     @State private var viewModel: ChatViewModel
     @FocusState private var isInputFocused: Bool
     @Namespace private var bottomID
-    public var onRequireSubscription: (() -> Void)? = nil
+    public var onRequireSubscription: (() -> Void)?
 
     public init(viewModel: ChatViewModel, onRequireSubscription: (() -> Void)? = nil) {
         self.viewModel = viewModel
@@ -29,7 +28,7 @@ public struct ChatGPTStyleView: View {
                 await viewModel.appear()
             }
             .onChange(of: DeepLinkBus.shared.latest) { _, deepLink in
-                if let deepLink = deepLink {
+                if let deepLink {
                     viewModel.handleDeepLink(deepLink)
                     DeepLinkBus.shared.clear()
                 }
@@ -113,7 +112,6 @@ public struct ChatGPTStyleView: View {
         .frame(maxWidth: .infinity)
     }
 
-    @ViewBuilder
     private func centeredMessageView(message: ChatMessage) -> some View {
         VStack(alignment: .leading, spacing: DSSpacing.md) {
             // User prompt (if user message)
@@ -169,15 +167,15 @@ public struct ChatGPTStyleView: View {
                             .frame(maxWidth: .infinity, alignment: .leading)
                     } else if message.isStreaming {
                         HStack(spacing: DSSpacing.xs) {
-                            ForEach(0..<3) { index in
+                            ForEach(0 ..< 3) { index in
                                 Circle()
                                     .fill(DSColors.textSecondary)
                                     .frame(width: 6, height: 6)
                                     .scaleEffect(message.isStreaming ? 1.0 : 0.5)
                                     .animation(
                                         .easeInOut(duration: 0.6)
-                                        .repeatForever()
-                                        .delay(Double(index) * 0.2),
+                                            .repeatForever()
+                                            .delay(Double(index) * 0.2),
                                         value: message.isStreaming
                                     )
                             }
@@ -268,66 +266,66 @@ public struct ChatGPTStyleView: View {
 // MARK: - Previews
 
 #if DEBUG
-private final class PreviewMessageRepository: MessageRepository {
-    func append(conversationID: UUID, role: MessageDTO.Role, text: String, createdAt: Date) async throws -> MessageDTO {
-        MessageDTO(id: UUID(), role: role, text: text, createdAt: createdAt, conversationID: conversationID)
+    private final class PreviewMessageRepository: MessageRepository {
+        func append(conversationID: UUID, role: MessageDTO.Role, text: String, createdAt: Date) async throws -> MessageDTO {
+            MessageDTO(id: UUID(), role: role, text: text, createdAt: createdAt, conversationID: conversationID)
+        }
+
+        func page(conversationID _: UUID, after _: MessageCursor?, limit _: Int) async throws -> (items: [MessageDTO], next: MessageCursor?) {
+            (items: [], next: nil)
+        }
+
+        func deleteAll(in _: UUID) async throws {}
+        func batchDelete(messageIDs _: [UUID]) async throws {}
     }
 
-    func page(conversationID: UUID, after: MessageCursor?, limit: Int) async throws -> (items: [MessageDTO], next: MessageCursor?) {
-        (items: [], next: nil)
-    }
-
-    func deleteAll(in conversationID: UUID) async throws {}
-    func batchDelete(messageIDs: [UUID]) async throws {}
-}
-
-private final class PreviewLLMClient: LLMClient {
-    func streamResponse(messages: [LLMMessage]) -> AsyncThrowingStream<String, Error> {
-        AsyncThrowingStream { continuation in
-            Task {
-                let response = "This is a preview response from the AI assistant showing how the centered layout looks with streaming text."
-                for char in response {
-                    try? await Task.sleep(nanoseconds: 20_000_000)
-                    continuation.yield(String(char))
+    private final class PreviewLLMClient: LLMClient {
+        func streamResponse(messages _: [LLMMessage]) -> AsyncThrowingStream<String, Error> {
+            AsyncThrowingStream { continuation in
+                Task {
+                    let response = "This is a preview response from the AI assistant showing how the centered layout looks with streaming text."
+                    for char in response {
+                        try? await Task.sleep(nanoseconds: 20_000_000)
+                        continuation.yield(String(char))
+                    }
+                    continuation.finish()
                 }
-                continuation.finish()
             }
         }
     }
-}
 
-#Preview("Empty State") {
-    NavigationStack {
-        ChatGPTStyleView(
-            viewModel: ChatViewModel(
-                conversationID: UUID(),
-                messageRepository: PreviewMessageRepository(),
-                llmClient: PreviewLLMClient()
+    #Preview("Empty State") {
+        NavigationStack {
+            ChatGPTStyleView(
+                viewModel: ChatViewModel(
+                    conversationID: UUID(),
+                    messageRepository: PreviewMessageRepository(),
+                    llmClient: PreviewLLMClient()
+                )
             )
-        )
-        .navigationTitle("Prompt Chat")
-        .navigationBarTitleDisplayMode(.inline)
-    }
-}
-
-#Preview("With Messages") {
-    @Previewable @State var vm = ChatViewModel(
-        conversationID: UUID(),
-        messageRepository: PreviewMessageRepository(),
-        llmClient: PreviewLLMClient()
-    )
-
-    NavigationStack {
-        ChatGPTStyleView(viewModel: vm)
             .navigationTitle("Prompt Chat")
             .navigationBarTitleDisplayMode(.inline)
-            .onAppear {
-                vm.messages = [
-                    ChatMessage(role: .assistant, text: "Hello! I'm here to help. What would you like to know?", createdAt: Date().addingTimeInterval(-120)),
-                    ChatMessage(role: .user, text: "Can you explain how SwiftUI's state management works?", createdAt: Date().addingTimeInterval(-60)),
-                    ChatMessage(role: .assistant, text: "SwiftUI's state management is based on several property wrappers:\n\n• @State for local view state\n• @Binding for two-way connections\n• @StateObject for reference types\n• @ObservedObject for external objects\n\nEach serves a specific purpose in managing data flow.", createdAt: Date())
-                ]
-            }
+        }
     }
-}
+
+    #Preview("With Messages") {
+        @Previewable @State var vm = ChatViewModel(
+            conversationID: UUID(),
+            messageRepository: PreviewMessageRepository(),
+            llmClient: PreviewLLMClient()
+        )
+
+        NavigationStack {
+            ChatGPTStyleView(viewModel: vm)
+                .navigationTitle("Prompt Chat")
+                .navigationBarTitleDisplayMode(.inline)
+                .onAppear {
+                    vm.messages = [
+                        ChatMessage(role: .assistant, text: "Hello! I'm here to help. What would you like to know?", createdAt: Date().addingTimeInterval(-120)),
+                        ChatMessage(role: .user, text: "Can you explain how SwiftUI's state management works?", createdAt: Date().addingTimeInterval(-60)),
+                        ChatMessage(role: .assistant, text: "SwiftUI's state management is based on several property wrappers:\n\n• @State for local view state\n• @Binding for two-way connections\n• @StateObject for reference types\n• @ObservedObject for external objects\n\nEach serves a specific purpose in managing data flow.", createdAt: Date()),
+                    ]
+                }
+        }
+    }
 #endif

@@ -1,11 +1,10 @@
-import XCTest
 @testable import AI
 import Networking
+import XCTest
 
 /// Shared base class for every `ProxyLLMClient` test file. Provides a fresh
 /// `MockHTTPClient` and client per test plus a shared `baseURL`.
 class ProxyLLMClientTestCase: XCTestCase {
-
     var mockHTTPClient: MockHTTPClient!
     var client: ProxyLLMClient!
     let baseURL = URL(string: "https://api.example.com")!

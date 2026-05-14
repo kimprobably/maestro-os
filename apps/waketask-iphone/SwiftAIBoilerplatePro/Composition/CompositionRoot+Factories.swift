@@ -1,13 +1,12 @@
-import Foundation
-import SwiftUI
 import FeatureChat
 import FeatureSettings
+import Foundation
+import SwiftUI
 
 @available(iOS 17.0, *)
-extension CompositionRoot {
-
+public extension CompositionRoot {
     /// Create ChatViewModel with injected dependencies.
-    public func makeChatViewModel(conversationID: UUID) -> ChatViewModel {
+    func makeChatViewModel(conversationID: UUID) -> ChatViewModel {
         ChatViewModel(
             conversationID: conversationID,
             messageRepository: messageRepository,
@@ -17,7 +16,7 @@ extension CompositionRoot {
     }
 
     /// Create DualStyleChatView with UI style switcher.
-    public func makeDualStyleChatView(
+    func makeDualStyleChatView(
         conversationID: UUID,
         onRequireSubscription: (() -> Void)? = nil
     ) -> DualStyleChatView {
@@ -30,7 +29,7 @@ extension CompositionRoot {
     }
 
     /// Create ChatGPTStyleView with ChatGPT-like UI.
-    public func makeChatGPTStyleView(
+    func makeChatGPTStyleView(
         conversationID: UUID,
         onRequireSubscription: (() -> Void)? = nil
     ) -> ChatGPTStyleView {
@@ -43,7 +42,7 @@ extension CompositionRoot {
     }
 
     /// Create SettingsViewModel with injected dependencies.
-    public func makeSettingsViewModel() -> SettingsViewModel {
+    func makeSettingsViewModel() -> SettingsViewModel {
         SettingsViewModel(
             settingsRepository: settingsRepository,
             authClient: sessionManager,
@@ -52,26 +51,26 @@ extension CompositionRoot {
     }
 
     /// Create ChatHistoryViewModel with injected dependencies.
-    public func makeChatHistoryViewModel() -> ChatHistoryViewModel {
+    func makeChatHistoryViewModel() -> ChatHistoryViewModel {
         ChatHistoryViewModel(
             conversationRepository: conversationRepository
         ) { [weak self] conversationID, style in
-            guard let self = self else { return AnyView(EmptyView()) }
+            guard let self else { return AnyView(EmptyView()) }
 
             switch style {
             case .bubbles:
-                let viewModel = self.makeChatViewModel(conversationID: conversationID)
+                let viewModel = makeChatViewModel(conversationID: conversationID)
                 return AnyView(ChatView(viewModel: viewModel, onRequireSubscription: nil))
 
             case .centered:
-                let viewModel = self.makeChatViewModel(conversationID: conversationID)
+                let viewModel = makeChatViewModel(conversationID: conversationID)
                 return AnyView(ChatGPTStyleView(viewModel: viewModel, onRequireSubscription: nil))
             }
         }
     }
 
     /// Create HomeViewModel with injected dependencies.
-    public func makeHomeViewModel() -> HomeViewModel {
+    func makeHomeViewModel() -> HomeViewModel {
         HomeViewModel(
             conversationRepository: conversationRepository,
             ratingClient: ratingClient
@@ -79,7 +78,7 @@ extension CompositionRoot {
     }
 
     /// Create WakeFlowViewModel with injected dependencies.
-    public func makeWakeFlowViewModel() -> WakeFlowViewModel {
+    func makeWakeFlowViewModel() -> WakeFlowViewModel {
         WakeFlowViewModel(
             alarmRepository: wakeAlarmRepository,
             runRepository: wakeRunRepository,
@@ -88,7 +87,7 @@ extension CompositionRoot {
     }
 
     /// Create ProfileViewModel with injected dependencies.
-    public func makeProfileViewModel() -> ProfileViewModel {
+    func makeProfileViewModel() -> ProfileViewModel {
         ProfileViewModel(
             authClient: sessionManager,
             paymentsClient: paymentsClient,

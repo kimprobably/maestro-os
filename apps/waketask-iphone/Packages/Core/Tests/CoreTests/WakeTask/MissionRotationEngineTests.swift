@@ -1,5 +1,5 @@
-import XCTest
 @testable import Core
+import XCTest
 
 final class MissionRotationEngineTests: XCTestCase {
     func testStrictModeAvoidsRecentModalitiesWhenPossible() {
@@ -40,6 +40,6 @@ final class MissionRotationEngineTests: XCTestCase {
         let missions = engine.missions(for: alarm, previousRuns: [], missionCount: 3)
 
         XCTAssertEqual(missions.count, 3)
-        XCTAssertFalse(missions.map(\.prompt).contains(where: { $0.isEmpty }))
+        XCTAssertFalse(missions.map(\.prompt).contains(where: \.isEmpty))
     }
 }

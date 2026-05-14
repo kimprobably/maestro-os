@@ -1,10 +1,9 @@
-import XCTest
-@testable import SwiftAIBoilerplatePro
 import Storage
+@testable import SwiftAIBoilerplatePro
+import XCTest
 
 @MainActor
 final class SwiftAIBoilerplateProTests: XCTestCase {
-
     func testMainTabOrderKeepsWakeRunsBetweenHomeAndProfile() {
         XCTAssertEqual(MainTabView.Tab.allCases.map(\.title), ["Home", "Runs", "Profile"])
     }

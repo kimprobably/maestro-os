@@ -1,7 +1,6 @@
 import XCTest
 
 final class IntegrationWakeExploratoryUITests: XCTestCase {
-
     private var app: XCUIApplication!
     private var telemetry = ExploratoryTelemetry()
 
@@ -21,7 +20,7 @@ final class IntegrationWakeExploratoryUITests: XCTestCase {
         try super.tearDownWithError()
     }
 
-    func testExploratoryWakeTraversal() throws {
+    func testExploratoryWakeTraversal() {
         let runsTab = app.tabBars.buttons["Runs"]
         XCTAssertTrue(runsTab.waitForExistence(timeout: 10))
         telemetry.tap(runsTab, id: "Runs")
@@ -57,7 +56,7 @@ final class IntegrationWakeExploratoryUITests: XCTestCase {
 
         let missionButtons = app.buttons.matching(NSPredicate(format: "identifier BEGINSWITH 'wakeMissionButton-'"))
         var tappedMissions = 0
-        while missionButtons.count > 0 && tappedMissions < 5 {
+        while missionButtons.count > 0, tappedMissions < 5 {
             let missionButton = missionButtons.firstMatch
             XCTAssertTrue(missionButton.waitForExistence(timeout: 10))
             telemetry.tap(missionButton, id: missionButton.identifier)
@@ -97,7 +96,7 @@ final class IntegrationWakeExploratoryUITests: XCTestCase {
     private func waitUntilEnabled(_ element: XCUIElement, timeout: TimeInterval = 10) -> Bool {
         let deadline = Date().addingTimeInterval(timeout)
         while Date() < deadline {
-            if element.exists && element.isEnabled {
+            if element.exists, element.isEnabled {
                 return true
             }
             waitForUIUpdate()
@@ -135,7 +134,8 @@ private struct ExploratoryTelemetry: Codable {
 
     func writeIfRequested() throws {
         guard let path = ProcessInfo.processInfo.environment["WAKE_EXPLORATORY_TELEMETRY_PATH"],
-              !path.isEmpty else {
+              !path.isEmpty
+        else {
             return
         }
 

@@ -1,5 +1,5 @@
-import Foundation
 import Core
+import Foundation
 
 public struct WakeTaskStoreLocation: Sendable {
     public let fileURL: URL
@@ -19,7 +19,7 @@ public final class LocalWakeAlarmRepository: WakeAlarmRepository, @unchecked Sen
     private let store: WakeTaskLocalStore
 
     public init(location: WakeTaskStoreLocation = .default()) {
-        self.store = WakeTaskLocalStore(fileURL: location.fileURL)
+        store = WakeTaskLocalStore(fileURL: location.fileURL)
     }
 
     public func listAlarms() async throws -> [WakeAlarm] {
@@ -54,7 +54,7 @@ public final class LocalWakeRunRepository: WakeRunRepository, @unchecked Sendabl
     private let store: WakeTaskLocalStore
 
     public init(location: WakeTaskStoreLocation = .default()) {
-        self.store = WakeTaskLocalStore(fileURL: location.fileURL)
+        store = WakeTaskLocalStore(fileURL: location.fileURL)
     }
 
     public func saveRun(_ run: WakeRun) async throws {
@@ -82,6 +82,6 @@ public final class LocalWakeRunRepository: WakeRunRepository, @unchecked Sendabl
         return filtered
             .sorted(by: { $0.scheduledAt > $1.scheduledAt })
             .prefix(max(1, limit))
-            .map { $0 }
+            .map(\.self)
     }
 }

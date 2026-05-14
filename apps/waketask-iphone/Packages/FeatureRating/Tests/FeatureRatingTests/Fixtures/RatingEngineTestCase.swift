@@ -1,11 +1,10 @@
-import XCTest
 @testable import FeatureRating
+import XCTest
 
 /// Shared base class for every `RatingEngine` test file. Provides a fresh
 /// in-memory storage, a mutable virtual clock, and helpers to build engines
 /// with arbitrary config + fast-forward days.
 class RatingEngineTestCase: XCTestCase {
-
     var storage: MockRatingStorage!
     var currentDate: Date!
     let calendar = Calendar.current
@@ -31,7 +30,7 @@ class RatingEngineTestCase: XCTestCase {
             storage: storage,
             config: config,
             calendar: calendar,
-            dateProvider: { [unowned self] in self.currentDate }
+            dateProvider: { [unowned self] in currentDate }
         )
     }
 

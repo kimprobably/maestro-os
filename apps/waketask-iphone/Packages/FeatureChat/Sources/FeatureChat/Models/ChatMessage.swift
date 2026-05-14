@@ -2,7 +2,6 @@ import Foundation
 
 /// Domain model for chat messages
 public struct ChatMessage: Sendable, Equatable, Identifiable {
-
     public enum Role: String, Sendable, Codable {
         case user
         case assistant

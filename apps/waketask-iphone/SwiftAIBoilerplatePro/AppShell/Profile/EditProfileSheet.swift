@@ -1,10 +1,9 @@
-import SwiftUI
-import PhotosUI
 import DesignSystem
+import PhotosUI
+import SwiftUI
 
 /// Modal sheet for editing display name + avatar.
 struct EditProfileSheet: View {
-
     @Bindable var viewModel: ProfileViewModel
     @FocusState private var isNameFieldFocused: Bool
 
@@ -46,7 +45,8 @@ struct EditProfileSheet: View {
     private var avatarPreview: some View {
         ZStack {
             if let imageData = viewModel.profileImageData,
-               let uiImage = UIImage(data: imageData) {
+               let uiImage = UIImage(data: imageData)
+            {
                 Image(uiImage: uiImage)
                     .resizable()
                     .scaledToFill()

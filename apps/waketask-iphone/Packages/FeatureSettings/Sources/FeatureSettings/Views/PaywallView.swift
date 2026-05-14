@@ -1,25 +1,24 @@
-import SwiftUI
 import DesignSystem
 import Payments
+import SwiftUI
 
 /// Paywall screen for subscription
 public struct PaywallView: View {
-    
     @State private var viewModel: PaywallViewModel
     private let onClose: () -> Void
-    
+
     public init(paymentsClient: any PaymentsClient, onClose: @escaping () -> Void = {}) {
-        self._viewModel = State(initialValue: PaywallViewModel(paymentsClient: paymentsClient))
+        _viewModel = State(initialValue: PaywallViewModel(paymentsClient: paymentsClient))
         self.onClose = onClose
     }
-    
+
     #if DEBUG
-    init(viewModel: PaywallViewModel, onClose: @escaping () -> Void = {}) {
-        self._viewModel = State(initialValue: viewModel)
-        self.onClose = onClose
-    }
+        init(viewModel: PaywallViewModel, onClose: @escaping () -> Void = {}) {
+            _viewModel = State(initialValue: viewModel)
+            self.onClose = onClose
+        }
     #endif
-    
+
     public var body: some View {
         NavigationStack {
             ZStack {
@@ -32,7 +31,7 @@ public struct PaywallView: View {
                         paywallContent
                     }
                 }
-                
+
                 if viewModel.isLoading {
                     Color.black.opacity(0.2)
                         .ignoresSafeArea()
@@ -54,32 +53,32 @@ public struct PaywallView: View {
             }
         }
     }
-    
+
     // MARK: - Already Subscribed Section
-    
+
     private var alreadySubscribedSection: some View {
         VStack(spacing: DSSpacing.xl) {
             Spacer().frame(height: DSSpacing.xl)
-            
+
             // Success checkmark
             ZStack {
                 Circle()
                     .fill(Color.green.opacity(0.15))
                     .frame(width: 100, height: 100)
-                
+
                 Image(systemName: "checkmark.circle.fill")
                     .font(.system(size: 60))
                     .foregroundStyle(.green)
             }
-            
+
             Text("You're a Pro! 🎉")
                 .font(.system(size: 28, weight: .bold, design: .rounded))
                 .foregroundStyle(DSColors.textPrimary)
-            
+
             Text("You have full access to all Pro features")
                 .font(.system(size: 16))
                 .foregroundStyle(DSColors.textSecondary)
-            
+
             // Feature list showing what they have
             VStack(spacing: DSSpacing.lg) {
                 FeatureRow(icon: "checkmark.circle.fill", title: "Advanced AI", description: "Access to enhanced AI models")
@@ -88,9 +87,9 @@ public struct PaywallView: View {
             }
             .padding(.horizontal, DSSpacing.xl)
             .padding(.vertical, DSSpacing.lg)
-            
+
             Spacer()
-            
+
             VStack(spacing: DSSpacing.lg) {
                 Button("Continue") {
                     onClose()
@@ -112,7 +111,7 @@ public struct PaywallView: View {
     }
 
     // MARK: - Paywall Content
-    
+
     private var paywallContent: some View {
         VStack(spacing: DSSpacing.xl) {
             // Header
@@ -120,17 +119,17 @@ public struct PaywallView: View {
                 Image(systemName: "lock.fill")
                     .font(.system(size: 60))
                     .foregroundStyle(DSColors.primary)
-                
+
                 Text("Go Pro")
                     .titleText()
                     .foregroundStyle(DSColors.textPrimary)
-                
+
                 Text("Unlock premium features")
                     .bodyText()
                     .foregroundStyle(DSColors.textSecondary)
             }
             .padding(.top, DSSpacing.xl)
-            
+
             // Features
             VStack(spacing: DSSpacing.lg) {
                 FeatureRow(icon: "sparkles", title: "Advanced AI", description: "Get smarter responses with enhanced models")
@@ -138,7 +137,7 @@ public struct PaywallView: View {
                 FeatureRow(icon: "infinity", title: "Unlimited Usage", description: "No daily limits or restrictions")
             }
             .padding(.horizontal, DSSpacing.xl)
-            
+
             // Plan Selection
             if !viewModel.offerings.isEmpty {
                 VStack(spacing: DSSpacing.md) {
@@ -146,7 +145,7 @@ public struct PaywallView: View {
                         .bodyText()
                         .fontWeight(.semibold)
                         .foregroundStyle(DSColors.textPrimary)
-                    
+
                     ForEach(viewModel.offerings) { offering in
                         PlanOptionCard(
                             offering: offering,
@@ -159,19 +158,19 @@ public struct PaywallView: View {
                 }
                 .padding(.horizontal, DSSpacing.xl)
             }
-            
+
             // Subscription info
             VStack(spacing: DSSpacing.xs) {
                 Text("Cancel anytime")
                     .footnoteText()
                     .fontWeight(.medium)
                     .foregroundStyle(DSColors.textPrimary)
-                
+
                 Text("Subscription auto-renews until cancelled")
                     .footnoteText()
                     .foregroundStyle(DSColors.textSecondary)
             }
-            
+
             // Error banner
             if let errorMessage = viewModel.errorMessage {
                 HStack(spacing: DSSpacing.md) {
@@ -193,7 +192,7 @@ public struct PaywallView: View {
                 .accessibilityAddTraits(.updatesFrequently)
                 .accessibilityIdentifier("paywallErrorBanner")
             }
-            
+
             VStack(spacing: DSSpacing.lg) {
                 Button("Subscribe") {
                     Task { await viewModel.purchase() }
@@ -231,24 +230,24 @@ private struct FeatureRow: View {
     let icon: String
     let title: String
     let description: String
-    
+
     var body: some View {
         HStack(spacing: DSSpacing.lg) {
             Image(systemName: icon)
                 .font(.title2)
                 .foregroundStyle(DSColors.primary)
                 .frame(width: 32)
-            
+
             VStack(alignment: .leading, spacing: DSSpacing.xs) {
                 Text(title)
                     .bodyText()
                     .foregroundStyle(DSColors.textPrimary)
-                
+
                 Text(description)
                     .footnoteText()
                     .foregroundStyle(DSColors.textSecondary)
             }
-            
+
             Spacer()
         }
         .accessibilityElement(children: .combine)
@@ -261,7 +260,7 @@ private struct PlanOptionCard: View {
     let offering: PaymentsOffering
     let isSelected: Bool
     let onSelect: () -> Void
-    
+
     var body: some View {
         Button(action: onSelect) {
             HStack(spacing: DSSpacing.lg) {
@@ -270,20 +269,20 @@ private struct PlanOptionCard: View {
                         .bodyText()
                         .fontWeight(.semibold)
                         .foregroundStyle(DSColors.textPrimary)
-                    
+
                     if let pricePerMonth = offering.pricePerMonth {
                         Text(pricePerMonth)
                             .footnoteText()
                             .foregroundStyle(DSColors.textSecondary)
                     }
                 }
-                
+
                 Spacer()
-                
+
                 Text(offering.price)
                     .headlineText()
                     .foregroundStyle(DSColors.primary)
-                
+
                 Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
                     .font(.title3)
                     .foregroundStyle(isSelected ? DSColors.primary : DSColors.separator)
@@ -305,73 +304,74 @@ private struct PlanOptionCard: View {
 }
 
 #if DEBUG
-// MARK: - Preview Helpers
 
-@MainActor
-private func createPreviewPaymentsClient() -> PaymentsClient {
-    MockPaymentsClient()
-}
+    // MARK: - Preview Helpers
 
-private final class MockPaymentsClient: PaymentsClient, @unchecked Sendable {
-    func configure(_ config: PaymentsConfig) {}
-    
-    func states() -> AsyncStream<PaymentsState> {
-        AsyncStream { continuation in
-            continuation.yield(PaymentsState(isSubscribed: false))
+    @MainActor
+    private func createPreviewPaymentsClient() -> PaymentsClient {
+        MockPaymentsClient()
+    }
+
+    private final class MockPaymentsClient: PaymentsClient, @unchecked Sendable {
+        func configure(_: PaymentsConfig) {}
+
+        func states() -> AsyncStream<PaymentsState> {
+            AsyncStream { continuation in
+                continuation.yield(PaymentsState(isSubscribed: false))
+            }
+        }
+
+        func currentState() async -> PaymentsState {
+            PaymentsState(isSubscribed: false)
+        }
+
+        func purchase(productID _: String) async throws {
+            try await Task.sleep(nanoseconds: 1_000_000_000) // 1 second delay
+        }
+
+        @discardableResult
+        func restore() async throws -> PaymentsState {
+            try await Task.sleep(nanoseconds: 500_000_000) // 0.5 second delay
+            return PaymentsState(isSubscribed: false)
+        }
+
+        func prefetchOfferings() async {}
+
+        func getOfferings() async throws -> [PaymentsOffering] {
+            [
+                PaymentsOffering(
+                    id: "$rc_monthly",
+                    title: "Monthly",
+                    price: "$9.99",
+                    pricePerMonth: "$9.99/month",
+                    packageType: .monthly
+                ),
+                PaymentsOffering(
+                    id: "$rc_annual",
+                    title: "Annual",
+                    price: "$99.99",
+                    pricePerMonth: "$8.33/month",
+                    packageType: .annual
+                ),
+            ]
         }
     }
-    
-    func currentState() async -> PaymentsState {
-        PaymentsState(isSubscribed: false)
-    }
-    
-    func purchase(productID: String) async throws {
-        try await Task.sleep(nanoseconds: 1_000_000_000) // 1 second delay
-    }
-    
-    @discardableResult
-    func restore() async throws -> PaymentsState {
-        try await Task.sleep(nanoseconds: 500_000_000) // 0.5 second delay
-        return PaymentsState(isSubscribed: false)
-    }
-    
-    func prefetchOfferings() async {}
-    
-    func getOfferings() async throws -> [PaymentsOffering] {
-        [
-            PaymentsOffering(
-                id: "$rc_monthly",
-                title: "Monthly",
-                price: "$9.99",
-                pricePerMonth: "$9.99/month",
-                packageType: .monthly
-            ),
-            PaymentsOffering(
-                id: "$rc_annual",
-                title: "Annual",
-                price: "$99.99",
-                pricePerMonth: "$8.33/month",
-                packageType: .annual
-            )
-        ]
-    }
-}
 
-// MARK: - Previews
+    // MARK: - Previews
 
-#Preview("Default") {
-    PaywallView(paymentsClient: createPreviewPaymentsClient())
-}
+    #Preview("Default") {
+        PaywallView(paymentsClient: createPreviewPaymentsClient())
+    }
 
-#Preview("Loading") {
-    let vm = PaywallViewModel(paymentsClient: createPreviewPaymentsClient())
-    vm.isLoading = true
-    return PaywallView(viewModel: vm)
-}
+    #Preview("Loading") {
+        let vm = PaywallViewModel(paymentsClient: createPreviewPaymentsClient())
+        vm.isLoading = true
+        return PaywallView(viewModel: vm)
+    }
 
-#Preview("Error") {
-    let vm = PaywallViewModel(paymentsClient: createPreviewPaymentsClient())
-    vm.errorMessage = "Unable to connect to App Store. Please check your internet connection."
-    return PaywallView(viewModel: vm)
-}
+    #Preview("Error") {
+        let vm = PaywallViewModel(paymentsClient: createPreviewPaymentsClient())
+        vm.errorMessage = "Unable to connect to App Store. Please check your internet connection."
+        return PaywallView(viewModel: vm)
+    }
 #endif

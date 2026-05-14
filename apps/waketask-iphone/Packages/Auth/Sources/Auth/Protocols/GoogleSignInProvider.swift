@@ -7,4 +7,3 @@ public protocol GoogleSignInProvider: Sendable {
     /// Returns the ID token that will be exchanged with Supabase
     func requestIDToken() async throws -> String
 }
-

@@ -1,10 +1,9 @@
-import XCTest
 @testable import AI
+import XCTest
 
 /// Initialization smoke tests for `ProxyLLMClient`. Request/stream/error
 /// coverage lives in sibling `Proxy/` files.
 final class ProxyLLMClientTests: ProxyLLMClientTestCase {
-
     func testInit_withDefaultPath() {
         let client = ProxyLLMClient(
             baseURL: baseURL,

@@ -15,15 +15,15 @@ public enum SAIGlassStyle: Sendable {
     @available(iOS 26.0, *)
     fileprivate var liquid: Glass {
         switch self {
-        case .regular: return .regular
-        case .clear:   return .clear
+        case .regular: .regular
+        case .clear: .clear
         }
     }
 
     fileprivate var fallbackMaterial: Material {
         switch self {
-        case .regular: return .regularMaterial
-        case .clear:   return .ultraThinMaterial
+        case .regular: .regularMaterial
+        case .clear: .ultraThinMaterial
         }
     }
 }
@@ -57,9 +57,9 @@ public extension View {
     /// Button("Send") { }
     ///     .saiGlass(.regular, in: Capsule())
     /// ```
-    func saiGlass<S: Shape>(
+    func saiGlass(
         _ style: SAIGlassStyle = .regular,
-        in shape: S,
+        in shape: some Shape,
         interactive: Bool = false
     ) -> some View {
         modifier(SAIGlassModifier(style: style, shape: shape, isInteractive: interactive))
@@ -111,7 +111,7 @@ public extension View {
     @ViewBuilder
     func saiScrollEdgeGlass(_ edge: Edge.Set = .bottom) -> some View {
         if #available(iOS 26.0, *) {
-            self.scrollEdgeEffectStyle(.hard, for: edge)
+            scrollEdgeEffectStyle(.hard, for: edge)
         } else {
             self
         }
@@ -134,10 +134,10 @@ public extension View {
     func saiTabBarMinimize(_ style: SAITabBarMinimizeStyle = .onScrollDown) -> some View {
         if #available(iOS 26.0, *) {
             switch style {
-            case .onScrollDown: self.tabBarMinimizeBehavior(.onScrollDown)
-            case .onScrollUp:   self.tabBarMinimizeBehavior(.onScrollUp)
-            case .automatic:    self.tabBarMinimizeBehavior(.automatic)
-            case .never:        self.tabBarMinimizeBehavior(.never)
+            case .onScrollDown: tabBarMinimizeBehavior(.onScrollDown)
+            case .onScrollUp: tabBarMinimizeBehavior(.onScrollUp)
+            case .automatic: tabBarMinimizeBehavior(.automatic)
+            case .never: tabBarMinimizeBehavior(.never)
             }
         } else {
             self
@@ -149,7 +149,7 @@ public extension View {
     @ViewBuilder
     func saiSidebarAdaptable() -> some View {
         if #available(iOS 26.0, *) {
-            self.tabViewStyle(.sidebarAdaptable)
+            tabViewStyle(.sidebarAdaptable)
         } else {
             self
         }
@@ -159,28 +159,28 @@ public extension View {
 // MARK: - Previews
 
 #if DEBUG
-#Preview("Glass surfaces") {
-    ZStack {
-        LinearGradient(
-            colors: [.blue, .purple, .pink],
-            startPoint: .topLeading,
-            endPoint: .bottomTrailing
-        )
-        .ignoresSafeArea()
+    #Preview("Glass surfaces") {
+        ZStack {
+            LinearGradient(
+                colors: [.blue, .purple, .pink],
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            )
+            .ignoresSafeArea()
 
-        SAIGlassContainer(spacing: DSSpacing.md) {
-            VStack(spacing: DSSpacing.lg) {
-                Text("Regular glass")
-                    .font(DSTypography.titleM)
-                    .padding(DSSpacing.lg)
-                    .saiGlass(.regular, in: Capsule())
+            SAIGlassContainer(spacing: DSSpacing.md) {
+                VStack(spacing: DSSpacing.lg) {
+                    Text("Regular glass")
+                        .font(DSTypography.titleM)
+                        .padding(DSSpacing.lg)
+                        .saiGlass(.regular, in: Capsule())
 
-                Text("Clear glass")
-                    .font(DSTypography.body)
-                    .padding(DSSpacing.lg)
-                    .saiGlass(.clear, in: RoundedRectangle(cornerRadius: DSRadius.lg, style: .continuous))
+                    Text("Clear glass")
+                        .font(DSTypography.body)
+                        .padding(DSSpacing.lg)
+                        .saiGlass(.clear, in: RoundedRectangle(cornerRadius: DSRadius.lg, style: .continuous))
+                }
             }
         }
     }
-}
 #endif

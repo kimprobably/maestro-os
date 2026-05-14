@@ -12,49 +12,48 @@ import SwiftUI
 /// ```
 @MainActor
 public enum SAISkeleton {
-    
     // MARK: - Avatar Skeleton
-    
+
     public static func avatar(size: SAIAvatar.Size = .md) -> some View {
         Circle()
             .fill(DSColors.chipBackground)
             .frame(width: size.diameter, height: size.diameter)
             .shimmer()
     }
-    
+
     // MARK: - Line Skeletons
-    
+
     public static func line(width: CGFloat? = nil, height: CGFloat = 16) -> some View {
         RoundedRectangle(cornerRadius: DSRadius.xs)
             .fill(DSColors.chipBackground)
             .frame(width: width, height: height)
             .shimmer()
     }
-    
+
     public static func lines(count: Int, spacing: CGFloat = DSSpacing.sm) -> some View {
         VStack(alignment: .leading, spacing: spacing) {
-            ForEach(0..<count, id: \.self) { index in
+            ForEach(0 ..< count, id: \.self) { index in
                 line(width: lineWidth(for: index, total: count))
             }
         }
     }
-    
+
     // MARK: - Paragraph Skeleton
-    
+
     public static func paragraph(lineCount: Int = 3) -> some View {
         VStack(alignment: .leading, spacing: DSSpacing.sm) {
             // Title line (thicker)
             line(width: 200, height: 20)
-            
+
             // Body lines
-            ForEach(0..<lineCount, id: \.self) { index in
+            ForEach(0 ..< lineCount, id: \.self) { index in
                 line(width: lineWidth(for: index, total: lineCount), height: 14)
             }
         }
     }
-    
+
     // MARK: - Card Skeleton
-    
+
     public static func card() -> some View {
         SAICard(style: .elevated) {
             VStack(alignment: .leading, spacing: DSSpacing.md) {
@@ -65,15 +64,15 @@ public enum SAISkeleton {
                         line(width: 80, height: 12)
                     }
                 }
-                
+
                 lines(count: 2)
             }
             .padding(DSSpacing.lg)
         }
     }
-    
+
     // MARK: - Helpers
-    
+
     private static func lineWidth(for index: Int, total: Int) -> CGFloat? {
         // Last line is shorter for natural look
         if index == total - 1 {
@@ -87,7 +86,7 @@ public enum SAISkeleton {
 
 public struct SkeletonView: View {
     public init() {}
-    
+
     public var body: some View {
         VStack(alignment: .leading, spacing: DSSpacing.xl) {
             SAISkeleton.paragraph(lineCount: 3)
@@ -108,13 +107,13 @@ public struct SkeletonView: View {
             SAISkeleton.avatar(size: .lg)
             SAISkeleton.avatar(size: .xl)
         }
-        
+
         Text("Lines").font(DSTypography.caption).foregroundStyle(DSColors.textSecondary)
         SAISkeleton.lines(count: 3)
-        
+
         Text("Paragraph").font(DSTypography.caption).foregroundStyle(DSColors.textSecondary)
         SAISkeleton.paragraph(lineCount: 4)
-        
+
         Text("Card").font(DSTypography.caption).foregroundStyle(DSColors.textSecondary)
         SAISkeleton.card()
     }
@@ -125,7 +124,7 @@ public struct SkeletonView: View {
 #Preview("Loading State") {
     ScrollView {
         VStack(spacing: DSSpacing.lg) {
-            ForEach(0..<3, id: \.self) { _ in
+            ForEach(0 ..< 3, id: \.self) { _ in
                 SAISkeleton.card()
             }
         }
@@ -144,4 +143,3 @@ public struct SkeletonView: View {
     .background(DSColors.background)
     .preferredColorScheme(.dark)
 }
-

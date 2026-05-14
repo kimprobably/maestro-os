@@ -1,7 +1,7 @@
-import SwiftUI
 import Core
 import DesignSystem
 import Localization
+import SwiftUI
 
 @MainActor
 struct WakeDashboardView: View {

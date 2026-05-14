@@ -1,16 +1,15 @@
-import Foundation
 import Core
+import Foundation
 import OSLog
 
 /// Mapping utilities for RevenueCat types to domain types
 enum RevenueCatMappers {
-    
     /// Map RCCustomerInfo to PaymentsState
     static func mapToState(customerInfo: RCCustomerInfo, entitlementID: String) -> PaymentsState {
         let activeIDs = customerInfo.activeEntitlementIDs
         let isSubscribed = activeIDs.contains(entitlementID)
         let expiryDate = customerInfo.expirationDate(for: entitlementID)
-        
+
         return PaymentsState(
             isSubscribed: isSubscribed,
             activeEntitlementIDs: activeIDs,
@@ -18,12 +17,12 @@ enum RevenueCatMappers {
             productID: nil // Could extract from customerInfo if needed
         )
     }
-    
+
     /// Map RCPackage to PaymentsOffering
     static func mapToOffering(_ package: RCPackage) -> PaymentsOffering {
         let packageType = parsePackageType(package.packageType)
         let title = packageType.displayName
-        
+
         return PaymentsOffering(
             id: package.identifier,
             title: title,
@@ -32,11 +31,11 @@ enum RevenueCatMappers {
             packageType: packageType
         )
     }
-    
+
     /// Parse package type from string
     private static func parsePackageType(_ type: String) -> PaymentsOffering.PackageType {
         let lowercased = type.lowercased()
-        
+
         if lowercased.contains("month") {
             return .monthly
         } else if lowercased.contains("annual") || lowercased.contains("year") {
@@ -47,16 +46,16 @@ enum RevenueCatMappers {
             return .unknown
         }
     }
-    
+
     /// Map RevenueCat errors to PaymentsError
     static func mapError(_ error: Error) -> PaymentsError {
         // Check for cancellation
         if error is CancellationError {
             return .cancelled
         }
-        
+
         let nsError = error as NSError
-        
+
         // Check for common RevenueCat error codes
         // RevenueCat errors are in domain "RevenueCat.ErrorCode"
         if nsError.domain.contains("RevenueCat") {
@@ -70,7 +69,8 @@ enum RevenueCatMappers {
             case 8: // receiptInvalidError / receiptAlreadyInUseError
                 // Check the underlying backend error code for more specific message
                 if let underlyingError = nsError.userInfo["NSUnderlyingError"] as? NSError,
-                   underlyingError.code == 7103 {
+                   underlyingError.code == 7103
+                {
                     // INVALID_RECEIPT - usually means RevenueCat credentials issue
                     return .server(message: "Unable to verify purchase. Please try again or contact support.")
                 }
@@ -91,7 +91,7 @@ enum RevenueCatMappers {
                 return .server(message: nsError.localizedDescription)
             }
         }
-        
+
         // Check for StoreKit errors
         if nsError.domain == "SKErrorDomain" {
             switch nsError.code {
@@ -111,12 +111,12 @@ enum RevenueCatMappers {
                 return .unknown(underlying: error)
             }
         }
-        
+
         // Check for network errors
         if nsError.domain == NSURLErrorDomain {
             return .network(underlying: error)
         }
-        
+
         // Default to unknown
         return .unknown(underlying: error)
     }

@@ -1,9 +1,8 @@
-import Foundation
 import Core
+import Foundation
 
 /// Retry logic for storage operations
 enum StorageRetry {
-    
     /// Retry a storage operation with exponential backoff
     /// - Parameters:
     ///   - maxAttempts: Maximum number of retry attempts (default: 3)
@@ -16,8 +15,8 @@ enum StorageRetry {
         operation: @MainActor () async throws -> T
     ) async throws -> T {
         var lastError: Error?
-        
-        for attempt in 1...maxAttempts {
+
+        for attempt in 1 ... maxAttempts {
             do {
                 return try await operation()
             } catch is CancellationError {
@@ -25,12 +24,12 @@ enum StorageRetry {
                 throw CancellationError()
             } catch {
                 lastError = error
-                
+
                 // Check if error is retryable
                 if !isRetryable(error) {
                     throw error
                 }
-                
+
                 // Don't sleep on last attempt
                 if attempt < maxAttempts {
                     let delay = baseDelay * Double(attempt)
@@ -39,37 +38,38 @@ enum StorageRetry {
                 }
             }
         }
-        
+
         AppLogger.error("Storage operation failed after \\(maxAttempts) attempts", category: AppLogger.storage)
         throw lastError ?? StorageError.underlying(NSError(domain: "Storage", code: -1))
     }
-    
+
     private static let baseDelay: TimeInterval = 0.1
-    
+
     /// Check if an error is retryable
     private static func isRetryable(_ error: Error) -> Bool {
         let nsError = error as NSError
-        
+
         // SwiftData/CoreData error codes that are retryable
-        let retryableCodes: Set<Int> = [
-            133020, // NSManagedObjectContextLockingError
-            133021, // NSPersistentStoreCoordinatorLockingError
-            134030, // NSManagedObjectValidationError (sometimes transient)
-            134060, // NSManagedObjectConstraintValidationError
-            134080 // NSPersistentStoreSaveConflictsError
+        let retryableCodes: Set = [
+            133_020, // NSManagedObjectContextLockingError
+            133_021, // NSPersistentStoreCoordinatorLockingError
+            134_030, // NSManagedObjectValidationError (sometimes transient)
+            134_060, // NSManagedObjectConstraintValidationError
+            134_080, // NSPersistentStoreSaveConflictsError
         ]
-        
+
         // Check for common retryable conditions
         if nsError.domain == NSCocoaErrorDomain && retryableCodes.contains(nsError.code) {
             return true
         }
-        
+
         // Retry on lock/busy errors
         if nsError.localizedDescription.lowercased().contains("locked") ||
-           nsError.localizedDescription.lowercased().contains("busy") {
+            nsError.localizedDescription.lowercased().contains("busy")
+        {
             return true
         }
-        
+
         return false
     }
 }

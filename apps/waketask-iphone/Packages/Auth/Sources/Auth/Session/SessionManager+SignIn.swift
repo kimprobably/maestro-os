@@ -1,12 +1,11 @@
-import Foundation
 import Core
+import Foundation
 
 @available(iOS 17.0, *)
-extension SessionManager {
-
+public extension SessionManager {
     // MARK: - AuthClient: sign in
 
-    public func signInWithApple() async throws -> AuthUser {
+    func signInWithApple() async throws -> AuthUser {
         let originalNonce = Nonce.random()
         let hashedNonce = Nonce.sha256(originalNonce)
 
@@ -30,8 +29,8 @@ extension SessionManager {
         return session.user
     }
 
-    public func signInWithGoogle() async throws -> AuthUser {
-        guard let google = google else {
+    func signInWithGoogle() async throws -> AuthUser {
+        guard let google else {
             throw AuthError.notConfigured
         }
 
@@ -52,7 +51,7 @@ extension SessionManager {
         return session.user
     }
 
-    public func signUpWithEmail(email: String, password: String) async throws -> AuthUser {
+    func signUpWithEmail(email: String, password: String) async throws -> AuthUser {
         AppLogger.info("Starting email sign up", category: AppLogger.auth)
 
         let session = try await api.signUpWithEmail(email: email, password: password)
@@ -68,7 +67,7 @@ extension SessionManager {
         return session.user
     }
 
-    public func signInWithEmail(email: String, password: String) async throws -> AuthUser {
+    func signInWithEmail(email: String, password: String) async throws -> AuthUser {
         AppLogger.info("Starting email sign in", category: AppLogger.auth)
 
         let session = try await api.signInWithEmail(email: email, password: password)
@@ -84,7 +83,7 @@ extension SessionManager {
         return session.user
     }
 
-    public func resetPassword(email: String) async throws {
+    func resetPassword(email: String) async throws {
         AppLogger.info("Requesting password reset", category: AppLogger.auth)
         try await api.resetPassword(email: email)
         AppLogger.info("Password reset email sent", category: AppLogger.auth)
@@ -92,7 +91,7 @@ extension SessionManager {
 
     // MARK: - AuthClient: sign out + user
 
-    public func signOut() async throws {
+    func signOut() async throws {
         AppLogger.info("Starting sign out", category: AppLogger.auth)
 
         refreshTask?.cancel()
@@ -105,21 +104,21 @@ extension SessionManager {
         try clearSession()
         currentSession = nil
 
-        AppLogger.info("Emitting unauthenticated state to \(self.stateContinuations.count) subscriber(s)", category: AppLogger.auth)
+        AppLogger.info("Emitting unauthenticated state to \(stateContinuations.count) subscriber(s)", category: AppLogger.auth)
         emit(.unauthenticated)
 
         AppLogger.info("Successfully signed out", category: AppLogger.auth)
     }
 
-    public func currentUser() async -> AuthUser? {
+    func currentUser() async -> AuthUser? {
         currentSession?.user
     }
 
     // MARK: - State stream
 
-    nonisolated public func authStates() -> AsyncStream<AuthState> {
+    nonisolated func authStates() -> AsyncStream<AuthState> {
         AsyncStream { [weak self] continuation in
-            guard let self = self else {
+            guard let self else {
                 continuation.finish()
                 return
             }
@@ -140,13 +139,13 @@ extension SessionManager {
         }
     }
 
-    func registerStateContinuation(_ continuation: AsyncStream<AuthState>.Continuation, id: UUID) {
+    internal func registerStateContinuation(_ continuation: AsyncStream<AuthState>.Continuation, id: UUID) {
         stateContinuations[id] = continuation
-        AppLogger.debug("Registered auth state subscriber (total: \(self.stateContinuations.count))", category: AppLogger.auth)
+        AppLogger.debug("Registered auth state subscriber (total: \(stateContinuations.count))", category: AppLogger.auth)
     }
 
-    func removeStateContinuation(id: UUID) {
+    internal func removeStateContinuation(id: UUID) {
         stateContinuations.removeValue(forKey: id)
-        AppLogger.debug("Removed auth state subscriber (remaining: \(self.stateContinuations.count))", category: AppLogger.auth)
+        AppLogger.debug("Removed auth state subscriber (remaining: \(stateContinuations.count))", category: AppLogger.auth)
     }
 }

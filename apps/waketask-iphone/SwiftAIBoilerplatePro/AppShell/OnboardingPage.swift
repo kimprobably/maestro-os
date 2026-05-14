@@ -9,7 +9,7 @@ struct OnboardingPage: Identifiable, Equatable {
     let systemImage: String
     let imageName: String? // Optional: Custom image from assets to replace SF Symbol
     let accentColor: String // Hex color or system color name
-    
+
     init(
         id: UUID = UUID(),
         title: String,
@@ -30,7 +30,6 @@ struct OnboardingPage: Identifiable, Equatable {
 // MARK: - Default Content
 
 extension OnboardingPage {
-    
     /// Default onboarding pages for the boilerplate
     /// Buyers should customize these for their specific app
     static let defaultPages: [OnboardingPage] = [
@@ -51,6 +50,6 @@ extension OnboardingPage {
             description: "Wake validation runs on-device for MVP. No ad interruptions appear in the critical wake path.",
             systemImage: "hand.raised.shield",
             accentColor: "indigo"
-        )
+        ),
     ]
 }

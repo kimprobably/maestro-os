@@ -1,51 +1,50 @@
-import SwiftUI
 import Auth
 import Core
 import DesignSystem
+import SwiftUI
 
 /// Password reset request screen
 @available(iOS 17.0, *)
 struct ForgotPasswordView: View {
-    
     // MARK: - Properties
-    
+
     @State private var viewModel: ForgotPasswordViewModel
     @FocusState private var isEmailFocused: Bool
-    
+
     // MARK: - Initialization
-    
+
     init(authClient: any AuthClient, onBackToLogin: @escaping () -> Void) {
-        self.viewModel = ForgotPasswordViewModel(
+        viewModel = ForgotPasswordViewModel(
             authClient: authClient,
             onBackToLogin: onBackToLogin
         )
     }
-    
+
     // MARK: - Body
-    
+
     var body: some View {
         NavigationStack {
             ScrollView {
                 VStack(spacing: DSSpacing.xl) {
                     // Header
                     headerSection
-                    
+
                     if viewModel.isSuccess {
                         // Success state
                         successSection
                     } else {
                         // Form state
                         formSection
-                        
+
                         // Send button
                         sendButton
-                        
+
                         // Error display
                         if let errorMessage = viewModel.errorMessage {
                             errorSection(errorMessage)
                         }
                     }
-                    
+
                     // Back to login
                     backToLoginSection
                 }
@@ -60,20 +59,20 @@ struct ForgotPasswordView: View {
             }
         }
     }
-    
+
     // MARK: - Subviews
-    
+
     private var headerSection: some View {
         VStack(spacing: DSSpacing.md) {
             Image(systemName: "lock.rotation")
                 .font(.system(size: 60, weight: .light))
                 .foregroundStyle(DSColors.accentPrimary.opacity(0.8))
-            
+
             Text("Forgot Password?")
                 .font(.title)
                 .fontWeight(.bold)
                 .foregroundStyle(DSColors.textPrimary)
-            
+
             Text("Enter your email address and we'll send you instructions to reset your password")
                 .font(.subheadline)
                 .foregroundStyle(DSColors.textSecondary)
@@ -81,13 +80,13 @@ struct ForgotPasswordView: View {
         }
         .frame(maxWidth: .infinity)
     }
-    
+
     private var formSection: some View {
         VStack(alignment: .leading, spacing: DSSpacing.sm) {
             Text("Email")
                 .font(.subheadline)
                 .fontWeight(.medium)
-            
+
             TextField("your@email.com", text: $viewModel.email)
                 .textFieldStyle(.roundedBorder)
                 .textContentType(.emailAddress)
@@ -100,7 +99,7 @@ struct ForgotPasswordView: View {
                         await viewModel.sendResetLink()
                     }
                 }
-            
+
             if let error = viewModel.emailError {
                 Text(error)
                     .font(.caption)
@@ -108,7 +107,7 @@ struct ForgotPasswordView: View {
             }
         }
     }
-    
+
     private var sendButton: some View {
         SAIButton(
             viewModel.isLoading ? "Sending..." : "Send Reset Link",
@@ -121,26 +120,26 @@ struct ForgotPasswordView: View {
         }
         .disabled(!viewModel.isFormValid || viewModel.isLoading)
     }
-    
+
     private var successSection: some View {
         VStack(spacing: DSSpacing.lg) {
             Image(systemName: "checkmark.circle.fill")
                 .font(.system(size: 80))
                 .foregroundStyle(.green)
-            
+
             Text("Check Your Email")
                 .font(.title2)
                 .fontWeight(.bold)
-            
+
             Text("We've sent password reset instructions to")
                 .font(.subheadline)
                 .foregroundStyle(DSColors.textSecondary)
-            
+
             Text(viewModel.email)
                 .font(.subheadline)
                 .fontWeight(.medium)
                 .foregroundStyle(DSColors.accentPrimary)
-            
+
             Text("Please check your inbox and follow the instructions to reset your password")
                 .font(.subheadline)
                 .foregroundStyle(DSColors.textSecondary)
@@ -150,7 +149,7 @@ struct ForgotPasswordView: View {
         .background(DSColors.success.opacity(0.08))
         .cornerRadius(DSSpacing.md)
     }
-    
+
     private var backToLoginSection: some View {
         HStack {
             Image(systemName: "arrow.left")
@@ -162,12 +161,12 @@ struct ForgotPasswordView: View {
         .font(.subheadline)
         .foregroundStyle(DSColors.accentPrimary)
     }
-    
+
     private func errorSection(_ message: String) -> some View {
         HStack(spacing: DSSpacing.md) {
             Image(systemName: "exclamationmark.triangle.fill")
                 .foregroundStyle(.red)
-            
+
             Text(message)
                 .font(.subheadline)
                 .foregroundStyle(.red)
@@ -184,46 +183,45 @@ struct ForgotPasswordView: View {
 @available(iOS 17.0, *)
 @Observable
 final class ForgotPasswordViewModel {
-    
     // MARK: - Published State
-    
+
     var email = ""
     var isLoading = false
     var isSuccess = false
     var errorMessage: String?
     var emailError: String?
-    
+
     // MARK: - Computed Properties
-    
+
     var isFormValid: Bool {
         !email.isEmpty && emailError == nil
     }
-    
+
     // MARK: - Dependencies
-    
+
     private let authClient: any AuthClient
     private let onBackToLogin: () -> Void
-    
+
     // MARK: - Initialization
-    
+
     init(authClient: any AuthClient, onBackToLogin: @escaping () -> Void) {
         self.authClient = authClient
         self.onBackToLogin = onBackToLogin
     }
-    
+
     // MARK: - Actions
-    
+
     @MainActor
     func sendResetLink() async {
         // Clear previous errors
         emailError = nil
         errorMessage = nil
-        
+
         // Validate
         guard validate() else { return }
-        
+
         isLoading = true
-        
+
         do {
             try await authClient.resetPassword(email: email)
             AppLogger.info("Password reset email sent", category: AppLogger.auth)
@@ -232,16 +230,16 @@ final class ForgotPasswordViewModel {
             AppLogger.error("Password reset failed: \(error.localizedDescription)", category: AppLogger.auth)
             errorMessage = AppError.from(error).userMessage
         }
-        
+
         isLoading = false
     }
-    
+
     func backToLogin() {
         onBackToLogin()
     }
-    
+
     // MARK: - Validation
-    
+
     private func validate() -> Bool {
         if email.isEmpty {
             emailError = "Email is required"
@@ -250,7 +248,7 @@ final class ForgotPasswordViewModel {
             emailError = "Invalid email address"
             return false
         }
-        
+
         return true
     }
 }
@@ -264,4 +262,3 @@ private extension String {
         return emailPredicate.evaluate(with: self)
     }
 }
-

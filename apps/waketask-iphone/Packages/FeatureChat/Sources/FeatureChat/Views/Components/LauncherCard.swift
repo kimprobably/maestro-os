@@ -1,6 +1,6 @@
-import SwiftUI
-import DesignSystem
 import Core
+import DesignSystem
+import SwiftUI
 
 /// Launcher card for starting a new chat with a specific style
 struct LauncherCard: View {
@@ -9,9 +9,9 @@ struct LauncherCard: View {
     let icon: String
     let cornerRadius: CGFloat
     let action: () -> Void
-    
+
     @GestureState private var isPressed = false
-    
+
     var body: some View {
         Button(action: action) {
             VStack(spacing: DSSpacing.md) {
@@ -24,17 +24,17 @@ struct LauncherCard: View {
                                 .strokeBorder(DSColors.borderSubtle.opacity(0.3), lineWidth: 0.5)
                         )
                         .frame(width: 64, height: 64)
-                    
+
                     Image(systemName: icon)
                         .font(.system(size: 28, weight: .medium))
                         .foregroundStyle(DSColors.accentPrimary)
                 }
-                
+
                 VStack(spacing: DSSpacing.xs) {
                     Text(title)
                         .font(.headline.weight(.semibold))
                         .foregroundStyle(DSColors.textPrimary)
-                    
+
                     Text(subtitle)
                         .font(.caption)
                         .foregroundStyle(DSColors.textSecondary.opacity(0.8))
@@ -64,4 +64,3 @@ struct LauncherCard: View {
         )
     }
 }
-

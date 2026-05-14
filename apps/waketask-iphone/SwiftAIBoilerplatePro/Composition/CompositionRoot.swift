@@ -1,16 +1,16 @@
-import Foundation
-import SwiftUI
-import FeatureSettings
-import SwiftData
-import Core
-import Networking
-import Storage
+import AI
 import Auth
-import Payments
+import Core
+import DesignSystem
 import FeatureChat
 import FeatureRating
-import DesignSystem
-import AI
+import FeatureSettings
+import Foundation
+import Networking
+import Payments
+import Storage
+import SwiftData
+import SwiftUI
 
 /// Central dependency-injection container.
 ///
@@ -21,7 +21,6 @@ import AI
 @MainActor
 @available(iOS 17.0, *)
 public final class CompositionRoot {
-
     // MARK: - Singletons
 
     /// SwiftData model container
@@ -79,10 +78,11 @@ public final class CompositionRoot {
 
         if let proxyURL = URL(string: AppConfiguration.PROXY_BASE_URL),
            !AppConfiguration.PROXY_BASE_URL.contains("YOUR"),
-           !AppConfiguration.PROXY_BASE_URL.contains("placeholder") {
-            self.proxyBaseURL = proxyURL
+           !AppConfiguration.PROXY_BASE_URL.contains("placeholder")
+        {
+            proxyBaseURL = proxyURL
         } else {
-            self.proxyBaseURL = nil
+            proxyBaseURL = nil
         }
 
         AppLogger.info("Initializing CompositionRoot", category: AppLogger.ui)
@@ -91,7 +91,7 @@ public final class CompositionRoot {
         let schema = Schema([
             Conversation.self,
             Message.self,
-            Settings.self
+            Settings.self,
         ])
 
         let modelConfiguration = ModelConfiguration(
@@ -99,7 +99,7 @@ public final class CompositionRoot {
             isStoredInMemoryOnly: false
         )
 
-        self.modelContainer = try ModelContainer(
+        modelContainer = try ModelContainer(
             for: schema,
             configurations: [modelConfiguration]
         )
@@ -107,7 +107,7 @@ public final class CompositionRoot {
         let mainContext = modelContainer.mainContext
 
         // 2. Keychain storage
-        self.keychainStore = KeychainStore(accessGroup: nil)
+        keychainStore = KeychainStore(accessGroup: nil)
 
         // 3. HTTP client with interceptors
         let tokenProvider = Storage.KeychainTokenProvider(
@@ -126,7 +126,7 @@ public final class CompositionRoot {
         )
 
         // TODO: Replace with actual API base URL
-        self.httpClient = Networking.URLSessionHTTPClient(
+        httpClient = Networking.URLSessionHTTPClient(
             baseURL: URL(string: "https://api.example.com")!,
             session: .shared,
             defaultHeaders: ["Accept": "application/json"],
@@ -136,25 +136,25 @@ public final class CompositionRoot {
         // 4. Repositories (local SwiftData — always created for offline support)
         let localConversationRepo = ConversationRepositoryImpl(modelContext: mainContext)
         let localMessageRepo = MessageRepositoryImpl(modelContext: mainContext)
-        self.settingsRepository = SettingsRepositoryImpl(modelContext: mainContext)
+        settingsRepository = SettingsRepositoryImpl(modelContext: mainContext)
         let wakeStoreLocation = WakeTaskStoreLocation.default()
-        self.wakeAlarmRepository = LocalWakeAlarmRepository(location: wakeStoreLocation)
-        self.wakeRunRepository = LocalWakeRunRepository(location: wakeStoreLocation)
-        self.wakeMissionEngine = DefaultWakeMissionRotationEngine()
+        wakeAlarmRepository = LocalWakeAlarmRepository(location: wakeStoreLocation)
+        wakeRunRepository = LocalWakeRunRepository(location: wakeStoreLocation)
+        wakeMissionEngine = DefaultWakeMissionRotationEngine()
 
         // 5. Auth: real Supabase+Apple+Email or MockAuthClient in DEBUG
         #if DEBUG
-        let authBypassValue = ProcessInfo.processInfo.environment["AUTH_BYPASS"]
-        let shouldUseMock = authBypassValue != "0"  // Use mock unless explicitly disabled
+            let authBypassValue = ProcessInfo.processInfo.environment["AUTH_BYPASS"]
+            let shouldUseMock = authBypassValue != "0" // Use mock unless explicitly disabled
         #else
-        let shouldUseMock = false  // Never use mock in production
+            let shouldUseMock = false // Never use mock in production
         #endif
 
         AppLogger.info("DEBUG build: \(shouldUseMock ? "Using MockAuthClient" : "Using real auth")", category: AppLogger.auth)
 
         if shouldUseMock {
             AppLogger.info("MockAuthClient enabled - no backend required", category: AppLogger.auth)
-            self.sessionManager = Auth.MockAuthClient()
+            sessionManager = Auth.MockAuthClient()
         } else {
             AppLogger.info("Using real authentication (Supabase + Apple + Email)", category: AppLogger.auth)
             let supabaseHTTPClient = Auth.SupabaseHTTPClient(
@@ -176,44 +176,44 @@ public final class CompositionRoot {
 
         // 4a. Chat sync (hybrid local + optional remote)
         // Enable by setting FeatureFlags.chatSyncEnabled = true (see docs/CHAT_SYNC_SETUP.md)
-        if FeatureFlags.chatSyncEnabled && !shouldUseMock {
+        if FeatureFlags.chatSyncEnabled, !shouldUseMock {
             AppLogger.info("Chat sync enabled - using hybrid repositories", category: AppLogger.storage)
             // TODO: wire Supabase remote repos once a signed-in user id is available
-            self.conversationRepository = localConversationRepo
-            self.messageRepository = localMessageRepo
+            conversationRepository = localConversationRepo
+            messageRepository = localMessageRepo
         } else {
             AppLogger.info("Chat sync disabled - using local-only repositories", category: AppLogger.storage)
-            self.conversationRepository = localConversationRepo
-            self.messageRepository = localMessageRepo
+            conversationRepository = localConversationRepo
+            messageRepository = localMessageRepo
         }
 
         // 5a. Profile photo storage (optional — requires Supabase setup)
         if !shouldUseMock {
             // TODO: wire SupabaseProfilePhotoStorageClient when bucket is configured
-            self.profilePhotoStorageClient = nil
+            profilePhotoStorageClient = nil
         } else {
-            self.profilePhotoStorageClient = MockProfilePhotoStorageClient()
+            profilePhotoStorageClient = MockProfilePhotoStorageClient()
         }
 
         // 6. Payments: RevenueCat
         let revenueCatClient = Payments.RevenueCatClient()
         revenueCatClient.configure(paymentsConfig)
-        self.paymentsClient = revenueCatClient
+        paymentsClient = revenueCatClient
 
         // 7. LLM client: Proxy or Echo, decided by PROXY_BASE_URL
-        self.llmClient = createLLMClient(httpClient: httpClient)
+        llmClient = createLLMClient(httpClient: httpClient)
 
         // 8. Crash reporter: Crashlytics if configured, otherwise NoOp
-        if FeatureFlags.crashlyticsEnabled && Self.checkCrashlyticsAvailable() {
-            self.crashReporter = CrashlyticsCrashReporter()
+        if FeatureFlags.crashlyticsEnabled, Self.checkCrashlyticsAvailable() {
+            crashReporter = CrashlyticsCrashReporter()
             AppLogger.info("Crashlytics enabled", category: AppLogger.ui)
         } else {
-            self.crashReporter = NoOpCrashReporter()
+            crashReporter = NoOpCrashReporter()
             AppLogger.info("Crash reporting disabled (NoOp)", category: AppLogger.ui)
         }
 
         // 9. Rating client: customise copy/thresholds to match your app
-        self.ratingClient = DefaultRatingClient(
+        ratingClient = DefaultRatingClient(
             config: RatingConfig(
                 positiveThreshold: 5.0,
                 cooldownDays: 30,
@@ -230,7 +230,7 @@ public final class CompositionRoot {
         AppLogger.info("CompositionRoot initialized successfully", category: AppLogger.ui)
 
         #if DEBUG
-        _ = DSColors.textPrimary // touch colors to trigger sanity warnings once
+            _ = DSColors.textPrimary // touch colors to trigger sanity warnings once
         #endif
     }
 

@@ -1,5 +1,5 @@
-import Foundation
 import Core
+import Foundation
 
 /// Token provider protocol for Storage module
 /// Note: Also conforms to Networking.TokenProvider via extension
@@ -12,7 +12,7 @@ public protocol TokenProvider: Sendable {
 public struct KeychainTokenProvider: TokenProvider {
     private let keychain: any SecureStore
     private let tokenKey: String
-    
+
     /// Creates a token provider that reads from keychain
     /// - Parameters:
     ///   - keychain: The keychain store to use
@@ -24,7 +24,7 @@ public struct KeychainTokenProvider: TokenProvider {
         self.keychain = keychain
         self.tokenKey = tokenKey
     }
-    
+
     public func currentToken() -> String? {
         do {
             let token = try keychain.getString(tokenKey)
@@ -42,10 +42,10 @@ public struct KeychainTokenProvider: TokenProvider {
 // MARK: - Networking.TokenProvider Conformance
 
 #if canImport(Networking)
-import Networking
+    import Networking
 
-/// Conform to Networking.TokenProvider so KeychainTokenProvider can be used with AuthInterceptor
-extension KeychainTokenProvider: Networking.TokenProvider {
-    // currentToken() is already implemented above and satisfies both protocols
-}
+    /// Conform to Networking.TokenProvider so KeychainTokenProvider can be used with AuthInterceptor
+    extension KeychainTokenProvider: Networking.TokenProvider {
+        // currentToken() is already implemented above and satisfies both protocols
+    }
 #endif

@@ -1,14 +1,13 @@
-import XCTest
+import Auth
 @testable import FeatureSettings
 import Storage
-import Auth
+import XCTest
 
 /// Tests for notification toggles, live auth/payment state observation,
 /// settings toggles (diagnostics/haptics/reduce motion), and rapid
 /// concurrent state updates.
 @MainActor
 final class SettingsViewModelObservationTests: SettingsViewModelTestCase {
-
     // MARK: - Notification toggles
 
     func testToggleNotifications_enableWithoutPermission() async {

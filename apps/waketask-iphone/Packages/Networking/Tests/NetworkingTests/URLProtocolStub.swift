@@ -2,51 +2,50 @@ import Foundation
 
 /// Test helper that intercepts URLSession requests and returns stubbed responses
 final class URLProtocolStub: URLProtocol {
-    
     /// Storage for stubbed responses
     private static var stubResponses: [URL: StubResponse] = [:]
-    
+
     /// Storage for stubbed errors
     private static var stubErrors: [URL: Error] = [:]
-    
+
     /// Captured requests for verification
     private static var _capturedRequests: [URLRequest] = []
-    
+
     /// Custom stub handler for dynamic responses
-    static var stub: ((URL, Data?, Int?, [String: String]?) -> Void)? = nil
-    
+    static var stub: ((URL, Data?, Int?, [String: String]?) -> Void)?
+
     /// Response data structure
     struct StubResponse {
         let data: Data
         let statusCode: Int
         let headers: [String: String]
     }
-    
+
     // MARK: - URLProtocol Implementation
-    
-    override class func canInit(with request: URLRequest) -> Bool {
-        return true // Intercept all requests
+
+    override class func canInit(with _: URLRequest) -> Bool {
+        true // Intercept all requests
     }
-    
+
     override class func canonicalRequest(for request: URLRequest) -> URLRequest {
-        return request
+        request
     }
-    
+
     override func startLoading() {
         // Capture the request
         Self._capturedRequests.append(request)
-        
+
         guard let url = request.url else {
             client?.urlProtocol(self, didFailWithError: URLError(.badURL))
             return
         }
-        
+
         // Check for stubbed error first
         if let error = Self.stubErrors[url] {
             client?.urlProtocol(self, didFailWithError: error)
             return
         }
-        
+
         // Check for stubbed response
         if let stubResponse = Self.stubResponses[url] {
             let httpResponse = HTTPURLResponse(
@@ -55,7 +54,7 @@ final class URLProtocolStub: URLProtocol {
                 httpVersion: "HTTP/1.1",
                 headerFields: stubResponse.headers
             )!
-            
+
             client?.urlProtocol(self, didReceive: httpResponse, cacheStoragePolicy: .notAllowed)
             client?.urlProtocol(self, didLoad: stubResponse.data)
             client?.urlProtocolDidFinishLoading(self)
@@ -67,19 +66,19 @@ final class URLProtocolStub: URLProtocol {
                 httpVersion: "HTTP/1.1",
                 headerFields: [:]
             )!
-            
+
             client?.urlProtocol(self, didReceive: httpResponse, cacheStoragePolicy: .notAllowed)
             client?.urlProtocol(self, didLoad: Data())
             client?.urlProtocolDidFinishLoading(self)
         }
     }
-    
+
     override func stopLoading() {
         // No-op
     }
-    
+
     // MARK: - Test Helper Methods
-    
+
     /// Stubs a successful response for a URL
     /// - Parameters:
     ///   - url: The URL to stub
@@ -98,7 +97,7 @@ final class URLProtocolStub: URLProtocol {
             headers: headers
         )
     }
-    
+
     /// Stubs an error for a URL
     /// - Parameters:
     ///   - url: The URL to stub
@@ -106,26 +105,26 @@ final class URLProtocolStub: URLProtocol {
     static func stub(url: URL, error: Error) {
         stubErrors[url] = error
     }
-    
+
     /// Returns all captured requests
     /// - Returns: Array of captured URLRequest objects
     static func capturedRequests() -> [URLRequest] {
-        return _capturedRequests
+        _capturedRequests
     }
-    
+
     /// Returns the last captured request
     /// - Returns: The most recent URLRequest, or nil if none
     static func lastRequest() -> URLRequest? {
-        return _capturedRequests.last
+        _capturedRequests.last
     }
-    
+
     /// Clears all stubs and captured requests
     static func reset() {
         stubResponses.removeAll()
         stubErrors.removeAll()
         _capturedRequests.removeAll()
     }
-    
+
     /// Creates a URLSession configured to use this protocol
     /// - Returns: URLSession that will use URLProtocolStub for all requests
     static func makeTestSession() -> URLSession {

@@ -7,32 +7,32 @@ public struct ToastMessage: Identifiable, Equatable, Sendable {
     public let message: String?
     public let style: ToastStyle
     public let duration: TimeInterval
-    
+
     public enum ToastStyle: Equatable, Sendable {
         case info
         case success
         case error
         case warning
-        
+
         var color: Color {
             switch self {
-            case .info: return DSColors.toastAccent
-            case .success: return DSColors.success
-            case .error: return DSColors.danger
-            case .warning: return DSColors.warning
+            case .info: DSColors.toastAccent
+            case .success: DSColors.success
+            case .error: DSColors.danger
+            case .warning: DSColors.warning
             }
         }
-        
+
         var icon: String {
             switch self {
-            case .info: return "info.circle.fill"
-            case .success: return "checkmark.circle.fill"
-            case .error: return "xmark.circle.fill"
-            case .warning: return "exclamationmark.triangle.fill"
+            case .info: "info.circle.fill"
+            case .success: "checkmark.circle.fill"
+            case .error: "xmark.circle.fill"
+            case .warning: "exclamationmark.triangle.fill"
             }
         }
     }
-    
+
     public init(
         id: UUID = UUID(),
         title: String,
@@ -56,17 +56,17 @@ public final class ToastCenter {
 
     public private(set) var currentToast: ToastMessage?
     private var toastTask: Task<Void, Never>?
-    
+
     private init() {}
-    
+
     /// Show a toast message
     public func show(_ toast: ToastMessage) {
         // Cancel any existing toast
         toastTask?.cancel()
-        
+
         // Show new toast
         currentToast = toast
-        
+
         // Auto-dismiss after duration
         toastTask = Task {
             try? await Task.sleep(for: .seconds(toast.duration))
@@ -75,7 +75,7 @@ public final class ToastCenter {
             }
         }
     }
-    
+
     /// Dismiss the current toast
     public func dismiss() {
         toastTask?.cancel()
@@ -104,32 +104,32 @@ public final class ToastCenter {
 public struct SAIToast: View {
     let toast: ToastMessage
     let onDismiss: () -> Void
-    
+
     @State private var progress: CGFloat = 0
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
-    
+
     public var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             HStack(spacing: DSSpacing.md) {
                 Image(systemName: toast.style.icon)
                     .font(.system(size: 20, weight: .semibold))
                     .foregroundStyle(toast.style.color)
-                
+
                 VStack(alignment: .leading, spacing: DSSpacing.xs) {
                     Text(toast.title)
                         .font(DSTypography.body)
                         .fontWeight(.semibold)
                         .foregroundStyle(DSColors.textPrimary)
-                    
+
                     if let message = toast.message {
                         Text(message)
                             .font(DSTypography.caption)
                             .foregroundStyle(DSColors.textSecondary)
                     }
                 }
-                
+
                 Spacer()
-                
+
                 Button(action: onDismiss) {
                     Image(systemName: "xmark")
                         .font(.system(size: 12, weight: .semibold))
@@ -138,7 +138,7 @@ public struct SAIToast: View {
                 }
             }
             .padding(DSSpacing.lg)
-            
+
             // Progress bar
             GeometryReader { geometry in
                 toast.style.color
@@ -155,13 +155,13 @@ public struct SAIToast: View {
             startProgress()
         }
     }
-    
+
     private func startProgress() {
         guard !reduceMotion else {
             progress = 1.0
             return
         }
-        
+
         withAnimation(.linear(duration: toast.duration)) {
             progress = 1.0
         }
@@ -178,15 +178,15 @@ public struct SAIToast: View {
 public struct ToastContainerView<Content: View>: View {
     private let toastCenter = ToastCenter.shared
     private let content: Content
-    
+
     public init(@ViewBuilder content: () -> Content) {
         self.content = content()
     }
-    
+
     public var body: some View {
         ZStack {
             content
-            
+
             VStack {
                 if let toast = toastCenter.currentToast {
                     SAIToast(toast: toast) {
@@ -197,7 +197,7 @@ public struct ToastContainerView<Content: View>: View {
                     .transition(.move(edge: .top).combined(with: .opacity))
                     .zIndex(999)
                 }
-                
+
                 Spacer()
             }
         }
@@ -223,19 +223,19 @@ public extension View {
             message: "This is an informational message",
             style: .info
         )) {}
-        
+
         SAIToast(toast: ToastMessage(
             title: "Success",
             message: "Operation completed successfully",
             style: .success
         )) {}
-        
+
         SAIToast(toast: ToastMessage(
             title: "Error",
             message: "Something went wrong",
             style: .error
         )) {}
-        
+
         SAIToast(toast: ToastMessage(
             title: "Warning",
             message: "Please review your input",
@@ -248,10 +248,10 @@ public extension View {
 
 #Preview("Toast Container") {
     @Previewable @State var showCount = 0
-    
+
     return VStack {
         Spacer()
-        
+
         SAIButton("Show Info Toast") {
             showCount += 1
             ToastCenter.shared.show(ToastMessage(
@@ -261,7 +261,7 @@ public extension View {
                 duration: 2.0
             ))
         }
-        
+
         SAIButton("Show Success Toast", style: .secondary) {
             ToastCenter.shared.show(ToastMessage(
                 title: "Success!",
@@ -270,7 +270,7 @@ public extension View {
                 duration: 2.0
             ))
         }
-        
+
         SAIButton("Show Error Toast", style: .secondary) {
             ToastCenter.shared.show(ToastMessage(
                 title: "Error",
@@ -279,10 +279,9 @@ public extension View {
                 duration: 3.0
             ))
         }
-        
+
         Spacer()
     }
     .toastContainer()
     .background(DSColors.background)
 }
-

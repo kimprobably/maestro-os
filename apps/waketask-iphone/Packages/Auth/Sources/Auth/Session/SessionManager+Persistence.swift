@@ -1,18 +1,18 @@
-import Foundation
 import Core
+import Foundation
 
 @available(iOS 17.0, *)
-extension SessionManager {
-
+public extension SessionManager {
     // MARK: - SessionStore
 
-    public func loadSession() throws -> AuthSession? {
+    func loadSession() throws -> AuthSession? {
         guard let accessToken = try keychain.getString(Keys.accessToken),
               let refreshToken = try keychain.getString(Keys.refreshToken),
               let expiresAtString = try keychain.getString(Keys.expiresAt),
               let expiresAtInterval = TimeInterval(expiresAtString),
               let userJSONString = try keychain.getString(Keys.userJSON),
-              let userJSONData = userJSONString.data(using: .utf8) else {
+              let userJSONData = userJSONString.data(using: .utf8)
+        else {
             return nil
         }
 
@@ -27,7 +27,7 @@ extension SessionManager {
         )
     }
 
-    public func saveSession(_ session: AuthSession) throws {
+    func saveSession(_ session: AuthSession) throws {
         try keychain.setString(session.accessToken, for: Keys.accessToken)
         try keychain.setString(session.refreshToken, for: Keys.refreshToken)
         try keychain.setString(String(session.expiresAt.timeIntervalSince1970), for: Keys.expiresAt)
@@ -43,7 +43,7 @@ extension SessionManager {
         try keychain.setString(userString, for: Keys.userJSON)
     }
 
-    public func clearSession() throws {
+    func clearSession() throws {
         try? keychain.delete(Keys.accessToken)
         try? keychain.delete(Keys.refreshToken)
         try? keychain.delete(Keys.expiresAt)
@@ -52,7 +52,7 @@ extension SessionManager {
 
     // MARK: - Initial load (from deinit-safe init Task)
 
-    func loadInitialSession() async {
+    internal func loadInitialSession() async {
         do {
             if let session = try loadSession() {
                 if Date.now > session.expiresAt {
@@ -82,7 +82,7 @@ extension SessionManager {
         }
     }
 
-    func persistSession(_ session: AuthSession) async throws {
+    internal func persistSession(_ session: AuthSession) async throws {
         try saveSession(session)
     }
 }

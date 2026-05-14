@@ -1,9 +1,8 @@
-import SwiftUI
 import DesignSystem
+import SwiftUI
 
 /// Settings screen. Composition only — each section lives in `Views/Settings/`.
 public struct SettingsView: View {
-
     @Environment(\.dismiss) private var dismiss
     @State private var viewModel: SettingsViewModel
     @State private var showPaywall = false
@@ -87,7 +86,7 @@ public struct SettingsView: View {
             SettingsAboutSection()
 
             #if DEBUG
-            SettingsDebugSection()
+                SettingsDebugSection()
             #endif
         }
     }

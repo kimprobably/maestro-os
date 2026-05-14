@@ -1,9 +1,8 @@
-import SwiftUI
 import DesignSystem
+import SwiftUI
 
 /// "Privacy & Diagnostics" section: one opt-in toggle for crash/usage sharing.
 struct SettingsPrivacySection: View {
-
     let viewModel: SettingsViewModel
 
     var body: some View {

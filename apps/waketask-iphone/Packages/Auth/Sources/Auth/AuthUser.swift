@@ -4,16 +4,16 @@ import Foundation
 public struct AuthUser: Sendable, Equatable, Codable {
     /// Unique identifier for the user
     public let id: String
-    
+
     /// User's email address
     public let email: String?
-    
+
     /// User's display name
     public let name: String?
-    
+
     /// URL to user's avatar image
     public let avatarURL: URL?
-    
+
     public init(id: String, email: String? = nil, name: String? = nil, avatarURL: URL? = nil) {
         self.id = id
         self.email = email

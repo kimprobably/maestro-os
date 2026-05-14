@@ -4,7 +4,7 @@ import Foundation
 public struct LLMMessage: Sendable, Equatable {
     public let role: String // "user" | "assistant" | "system"
     public let content: String
-    
+
     public init(role: String, content: String) {
         self.role = role
         self.content = content
@@ -21,9 +21,9 @@ public protocol LLMClient: Sendable {
 }
 
 /// Convenience extension for converting ChatMessage to LLMMessage
-extension LLMMessage {
-    public init(from chatMessage: ChatMessage) {
-        self.role = chatMessage.role.rawValue
-        self.content = chatMessage.text
+public extension LLMMessage {
+    init(from chatMessage: ChatMessage) {
+        role = chatMessage.role.rawValue
+        content = chatMessage.text
     }
 }

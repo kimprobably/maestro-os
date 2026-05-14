@@ -1,5 +1,5 @@
-import Foundation
 import Core
+import Foundation
 
 /// Hybrid repository that syncs between local SwiftData and Supabase
 /// - Writes to both local and remote (with fallback to local-only if remote fails)
@@ -7,7 +7,6 @@ import Core
 /// - Provides offline-first experience with cloud sync
 @available(iOS 17.0, macOS 14.0, *)
 public final class HybridMessageRepository: MessageRepository {
-    
     private let local: any MessageRepository
     private let remote: (any MessageRepository)?
     private let syncEnabled: Bool
@@ -19,15 +18,15 @@ public final class HybridMessageRepository: MessageRepository {
     public init(local: any MessageRepository, remote: (any MessageRepository)? = nil) {
         self.local = local
         self.remote = remote
-        self.syncEnabled = remote != nil
+        syncEnabled = remote != nil
     }
-    
+
     public func append(conversationID: UUID, role: MessageDTO.Role, text: String, createdAt: Date) async throws -> MessageDTO {
         // Append locally first (offline-first)
         let localMessage = try await local.append(conversationID: conversationID, role: role, text: text, createdAt: createdAt)
-        
+
         // Sync to remote if available
-        if syncEnabled, let remote = remote {
+        if syncEnabled, let remote {
             Task {
                 do {
                     _ = try await remote.append(conversationID: conversationID, role: role, text: text, createdAt: createdAt)
@@ -37,16 +36,16 @@ public final class HybridMessageRepository: MessageRepository {
                 }
             }
         }
-        
+
         return localMessage
     }
-    
+
     public func page(conversationID: UUID, after: MessageCursor?, limit: Int) async throws -> (items: [MessageDTO], next: MessageCursor?) {
         // Always return local data for fast response
         let localPage = try await local.page(conversationID: conversationID, after: after, limit: limit)
-        
+
         // Sync from remote in background (pull changes from other devices)
-        if syncEnabled, let remote = remote, after == nil { // Only sync on initial load
+        if syncEnabled, let remote, after == nil { // Only sync on initial load
             Task {
                 do {
                     let remotePage = try await remote.page(conversationID: conversationID, after: nil, limit: 100)
@@ -56,16 +55,16 @@ public final class HybridMessageRepository: MessageRepository {
                 }
             }
         }
-        
+
         return localPage
     }
-    
+
     public func deleteAll(in conversationID: UUID) async throws {
         // Delete locally first
         try await local.deleteAll(in: conversationID)
-        
+
         // Sync deletion to remote if available
-        if syncEnabled, let remote = remote {
+        if syncEnabled, let remote {
             Task {
                 do {
                     try await remote.deleteAll(in: conversationID)
@@ -76,13 +75,13 @@ public final class HybridMessageRepository: MessageRepository {
             }
         }
     }
-    
+
     public func batchDelete(messageIDs: [UUID]) async throws {
         // Delete locally first
         try await local.batchDelete(messageIDs: messageIDs)
-        
+
         // Sync deletion to remote if available
-        if syncEnabled, let remote = remote {
+        if syncEnabled, let remote {
             Task {
                 do {
                     try await remote.batchDelete(messageIDs: messageIDs)
@@ -93,14 +92,14 @@ public final class HybridMessageRepository: MessageRepository {
             }
         }
     }
-    
+
     /// Sync remote messages to local storage
     /// New messages from other devices are added to local storage
     private func syncRemoteToLocal(conversationID: UUID, remoteMessages: [MessageDTO]) async {
         do {
             let localPage = try await local.page(conversationID: conversationID, after: nil, limit: 1000)
-            let localIDs = Set(localPage.items.map { $0.id })
-            
+            let localIDs = Set(localPage.items.map(\.id))
+
             // Add messages that don't exist locally (from other devices)
             for remote in remoteMessages where !localIDs.contains(remote.id) {
                 _ = try await local.append(
@@ -116,4 +115,3 @@ public final class HybridMessageRepository: MessageRepository {
         }
     }
 }
-

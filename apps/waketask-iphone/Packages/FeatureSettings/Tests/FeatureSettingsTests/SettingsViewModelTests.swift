@@ -1,14 +1,13 @@
-import XCTest
+import Auth
 @testable import FeatureSettings
 import Storage
-import Auth
+import XCTest
 
 /// Core happy-path tests for `SettingsViewModel`: initial state, theme,
 /// auth, payments, errors, accessor. Observation + toggle coverage lives
 /// in sibling files.
 @MainActor
 final class SettingsViewModelTests: SettingsViewModelTestCase {
-
     func testInitialState() {
         XCTAssertEqual(viewModel.theme, .system)
         XCTAssertFalse(viewModel.isAuthenticated)
@@ -117,14 +116,14 @@ final class SettingsViewModelTests: SettingsViewModelTestCase {
         XCTAssertTrue(viewModel.notificationsEnabled)
     }
 
-    func testErrorHandling_settingsSaveFails_showsUserMessage() async {
+    func testErrorHandling_settingsSaveFails_showsUserMessage() async throws {
         fakeSettingsRepo.shouldThrow = true
         await viewModel.appear()
 
         await viewModel.setTheme(.dark)
 
         XCTAssertNotNil(viewModel.errorMessage)
-        XCTAssertFalse(viewModel.errorMessage!.isEmpty)
+        XCTAssertFalse(try XCTUnwrap(viewModel.errorMessage?.isEmpty))
     }
 
     // MARK: - ThemeManager integration

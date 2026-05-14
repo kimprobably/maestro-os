@@ -9,9 +9,9 @@ public final class Message {
     public var role: String // "user" | "assistant" | "system"
     public var text: String
     public var createdAt: Date
-    
+
     public var conversation: Conversation?
-    
+
     public init(
         id: UUID = UUID(),
         role: String,

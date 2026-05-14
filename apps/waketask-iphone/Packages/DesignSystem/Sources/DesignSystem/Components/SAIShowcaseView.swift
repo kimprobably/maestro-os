@@ -5,38 +5,37 @@ import SwiftUI
 /// A comprehensive showcase of all SAI components for developers.
 /// This view demonstrates the full capability of the Signature UI Kit.
 public struct SAIShowcaseView: View {
-    
     @State private var inputText = ""
     @State private var selectedChip = "GPT-4"
     @State private var isStreaming = false
-    
+
     public init() {}
-    
+
     public var body: some View {
         NavigationStack {
             ScrollView {
                 VStack(spacing: DSSpacing.xl) {
                     // Header
                     headerSection
-                    
+
                     // Buttons
                     buttonsSection
-                    
+
                     // Cards
                     cardsSection
-                    
+
                     // Chips
                     chipsSection
-                    
+
                     // List Rows
                     listRowsSection
-                    
+
                     // Tags & Avatars
                     tagsAvatarsSection
-                    
+
                     // Input & Streaming
                     inputSection
-                    
+
                     // Toast Demo
                     toastSection
                 }
@@ -47,26 +46,26 @@ public struct SAIShowcaseView: View {
         }
         .toastContainer()
     }
-    
+
     // MARK: - Sections
-    
+
     private var headerSection: some View {
         VStack(alignment: .leading, spacing: DSSpacing.md) {
             SAISectionHeader(
                 title: "Signature UI Kit",
                 kicker: "Components"
             )
-            
+
             Text("A premium, distinctive look-and-feel with reusable SwiftUI components.")
                 .font(DSTypography.body)
                 .foregroundStyle(DSColors.textSecondary)
         }
     }
-    
+
     private var buttonsSection: some View {
         VStack(alignment: .leading, spacing: DSSpacing.md) {
             SAISectionHeader(title: "Buttons")
-            
+
             VStack(spacing: DSSpacing.sm) {
                 SAIButton("Primary Button", style: .primary) {}
                 SAIButton("Secondary Button", style: .secondary) {}
@@ -75,11 +74,11 @@ public struct SAIShowcaseView: View {
             }
         }
     }
-    
+
     private var cardsSection: some View {
         VStack(alignment: .leading, spacing: DSSpacing.md) {
             SAISectionHeader(title: "Cards")
-            
+
             SAICard(style: .elevated) {
                 VStack(alignment: .leading, spacing: DSSpacing.md) {
                     HStack {
@@ -97,7 +96,7 @@ public struct SAIShowcaseView: View {
                 }
                 .padding(DSSpacing.lg)
             }
-            
+
             SAICard(style: .outline) {
                 VStack(alignment: .leading, spacing: DSSpacing.sm) {
                     Text("Outline Card")
@@ -110,11 +109,11 @@ public struct SAIShowcaseView: View {
             }
         }
     }
-    
+
     private var chipsSection: some View {
         VStack(alignment: .leading, spacing: DSSpacing.md) {
             SAISectionHeader(title: "Chips")
-            
+
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: DSSpacing.sm) {
                     SAIChip(
@@ -124,7 +123,7 @@ public struct SAIShowcaseView: View {
                     ) {
                         selectedChip = "GPT-4"
                     }
-                    
+
                     SAIChip(
                         title: "Claude",
                         isSelected: selectedChip == "Claude",
@@ -132,7 +131,7 @@ public struct SAIShowcaseView: View {
                     ) {
                         selectedChip = "Claude"
                     }
-                    
+
                     SAIChip(
                         title: "Gemini",
                         isSelected: selectedChip == "Gemini",
@@ -140,7 +139,7 @@ public struct SAIShowcaseView: View {
                     ) {
                         selectedChip = "Gemini"
                     }
-                    
+
                     SAIChip(
                         title: "Loading",
                         isLoading: true
@@ -149,11 +148,11 @@ public struct SAIShowcaseView: View {
             }
         }
     }
-    
+
     private var listRowsSection: some View {
         VStack(alignment: .leading, spacing: DSSpacing.md) {
             SAISectionHeader(title: "List Rows")
-            
+
             VStack(spacing: 0) {
                 SAIListRow(
                     title: "Account Settings",
@@ -167,7 +166,7 @@ public struct SAIShowcaseView: View {
                 .onTap {
                     print("Account tapped")
                 }
-                
+
                 SAIListRow(
                     title: "Notifications",
                     subtitle: "Push notifications",
@@ -175,7 +174,7 @@ public struct SAIShowcaseView: View {
                 ) {
                     Toggle("", isOn: .constant(true))
                 }
-                
+
                 SAIListRow(
                     title: "Premium Features",
                     leading: Image(systemName: "crown.fill")
@@ -187,18 +186,18 @@ public struct SAIShowcaseView: View {
             .cornerRadius(DSRadius.md)
         }
     }
-    
+
     private var tagsAvatarsSection: some View {
         VStack(alignment: .leading, spacing: DSSpacing.md) {
             SAISectionHeader(title: "Tags & Avatars")
-            
+
             HStack(spacing: DSSpacing.sm) {
                 SAITag("Info", style: .info)
                 SAITag("Success", style: .success)
                 SAITag("Warning", style: .warning)
                 SAITag("Danger", style: .danger)
             }
-            
+
             HStack(spacing: DSSpacing.md) {
                 SAIAvatar(name: "John Doe", size: .sm)
                 SAIAvatar(name: "Jane Smith", size: .md)
@@ -206,17 +205,17 @@ public struct SAIShowcaseView: View {
             }
         }
     }
-    
+
     private var inputSection: some View {
         VStack(alignment: .leading, spacing: DSSpacing.md) {
             SAISectionHeader(title: "Chat Components")
-            
+
             SAIStreamingBubble(
                 text: "This is a streaming response with a live caret...",
                 isStreaming: isStreaming,
                 badges: ["Web", "Search"]
             )
-            
+
             HStack {
                 Spacer()
                 Text("How can I help you?")
@@ -226,18 +225,18 @@ public struct SAIShowcaseView: View {
                     .background(DSGradient.primaryLinear)
                     .cornerRadius(DSRadius.lg)
             }
-            
+
             Button("Toggle Streaming") {
                 isStreaming.toggle()
             }
             .buttonStyle(.bordered)
         }
     }
-    
+
     private var toastSection: some View {
         VStack(alignment: .leading, spacing: DSSpacing.md) {
             SAISectionHeader(title: "Toasts")
-            
+
             VStack(spacing: DSSpacing.sm) {
                 SAIButton("Show Info Toast") {
                     ToastCenter.shared.show(ToastMessage(
@@ -246,7 +245,7 @@ public struct SAIShowcaseView: View {
                         style: .info
                     ))
                 }
-                
+
                 SAIButton("Show Success Toast", style: .secondary) {
                     ToastCenter.shared.show(ToastMessage(
                         title: "Success!",
@@ -254,7 +253,7 @@ public struct SAIShowcaseView: View {
                         style: .success
                     ))
                 }
-                
+
                 SAIButton("Show Error Toast", style: .quiet) {
                     ToastCenter.shared.show(ToastMessage(
                         title: "Error",
@@ -273,4 +272,3 @@ public struct SAIShowcaseView: View {
 #Preview {
     SAIShowcaseView()
 }
-

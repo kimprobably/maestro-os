@@ -1,6 +1,6 @@
+import Core
 import Foundation
 import Networking
-import Core
 import OSLog
 
 /// Supabase GoTrue REST client.
@@ -28,7 +28,7 @@ struct SupabaseAuthAPI {
             headers: [
                 "apikey": config.supabaseAnonKey,
                 "Authorization": "Bearer \(config.supabaseAnonKey)",
-                "Content-Type": "application/json"
+                "Content-Type": "application/json",
             ],
             query: ["grant_type": "id_token", "provider": "apple"],
             body: bodyData
@@ -48,7 +48,7 @@ struct SupabaseAuthAPI {
             headers: [
                 "apikey": config.supabaseAnonKey,
                 "Authorization": "Bearer \(config.supabaseAnonKey)",
-                "Content-Type": "application/json"
+                "Content-Type": "application/json",
             ],
             query: ["grant_type": "id_token", "provider": "google"],
             body: bodyData
@@ -69,7 +69,7 @@ struct SupabaseAuthAPI {
             method: .post,
             headers: [
                 "apikey": config.supabaseAnonKey,
-                "Content-Type": "application/json"
+                "Content-Type": "application/json",
             ],
             query: ["grant_type": "refresh_token"],
             body: bodyData
@@ -80,7 +80,7 @@ struct SupabaseAuthAPI {
         do {
             let response = try await httpClient.send(request)
 
-            if (200..<300).contains(response.statusCode) {
+            if (200 ..< 300).contains(response.statusCode) {
                 // Passing the existing refresh token lets the decoder handle
                 // server responses that rotate only access tokens.
                 let session = try mapToAuthSession(from: response.data, existingRefreshToken: refreshToken)
@@ -109,7 +109,7 @@ struct SupabaseAuthAPI {
             method: .post,
             headers: [
                 "apikey": config.supabaseAnonKey,
-                "Content-Type": "application/json"
+                "Content-Type": "application/json",
             ],
             body: bodyData
         )
@@ -127,7 +127,7 @@ struct SupabaseAuthAPI {
             method: .post,
             headers: [
                 "apikey": config.supabaseAnonKey,
-                "Content-Type": "application/json"
+                "Content-Type": "application/json",
             ],
             query: ["grant_type": "password"],
             body: bodyData
@@ -146,7 +146,7 @@ struct SupabaseAuthAPI {
             method: .post,
             headers: [
                 "apikey": config.supabaseAnonKey,
-                "Content-Type": "application/json"
+                "Content-Type": "application/json",
             ],
             body: bodyData
         )
@@ -165,7 +165,7 @@ struct SupabaseAuthAPI {
             headers: [
                 "apikey": config.supabaseAnonKey,
                 "Authorization": "Bearer \(accessToken)",
-                "Content-Type": "application/json"
+                "Content-Type": "application/json",
             ],
             body: bodyData
         )
@@ -182,7 +182,7 @@ struct SupabaseAuthAPI {
             method: .post,
             headers: [
                 "apikey": config.supabaseAnonKey,
-                "Authorization": "Bearer \(accessToken)"
+                "Authorization": "Bearer \(accessToken)",
             ]
         )
 
@@ -191,7 +191,7 @@ struct SupabaseAuthAPI {
         do {
             let response = try await httpClient.send(request)
 
-            if (200..<300).contains(response.statusCode) {
+            if (200 ..< 300).contains(response.statusCode) {
                 AppLogger.info("Successfully revoked auth token", category: AppLogger.auth)
             } else {
                 AppLogger.error("Failed to revoke token: HTTP \(response.statusCode)", category: AppLogger.auth)
@@ -212,7 +212,7 @@ struct SupabaseAuthAPI {
         do {
             let response = try await httpClient.send(request)
 
-            if (200..<300).contains(response.statusCode) {
+            if (200 ..< 300).contains(response.statusCode) {
                 let session = try mapToAuthSession(from: response.data)
                 AppLogger.info("Successfully completed: \(operation)", category: AppLogger.auth)
                 return session
@@ -234,7 +234,7 @@ struct SupabaseAuthAPI {
         do {
             let response = try await httpClient.send(request)
 
-            if (200..<300).contains(response.statusCode) {
+            if (200 ..< 300).contains(response.statusCode) {
                 AppLogger.info(successMessage, category: AppLogger.auth)
             } else {
                 throw mapError(statusCode: response.statusCode, data: response.data)

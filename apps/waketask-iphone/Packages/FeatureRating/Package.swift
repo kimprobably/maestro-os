@@ -5,17 +5,17 @@ import PackageDescription
 let package = Package(
     name: "FeatureRating",
     platforms: [
-        .iOS(.v17)
+        .iOS(.v17),
     ],
     products: [
         .library(
             name: "FeatureRating",
             targets: ["FeatureRating"]
-        )
+        ),
     ],
     dependencies: [
         .package(path: "../Core"),
-        .package(path: "../DesignSystem")
+        .package(path: "../DesignSystem"),
     ],
     targets: [
         .target(
@@ -25,6 +25,6 @@ let package = Package(
         .testTarget(
             name: "FeatureRatingTests",
             dependencies: ["FeatureRating"]
-        )
+        ),
     ]
 )

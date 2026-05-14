@@ -1,18 +1,17 @@
-import XCTest
-import SwiftUI
 @testable import FeatureSettings
+import SwiftUI
+import XCTest
 
 @MainActor
 final class PaywallSnapshotTests: XCTestCase {
-    
     func testPaywall_light() {
         // Given
         let paymentsClient = createMockPaymentsClient()
         let view = PaywallView(paymentsClient: paymentsClient)
-        
+
         // Then - Should render without errors
         XCTAssertNotNil(view)
-        
+
         // TODO: snapshot infra
         // In a real snapshot test, would capture:
         // - Light mode appearance
@@ -24,15 +23,15 @@ final class PaywallSnapshotTests: XCTestCase {
         // - No error banner
         // - No loading overlay
     }
-    
+
     func testPaywall_dark() {
         // Given
         let paymentsClient = createMockPaymentsClient()
         let view = PaywallView(paymentsClient: paymentsClient)
-        
+
         // Then - Should render without errors
         XCTAssertNotNil(view)
-        
+
         // TODO: snapshot infra
         // In a real snapshot test, would capture with dark mode trait collection:
         // - Dark mode appearance
@@ -40,15 +39,15 @@ final class PaywallSnapshotTests: XCTestCase {
         // - Proper contrast ratios
         // - Material backgrounds
     }
-    
+
     func testPaywall_loadingState() {
         // Given
         let paymentsClient = createMockPaymentsClient()
         let view = PaywallView(paymentsClient: paymentsClient)
-        
+
         // Then - Should render without errors
         XCTAssertNotNil(view)
-        
+
         // TODO: snapshot infra
         // Would verify:
         // - Semi-transparent loading overlay
@@ -56,15 +55,15 @@ final class PaywallSnapshotTests: XCTestCase {
         // - All buttons disabled
         // - Content visible but dimmed
     }
-    
+
     func testPaywall_errorState() {
         // Given
         let paymentsClient = createMockPaymentsClient()
         let view = PaywallView(paymentsClient: paymentsClient)
-        
+
         // Then - Should render without errors
         XCTAssertNotNil(view)
-        
+
         // TODO: snapshot infra
         // Would verify:
         // - Error banner visible with red background
@@ -72,24 +71,24 @@ final class PaywallSnapshotTests: XCTestCase {
         // - All other content still visible
         // - Buttons enabled (not loading)
     }
-    
+
     func testPaywall_subscribedState() {
         // Given
         let paymentsClient = createMockPaymentsClient()
         let view = PaywallView(paymentsClient: paymentsClient)
-        
+
         // Then - Should render without errors
         XCTAssertNotNil(view)
-        
+
         // TODO: snapshot infra
         // Would verify:
         // - Different messaging for subscribed users
         // - "Manage Subscription" instead of "Subscribe"
         // - Proper state handling
     }
-    
+
     // MARK: - Test Helpers
-    
+
     private func createMockPaymentsClient() -> PaymentsClient {
         MockPaymentsClient()
     }
@@ -98,28 +97,28 @@ final class PaywallSnapshotTests: XCTestCase {
 // MARK: - Mock Payments Client
 
 private final class MockPaymentsClient: PaymentsClient, @unchecked Sendable {
-    func configure(_ config: PaymentsConfig) {}
-    
+    func configure(_: PaymentsConfig) {}
+
     func states() -> AsyncStream<PaymentsState> {
         AsyncStream { continuation in
             continuation.yield(PaymentsState(isSubscribed: false))
         }
     }
-    
+
     func currentState() async -> PaymentsState {
         PaymentsState(isSubscribed: false)
     }
-    
-    func purchase(productID: String) async throws {}
-    
+
+    func purchase(productID _: String) async throws {}
+
     @discardableResult
     func restore() async throws -> PaymentsState {
-        return PaymentsState(isSubscribed: false)
+        PaymentsState(isSubscribed: false)
     }
-    
+
     func prefetchOfferings() async {}
-    
+
     func getOfferings() async throws -> [PaymentsOffering] {
-        return []
+        []
     }
 }

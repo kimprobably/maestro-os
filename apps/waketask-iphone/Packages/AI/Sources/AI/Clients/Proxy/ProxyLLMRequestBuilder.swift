@@ -18,7 +18,6 @@ struct ProxyChatMessage: Codable {
 // MARK: - Builder
 
 extension ProxyLLMClient {
-
     /// Builds the POST request for the chat streaming endpoint.
     /// Defaults: `model = "default"`, `temperature = 0.2`.
     func buildRequest(

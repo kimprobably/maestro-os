@@ -1,12 +1,12 @@
-import Foundation
 import Core
+import Foundation
 
 /// Storage-specific error cases
 public enum StorageError: Error, Sendable, Equatable {
     case notFound
     case validation(String)
     case underlying(Error)
-    
+
     public static func == (lhs: StorageError, rhs: StorageError) -> Bool {
         switch (lhs, rhs) {
         case (.notFound, .notFound):
@@ -26,16 +26,16 @@ public enum StorageError: Error, Sendable, Equatable {
 
 // MARK: - AppError Conversion
 
-extension StorageError {
+public extension StorageError {
     /// Converts StorageError to AppError for consistent error handling
-    public func asAppError() -> AppError {
+    func asAppError() -> AppError {
         switch self {
         case .notFound:
-            return .storage(code: 404, message: "Item not found")
+            .storage(code: 404, message: "Item not found")
         case let .validation(message):
-            return .validation(message: message)
+            .validation(message: message)
         case let .underlying(error):
-            return AppError.from(error)
+            AppError.from(error)
         }
     }
 }

@@ -1,10 +1,9 @@
-import SwiftUI
-import DesignSystem
 import Core
+import DesignSystem
+import SwiftUI
 
 /// "Quick Actions" section: Settings, Help & Support, Privacy Policy, Terms of Service.
 struct ProfileQuickActionsSection: View {
-
     let onShowSettings: () -> Void
 
     var body: some View {

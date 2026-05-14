@@ -1,13 +1,13 @@
-import Foundation
 @testable import Auth
-import Networking
 import Core
+import Foundation
+import Networking
 
 /// In-memory `HTTPClient` double shared by all SessionManager test files.
 /// Captures every request and replays a canned response/error.
 final class MockHTTPClient: HTTPClient, @unchecked Sendable {
     var requests: [HTTPRequest] = []
-    var mockResponseData: Data = Data()
+    var mockResponseData: Data = .init()
     var mockStatusCode: Int = 200
     var shouldThrow = false
     var errorToThrow: Error = NSError(domain: "test", code: -1)
@@ -37,7 +37,7 @@ final class MockAppleProvider: AppleSignInProvider, @unchecked Sendable {
     var shouldThrow = false
     var errorToThrow: Error = NSError(domain: "test", code: -1)
 
-    func requestIDToken(originalNonce: String, hashedNonce: String) async throws -> (idToken: String, nonce: String) {
+    func requestIDToken(originalNonce _: String, hashedNonce _: String) async throws -> (idToken: String, nonce: String) {
         requestIDTokenCalled = true
 
         if shouldThrow {
@@ -58,5 +58,5 @@ final class MockAppleProvider: AppleSignInProvider, @unchecked Sendable {
 
 /// No-op `Sleeper` so refresh retry paths don't actually delay tests.
 final class MockSleeper: Sleeper, @unchecked Sendable {
-    func sleep(for seconds: TimeInterval) async throws {}
+    func sleep(for _: TimeInterval) async throws {}
 }

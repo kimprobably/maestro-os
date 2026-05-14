@@ -1,6 +1,6 @@
+import Core
 import Foundation
 import SwiftData
-import Core
 
 /// Protocol for managing settings persistence
 public protocol SettingsRepository: Sendable {
@@ -13,19 +13,19 @@ public protocol SettingsRepository: Sendable {
 @MainActor
 public final class SettingsRepositoryImpl: SettingsRepository {
     private let modelContext: ModelContext
-    
+
     public init(modelContext: ModelContext) {
         self.modelContext = modelContext
     }
-    
+
     public func load() async throws -> SettingsDTO {
         let descriptor = FetchDescriptor<Settings>(
             sortBy: [SortDescriptor(\.createdAt, order: .forward)]
         )
-        
+
         do {
             let allSettings = try modelContext.fetch(descriptor)
-            
+
             if let existing = allSettings.first {
                 AppLogger.debug("Loaded existing settings", category: AppLogger.storage)
                 return SettingsDTO(existing)
@@ -34,7 +34,7 @@ public final class SettingsRepositoryImpl: SettingsRepository {
                 let defaultSettings = Settings()
                 modelContext.insert(defaultSettings)
                 try modelContext.save()
-                
+
                 AppLogger.debug("Created default settings", category: AppLogger.storage)
                 return SettingsDTO(defaultSettings)
             }
@@ -43,15 +43,15 @@ public final class SettingsRepositoryImpl: SettingsRepository {
             throw StorageError.underlying(error)
         }
     }
-    
+
     public func save(_ settings: SettingsDTO) async throws {
         let descriptor = FetchDescriptor<Settings>(
             sortBy: [SortDescriptor(\.createdAt, order: .forward)]
         )
-        
+
         do {
             let allSettings = try modelContext.fetch(descriptor)
-            
+
             let settingsModel: Settings
             if let existing = allSettings.first {
                 // Update existing settings
@@ -74,7 +74,7 @@ public final class SettingsRepositoryImpl: SettingsRepository {
                 )
                 modelContext.insert(settingsModel)
             }
-            
+
             try modelContext.save()
             AppLogger.debug("Saved settings", category: AppLogger.storage)
         } catch {

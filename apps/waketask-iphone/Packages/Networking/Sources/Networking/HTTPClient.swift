@@ -1,7 +1,7 @@
 import Foundation
 
 /// Protocol for making HTTP requests
-/// 
+///
 /// HTTPClient provides a simple, async interface for performing HTTP requests.
 /// Implementations should handle URL construction, header management, and error mapping
 /// while maintaining cancellation support through Swift's structured concurrency.

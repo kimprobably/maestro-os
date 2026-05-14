@@ -1,9 +1,8 @@
-import SwiftUI
 import DesignSystem
+import SwiftUI
 
 /// Profile screen header: avatar with edit badge + name + email + tap hint.
 struct ProfileHeader: View {
-
     let viewModel: ProfileViewModel
 
     var body: some View {
@@ -40,7 +39,8 @@ struct ProfileHeader: View {
     @ViewBuilder
     private var avatar: some View {
         if let imageData = viewModel.profileImageData,
-           let uiImage = UIImage(data: imageData) {
+           let uiImage = UIImage(data: imageData)
+        {
             Image(uiImage: uiImage)
                 .resizable()
                 .scaledToFill()

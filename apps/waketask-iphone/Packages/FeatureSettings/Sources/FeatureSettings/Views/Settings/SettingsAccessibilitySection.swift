@@ -1,9 +1,8 @@
-import SwiftUI
 import DesignSystem
+import SwiftUI
 
 /// "Accessibility & Feel" section: reduce motion + haptic feedback toggles.
 struct SettingsAccessibilitySection: View {
-
     let viewModel: SettingsViewModel
 
     var body: some View {

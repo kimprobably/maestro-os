@@ -6,4 +6,3 @@ public enum DSLayout {
     /// Provides optimal line length and button sizes on larger screens
     public static let readableMaxWidth: CGFloat = 420
 }
-

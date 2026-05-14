@@ -1,6 +1,6 @@
+import Core
 import Foundation
 import Networking
-import Core
 
 // MARK: - OpenRouter SSE chunk shape
 
@@ -21,7 +21,6 @@ struct OpenRouterDelta: Codable {
 // MARK: - Parser
 
 extension ProxyLLMClient {
-
     /// Validates the HTTP response and dispatches to the SSE parser on success.
     func handleResponse(
         _ response: HTTPResponse,
@@ -32,7 +31,7 @@ extension ProxyLLMClient {
             return
         }
 
-        guard (200...299).contains(response.statusCode) else {
+        guard (200 ... 299).contains(response.statusCode) else {
             let error = AppError.server(
                 code: response.statusCode,
                 message: "LLM request failed with status \(response.statusCode)"
@@ -83,7 +82,8 @@ extension ProxyLLMClient {
             if let jsonData = content.data(using: .utf8),
                let json = try? JSONDecoder().decode(OpenRouterChunk.self, from: jsonData),
                let deltaContent = json.choices.first?.delta.content,
-               !deltaContent.isEmpty {
+               !deltaContent.isEmpty
+            {
                 continuation.yield(deltaContent)
             } else {
                 // Fallback: treat as plain text so non-OpenRouter backends work.

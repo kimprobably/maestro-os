@@ -15,46 +15,45 @@ import SwiftUI
 /// )
 /// ```
 public struct SAIAvatar: View {
-    
     public enum Size {
         case sm
         case md
         case lg
         case xl
-        
+
         var diameter: CGFloat {
             switch self {
-            case .sm: return 32
-            case .md: return 40
-            case .lg: return 56
-            case .xl: return 80
+            case .sm: 32
+            case .md: 40
+            case .lg: 56
+            case .xl: 80
             }
         }
-        
+
         var fontSize: CGFloat {
             switch self {
-            case .sm: return 13
-            case .md: return 16
-            case .lg: return 22
-            case .xl: return 32
+            case .sm: 13
+            case .md: 16
+            case .lg: 22
+            case .xl: 32
             }
         }
-        
+
         var indicatorSize: CGFloat {
             switch self {
-            case .sm: return 8
-            case .md: return 10
-            case .lg: return 12
-            case .xl: return 16
+            case .sm: 8
+            case .md: 10
+            case .lg: 12
+            case .xl: 16
             }
         }
     }
-    
+
     private let name: String
     private let imageURL: URL?
     private let size: Size
     private let showsOnlineIndicator: Bool
-    
+
     public init(
         name: String,
         imageURL: URL? = nil,
@@ -66,10 +65,10 @@ public struct SAIAvatar: View {
         self.size = size
         self.showsOnlineIndicator = showsOnlineIndicator
     }
-    
+
     public var body: some View {
         ZStack(alignment: .bottomTrailing) {
-            if let imageURL = imageURL {
+            if let imageURL {
                 AsyncImage(url: imageURL) { image in
                     image
                         .resizable()
@@ -82,19 +81,19 @@ public struct SAIAvatar: View {
             } else {
                 initialsView
             }
-            
+
             if showsOnlineIndicator {
                 onlineIndicator
             }
         }
     }
-    
+
     // MARK: - Initials View
-    
+
     private var initialsView: some View {
         ZStack {
             gradientBackground
-            
+
             Text(initials)
                 .font(.system(size: size.fontSize, weight: .semibold))
                 .foregroundStyle(DSColors.background)
@@ -102,7 +101,7 @@ public struct SAIAvatar: View {
         .frame(width: size.diameter, height: size.diameter)
         .clipShape(Circle())
     }
-    
+
     private var gradientBackground: some View {
         let colors = generateGradientColors(for: name)
         return LinearGradient(
@@ -111,7 +110,7 @@ public struct SAIAvatar: View {
             endPoint: .bottomTrailing
         )
     }
-    
+
     private var initials: String {
         let components = name.split(separator: " ")
         if components.count >= 2 {
@@ -123,9 +122,9 @@ public struct SAIAvatar: View {
         }
         return "?"
     }
-    
+
     // MARK: - Online Indicator
-    
+
     private var onlineIndicator: some View {
         Circle()
             .fill(DSColors.success)
@@ -136,17 +135,17 @@ public struct SAIAvatar: View {
             )
             .offset(x: 2, y: 2)
     }
-    
+
     // MARK: - Gradient Generation
-    
+
     private func generateGradientColors(for name: String) -> [Color] {
         let hash = abs(name.hashValue)
         let hue1 = Double(hash % 360) / 360.0
         let hue2 = Double((hash / 360) % 360) / 360.0
-        
+
         return [
             Color(hue: hue1, saturation: 0.6, brightness: 0.8),
-            Color(hue: hue2, saturation: 0.7, brightness: 0.7)
+            Color(hue: hue2, saturation: 0.7, brightness: 0.7),
         ]
     }
 }
@@ -161,7 +160,7 @@ public struct SAIAvatar: View {
             SAIAvatar(name: "Bob Wilson", size: .lg)
             SAIAvatar(name: "Alice Brown", size: .xl)
         }
-        
+
         HStack(spacing: DSSpacing.lg) {
             SAIAvatar(name: "John Doe", size: .sm, showsOnlineIndicator: true)
             SAIAvatar(name: "Jane Smith", size: .md, showsOnlineIndicator: true)
@@ -181,7 +180,7 @@ public struct SAIAvatar: View {
             SAIAvatar(name: "Alex Johnson", size: .md)
             SAIAvatar(name: "Alex Johnson Smith", size: .md)
         }
-        
+
         HStack(spacing: DSSpacing.md) {
             SAIAvatar(name: "Sarah Connor", size: .md)
             SAIAvatar(name: "John Wick", size: .md)
@@ -202,4 +201,3 @@ public struct SAIAvatar: View {
     .background(DSColors.background)
     .preferredColorScheme(.dark)
 }
-

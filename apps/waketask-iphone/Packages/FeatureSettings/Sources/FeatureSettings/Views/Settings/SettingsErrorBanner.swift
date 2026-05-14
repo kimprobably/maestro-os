@@ -1,10 +1,9 @@
-import SwiftUI
 import DesignSystem
+import SwiftUI
 
 /// Inline error banner used as the `header` of a hidden `Section` at the top
 /// of the Settings form.
 struct SettingsErrorBanner: View {
-
     let message: String
 
     var body: some View {

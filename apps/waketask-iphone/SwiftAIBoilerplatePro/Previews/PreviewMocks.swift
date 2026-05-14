@@ -1,268 +1,272 @@
 #if DEBUG
-import Foundation
-import Storage
-import Auth
-import Payments
-import FeatureChat
-import Core
+    import Auth
+    import Core
+    import FeatureChat
+    import Foundation
+    import Payments
+    import Storage
 
-/// Minimal mocks for SwiftUI previews
-/// These conform to public protocols and return static/empty data
-enum PreviewMocks {
-    
-    // MARK: - Storage Mocks
-    
-    final class MockMessageRepository: MessageRepository, @unchecked Sendable {
-        func append(conversationID: UUID, role: MessageDTO.Role, text: String, createdAt: Date) async throws -> MessageDTO {
-            MessageDTO(id: UUID(), role: role, text: text, createdAt: createdAt, conversationID: conversationID)
+    /// Minimal mocks for SwiftUI previews
+    /// These conform to public protocols and return static/empty data
+    enum PreviewMocks {
+        // MARK: - Storage Mocks
+
+        final class MockMessageRepository: MessageRepository, @unchecked Sendable {
+            func append(conversationID: UUID, role: MessageDTO.Role, text: String, createdAt: Date) async throws -> MessageDTO {
+                MessageDTO(id: UUID(), role: role, text: text, createdAt: createdAt, conversationID: conversationID)
+            }
+
+            func page(conversationID _: UUID, after _: MessageCursor?, limit _: Int) async throws -> (items: [MessageDTO], next: MessageCursor?) {
+                (items: [], next: nil)
+            }
+
+            func deleteAll(in _: UUID) async throws {}
+            func batchDelete(messageIDs _: [UUID]) async throws {}
         }
-        
-        func page(conversationID: UUID, after: MessageCursor?, limit: Int) async throws -> (items: [MessageDTO], next: MessageCursor?) {
-            (items: [], next: nil)
+
+        final class MockSettingsRepository: SettingsRepository, @unchecked Sendable {
+            func load() async throws -> SettingsDTO {
+                SettingsDTO(theme: .system)
+            }
+
+            func save(_: SettingsDTO) async throws {}
         }
-        
-        func deleteAll(in conversationID: UUID) async throws {}
-        func batchDelete(messageIDs: [UUID]) async throws {}
-    }
-    
-    final class MockSettingsRepository: SettingsRepository, @unchecked Sendable {
-        func load() async throws -> SettingsDTO {
-            SettingsDTO(theme: .system)
-        }
-        
-        func save(_ settings: SettingsDTO) async throws {}
-    }
-    
-    final class MockConversationRepository: ConversationRepository, @unchecked Sendable {
-        func create(title: String, personaName: String?) async throws -> ConversationDTO {
-            ConversationDTO(
-                id: UUID(),
-                title: title,
-                createdAt: Date(),
-                updatedAt: Date(),
-                personaName: personaName
-            )
-        }
-        
-        func rename(id: UUID, title: String) async throws {}
-        
-        func delete(id: UUID) async throws {}
-        
-        func list(limit: Int, after: Date?) async throws -> [ConversationDTO] {
-            [
+
+        final class MockConversationRepository: ConversationRepository, @unchecked Sendable {
+            func create(title: String, personaName: String?) async throws -> ConversationDTO {
                 ConversationDTO(
                     id: UUID(),
-                    title: "Preview Chat 1",
-                    createdAt: Date().addingTimeInterval(-3600),
-                    updatedAt: Date().addingTimeInterval(-1800),
-                    personaName: nil
-                ),
-                ConversationDTO(
-                    id: UUID(),
-                    title: "Preview Chat 2",
-                    createdAt: Date().addingTimeInterval(-7200),
-                    updatedAt: Date().addingTimeInterval(-3600),
-                    personaName: "AI Assistant"
+                    title: title,
+                    createdAt: Date(),
+                    updatedAt: Date(),
+                    personaName: personaName
                 )
-            ]
-        }
-    }
+            }
 
-    final class MockWakeAlarmRepository: WakeAlarmRepository, @unchecked Sendable {
-        func listAlarms() async throws -> [WakeAlarm] {
-            [
-                WakeAlarm(
-                    title: "Workday Start",
-                    hour: 7,
-                    minute: 0,
-                    enabled: true,
-                    strictness: .balanced,
-                    wakeCheckWindowSeconds: 120,
-                    firstTaskTitle: "Review top 3 priorities"
-                )
-            ]
-        }
+            func rename(id _: UUID, title _: String) async throws {}
 
-        func upsertAlarm(_ alarm: WakeAlarm) async throws {}
-        func deleteAlarm(id: UUID) async throws {}
-    }
+            func delete(id _: UUID) async throws {}
 
-    final class MockWakeRunRepository: WakeRunRepository, @unchecked Sendable {
-        func saveRun(_ run: WakeRun) async throws {}
-        func loadRun(id: UUID) async throws -> WakeRun? { nil }
-        func listRuns(alarmID: UUID?, limit: Int) async throws -> [WakeRun] { [] }
-    }
-
-    struct MockWakeMissionEngine: WakeMissionRotationEngine, Sendable {
-        func missions(for alarm: WakeAlarm, previousRuns: [WakeRun], missionCount: Int) -> [WakeMission] {
-            [
-                WakeMission(modality: .cognitive, prompt: "Say tomorrow's first meeting out loud"),
-                WakeMission(modality: .movement, prompt: "Do 20 seconds of shoulder mobility"),
-                WakeMission(modality: .scanPhoto, prompt: "Scan your bathroom sink area")
-            ]
-        }
-    }
-    
-    // MARK: - Auth Mock
-    
-    final class MockAuthClient: AuthClient, @unchecked Sendable {
-        func signUpWithEmail(email: String, password: String) async throws -> Auth.AuthUser {
-            // No need to implement
-            return Auth.AuthUser(id: "MockID")
-        }
-        
-        func signInWithEmail(email: String, password: String) async throws -> Auth.AuthUser {
-            // No need to implement
-            return Auth.AuthUser(id: "MockID")
-        }
-        
-        func resetPassword(email: String) async throws {
-            // No need to implement
-        }
-        
-        func signInWithApple() async throws -> AuthUser {
-            AuthUser(id: "preview", email: "preview@example.com")
-        }
-        
-        func signInWithGoogle() async throws -> AuthUser {
-            AuthUser(id: "preview-google", email: "preview@google.com")
-        }
-        
-        func signOut() async throws {}
-        
-        func currentUser() async -> AuthUser? {
-            nil
-        }
-        
-        func authStates() -> AsyncStream<AuthState> {
-            AsyncStream { continuation in
-                continuation.yield(.unauthenticated)
+            func list(limit _: Int, after _: Date?) async throws -> [ConversationDTO] {
+                [
+                    ConversationDTO(
+                        id: UUID(),
+                        title: "Preview Chat 1",
+                        createdAt: Date().addingTimeInterval(-3600),
+                        updatedAt: Date().addingTimeInterval(-1800),
+                        personaName: nil
+                    ),
+                    ConversationDTO(
+                        id: UUID(),
+                        title: "Preview Chat 2",
+                        createdAt: Date().addingTimeInterval(-7200),
+                        updatedAt: Date().addingTimeInterval(-3600),
+                        personaName: "AI Assistant"
+                    ),
+                ]
             }
         }
-        
-        func refreshIfNeeded() async throws {}
-    }
-    
-    /// Mock auth client that fails - useful for testing error states
-    final class FailingMockAuthClient: AuthClient, @unchecked Sendable {
-        func signUpWithEmail(email: String, password: String) async throws -> Auth.AuthUser {
-            // No need to implement
-            return Auth.AuthUser(id: "MockID")
+
+        final class MockWakeAlarmRepository: WakeAlarmRepository, @unchecked Sendable {
+            func listAlarms() async throws -> [WakeAlarm] {
+                [
+                    WakeAlarm(
+                        title: "Workday Start",
+                        hour: 7,
+                        minute: 0,
+                        enabled: true,
+                        strictness: .balanced,
+                        wakeCheckWindowSeconds: 120,
+                        firstTaskTitle: "Review top 3 priorities"
+                    ),
+                ]
+            }
+
+            func upsertAlarm(_: WakeAlarm) async throws {}
+            func deleteAlarm(id _: UUID) async throws {}
         }
-        
-        func signInWithEmail(email: String, password: String) async throws -> Auth.AuthUser {
-            // No need to implement
-            return Auth.AuthUser(id: "MockID")
-        }
-        
-        func resetPassword(email: String) async throws {
-            // No need to implement
-        }
-        
-        func signInWithApple() async throws -> AuthUser {
-            try await Task.sleep(nanoseconds: 1_000_000_000) // 1 second delay
-            throw AuthError.network(underlying: NSError(domain: "PreviewError", code: 1001, userInfo: [NSLocalizedDescriptionKey: "Unable to sign in. Please check your internet connection and try again."]))
-        }
-        
-        func signInWithGoogle() async throws -> AuthUser {
-            try await Task.sleep(nanoseconds: 1_000_000_000) // 1 second delay
-            throw AuthError.network(underlying: NSError(domain: "PreviewError", code: 1001, userInfo: [NSLocalizedDescriptionKey: "Unable to sign in with Google. Please check your internet connection and try again."]))
-        }
-        
-        func signOut() async throws {}
-        
-        func currentUser() async -> AuthUser? {
-            nil
-        }
-        
-        func authStates() -> AsyncStream<AuthState> {
-            AsyncStream { continuation in
-                continuation.yield(.unauthenticated)
+
+        final class MockWakeRunRepository: WakeRunRepository, @unchecked Sendable {
+            func saveRun(_: WakeRun) async throws {}
+            func loadRun(id _: UUID) async throws -> WakeRun? {
+                nil
+            }
+
+            func listRuns(alarmID _: UUID?, limit _: Int) async throws -> [WakeRun] {
+                []
             }
         }
-        
-        func refreshIfNeeded() async throws {}
-    }
-    
-    // MARK: - Payments Mock
-    
-    final class MockPaymentsClient: PaymentsClient, @unchecked Sendable {
-        func configure(_ config: PaymentsConfig) {}
-        
-        func states() -> AsyncStream<Payments.PaymentsState> {
-            AsyncStream { continuation in
-                continuation.yield(Payments.PaymentsState(isSubscribed: false))
+
+        struct MockWakeMissionEngine: WakeMissionRotationEngine {
+            func missions(for _: WakeAlarm, previousRuns _: [WakeRun], missionCount _: Int) -> [WakeMission] {
+                [
+                    WakeMission(modality: .cognitive, prompt: "Say tomorrow's first meeting out loud"),
+                    WakeMission(modality: .movement, prompt: "Do 20 seconds of shoulder mobility"),
+                    WakeMission(modality: .scanPhoto, prompt: "Scan your bathroom sink area"),
+                ]
             }
         }
-        
-        func currentState() async -> Payments.PaymentsState {
-            Payments.PaymentsState(isSubscribed: false)
+
+        // MARK: - Auth Mock
+
+        final class MockAuthClient: AuthClient, @unchecked Sendable {
+            func signUpWithEmail(email _: String, password _: String) async throws -> Auth.AuthUser {
+                // No need to implement
+                Auth.AuthUser(id: "MockID")
+            }
+
+            func signInWithEmail(email _: String, password _: String) async throws -> Auth.AuthUser {
+                // No need to implement
+                Auth.AuthUser(id: "MockID")
+            }
+
+            func resetPassword(email _: String) async throws {
+                // No need to implement
+            }
+
+            func signInWithApple() async throws -> AuthUser {
+                AuthUser(id: "preview", email: "preview@example.com")
+            }
+
+            func signInWithGoogle() async throws -> AuthUser {
+                AuthUser(id: "preview-google", email: "preview@google.com")
+            }
+
+            func signOut() async throws {}
+
+            func currentUser() async -> AuthUser? {
+                nil
+            }
+
+            func authStates() -> AsyncStream<AuthState> {
+                AsyncStream { continuation in
+                    continuation.yield(.unauthenticated)
+                }
+            }
+
+            func refreshIfNeeded() async throws {}
         }
-        
-        func purchase(productID: String) async throws {}
-        
-        @discardableResult
-        func restore() async throws -> Payments.PaymentsState {
-            return Payments.PaymentsState(isSubscribed: false)
+
+        /// Mock auth client that fails - useful for testing error states
+        final class FailingMockAuthClient: AuthClient, @unchecked Sendable {
+            func signUpWithEmail(email _: String, password _: String) async throws -> Auth.AuthUser {
+                // No need to implement
+                Auth.AuthUser(id: "MockID")
+            }
+
+            func signInWithEmail(email _: String, password _: String) async throws -> Auth.AuthUser {
+                // No need to implement
+                Auth.AuthUser(id: "MockID")
+            }
+
+            func resetPassword(email _: String) async throws {
+                // No need to implement
+            }
+
+            func signInWithApple() async throws -> AuthUser {
+                try await Task.sleep(nanoseconds: 1_000_000_000) // 1 second delay
+                throw AuthError.network(underlying: NSError(domain: "PreviewError", code: 1001, userInfo: [NSLocalizedDescriptionKey: "Unable to sign in. Please check your internet connection and try again."]))
+            }
+
+            func signInWithGoogle() async throws -> AuthUser {
+                try await Task.sleep(nanoseconds: 1_000_000_000) // 1 second delay
+                throw AuthError.network(underlying: NSError(domain: "PreviewError", code: 1001, userInfo: [NSLocalizedDescriptionKey: "Unable to sign in with Google. Please check your internet connection and try again."]))
+            }
+
+            func signOut() async throws {}
+
+            func currentUser() async -> AuthUser? {
+                nil
+            }
+
+            func authStates() -> AsyncStream<AuthState> {
+                AsyncStream { continuation in
+                    continuation.yield(.unauthenticated)
+                }
+            }
+
+            func refreshIfNeeded() async throws {}
         }
-        
-        func prefetchOfferings() async {}
-        
-        func getOfferings() async throws -> [PaymentsOffering] {
-            [
-                PaymentsOffering(
-                    id: "$rc_monthly",
-                    title: "Monthly",
-                    price: "$9.99",
-                    pricePerMonth: "$9.99/month",
-                    packageType: .monthly
-                ),
-                PaymentsOffering(
-                    id: "$rc_annual",
-                    title: "Annual",
-                    price: "$99.99",
-                    pricePerMonth: "$8.33/month",
-                    packageType: .annual
-                )
-            ]
-        }
-    }
-    
-    // MARK: - LLM Mock
-    
-    final class MockLLMClient: LLMClient, @unchecked Sendable {
-        func streamResponse(messages: [LLMMessage]) -> AsyncThrowingStream<String, Error> {
-            AsyncThrowingStream { continuation in
-                continuation.yield("Preview response")
-                continuation.finish()
+
+        // MARK: - Payments Mock
+
+        final class MockPaymentsClient: PaymentsClient, @unchecked Sendable {
+            func configure(_: PaymentsConfig) {}
+
+            func states() -> AsyncStream<Payments.PaymentsState> {
+                AsyncStream { continuation in
+                    continuation.yield(Payments.PaymentsState(isSubscribed: false))
+                }
+            }
+
+            func currentState() async -> Payments.PaymentsState {
+                Payments.PaymentsState(isSubscribed: false)
+            }
+
+            func purchase(productID _: String) async throws {}
+
+            @discardableResult
+            func restore() async throws -> Payments.PaymentsState {
+                Payments.PaymentsState(isSubscribed: false)
+            }
+
+            func prefetchOfferings() async {}
+
+            func getOfferings() async throws -> [PaymentsOffering] {
+                [
+                    PaymentsOffering(
+                        id: "$rc_monthly",
+                        title: "Monthly",
+                        price: "$9.99",
+                        pricePerMonth: "$9.99/month",
+                        packageType: .monthly
+                    ),
+                    PaymentsOffering(
+                        id: "$rc_annual",
+                        title: "Annual",
+                        price: "$99.99",
+                        pricePerMonth: "$8.33/month",
+                        packageType: .annual
+                    ),
+                ]
             }
         }
+
+        // MARK: - LLM Mock
+
+        final class MockLLMClient: LLMClient, @unchecked Sendable {
+            func streamResponse(messages _: [LLMMessage]) -> AsyncThrowingStream<String, Error> {
+                AsyncThrowingStream { continuation in
+                    continuation.yield("Preview response")
+                    continuation.finish()
+                }
+            }
+        }
+
+        // MARK: - Convenience Static Accessors
+
+        static var messageRepository: MessageRepository {
+            MockMessageRepository()
+        }
+
+        static var conversationRepository: ConversationRepository {
+            MockConversationRepository()
+        }
+
+        static var settingsRepository: SettingsRepository {
+            MockSettingsRepository()
+        }
+
+        static var authClient: AuthClient {
+            MockAuthClient()
+        }
+
+        static var paymentsClient: PaymentsClient {
+            MockPaymentsClient()
+        }
+
+        static var llmClient: LLMClient {
+            MockLLMClient()
+        }
     }
-    
-    // MARK: - Convenience Static Accessors
-    
-    static var messageRepository: MessageRepository {
-        MockMessageRepository()
-    }
-    
-    static var conversationRepository: ConversationRepository {
-        MockConversationRepository()
-    }
-    
-    static var settingsRepository: SettingsRepository {
-        MockSettingsRepository()
-    }
-    
-    static var authClient: AuthClient {
-        MockAuthClient()
-    }
-    
-    static var paymentsClient: PaymentsClient {
-        MockPaymentsClient()
-    }
-    
-    static var llmClient: LLMClient {
-        MockLLMClient()
-    }
-}
 #endif

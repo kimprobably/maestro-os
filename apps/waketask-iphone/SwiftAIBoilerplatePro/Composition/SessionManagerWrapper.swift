@@ -1,11 +1,10 @@
-import Foundation
 import Auth
+import Foundation
 
 /// Adapts the actor-isolated `SessionManager` to the sync-friendly
 /// `AuthClient` protocol the rest of the app consumes.
 @available(iOS 17.0, *)
 final class SessionManagerWrapper: AuthClient, Sendable {
-
     private let sessionManager: SessionManager
 
     init(_ sessionManager: SessionManager) {

@@ -1,9 +1,8 @@
-import Foundation
 import Core
+import Foundation
 
 @available(iOS 17.0, *)
 extension SupabaseAuthAPI {
-
     /// Decode a GoTrue `/token` response into an `AuthSession`. Handles
     /// rotating refresh tokens and the signup-confirmation edge case where
     /// the access token is missing until the user clicks the email link.
@@ -64,17 +63,18 @@ extension SupabaseAuthAPI {
             AppLogger.debug("Parsed error response - error: \(errorResponse.error ?? "nil"), error_description: \(errorResponse.error_description ?? "nil"), message: \(errorResponse.message ?? "nil"), msg: \(errorResponse.msg ?? "nil"), code: \(errorResponse.code ?? "nil")", category: AppLogger.auth)
 
             message = errorResponse.error_description ??
-                     errorResponse.message ??
-                     errorResponse.msg ??
-                     errorResponse.error
+                errorResponse.message ??
+                errorResponse.msg ??
+                errorResponse.error
         } else {
             AppLogger.debug("Failed to decode SupabaseErrorResponse from data", category: AppLogger.auth)
         }
 
         if let msg = message?.lowercased() {
             if msg.contains("email not confirmed") ||
-               msg.contains("confirm your email") ||
-               msg.contains("email confirmation") {
+                msg.contains("confirm your email") ||
+                msg.contains("email confirmation")
+            {
                 AppLogger.info("Email confirmation required", category: AppLogger.auth)
                 return .emailConfirmationRequired
             }
@@ -85,10 +85,11 @@ extension SupabaseAuthAPI {
             // A 400 from /auth in context usually means invalid credentials.
             if let msg = message?.lowercased() {
                 if msg.contains("invalid") ||
-                   msg.contains("credentials") ||
-                   msg.contains("password") ||
-                   msg.contains("wrong") ||
-                   msg.contains("user not found") {
+                    msg.contains("credentials") ||
+                    msg.contains("password") ||
+                    msg.contains("wrong") ||
+                    msg.contains("user not found")
+                {
                     return .invalidCredentials
                 }
             } else {

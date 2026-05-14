@@ -21,19 +21,18 @@ import SwiftUI
 /// }
 /// ```
 public struct SAICard<Content: View>: View {
-    
     public enum Style {
         case elevated
         case outline
         case tinted
     }
-    
+
     private let style: Style
     private let content: Content
-    
+
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var isPressed = false
-    
+
     public init(
         style: Style = .elevated,
         @ViewBuilder content: () -> Content
@@ -41,7 +40,7 @@ public struct SAICard<Content: View>: View {
         self.style = style
         self.content = content()
     }
-    
+
     public var body: some View {
         content
             .background(backgroundForStyle)
@@ -51,9 +50,9 @@ public struct SAICard<Content: View>: View {
             .scaleEffect(pressedScale)
             .animation(SAIMotion.quick, value: isPressed)
     }
-    
+
     // MARK: - Style Helpers
-    
+
     @ViewBuilder
     private var backgroundForStyle: some View {
         switch style {
@@ -65,7 +64,7 @@ public struct SAICard<Content: View>: View {
             DSColors.surfaceTinted
         }
     }
-    
+
     @ViewBuilder
     private var overlayForStyle: some View {
         if style == .outline {
@@ -73,11 +72,11 @@ public struct SAICard<Content: View>: View {
                 .strokeBorder(DSColors.borderHairline, lineWidth: 1)
         }
     }
-    
+
     private var elevationForStyle: ShadowStyle {
         style == .elevated ? DSElevation.level2 : ShadowStyle(color: .clear, radius: 0, x: 0, y: 0)
     }
-    
+
     private var pressedScale: CGFloat {
         guard !reduceMotion else { return 1.0 }
         return isPressed ? 0.98 : 1.0
@@ -113,11 +112,11 @@ private struct CardButtonStyle: ButtonStyle {
         SAICard(style: .elevated) {
             cardContent
         }
-        
+
         SAICard(style: .outline) {
             cardContent
         }
-        
+
         SAICard(style: .tinted) {
             cardContent
         }
@@ -158,4 +157,3 @@ private var cardContent: some View {
     .padding(DSSpacing.lg)
     .frame(maxWidth: .infinity, alignment: .leading)
 }
-

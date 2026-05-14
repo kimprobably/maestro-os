@@ -7,7 +7,7 @@ public struct ConversationDTO: Sendable, Equatable, Identifiable {
     public let createdAt: Date
     public let updatedAt: Date
     public let personaName: String?
-    
+
     public init(
         id: UUID,
         title: String,
@@ -29,10 +29,10 @@ public struct ConversationDTO: Sendable, Equatable, Identifiable {
 extension ConversationDTO {
     /// Maps from SwiftData model to DTO
     init(_ model: Conversation) {
-        self.id = model.id
-        self.title = model.title
-        self.createdAt = model.createdAt
-        self.updatedAt = model.updatedAt
-        self.personaName = model.personaName
+        id = model.id
+        title = model.title
+        createdAt = model.createdAt
+        updatedAt = model.updatedAt
+        personaName = model.personaName
     }
 }

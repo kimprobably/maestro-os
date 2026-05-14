@@ -11,40 +11,39 @@ import SwiftUI
 /// SAITag("New", style: .info)
 /// ```
 public struct SAITag: View {
-    
     public enum Style {
         case info
         case success
         case warning
         case danger
-        
+
         var backgroundColor: Color {
             switch self {
-            case .info: return DSColors.toastAccent.opacity(0.15)
-            case .success: return DSColors.success.opacity(0.15)
-            case .warning: return DSColors.warning.opacity(0.15)
-            case .danger: return DSColors.danger.opacity(0.15)
+            case .info: DSColors.toastAccent.opacity(0.15)
+            case .success: DSColors.success.opacity(0.15)
+            case .warning: DSColors.warning.opacity(0.15)
+            case .danger: DSColors.danger.opacity(0.15)
             }
         }
-        
+
         var foregroundColor: Color {
             switch self {
-            case .info: return DSColors.toastAccent
-            case .success: return DSColors.success
-            case .warning: return DSColors.warning
-            case .danger: return DSColors.danger
+            case .info: DSColors.toastAccent
+            case .success: DSColors.success
+            case .warning: DSColors.warning
+            case .danger: DSColors.danger
             }
         }
     }
-    
+
     private let text: String
     private let style: Style
-    
+
     public init(_ text: String, style: Style = .info) {
         self.text = text
         self.style = style
     }
-    
+
     public var body: some View {
         Text(text)
             .font(.system(size: 12, weight: .bold))
@@ -66,7 +65,7 @@ public struct SAITag: View {
             SAITag("Warning", style: .warning)
             SAITag("Danger", style: .danger)
         }
-        
+
         HStack(spacing: DSSpacing.md) {
             SAITag("Pro", style: .success)
             SAITag("Beta", style: .warning)
@@ -99,7 +98,7 @@ public struct SAITag: View {
         ) {
             SAITag("Pro", style: .success)
         }
-        
+
         SAIListRow(
             title: "Beta Feature",
             subtitle: "Test new functionality",
@@ -107,7 +106,7 @@ public struct SAITag: View {
         ) {
             SAITag("Beta", style: .warning)
         }
-        
+
         SAIListRow(
             title: "New Feature",
             subtitle: "Recently added",
@@ -118,4 +117,3 @@ public struct SAITag: View {
     }
     .background(DSColors.surface)
 }
-

@@ -23,7 +23,8 @@ public struct WakeContractEvaluator {
         guard run.state == .dismissedAwaitingCheck,
               let deadline = run.wakeCheckDeadline,
               now > deadline,
-              run.wakeCheckCompletedAt == nil else {
+              run.wakeCheckCompletedAt == nil
+        else {
             return run
         }
 

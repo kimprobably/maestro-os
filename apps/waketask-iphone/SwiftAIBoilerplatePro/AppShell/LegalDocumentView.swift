@@ -2,11 +2,10 @@ import SwiftUI
 
 /// View for displaying legal documents (Terms, Privacy, Subscription Terms)
 struct LegalDocumentView: View {
-    
     let title: String
     let content: String
     @Environment(\.dismiss) private var dismiss
-    
+
     var body: some View {
         NavigationStack {
             ScrollView {
@@ -25,23 +24,23 @@ struct LegalDocumentView: View {
             }
         }
     }
-    
+
     // MARK: - Factory Methods
-    
+
     static func terms() -> LegalDocumentView {
         LegalDocumentView(
             title: "Terms of Service",
             content: termsContent
         )
     }
-    
+
     static func privacy() -> LegalDocumentView {
         LegalDocumentView(
             title: "Privacy Policy",
             content: privacyContent
         )
     }
-    
+
     static func subscriptionTerms() -> LegalDocumentView {
         LegalDocumentView(
             title: "Subscription Terms",
@@ -192,4 +191,3 @@ If you have any questions about subscriptions or billing, please contact us at: 
 
 For App Store-related issues, please contact Apple Support directly.
 """
-

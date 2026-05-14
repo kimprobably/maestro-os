@@ -9,7 +9,7 @@ public struct SettingsDTO: Sendable, Equatable {
         case aurora
         case obsidian
     }
-    
+
     public let theme: Theme
     public let preferredModel: String?
     public let reduceMotion: Bool
@@ -19,7 +19,7 @@ public struct SettingsDTO: Sendable, Equatable {
     public let hapticsEnabled: Bool
     public let createdAt: Date
     public let updatedAt: Date
-    
+
     public init(
         theme: Theme = .system,
         preferredModel: String? = nil,
@@ -49,17 +49,17 @@ public struct SettingsDTO: Sendable, Equatable {
 extension SettingsDTO {
     /// Maps from SwiftData model to DTO
     init(_ model: Settings) {
-        self.theme = Theme(rawValue: model.theme) ?? .system
-        self.preferredModel = model.preferredModel
-        self.reduceMotion = model.reduceMotion
-        self.hasSeenOnboarding = model.hasSeenOnboarding
-        self.notificationsEnabled = model.notificationsEnabled
-        self.shareDiagnostics = model.shareDiagnostics
-        self.hapticsEnabled = model.hapticsEnabled
-        self.createdAt = model.createdAt
-        self.updatedAt = model.updatedAt
+        theme = Theme(rawValue: model.theme) ?? .system
+        preferredModel = model.preferredModel
+        reduceMotion = model.reduceMotion
+        hasSeenOnboarding = model.hasSeenOnboarding
+        notificationsEnabled = model.notificationsEnabled
+        shareDiagnostics = model.shareDiagnostics
+        hapticsEnabled = model.hapticsEnabled
+        createdAt = model.createdAt
+        updatedAt = model.updatedAt
     }
-    
+
     /// Maps from DTO to SwiftData model theme string
     var themeString: String {
         theme.rawValue

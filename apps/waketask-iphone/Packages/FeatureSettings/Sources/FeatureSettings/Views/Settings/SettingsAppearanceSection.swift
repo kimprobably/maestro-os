@@ -1,10 +1,9 @@
-import SwiftUI
 import DesignSystem
 import Storage
+import SwiftUI
 
 /// "Appearance" section: theme picker rows with a premium-theme footer hint.
 struct SettingsAppearanceSection: View {
-
     let viewModel: SettingsViewModel
 
     var body: some View {
@@ -100,11 +99,11 @@ private struct ThemeOptionRow: View {
 
     private var iconColor: Color {
         switch theme {
-        case .system: return DSColors.accentPrimary
-        case .light: return .orange
-        case .dark: return .indigo
-        case .aurora: return Color(red: 1.0, green: 0.45, blue: 0.6)
-        case .obsidian: return Color(red: 0.4, green: 0.8, blue: 1.0)
+        case .system: DSColors.accentPrimary
+        case .light: .orange
+        case .dark: .indigo
+        case .aurora: Color(red: 1.0, green: 0.45, blue: 0.6)
+        case .obsidian: Color(red: 0.4, green: 0.8, blue: 1.0)
         }
     }
 

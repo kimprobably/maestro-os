@@ -1,13 +1,12 @@
-import SwiftUI
-import SwiftData
-import Storage
-import DesignSystem
 import Core
+import DesignSystem
+import Storage
+import SwiftData
+import SwiftUI
 
 /// Chat history screen with premium launcher cards and conversation list
 @available(iOS 17.0, *)
 public struct ChatHistoryView: View {
-    
     @State private var viewModel: ChatHistoryViewModel
     @State private var searchText = ""
     @State private var navigationPath = NavigationPath()
@@ -16,15 +15,15 @@ public struct ChatHistoryView: View {
     @State private var renamingConversation: UUID?
     @State private var deletingConversation: UUID?
     @State private var renameText: String = ""
-    
+
     // Design constants
     private let cornerRadius: CGFloat = 18
     private let strokeWidth: CGFloat = 1
-    
+
     public init(viewModel: ChatHistoryViewModel) {
         self.viewModel = viewModel
     }
-    
+
     public var body: some View {
         NavigationStack(path: $navigationPath) {
             List {
@@ -35,7 +34,7 @@ public struct ChatHistoryView: View {
                         .listRowInsets(EdgeInsets(top: DSSpacing.md, leading: DSSpacing.lg, bottom: DSSpacing.sm, trailing: DSSpacing.lg))
                         .listRowBackground(Color.clear)
                 }
-                
+
                 // Search Bar Section
                 Section {
                     ChatSearchBar(
@@ -49,11 +48,11 @@ public struct ChatHistoryView: View {
                     .listRowInsets(EdgeInsets(top: DSSpacing.sm, leading: DSSpacing.lg, bottom: DSSpacing.sm, trailing: DSSpacing.lg))
                     .listRowBackground(Color.clear)
                 }
-                
+
                 // Conversations Section
                 Section {
                     // Search micro-feedback
-                    if isSearching && !filteredConversations.isEmpty {
+                    if isSearching, !filteredConversations.isEmpty {
                         HStack {
                             ProgressView()
                                 .scaleEffect(0.8)
@@ -66,7 +65,7 @@ public struct ChatHistoryView: View {
                         .listRowBackground(Color.clear)
                         .listRowInsets(EdgeInsets(top: 0, leading: DSSpacing.lg, bottom: 0, trailing: DSSpacing.lg))
                     }
-                    
+
                     // Conversation List or Empty States
                     conversationListContent
                 }
@@ -95,7 +94,7 @@ public struct ChatHistoryView: View {
             }
             .navigationDestination(for: NavigationDestination.self) { destination in
                 switch destination {
-                case .chat(let conversationID, let style):
+                case let .chat(conversationID, style):
                     viewModel.makeChatView(conversationID: conversationID, style: style)
                 }
             }
@@ -151,9 +150,9 @@ public struct ChatHistoryView: View {
             }
         }
     }
-    
+
     // MARK: - Launcher Cards Row
-    
+
     private var launcherCardsRow: some View {
         HStack(spacing: DSSpacing.md) {
             LauncherCard(
@@ -167,7 +166,7 @@ public struct ChatHistoryView: View {
                     await startBubbleChat()
                 }
             }
-            
+
             LauncherCard(
                 title: "Prompt Chat",
                 subtitle: "Document style",
@@ -181,17 +180,17 @@ public struct ChatHistoryView: View {
             }
         }
     }
-    
+
     // MARK: - Conversation List Content
-    
+
     @ViewBuilder
     private var conversationListContent: some View {
-        if viewModel.conversations.isEmpty && searchText.isEmpty {
+        if viewModel.conversations.isEmpty, searchText.isEmpty {
             EmptyStateView()
                 .listRowSeparator(.hidden)
                 .listRowBackground(Color.clear)
                 .listRowInsets(EdgeInsets())
-        } else if filteredConversations.isEmpty && !searchText.isEmpty {
+        } else if filteredConversations.isEmpty, !searchText.isEmpty {
             NoResultsStateView(onClearSearch: clearSearch)
                 .listRowSeparator(.hidden)
                 .listRowBackground(Color.clear)
@@ -230,9 +229,9 @@ public struct ChatHistoryView: View {
             }
         }
     }
-    
+
     // MARK: - Helpers
-    
+
     private func handleSearchChange(_ newValue: String) {
         // Debounced search feel
         isSearching = !newValue.isEmpty
@@ -241,34 +240,34 @@ public struct ChatHistoryView: View {
             isSearching = false
         }
     }
-    
+
     private func clearSearch() {
         searchText = ""
         isSearchFocused = false
     }
-    
+
     private var filteredConversations: [ConversationDTO] {
         if searchText.isEmpty {
             return viewModel.conversations
         }
         return viewModel.conversations.filter { conversation in
             conversation.title.localizedCaseInsensitiveContains(searchText) ||
-            (conversation.personaName?.localizedCaseInsensitiveContains(searchText) ?? false)
+                (conversation.personaName?.localizedCaseInsensitiveContains(searchText) ?? false)
         }
     }
-    
+
     private func startBubbleChat() async {
         let newConversation = await viewModel.createNewConversation()
         guard let conversationID = newConversation?.id else { return }
-        
+
         Haptics.success()
         navigationPath.append(NavigationDestination.chat(conversationID: conversationID, style: .bubbles))
     }
-    
+
     private func startPromptChat() async {
         let newConversation = await viewModel.createNewConversation()
         guard let conversationID = newConversation?.id else { return }
-        
+
         Haptics.success()
         navigationPath.append(NavigationDestination.chat(conversationID: conversationID, style: .centered))
     }

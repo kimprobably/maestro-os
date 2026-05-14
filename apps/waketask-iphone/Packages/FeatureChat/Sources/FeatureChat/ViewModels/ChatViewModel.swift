@@ -1,7 +1,7 @@
-import Foundation
-import SwiftUI
 import Core
+import Foundation
 import Storage
+import SwiftUI
 
 /// Free-tier message limit per conversation.
 private let kFreeMessageLimit = 10
@@ -23,7 +23,6 @@ public struct PaymentsState: Sendable {
 @MainActor
 @Observable
 public final class ChatViewModel {
-
     // MARK: - Published State
 
     public var messages: [ChatMessage] = []
@@ -66,7 +65,7 @@ public final class ChatViewModel {
         self.memoryRepository = memoryRepository
         self.memoryRetriever = memoryRetriever
         self.memoryExtractor = memoryExtractor
-        self.paginator = InfinitePaginator(pageSize: pageSize)
+        paginator = InfinitePaginator(pageSize: pageSize)
     }
 
     // MARK: - Public API
@@ -103,7 +102,7 @@ public final class ChatViewModel {
         if let provider = paymentsStatusProvider {
             let state = await provider.currentState()
             if !state.isSubscribed {
-                let userMessageCount = messages.filter { $0.role == .user }.count
+                let userMessageCount = messages.count(where: { $0.role == .user })
                 if userMessageCount >= kFreeMessageLimit {
                     errorMessage = "Free limit reached. Upgrade to Pro for unlimited messages."
                     AppLogger.info("Free message limit reached (\(kFreeMessageLimit))", category: AppLogger.feature)
@@ -247,11 +246,10 @@ public final class ChatViewModel {
             AppLogger.error("Failed to send message: \(error)", category: AppLogger.feature)
             isSending = false
 
-            let appError: AppError
-            if let storageError = error as? StorageError {
-                appError = storageError.asAppError()
+            let appError: AppError = if let storageError = error as? StorageError {
+                storageError.asAppError()
             } else {
-                appError = AppError.from(error)
+                AppError.from(error)
             }
 
             errorMessage = appError.chatUserMessage
@@ -267,7 +265,7 @@ public final class ChatViewModel {
     /// a pending quick-reply payload, fire it as if the user typed it.
     public func handleDeepLink(_ deepLink: DeepLink) {
         switch deepLink {
-        case .chat(let conversationId):
+        case let .chat(conversationId):
             let currentConversationId = conversationID.uuidString
             if conversationId == currentConversationId {
                 if let replyText = ReplyActionBus.shared.take(for: conversationId) {
@@ -312,12 +310,12 @@ public final class ChatViewModel {
         }
 
         switch result {
-        case .success(let newMessages):
+        case let .success(newMessages):
             messages.append(contentsOf: newMessages)
             paginatorState = paginator.state
             errorMessage = nil
 
-        case .failure(let error):
+        case let .failure(error):
             errorMessage = error.chatUserMessage
             paginatorState = paginator.state
         }

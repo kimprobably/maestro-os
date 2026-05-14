@@ -4,22 +4,22 @@ import Foundation
 public struct HTTPRequest: Sendable {
     /// The request path (e.g., "/v1/messages")
     public let path: String
-    
+
     /// The HTTP method for this request
     public let method: HTTPMethod
-    
+
     /// HTTP headers for the request
     public let headers: [String: String]
-    
+
     /// Query parameters for the request (values can be nil to represent empty values)
     public let query: [String: String?]
-    
+
     /// Request body data
     public let body: Data?
-    
+
     /// Cache policy for this request (nil uses client default)
     public let cachePolicy: CachePolicy?
-    
+
     /// Creates a new HTTP request
     /// - Parameters:
     ///   - path: The request path
@@ -43,7 +43,7 @@ public struct HTTPRequest: Sendable {
         self.body = body
         self.cachePolicy = cachePolicy
     }
-    
+
     /// Returns a copy of the request with an additional header
     /// - Parameters:
     ///   - key: The header name
@@ -52,7 +52,7 @@ public struct HTTPRequest: Sendable {
     public func withHeader(_ key: String, _ value: String) -> HTTPRequest {
         var newHeaders = headers
         newHeaders[key] = value
-        
+
         return HTTPRequest(
             path: path,
             method: method,
@@ -62,7 +62,7 @@ public struct HTTPRequest: Sendable {
             cachePolicy: cachePolicy
         )
     }
-    
+
     /// Returns a copy of the request with additional headers
     /// - Parameter additionalHeaders: Headers to merge with existing ones
     /// - Returns: A new HTTPRequest with the merged headers
@@ -71,7 +71,7 @@ public struct HTTPRequest: Sendable {
         for (key, value) in additionalHeaders {
             newHeaders[key] = value
         }
-        
+
         return HTTPRequest(
             path: path,
             method: method,
@@ -81,7 +81,7 @@ public struct HTTPRequest: Sendable {
             cachePolicy: cachePolicy
         )
     }
-    
+
     /// Returns a copy of the request with a query parameter
     /// - Parameters:
     ///   - key: The query parameter name
@@ -90,7 +90,7 @@ public struct HTTPRequest: Sendable {
     public func withQuery(_ key: String, _ value: String?) -> HTTPRequest {
         var newQuery = query
         newQuery[key] = value
-        
+
         return HTTPRequest(
             path: path,
             method: method,
@@ -100,12 +100,12 @@ public struct HTTPRequest: Sendable {
             cachePolicy: cachePolicy
         )
     }
-    
+
     /// Returns a copy of the request with a cache policy
     /// - Parameter policy: The cache policy to apply
     /// - Returns: A new HTTPRequest with the cache policy
     public func withCache(_ policy: CachePolicy) -> HTTPRequest {
-        return HTTPRequest(
+        HTTPRequest(
             path: path,
             method: method,
             headers: headers,

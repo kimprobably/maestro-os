@@ -1,10 +1,9 @@
-import SwiftUI
 import DesignSystem
+import SwiftUI
 
 /// "Notifications" section: enable toggle + "open iOS Settings" escape hatch
 /// when permission is revoked.
 struct SettingsNotificationsSection: View {
-
     let viewModel: SettingsViewModel
 
     var body: some View {
@@ -17,7 +16,7 @@ struct SettingsNotificationsSection: View {
             ))
             .tint(DSColors.primary)
 
-            if !viewModel.notificationPermissionGranted && viewModel.notificationsEnabled {
+            if !viewModel.notificationPermissionGranted, viewModel.notificationsEnabled {
                 Button {
                     viewModel.openSystemNotificationSettings()
                 } label: {

@@ -5,14 +5,14 @@ let package = Package(
     name: "FeatureSettings",
     platforms: [.iOS(.v17)],
     products: [
-        .library(name: "FeatureSettings", targets: ["FeatureSettings"])
+        .library(name: "FeatureSettings", targets: ["FeatureSettings"]),
     ],
     dependencies: [
         .package(path: "../Core"),
         .package(path: "../Storage"),
         .package(path: "../Auth"),
         .package(path: "../Payments"),
-        .package(path: "../DesignSystem")
+        .package(path: "../DesignSystem"),
     ],
     targets: [
         .target(
@@ -22,6 +22,6 @@ let package = Package(
         .testTarget(
             name: "FeatureSettingsTests",
             dependencies: ["FeatureSettings"]
-        )
+        ),
     ]
 )

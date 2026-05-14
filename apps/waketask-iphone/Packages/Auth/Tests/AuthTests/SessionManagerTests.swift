@@ -1,8 +1,8 @@
-import XCTest
 @testable import Auth
+import Core
 import Networking
 import Storage
-import Core
+import XCTest
 
 // Import DTOs for mocking responses
 typealias SessionPayload = Auth.SessionPayload
@@ -10,20 +10,19 @@ typealias UserPayload = Auth.UserPayload
 
 @available(iOS 17.0, *)
 final class SessionManagerTests: XCTestCase {
-    
     fileprivate var httpClient: MockHTTPClient!
     fileprivate var apple: MockAppleProvider!
     fileprivate var config: AuthConfig!
     fileprivate var sleeper: MockSleeper!
     var manager: SessionManager!
-    
+
     override func setUp() async throws {
         try await super.setUp()
         httpClient = MockHTTPClient()
         apple = MockAppleProvider()
         config = AuthConfig(supabaseURL: URL(string: "https://test.supabase.co")!, supabaseAnonKey: "test-key")
         sleeper = MockSleeper()
-        
+
         // Use mock keychain for testing
         let mockKeychain = MockKeychain()
         manager = SessionManager(
@@ -33,11 +32,11 @@ final class SessionManagerTests: XCTestCase {
             config: config,
             sleeper: sleeper
         )
-        
+
         // Give time for initial session load
         try? await Task.sleep(nanoseconds: 10_000_000) // 10ms
     }
-    
+
     override func tearDown() async throws {
         manager = nil
         httpClient = nil
@@ -46,14 +45,14 @@ final class SessionManagerTests: XCTestCase {
         sleeper = nil
         try await super.tearDown()
     }
-    
+
     // MARK: - Sign Up Tests
-    
+
     func testSignUpWithEmail_success_returnsUser() async throws {
         // Given
         let email = "test@example.com"
         let password = "password123"
-        
+
         let payload = SessionPayload(
             access_token: "access-token",
             refresh_token: "refresh-token",
@@ -61,18 +60,18 @@ final class SessionManagerTests: XCTestCase {
             token_type: "bearer",
             user: UserPayload(id: "user-123", email: email, user_metadata: nil)
         )
-        
+
         httpClient.mockResponseData = try JSONEncoder().encode(payload)
-        
+
         // When
         let user = try await manager.signUpWithEmail(email: email, password: password)
-        
+
         // Then
         XCTAssertEqual(user.id, "user-123")
         XCTAssertEqual(user.email, email)
         XCTAssertEqual(httpClient.requests.count, 1)
     }
-    
+
     func testSignUpWithEmail_persistsSession() async throws {
         // Given
         let payload = SessionPayload(
@@ -83,22 +82,22 @@ final class SessionManagerTests: XCTestCase {
             user: UserPayload(id: "user-123", email: "test@example.com", user_metadata: nil)
         )
         httpClient.mockResponseData = try JSONEncoder().encode(payload)
-        
+
         // When
         _ = try await manager.signUpWithEmail(email: "test@example.com", password: "password123")
-        
+
         // Then
         // Verify user is authenticated after sign up
         let user = await manager.currentUser()
         XCTAssertNotNil(user)
         XCTAssertEqual(user?.id, "user-123")
     }
-    
+
     func testSignUpWithEmail_failure_throwsError() async {
         // Given
         httpClient.shouldThrow = true
         httpClient.errorToThrow = AuthError.invalidCredentials
-        
+
         // When/Then
         do {
             _ = try await manager.signUpWithEmail(email: "test@example.com", password: "weak")
@@ -107,14 +106,14 @@ final class SessionManagerTests: XCTestCase {
             XCTAssertTrue(error is AuthError)
         }
     }
-    
+
     // MARK: - Sign In with Email Tests
-    
+
     func testSignInWithEmail_success_returnsUser() async throws {
         // Given
         let email = "test@example.com"
         let password = "password123"
-        
+
         let payload = SessionPayload(
             access_token: "access-token",
             refresh_token: "refresh-token",
@@ -122,22 +121,22 @@ final class SessionManagerTests: XCTestCase {
             token_type: "bearer",
             user: UserPayload(id: "user-123", email: email, user_metadata: nil)
         )
-        
+
         httpClient.mockResponseData = try JSONEncoder().encode(payload)
-        
+
         // When
         let user = try await manager.signInWithEmail(email: email, password: password)
-        
+
         // Then
         XCTAssertEqual(user.id, "user-123")
         XCTAssertEqual(user.email, email)
     }
-    
+
     func testSignInWithEmail_invalidCredentials_throwsError() async {
         // Given
         httpClient.shouldThrow = true
         httpClient.errorToThrow = AuthError.invalidCredentials
-        
+
         // When/Then
         do {
             _ = try await manager.signInWithEmail(email: "wrong@example.com", password: "wrong")
@@ -145,16 +144,16 @@ final class SessionManagerTests: XCTestCase {
         } catch let error as AuthError {
             if case .invalidCredentials = error {
                 // Success
-        } else {
+            } else {
                 XCTFail("Wrong error type")
             }
         } catch {
             XCTFail("Unexpected error: \(error)")
         }
     }
-    
+
     // MARK: - Sign In with Apple Tests
-    
+
     func testSignInWithApple_success_returnsUser() async throws {
         // Given
         let payload = SessionPayload(
@@ -164,24 +163,24 @@ final class SessionManagerTests: XCTestCase {
             token_type: "bearer",
             user: UserPayload(id: "apple-user-123", email: "apple@example.com", user_metadata: nil)
         )
-        
+
         apple.mockIDToken = "mock-id-token"
         apple.mockNonce = "mock-nonce"
         httpClient.mockResponseData = try JSONEncoder().encode(payload)
-        
+
         // When
         let user = try await manager.signInWithApple()
-        
+
         // Then
         XCTAssertEqual(user.id, "apple-user-123")
         XCTAssertTrue(apple.requestIDTokenCalled)
     }
-    
+
     func testSignInWithApple_cancelled_throwsError() async {
         // Given
         apple.shouldThrow = true
         apple.errorToThrow = AuthError.cancelled
-        
+
         // When/Then
         do {
             _ = try await manager.signInWithApple()
@@ -196,9 +195,9 @@ final class SessionManagerTests: XCTestCase {
             XCTFail("Unexpected error: \(error)")
         }
     }
-    
+
     // MARK: - Sign Out Tests
-    
+
     func testSignOut_clearsSession() async throws {
         // Given - Sign in first
         let payload = SessionPayload(
@@ -210,25 +209,25 @@ final class SessionManagerTests: XCTestCase {
         )
         httpClient.mockResponseData = try JSONEncoder().encode(payload)
         _ = try await manager.signInWithEmail(email: "test@example.com", password: "password123")
-        
+
         // When
         try await manager.signOut()
-        
+
         // Then
         let user = await manager.currentUser()
         XCTAssertNil(user)
     }
-    
+
     // MARK: - Current User Tests
-    
+
     func testCurrentUser_noSession_returnsNil() async {
         // When
         let user = await manager.currentUser()
-        
+
         // Then
         XCTAssertNil(user)
     }
-    
+
     func testCurrentUser_afterSignIn_returnsUser() async throws {
         // Given
         let payload = SessionPayload(
@@ -239,32 +238,32 @@ final class SessionManagerTests: XCTestCase {
             user: UserPayload(id: "user-123", email: "test@example.com", user_metadata: nil)
         )
         httpClient.mockResponseData = try JSONEncoder().encode(payload)
-        
+
         // When
         _ = try await manager.signInWithEmail(email: "test@example.com", password: "password123")
         let user = await manager.currentUser()
-        
+
         // Then
         XCTAssertNotNil(user)
         XCTAssertEqual(user?.id, "user-123")
     }
-    
+
     // MARK: - Reset Password Tests
-    
+
     func testResetPassword_success() async throws {
         // Given
         httpClient.mockResponseData = Data() // Empty response is fine
-        
+
         // When/Then
         try await manager.resetPassword(email: "test@example.com")
         XCTAssertEqual(httpClient.requests.count, 1)
     }
-    
+
     func testResetPassword_invalidEmail_throwsError() async {
         // Given
         httpClient.shouldThrow = true
         httpClient.errorToThrow = AuthError.invalidCredentials
-        
+
         // When/Then
         do {
             try await manager.resetPassword(email: "invalid-email")
@@ -273,13 +272,13 @@ final class SessionManagerTests: XCTestCase {
             XCTAssertTrue(error is AuthError)
         }
     }
-    
+
     // MARK: - Auth States Tests
-    
+
     func testAuthStates_yieldsUnauthenticatedInitially() async {
         // Given
         let expectation = expectation(description: "auth state")
-        
+
         // When
         let stream = manager.authStates()
         let task = Task {
@@ -291,23 +290,23 @@ final class SessionManagerTests: XCTestCase {
             }
             return receivedState
         }
-        
+
         // Then
         await fulfillment(of: [expectation], timeout: 1.0)
         let receivedState = await task.value
         task.cancel()
-        
+
         if case .unauthenticated = receivedState {
             // Success
         } else {
             XCTFail("Expected unauthenticated state")
         }
     }
-    
+
     func testAuthStates_yieldsAuthenticatedAfterSignIn() async throws {
         // Given
         let expectation = expectation(description: "auth state")
-        
+
         let payload = SessionPayload(
             access_token: "access-token",
             refresh_token: "refresh-token",
@@ -316,7 +315,7 @@ final class SessionManagerTests: XCTestCase {
             user: UserPayload(id: "user-123", email: "test@example.com", user_metadata: nil)
         )
         httpClient.mockResponseData = try JSONEncoder().encode(payload)
-        
+
         // When - Start listening before sign in
         let stream = manager.authStates()
         let task = Task {
@@ -330,28 +329,28 @@ final class SessionManagerTests: XCTestCase {
             }
             return states
         }
-        
+
         // Give stream time to start
         try await Task.sleep(nanoseconds: 50_000_000) // 50ms
-        
+
         _ = try await manager.signInWithEmail(email: "test@example.com", password: "password123")
-        
+
         // Then
         await fulfillment(of: [expectation], timeout: 2.0)
         let states = await task.value
         task.cancel()
-        
+
         XCTAssertGreaterThanOrEqual(states.count, 1)
         // Last state should be authenticated
-        if case .authenticated(let user) = states.last {
+        if case let .authenticated(user) = states.last {
             XCTAssertEqual(user.id, "user-123")
         } else {
             XCTFail("Expected authenticated state")
         }
     }
-    
+
     // MARK: - Token Refresh Tests
-    
+
     func testRefreshIfNeeded_expiredToken_refreshesSession() async throws {
         // Given - Session with expired token
         let expiredPayload = SessionPayload(
@@ -361,7 +360,7 @@ final class SessionManagerTests: XCTestCase {
             token_type: "bearer",
             user: UserPayload(id: "user-123", email: "test@example.com", user_metadata: nil)
         )
-        
+
         let newPayload = SessionPayload(
             access_token: "new-access-token",
             refresh_token: "new-refresh-token",
@@ -369,17 +368,17 @@ final class SessionManagerTests: XCTestCase {
             token_type: "bearer",
             user: UserPayload(id: "user-123", email: "test@example.com", user_metadata: nil)
         )
-        
+
         // Sign in with expired session
         httpClient.mockResponseData = try JSONEncoder().encode(expiredPayload)
         _ = try await manager.signInWithEmail(email: "test@example.com", password: "password123")
-        
+
         // Setup refresh response
         httpClient.mockResponseData = try JSONEncoder().encode(newPayload)
-        
+
         // When
         try await manager.refreshIfNeeded()
-        
+
         // Then
         let user = await manager.currentUser()
         XCTAssertNotNil(user)
@@ -387,4 +386,3 @@ final class SessionManagerTests: XCTestCase {
         XCTAssertGreaterThanOrEqual(httpClient.requests.count, 1)
     }
 }
-

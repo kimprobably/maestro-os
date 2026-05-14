@@ -6,18 +6,18 @@ let package = Package(
     defaultLocalization: "en",
     platforms: [.iOS(.v17)],
     products: [
-        .library(name: "Localization", targets: ["Localization"])
+        .library(name: "Localization", targets: ["Localization"]),
     ],
     targets: [
         .target(
             name: "Localization",
             resources: [
-                .process("Resources")
+                .process("Resources"),
             ]
         ),
         .testTarget(
             name: "LocalizationTests",
             dependencies: ["Localization"]
-        )
+        ),
     ]
 )

@@ -1,58 +1,57 @@
-import SwiftUI
 import Auth
 import Core
 import DesignSystem
+import SwiftUI
 
 /// Email login screen with password reset link
 @available(iOS 17.0, *)
 struct EmailLoginView: View {
-    
     // MARK: - Properties
-    
+
     @State private var viewModel: EmailLoginViewModel
     @FocusState private var focusedField: Field?
-    
+
     private enum Field: Hashable {
         case email, password
     }
-    
+
     // MARK: - Initialization
-    
+
     init(
         authClient: any AuthClient,
         onSuccess: @escaping () -> Void,
         onSwitchToSignUp: @escaping () -> Void,
         onForgotPassword: @escaping () -> Void
     ) {
-        self.viewModel = EmailLoginViewModel(
+        viewModel = EmailLoginViewModel(
             authClient: authClient,
             onSuccess: onSuccess,
             onSwitchToSignUp: onSwitchToSignUp,
             onForgotPassword: onForgotPassword
         )
     }
-    
+
     // MARK: - Body
-    
+
     var body: some View {
         NavigationStack {
             ScrollView {
                 VStack(spacing: DSSpacing.xl) {
                     // Header
                     headerSection
-                    
+
                     // Form
                     formSection
-                    
+
                     // Forgot password link
                     forgotPasswordLink
-                    
+
                     // Login button
                     loginButton
-                    
+
                     // Switch to sign up
                     switchToSignUpSection
-                    
+
                     // Error display
                     if let errorMessage = viewModel.errorMessage {
                         errorSection(errorMessage)
@@ -69,22 +68,22 @@ struct EmailLoginView: View {
             }
         }
     }
-    
+
     // MARK: - Subviews
-    
+
     private var headerSection: some View {
         VStack(spacing: DSSpacing.md) {
             Text("Welcome Back")
                 .font(.title)
                 .fontWeight(.bold)
-            
+
             Text("Sign in to continue")
                 .font(.subheadline)
                 .foregroundStyle(DSColors.textSecondary)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
     }
-    
+
     private var formSection: some View {
         VStack(spacing: DSSpacing.lg) {
             // Email field
@@ -92,7 +91,7 @@ struct EmailLoginView: View {
                 Text("Email")
                     .font(.subheadline)
                     .fontWeight(.medium)
-                
+
                 TextField("your@email.com", text: $viewModel.email)
                     .textFieldStyle(.roundedBorder)
                     .textContentType(.emailAddress)
@@ -103,20 +102,20 @@ struct EmailLoginView: View {
                     .onSubmit {
                         focusedField = .password
                     }
-                
+
                 if let error = viewModel.emailError {
                     Text(error)
                         .font(.caption)
                         .foregroundStyle(.red)
                 }
             }
-            
+
             // Password field
             VStack(alignment: .leading, spacing: DSSpacing.sm) {
                 Text("Password")
                     .font(.subheadline)
                     .fontWeight(.medium)
-                
+
                 HStack {
                     if viewModel.showPassword {
                         TextField("Enter your password", text: $viewModel.password)
@@ -139,7 +138,7 @@ struct EmailLoginView: View {
                                 }
                             }
                     }
-                    
+
                     Button {
                         viewModel.showPassword.toggle()
                     } label: {
@@ -148,7 +147,7 @@ struct EmailLoginView: View {
                     }
                 }
                 .textFieldStyle(.roundedBorder)
-                
+
                 if let error = viewModel.passwordError {
                     Text(error)
                         .font(.caption)
@@ -157,7 +156,7 @@ struct EmailLoginView: View {
             }
         }
     }
-    
+
     private var forgotPasswordLink: some View {
         HStack {
             Spacer()
@@ -168,7 +167,7 @@ struct EmailLoginView: View {
             .foregroundStyle(DSColors.accentPrimary)
         }
     }
-    
+
     private var loginButton: some View {
         SAIButton(
             viewModel.isLoading ? "Signing in..." : "Sign In",
@@ -181,12 +180,12 @@ struct EmailLoginView: View {
         }
         .disabled(!viewModel.isFormValid || viewModel.isLoading)
     }
-    
+
     private var switchToSignUpSection: some View {
         HStack {
             Text("Don't have an account?")
                 .foregroundStyle(DSColors.textSecondary)
-            
+
             Button("Sign Up") {
                 viewModel.switchToSignUp()
             }
@@ -194,12 +193,12 @@ struct EmailLoginView: View {
         }
         .font(.subheadline)
     }
-    
+
     private func errorSection(_ message: String) -> some View {
         HStack(spacing: DSSpacing.md) {
             Image(systemName: "exclamationmark.triangle.fill")
                 .foregroundStyle(.red)
-            
+
             Text(message)
                 .font(.subheadline)
                 .foregroundStyle(.red)
@@ -216,45 +215,47 @@ struct EmailLoginView: View {
 @available(iOS 17.0, *)
 @Observable
 final class EmailLoginViewModel {
-    
     // MARK: - Published State
+
     // Note: Using didSet to clear errors when user edits fields
     // This prevents the validation deadlock where errors disable the button
     // but errors can only be cleared by submitting (which requires the button)
-    
+
     var email = "" {
         didSet { emailError = nil; errorMessage = nil }
     }
+
     var password = "" {
         didSet { passwordError = nil; errorMessage = nil }
     }
+
     var showPassword = false
-    
+
     var isLoading = false
     var errorMessage: String?
-    
+
     // Validation errors
     var emailError: String?
     var passwordError: String?
-    
+
     // MARK: - Computed Properties
-    
+
     var isFormValid: Bool {
         !email.isEmpty &&
-        !password.isEmpty &&
-        emailError == nil &&
-        passwordError == nil
+            !password.isEmpty &&
+            emailError == nil &&
+            passwordError == nil
     }
-    
+
     // MARK: - Dependencies
-    
+
     private let authClient: any AuthClient
     private let onSuccess: () -> Void
     private let onSwitchToSignUp: () -> Void
     private let onForgotPassword: () -> Void
-    
+
     // MARK: - Initialization
-    
+
     init(
         authClient: any AuthClient,
         onSuccess: @escaping () -> Void,
@@ -266,21 +267,21 @@ final class EmailLoginViewModel {
         self.onSwitchToSignUp = onSwitchToSignUp
         self.onForgotPassword = onForgotPassword
     }
-    
+
     // MARK: - Actions
-    
+
     @MainActor
     func signIn() async {
         // Clear previous errors
         emailError = nil
         passwordError = nil
         errorMessage = nil
-        
+
         // Validate
         guard validate() else { return }
-        
+
         isLoading = true
-        
+
         do {
             _ = try await authClient.signInWithEmail(email: email, password: password)
             AppLogger.info("User signed in successfully", category: AppLogger.auth)
@@ -294,23 +295,23 @@ final class EmailLoginViewModel {
             AppLogger.error("Sign in failed: \(error.localizedDescription)", category: AppLogger.auth)
             errorMessage = AppError.from(error).userMessage
         }
-        
+
         isLoading = false
     }
-    
+
     func switchToSignUp() {
         onSwitchToSignUp()
     }
-    
+
     func forgotPassword() {
         onForgotPassword()
     }
-    
+
     // MARK: - Validation
-    
+
     private func validate() -> Bool {
         var isValid = true
-        
+
         // Email validation
         if email.isEmpty {
             emailError = "Email is required"
@@ -319,13 +320,13 @@ final class EmailLoginViewModel {
             emailError = "Invalid email address"
             isValid = false
         }
-        
+
         // Password validation
         if password.isEmpty {
             passwordError = "Password is required"
             isValid = false
         }
-        
+
         return isValid
     }
 }
@@ -339,4 +340,3 @@ private extension String {
         return emailPredicate.evaluate(with: self)
     }
 }
-

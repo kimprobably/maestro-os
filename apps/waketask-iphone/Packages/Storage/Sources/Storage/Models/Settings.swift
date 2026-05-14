@@ -15,7 +15,7 @@ public final class Settings {
     public var hapticsEnabled: Bool = true
     public var createdAt: Date
     public var updatedAt: Date
-    
+
     public init(
         id: UUID = UUID(),
         theme: String = "system",

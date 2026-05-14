@@ -10,10 +10,10 @@ public final class Conversation {
     public var createdAt: Date
     public var updatedAt: Date
     public var personaName: String?
-    
+
     @Relationship(deleteRule: .cascade, inverse: \Message.conversation)
     public var messages: [Message]
-    
+
     public init(
         id: UUID = UUID(),
         title: String,

@@ -5,18 +5,18 @@ import PackageDescription
 let package = Package(
     name: "FeatureChat",
     platforms: [
-        .iOS(.v17)
+        .iOS(.v17),
     ],
     products: [
         .library(
             name: "FeatureChat",
             targets: ["FeatureChat"]
-        )
+        ),
     ],
     dependencies: [
         .package(path: "../Core"),
         .package(path: "../Storage"),
-        .package(path: "../DesignSystem")
+        .package(path: "../DesignSystem"),
     ],
     targets: [
         .target(
@@ -26,6 +26,6 @@ let package = Package(
         .testTarget(
             name: "FeatureChatTests",
             dependencies: ["FeatureChat"]
-        )
+        ),
     ]
 )

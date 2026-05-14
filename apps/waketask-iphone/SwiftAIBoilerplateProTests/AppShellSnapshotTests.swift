@@ -1,10 +1,9 @@
+@testable import SwiftAIBoilerplatePro
 import SwiftUI
 import XCTest
-@testable import SwiftAIBoilerplatePro
 
 @MainActor
 final class AppShellSnapshotTests: XCTestCase {
-
     func testHomeContentCanBeInitialized() {
         let view = HomeContent()
         XCTAssertEqual(String(describing: type(of: view)), "HomeContent")

@@ -1,10 +1,9 @@
-import SwiftUI
 import DesignSystem
+import SwiftUI
 
 /// "Subscription" section showing Pro status or a "Go Pro" button, plus a
 /// secondary Restore Purchases row (primary lives in Profile).
 struct SettingsSubscriptionSection: View {
-
     let viewModel: SettingsViewModel
     let onShowPaywall: () -> Void
 

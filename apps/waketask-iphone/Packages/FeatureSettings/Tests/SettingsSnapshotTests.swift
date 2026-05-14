@@ -1,18 +1,17 @@
-import XCTest
-import SwiftUI
 @testable import FeatureSettings
+import SwiftUI
+import XCTest
 
 @MainActor
 final class SettingsSnapshotTests: XCTestCase {
-    
     func testSettings_light() {
         // Given
         let viewModel = PreviewComposition.settingsVM()
         let view = SettingsView(viewModel: viewModel)
-        
+
         // Then - Should render without errors
         XCTAssertNotNil(view)
-        
+
         // TODO: snapshot infra
         // In a real snapshot test, would capture:
         // - Light mode appearance
@@ -23,15 +22,15 @@ final class SettingsSnapshotTests: XCTestCase {
         // - No error banner
         // - No loading overlay
     }
-    
+
     func testSettings_dark() {
         // Given
         let viewModel = PreviewComposition.settingsVM()
         let view = SettingsView(viewModel: viewModel)
-        
+
         // Then - Should render without errors
         XCTAssertNotNil(view)
-        
+
         // TODO: snapshot infra
         // In a real snapshot test, would capture with dark mode trait collection:
         // - Dark mode appearance
@@ -42,17 +41,17 @@ final class SettingsSnapshotTests: XCTestCase {
         // - No error banner
         // - No loading overlay
     }
-    
+
     func testSettings_authenticatedAndSubscribed() {
         // Given
         let viewModel = PreviewComposition.settingsVM()
         viewModel.isAuthenticated = true
         viewModel.isSubscribed = true
         let view = SettingsView(viewModel: viewModel)
-        
+
         // Then - Should render without errors
         XCTAssertNotNil(view)
-        
+
         // TODO: snapshot infra
         // Would verify:
         // - "Signed In" status with checkmark
@@ -61,17 +60,17 @@ final class SettingsSnapshotTests: XCTestCase {
         // - "Restore Purchases" button still visible
         // - No "Go Pro" button
     }
-    
+
     func testSettings_errorState() {
         // Given
         let viewModel = PreviewComposition.settingsVM()
         viewModel.errorMessage = "Unable to connect to server. Please check your internet connection."
         viewModel.isLoading = false
         let view = SettingsView(viewModel: viewModel)
-        
+
         // Then - Should render without errors
         XCTAssertNotNil(view)
-        
+
         // TODO: snapshot infra
         // Would verify:
         // - Error banner visible at top with red background
@@ -79,16 +78,16 @@ final class SettingsSnapshotTests: XCTestCase {
         // - All other sections still visible
         // - Buttons enabled (not loading)
     }
-    
+
     func testSettings_loadingState() {
         // Given
         let viewModel = PreviewComposition.settingsVM()
         viewModel.isLoading = true
         let view = SettingsView(viewModel: viewModel)
-        
+
         // Then - Should render without errors
         XCTAssertNotNil(view)
-        
+
         // TODO: snapshot infra
         // Would verify:
         // - Semi-transparent loading overlay

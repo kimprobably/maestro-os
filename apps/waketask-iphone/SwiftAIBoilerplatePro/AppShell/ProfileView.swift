@@ -1,11 +1,10 @@
-import SwiftUI
 import DesignSystem
 import FeatureSettings
+import SwiftUI
 
 /// Profile tab — owns navigation, alerts, and sheet presentation.
 /// Visual sections live in `AppShell/Profile/`.
 struct ProfileView: View {
-
     @State private var viewModel: ProfileViewModel
     @State private var settingsViewModel: SettingsViewModel
     @State private var showSettings = false
@@ -87,7 +86,7 @@ struct ProfileView: View {
                 Text(viewModel.successMessage ?? "")
             }
             .alert("Sign Out", isPresented: $viewModel.showSignOutConfirmation) {
-                Button("Cancel", role: .cancel) { }
+                Button("Cancel", role: .cancel) {}
                 Button("Sign Out", role: .destructive) {
                     Task { await viewModel.signOut() }
                 }
@@ -95,7 +94,7 @@ struct ProfileView: View {
                 Text("Are you sure you want to sign out?")
             }
             .alert("Delete Account", isPresented: $viewModel.showDeleteAccountConfirmation) {
-                Button("Cancel", role: .cancel) { }
+                Button("Cancel", role: .cancel) {}
                 Button("Delete", role: .destructive) {
                     Task { await viewModel.deleteAccount() }
                 }
@@ -113,22 +112,22 @@ struct ProfileView: View {
 }
 
 #if DEBUG
-#Preview {
-    if #available(iOS 17.0, *) {
-        let viewModel = ProfileViewModel(
-            authClient: PreviewMocks.MockAuthClient(),
-            paymentsClient: PreviewMocks.MockPaymentsClient()
-        )
+    #Preview {
+        if #available(iOS 17.0, *) {
+            let viewModel = ProfileViewModel(
+                authClient: PreviewMocks.MockAuthClient(),
+                paymentsClient: PreviewMocks.MockPaymentsClient()
+            )
 
-        return ProfileView(
-            viewModel: viewModel,
-            settingsViewModel: PreviewComposition.settingsVM(),
-            onShowPaywall: {
-                print("Show paywall tapped")
-            }
-        )
-    } else {
-        return Text("iOS 17+ required")
+            return ProfileView(
+                viewModel: viewModel,
+                settingsViewModel: PreviewComposition.settingsVM(),
+                onShowPaywall: {
+                    print("Show paywall tapped")
+                }
+            )
+        } else {
+            return Text("iOS 17+ required")
+        }
     }
-}
 #endif

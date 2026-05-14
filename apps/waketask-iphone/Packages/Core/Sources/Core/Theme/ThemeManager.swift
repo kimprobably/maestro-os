@@ -1,5 +1,5 @@
-import SwiftUI
 import Combine
+import SwiftUI
 
 /// Manages app-wide theme selection and applies interface style overrides
 ///
@@ -11,58 +11,59 @@ import Combine
 @MainActor
 @Observable
 public final class ThemeManager {
-    
     // MARK: - Singleton
-    
+
     public static let shared = ThemeManager()
-    
+
     // MARK: - Theme Definition
-    
+
     public enum Theme: String, CaseIterable, Identifiable {
         case system
         case light
         case dark
         case aurora
         case obsidian
-        
-        public var id: String { rawValue }
-        
+
+        public var id: String {
+            rawValue
+        }
+
         public var displayName: String {
             switch self {
-            case .system: return "System"
-            case .light: return "Light"
-            case .dark: return "Dark"
-            case .aurora: return "Aurora"
-            case .obsidian: return "Obsidian"
+            case .system: "System"
+            case .light: "Light"
+            case .dark: "Dark"
+            case .aurora: "Aurora"
+            case .obsidian: "Obsidian"
             }
         }
-        
+
         public var description: String {
             switch self {
-            case .system: return "Follows system"
-            case .light: return "Always light"
-            case .dark: return "Always dark"
-            case .aurora: return "Premium light"
-            case .obsidian: return "Premium dark"
+            case .system: "Follows system"
+            case .light: "Always light"
+            case .dark: "Always dark"
+            case .aurora: "Premium light"
+            case .obsidian: "Premium dark"
             }
         }
-        
+
         public var isPremium: Bool {
             self == .aurora || self == .obsidian
         }
-        
+
         /// Base interface style for this theme
         public var baseInterfaceStyle: UIUserInterfaceStyle {
             switch self {
-            case .system: return .unspecified
-            case .light, .aurora: return .light
-            case .dark, .obsidian: return .dark
+            case .system: .unspecified
+            case .light, .aurora: .light
+            case .dark, .obsidian: .dark
             }
         }
     }
-    
+
     // MARK: - State
-    
+
     /// Currently selected theme
     public var selected: Theme {
         didSet {
@@ -72,24 +73,25 @@ public final class ThemeManager {
             }
         }
     }
-    
+
     /// Current effective color scheme (light or dark)
     public private(set) var effectiveColorScheme: ColorScheme = .light
-    
+
     // MARK: - Initialization
-    
+
     private init() {
         // Load persisted theme
         if let stored = UserDefaults.standard.string(forKey: "selectedTheme"),
-           let theme = Theme(rawValue: stored) {
-            self.selected = theme
+           let theme = Theme(rawValue: stored)
+        {
+            selected = theme
         } else {
-            self.selected = .system
+            selected = .system
         }
-        
+
         // Apply immediately
         applyTheme()
-        
+
         // Observe system appearance changes
         NotificationCenter.default.addObserver(
             forName: UIApplication.didBecomeActiveNotification,
@@ -101,29 +103,30 @@ public final class ThemeManager {
             }
         }
     }
-    
+
     // MARK: - Theme Application
-    
+
     /// Apply the current theme to all windows
     public func applyTheme() {
         guard let windowScene = UIApplication.shared.connectedScenes
-            .first(where: { $0.activationState == .foregroundActive }) as? UIWindowScene else {
+            .first(where: { $0.activationState == .foregroundActive }) as? UIWindowScene
+        else {
             return
         }
-        
+
         let interfaceStyle = selected.baseInterfaceStyle
-        
+
         // Apply to all windows with smooth animation
         UIView.animate(withDuration: 0.2, delay: 0, options: .curveEaseInOut) {
-            windowScene.windows.forEach { window in
+            for window in windowScene.windows {
                 window.overrideUserInterfaceStyle = interfaceStyle
             }
         }
-        
+
         updateEffectiveColorScheme()
         notifyColorSystemOfThemeChange()
     }
-    
+
     /// Notify the color system of theme changes
     /// This updates DSColors.activeTheme to match the selected theme
     private func notifyColorSystemOfThemeChange() {
@@ -135,11 +138,11 @@ public final class ThemeManager {
             userInfo: ["theme": selected.rawValue, "colorScheme": effectiveColorScheme]
         )
     }
-    
+
     /// Update effective color scheme based on current theme and system
     private func updateEffectiveColorScheme() {
         let systemScheme = UITraitCollection.current.userInterfaceStyle
-        
+
         switch selected {
         case .system:
             effectiveColorScheme = systemScheme == .dark ? .dark : .light
@@ -149,7 +152,7 @@ public final class ThemeManager {
             effectiveColorScheme = .dark
         }
     }
-    
+
     /// Persist selected theme
     private func persistTheme() {
         UserDefaults.standard.set(selected.rawValue, forKey: "selectedTheme")
@@ -159,11 +162,8 @@ public final class ThemeManager {
 // MARK: - Environment Key
 
 public extension EnvironmentValues {
-    @Entry var themeManager: ThemeManager = {
-        // Access shared instance directly - will be called on MainActor in SwiftUI context
+    @Entry var themeManager: ThemeManager = // Access shared instance directly - will be called on MainActor in SwiftUI context
         MainActor.assumeIsolated {
             ThemeManager.shared
         }
-    }()
 }
-

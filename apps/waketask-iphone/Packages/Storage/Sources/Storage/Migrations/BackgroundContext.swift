@@ -1,11 +1,10 @@
+import Core
 import Foundation
 import SwiftData
-import Core
 
 /// Utilities for background context operations
 @available(iOS 17.0, macOS 14.0, *)
 public enum BackgroundContext {
-    
     /// Perform work in a background context
     /// - Parameters:
     ///   - container: The model container
@@ -15,18 +14,18 @@ public enum BackgroundContext {
         in container: ModelContainer,
         _ work: @escaping @Sendable (ModelContext) throws -> T
     ) async throws -> T {
-        return try await Task.detached {
+        try await Task.detached {
             let context = ModelContext(container)
             let result = try work(context)
-            
+
             if context.hasChanges {
                 try context.save()
             }
-            
+
             return result
         }.value
     }
-    
+
     /// Perform work in a background context with actor isolation
     /// - Parameters:
     ///   - container: The model container
@@ -36,14 +35,14 @@ public enum BackgroundContext {
         in container: ModelContainer,
         _ work: @escaping @Sendable (ModelContext) async throws -> T
     ) async throws -> T {
-        return try await Task.detached {
+        try await Task.detached {
             let context = ModelContext(container)
             let result = try await work(context)
-            
+
             if context.hasChanges {
                 try context.save()
             }
-            
+
             return result
         }.value
     }

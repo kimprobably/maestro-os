@@ -1,10 +1,9 @@
-import Testing
-import SwiftUI
 @testable import DesignSystem
+import SwiftUI
+import Testing
 
 /// Tests for Design System token invariants
 struct TokenTests {
-
     // MARK: - Spacing Tests
 
     @Test("Spacing tokens are positive and ordered")
@@ -125,24 +124,24 @@ struct TokenTests {
     @Test("Core colors are accessible")
     func coreColorsAreAccessible() {
         // Smoke test: verify colors can be accessed without crashing
-        let _ = DSColors.accentPrimary
-        let _ = DSColors.accentSecondary
-        let _ = DSColors.surface
-        let _ = DSColors.surfaceElevated
-        let _ = DSColors.surfaceTinted
-        let _ = DSColors.borderHairline
-        let _ = DSColors.textPrimary
-        let _ = DSColors.textSecondary
+        _ = DSColors.accentPrimary
+        _ = DSColors.accentSecondary
+        _ = DSColors.surface
+        _ = DSColors.surfaceElevated
+        _ = DSColors.surfaceTinted
+        _ = DSColors.borderHairline
+        _ = DSColors.textPrimary
+        _ = DSColors.textSecondary
     }
 
     @Test("Semantic colors are accessible")
     func semanticColorsAreAccessible() {
-        let _ = DSColors.danger
-        let _ = DSColors.success
-        let _ = DSColors.warning
-        let _ = DSColors.chipBackground
-        let _ = DSColors.chipSelectedBackground
-        let _ = DSColors.toastAccent
+        _ = DSColors.danger
+        _ = DSColors.success
+        _ = DSColors.warning
+        _ = DSColors.chipBackground
+        _ = DSColors.chipSelectedBackground
+        _ = DSColors.toastAccent
     }
 
     @Test("Legacy color compatibility is maintained")
@@ -174,7 +173,6 @@ struct TokenTests {
 // MARK: - Component Invariant Tests
 
 struct ComponentTests {
-
     @Test("SAIButton sizes are valid")
     func buttonSizesAreValid() {
         #expect(SAIButton.Size.sm.height > 0)
@@ -223,20 +221,19 @@ struct ComponentTests {
 // MARK: - Motion Tests
 
 struct MotionTests {
-
     @Test("Motion timings are positive")
     func motionTimingsArePositive() {
         // We can't directly test Animation values, but we can verify they exist
-        let _ = SAIMotion.quick
-        let _ = SAIMotion.standard
-        let _ = SAIMotion.smooth
-        let _ = SAIMotion.spring
-        let _ = SAIMotion.gentleSpring
+        _ = SAIMotion.quick
+        _ = SAIMotion.standard
+        _ = SAIMotion.smooth
+        _ = SAIMotion.spring
+        _ = SAIMotion.gentleSpring
     }
 
     @Test("Adaptive animations exist")
     func adaptiveAnimationsExist() {
-        let _ = SAIMotion.adaptiveStandard
-        let _ = SAIMotion.adaptiveSpring
+        _ = SAIMotion.adaptiveStandard
+        _ = SAIMotion.adaptiveSpring
     }
 }

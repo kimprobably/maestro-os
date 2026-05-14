@@ -15,7 +15,6 @@ import SwiftUI
 /// )
 /// ```
 public struct SAIInputBar: View {
-
     @Binding private var text: String
     private let isSending: Bool
     private let placeholder: String
@@ -37,11 +36,11 @@ public struct SAIInputBar: View {
         focusState: FocusState<Bool>.Binding? = nil,
         onSend: @escaping () -> Void
     ) {
-        self._text = text
+        _text = text
         self.isSending = isSending
         self.placeholder = placeholder
         self.showTokenCount = showTokenCount
-        self.externalFocus = focusState
+        externalFocus = focusState
         self.onSend = onSend
     }
 

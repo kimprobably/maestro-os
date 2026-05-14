@@ -1,8 +1,7 @@
 import SwiftUI
 
 /// WakeTask brand configuration used across the app shell.
-public struct BrandConfig {
-
+public enum BrandConfig {
     /// App display name shown in first-party UI surfaces.
     public static let appDisplayName = "WakeTask"
 

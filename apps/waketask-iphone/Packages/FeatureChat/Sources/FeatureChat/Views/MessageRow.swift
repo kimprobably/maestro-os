@@ -1,9 +1,8 @@
-import SwiftUI
 import DesignSystem
+import SwiftUI
 
 /// Single message row component
 public struct MessageRow: View {
-
     let message: ChatMessage
 
     public init(message: ChatMessage) {

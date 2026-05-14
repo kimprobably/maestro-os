@@ -1,5 +1,5 @@
-import SwiftUI
 import Core
+import SwiftUI
 
 /// ViewModifier that manages the rating prompt presentation lifecycle.
 ///
@@ -20,10 +20,9 @@ import Core
 /// pre-prompt popup when all conditions are met. The popup uses a
 /// `fullScreenCover`-style overlay to ensure it appears above all content.
 struct RatingPromptModifier: ViewModifier {
-    
     let client: any RatingClient
     @State private var showPrompt = false
-    
+
     func body(content: Content) -> some View {
         content
             .overlay {

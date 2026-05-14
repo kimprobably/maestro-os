@@ -6,17 +6,17 @@ import PackageDescription
 let package = Package(
     name: "Storage",
     platforms: [
-        .iOS(.v17)
+        .iOS(.v17),
     ],
     products: [
         .library(
             name: "Storage",
             targets: ["Storage"]
-        )
+        ),
     ],
     dependencies: [
         .package(path: "../Core"),
-        .package(path: "../Networking")
+        .package(path: "../Networking"),
     ],
     targets: [
         .target(
@@ -26,6 +26,6 @@ let package = Package(
         .testTarget(
             name: "StorageTests",
             dependencies: ["Storage"]
-        )
+        ),
     ]
 )

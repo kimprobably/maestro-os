@@ -1,11 +1,10 @@
-import XCTest
 @testable import AI
 import Networking
+import XCTest
 
 /// Covers SSE parsing — happy-path chunks, plain-text fallback, spaced
 /// `data:` prefix handling, and blank-line tolerance.
 final class ProxyLLMClientStreamTests: ProxyLLMClientTestCase {
-
     func testStreamResponse_successfulResponse_yieldsChunks() async throws {
         let messages = [LLMMessage(role: "user", content: "Hello")]
         let sseResponse = """

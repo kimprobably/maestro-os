@@ -1,11 +1,10 @@
-import SwiftUI
 import DesignSystem
 import Payments
+import SwiftUI
 
 /// "Subscription" section showing active plan + App Store Guideline 3.1.1
 /// compliant Restore Purchases row.
 struct ProfileSubscriptionSection: View {
-
     let subscription: ProfileViewModel.SubscriptionInfo
     let viewModel: ProfileViewModel
     let onShowPaywall: () -> Void

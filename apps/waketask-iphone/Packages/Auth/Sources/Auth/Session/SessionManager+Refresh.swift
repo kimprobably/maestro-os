@@ -1,9 +1,8 @@
-import Foundation
 import Core
+import Foundation
 
 @available(iOS 17.0, *)
 extension SessionManager {
-
     // MARK: - Proactive refresh
 
     public func refreshIfNeeded() async throws {
@@ -27,7 +26,7 @@ extension SessionManager {
         emit(.refreshing)
 
         var lastError: Error?
-        for attempt in 1...3 {
+        for attempt in 1 ... 3 {
             do {
                 let newSession = try await api.refresh(refreshToken: session.refreshToken)
 
@@ -78,7 +77,7 @@ extension SessionManager {
         emit(.refreshing)
 
         var lastError: Error?
-        for attempt in 1...3 {
+        for attempt in 1 ... 3 {
             do {
                 AppLogger.debug("Session refresh attempt \(attempt)/3", category: AppLogger.auth)
                 let newSession = try await api.refresh(refreshToken: expiredSession.refreshToken)

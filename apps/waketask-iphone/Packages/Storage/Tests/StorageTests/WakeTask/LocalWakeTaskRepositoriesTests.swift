@@ -1,6 +1,6 @@
-import XCTest
-@testable import Storage
 import Core
+@testable import Storage
+import XCTest
 
 final class LocalWakeTaskRepositoriesTests: XCTestCase {
     private var tempURL: URL!

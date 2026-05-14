@@ -4,16 +4,16 @@ import Foundation
 public struct HTTPResponse: Sendable {
     /// HTTP status code
     public let statusCode: Int
-    
+
     /// Response headers
     public let headers: [String: String]
-    
+
     /// Response body data
     public let data: Data
-    
+
     /// Request ID extracted from response headers (X-Request-ID, case-insensitive)
     public let requestID: String?
-    
+
     /// Creates a new HTTP response
     /// - Parameters:
     ///   - statusCode: HTTP status code
@@ -29,70 +29,71 @@ public struct HTTPResponse: Sendable {
         self.statusCode = statusCode
         self.headers = headers
         self.data = data
-        
+
         // Extract request ID from headers if not explicitly provided
-        if let requestID = requestID {
+        if let requestID {
             self.requestID = requestID
         } else {
             self.requestID = Self.extractRequestID(from: headers)
         }
     }
-    
+
     /// Convenience initializer from URLSession response
     /// - Parameters:
     ///   - data: Response data
     ///   - response: URLResponse from URLSession
     public init(data: Data, response: URLResponse) {
         if let httpResponse = response as? HTTPURLResponse {
-            self.statusCode = httpResponse.statusCode
-            
+            statusCode = httpResponse.statusCode
+
             // Convert HTTPURLResponse.allHeaderFields to [String: String]
             var stringHeaders: [String: String] = [:]
             for (key, value) in httpResponse.allHeaderFields {
                 if let keyString = key as? String,
-                   let valueString = value as? String {
+                   let valueString = value as? String
+                {
                     stringHeaders[keyString] = valueString
                 }
             }
-            self.headers = stringHeaders
-            
+            headers = stringHeaders
+
             self.data = data
-            self.requestID = Self.extractRequestID(from: stringHeaders)
+            requestID = Self.extractRequestID(from: stringHeaders)
         } else {
             // Fallback for non-HTTP responses
-            self.statusCode = 0
-            self.headers = [:]
+            statusCode = 0
+            headers = [:]
             self.data = data
-            self.requestID = nil
+            requestID = nil
         }
     }
-    
+
     /// Extracts request ID from headers (case-insensitive lookup)
     /// - Parameter headers: Response headers
     /// - Returns: Request ID if found
     private static func extractRequestID(from headers: [String: String]) -> String? {
         // Common request ID header names (case-insensitive)
         let requestIDKeys = ["x-request-id", "x-requestid", "request-id"]
-        
+
         for (key, value) in headers where requestIDKeys.contains(key.lowercased()) {
             return value
         }
-        
+
         return nil
     }
-    
+
     /// Returns true if the response indicates success (status code 200-299)
     public var isSuccess: Bool {
-        return (200..<300).contains(statusCode)
+        (200 ..< 300).contains(statusCode)
     }
-    
+
     /// Returns true if the response indicates a client error (status code 400-499)
     public var isClientError: Bool {
-        return (400..<500).contains(statusCode)
+        (400 ..< 500).contains(statusCode)
     }
-    
+
     /// Returns true if the response indicates a server error (status code 500-599)
     public var isServerError: Bool {
-        return (500..<600).contains(statusCode)
+        (500 ..< 600).contains(statusCode)
     }
 }

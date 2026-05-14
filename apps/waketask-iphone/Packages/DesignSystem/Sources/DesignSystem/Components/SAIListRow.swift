@@ -17,12 +17,11 @@ import SwiftUI
 /// }
 /// ```
 public struct SAIListRow<Trailing: View>: View {
-    
     private let title: String
     private let subtitle: String?
     private let leading: Image?
     private let trailing: Trailing
-    
+
     public init(
         title: String,
         subtitle: String? = nil,
@@ -34,30 +33,30 @@ public struct SAIListRow<Trailing: View>: View {
         self.leading = leading
         self.trailing = trailing()
     }
-    
+
     public var body: some View {
         HStack(spacing: DSSpacing.md) {
-            if let leading = leading {
+            if let leading {
                 leading
                     .font(.system(size: 24))
                     .foregroundStyle(DSColors.accentPrimary)
                     .frame(width: 28, height: 28)
             }
-            
+
             VStack(alignment: .leading, spacing: DSSpacing.xs) {
                 Text(title)
                     .font(DSTypography.body)
                     .foregroundStyle(DSColors.textPrimary)
-                
-                if let subtitle = subtitle {
+
+                if let subtitle {
                     Text(subtitle)
                         .font(DSTypography.caption)
                         .foregroundStyle(DSColors.textSecondary)
                 }
             }
-            
+
             Spacer()
-            
+
             trailing
         }
         .padding(.vertical, DSSpacing.md)
@@ -91,17 +90,17 @@ public extension SAIListRow {
 #Preview("List Rows") {
     VStack(spacing: 0) {
         SAIListRow(title: "Simple Row")
-        
+
         SAIListRow(
             title: "Row with Subtitle",
             subtitle: "Additional information"
         )
-        
+
         SAIListRow(
             title: "Row with Icon",
             leading: Image(systemName: "star.fill")
         )
-        
+
         SAIListRow(
             title: "Complete Row",
             subtitle: "All features enabled",
@@ -111,7 +110,7 @@ public extension SAIListRow {
                 .font(.system(size: 14, weight: .semibold))
                 .foregroundStyle(DSColors.textSecondary)
         }
-        
+
         SAIListRow(
             title: "With Badge",
             subtitle: "Pro feature",
@@ -135,7 +134,7 @@ public extension SAIListRow {
         .onTap {
             print("Account tapped")
         }
-        
+
         SAIListRow(
             title: "Notifications",
             leading: Image(systemName: "bell")
@@ -149,4 +148,3 @@ public extension SAIListRow {
     }
     .background(DSColors.surface)
 }
-

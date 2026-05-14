@@ -47,7 +47,7 @@ struct UserPayload: Codable {
     let id: String
     let email: String?
     let user_metadata: UserMetadata?
-    
+
     struct UserMetadata: Codable {
         let full_name: String?
         let avatar_url: String?

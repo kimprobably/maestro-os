@@ -1,6 +1,6 @@
-import SwiftUI
-import DesignSystem
 import Core
+import DesignSystem
+import SwiftUI
 
 // MARK: - Onboarding Style
 
@@ -15,15 +15,14 @@ enum OnboardingStyle {
 /// Onboarding container with page navigation
 /// Shows a series of onboarding pages with dots indicator and navigation buttons
 struct OnboardingContainerView: View {
-    
     // MARK: - Properties
-    
+
     let pages: [OnboardingPage]
     let style: OnboardingStyle
     let onComplete: () -> Void
-    
+
     @State private var currentPage = 0
-    
+
     init(
         pages: [OnboardingPage] = OnboardingPage.defaultPages,
         style: OnboardingStyle = .swipeOnly,
@@ -33,15 +32,15 @@ struct OnboardingContainerView: View {
         self.style = style
         self.onComplete = onComplete
     }
-    
+
     // MARK: - Body
-    
+
     var body: some View {
         ZStack {
             // Background
             DSColors.background
                 .ignoresSafeArea()
-            
+
             VStack(spacing: 0) {
                 // Skip button
                 HStack {
@@ -58,7 +57,7 @@ struct OnboardingContainerView: View {
                 }
                 .opacity(isLastPage ? 0 : 1)
                 .accessibilityHidden(isLastPage)
-                
+
                 // Pages
                 TabView(selection: $currentPage) {
                     ForEach(Array(pages.enumerated()), id: \.element.id) { index, page in
@@ -73,12 +72,12 @@ struct OnboardingContainerView: View {
                     let impact = UIImpactFeedbackGenerator(style: .light)
                     impact.impactOccurred()
                 }
-                
+
                 // Bottom area: Dots + CTA
                 VStack(spacing: DSSpacing.lg) {
                     // Custom page indicator dots with gradient
                     HStack(spacing: DSSpacing.sm) {
-                        ForEach(0..<pages.count, id: \.self) { index in
+                        ForEach(0 ..< pages.count, id: \.self) { index in
                             Capsule()
                                 .fill(index == currentPage ? DSGradient.primaryLinear : LinearGradient(colors: [DSColors.textSecondary.opacity(0.3)], startPoint: .leading, endPoint: .trailing))
                                 .frame(width: index == currentPage ? 24 : 8, height: 8)
@@ -94,7 +93,7 @@ struct OnboardingContainerView: View {
                     }
                     .accessibilityElement(children: .combine)
                     .accessibilityLabel("Page \(currentPage + 1) of \(pages.count)")
-                    
+
                     // Navigation: swipeOnly or buttons style
                     Group {
                         if style == .swipeOnly {
@@ -122,9 +121,9 @@ struct OnboardingContainerView: View {
             }
         }
     }
-    
+
     // MARK: - Subviews
-    
+
     /// Traditional button navigation (used when style == .buttons)
     @ViewBuilder
     private var navigationButtons: some View {
@@ -152,7 +151,7 @@ struct OnboardingContainerView: View {
                         currentPage -= 1
                     }
                 }
-                
+
                 SAIButton(
                     isLastPage ? "Get Started" : "Next",
                     style: .primary,
@@ -170,18 +169,18 @@ struct OnboardingContainerView: View {
             }
         }
     }
-    
+
     // MARK: - Helpers
-    
+
     private var isLastPage: Bool {
         currentPage == pages.count - 1
     }
-    
+
     private func completeOnboarding() {
         // Success haptic feedback
         let notification = UINotificationFeedbackGenerator()
         notification.notificationOccurred(.success)
-        
+
         AppLogger.info("Onboarding completed", category: AppLogger.ui)
         onComplete()
     }
@@ -190,37 +189,36 @@ struct OnboardingContainerView: View {
 // MARK: - Preview
 
 #if DEBUG
-#Preview("Swipe-Only (Default)") {
-    OnboardingContainerView {
-        print("Onboarding completed!")
+    #Preview("Swipe-Only (Default)") {
+        OnboardingContainerView {
+            print("Onboarding completed!")
+        }
     }
-}
 
-#Preview("Button Navigation") {
-    OnboardingContainerView(style: .buttons) {
-        print("Onboarding with buttons completed!")
+    #Preview("Button Navigation") {
+        OnboardingContainerView(style: .buttons) {
+            print("Onboarding with buttons completed!")
+        }
     }
-}
 
-#Preview("Custom Pages") {
-    let customPages = [
-        OnboardingPage(
-            title: "Welcome",
-            description: "This is a custom onboarding flow",
-            systemImage: "hand.wave",
-            accentColor: "blue"
-        ),
-        OnboardingPage(
-            title: "Custom Feature",
-            description: "Showcase your unique features here",
-            systemImage: "star",
-            accentColor: "yellow"
-        )
-    ]
-    
-    return OnboardingContainerView(pages: customPages) {
-        print("Custom onboarding completed!")
+    #Preview("Custom Pages") {
+        let customPages = [
+            OnboardingPage(
+                title: "Welcome",
+                description: "This is a custom onboarding flow",
+                systemImage: "hand.wave",
+                accentColor: "blue"
+            ),
+            OnboardingPage(
+                title: "Custom Feature",
+                description: "Showcase your unique features here",
+                systemImage: "star",
+                accentColor: "yellow"
+            ),
+        ]
+
+        return OnboardingContainerView(pages: customPages) {
+            print("Custom onboarding completed!")
+        }
     }
-}
 #endif
-

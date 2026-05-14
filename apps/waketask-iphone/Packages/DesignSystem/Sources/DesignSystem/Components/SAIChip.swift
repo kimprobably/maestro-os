@@ -15,15 +15,14 @@ import SwiftUI
 /// )
 /// ```
 public struct SAIChip: View {
-    
     private let title: String
     private let isSelected: Bool
     private let isLoading: Bool
     private let icon: Image?
     private let action: () -> Void
-    
+
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
-    
+
     public init(
         title: String,
         isSelected: Bool = false,
@@ -37,7 +36,7 @@ public struct SAIChip: View {
         self.icon = icon
         self.action = action
     }
-    
+
     public var body: some View {
         Button(action: handleTap) {
             HStack(spacing: DSSpacing.xs) {
@@ -45,11 +44,11 @@ public struct SAIChip: View {
                     ProgressView()
                         .scaleEffect(0.7)
                         .frame(width: 14, height: 14)
-                } else if let icon = icon {
+                } else if let icon {
                     icon
                         .font(.system(size: 13, weight: .medium))
                 }
-                
+
                 Text(title)
                     .font(.system(size: 14, weight: .medium))
             }
@@ -63,26 +62,26 @@ public struct SAIChip: View {
         }
         .buttonStyle(ChipButtonStyle())
     }
-    
+
     private func handleTap() {
         guard !isLoading else { return }
         Haptics.tap()
         action()
     }
-    
+
     // MARK: - Style Helpers
-    
+
     private var foregroundColor: Color {
         isSelected ? DSColors.accentPrimary : DSColors.textPrimary
     }
-    
+
     private var backgroundColor: Color {
         isSelected ? DSColors.chipSelectedBackground : DSColors.chipBackground
     }
-    
+
     @ViewBuilder
     private var selectedOverlay: some View {
-        if isSelected && !reduceMotion {
+        if isSelected, !reduceMotion {
             RoundedRectangle(cornerRadius: DSRadius.sm)
                 .strokeBorder(DSColors.accentPrimary.opacity(0.5), lineWidth: 1)
                 .shadow(color: DSColors.accentPrimary.opacity(0.3), radius: 4, x: 0, y: 0)
@@ -94,14 +93,14 @@ public struct SAIChip: View {
 
 private struct ChipButtonStyle: ButtonStyle {
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
-    
+
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .scaleEffect(scale(for: configuration))
             .opacity(configuration.isPressed ? 0.85 : 1.0)
             .animation(SAIMotion.quick, value: configuration.isPressed)
     }
-    
+
     private func scale(for configuration: Configuration) -> CGFloat {
         guard !reduceMotion else { return 1.0 }
         return configuration.isPressed ? 0.95 : 1.0
@@ -117,7 +116,7 @@ private struct ChipButtonStyle: ButtonStyle {
             SAIChip(title: "Selected", isSelected: true) {}
             SAIChip(title: "Loading", isLoading: true) {}
         }
-        
+
         HStack(spacing: DSSpacing.sm) {
             SAIChip(title: "GPT-4", icon: Image(systemName: "sparkles")) {}
             SAIChip(title: "Claude", isSelected: true, icon: Image(systemName: "brain")) {}
@@ -141,7 +140,7 @@ private struct ChipButtonStyle: ButtonStyle {
 
 #Preview("Model Selector") {
     @Previewable @State var selectedModel = "GPT-4"
-    
+
     return HStack(spacing: DSSpacing.sm) {
         SAIChip(
             title: "GPT-4",
@@ -150,7 +149,7 @@ private struct ChipButtonStyle: ButtonStyle {
         ) {
             selectedModel = "GPT-4"
         }
-        
+
         SAIChip(
             title: "Claude",
             isSelected: selectedModel == "Claude",
@@ -158,7 +157,7 @@ private struct ChipButtonStyle: ButtonStyle {
         ) {
             selectedModel = "Claude"
         }
-        
+
         SAIChip(
             title: "Gemini",
             isSelected: selectedModel == "Gemini",
@@ -170,4 +169,3 @@ private struct ChipButtonStyle: ButtonStyle {
     .padding(DSSpacing.xl)
     .background(DSColors.background)
 }
-

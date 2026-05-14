@@ -1,7 +1,7 @@
-import Foundation
-import Core
-import Networking
 import AI
+import Core
+import Foundation
+import Networking
 
 /// Creates an LLM client based on `AppConfiguration` (generated from
 /// `Config/Secrets.xcconfig`). Returns `ProxyLLMClient` when a valid
@@ -11,7 +11,8 @@ import AI
 func createLLMClient(httpClient: any HTTPClient) -> any LLMClient {
     guard let baseURL = URL(string: AppConfiguration.PROXY_BASE_URL),
           !AppConfiguration.PROXY_BASE_URL.contains("YOUR"),
-          !AppConfiguration.PROXY_BASE_URL.contains("placeholder") else {
+          !AppConfiguration.PROXY_BASE_URL.contains("placeholder")
+    else {
         AppLogger.info("LLM provider: EchoLLMClient (PROXY_BASE_URL not configured)", category: AppLogger.ai)
         return EchoLLMClient()
     }
@@ -48,8 +49,7 @@ private func parseHeadersJSON(_ jsonString: String) -> [String: String] {
     }
 
     do {
-        let headers = try JSONSerialization.jsonObject(with: data) as? [String: String] ?? [:]
-        return headers
+        return try JSONSerialization.jsonObject(with: data) as? [String: String] ?? [:]
     } catch {
         AppLogger.error("Failed to parse headers JSON: \(error.localizedDescription)", category: AppLogger.ai)
         return [:]

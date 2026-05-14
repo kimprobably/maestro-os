@@ -1,12 +1,12 @@
-import Foundation
 import Auth
 import Core
+import Foundation
 
 @available(iOS 17.0, *)
 @Observable
 final class EmailSignUpViewModel {
-
     // MARK: - Form state
+
     //
     // `didSet` clears errors eagerly so the Sign Up button does not stay
     // disabled on a stale validation error the user has already corrected.
@@ -14,12 +14,15 @@ final class EmailSignUpViewModel {
     var email = "" {
         didSet { emailError = nil; errorMessage = nil }
     }
+
     var password = "" {
         didSet { passwordError = nil; confirmPasswordError = nil; errorMessage = nil }
     }
+
     var confirmPassword = "" {
         didSet { confirmPasswordError = nil; errorMessage = nil }
     }
+
     var acceptedTerms = false {
         didSet { termsError = nil; errorMessage = nil }
     }
@@ -42,12 +45,12 @@ final class EmailSignUpViewModel {
 
     var isFormValid: Bool {
         !email.isEmpty &&
-        !password.isEmpty &&
-        !confirmPassword.isEmpty &&
-        acceptedTerms &&
-        emailError == nil &&
-        passwordError == nil &&
-        confirmPasswordError == nil
+            !password.isEmpty &&
+            !confirmPassword.isEmpty &&
+            acceptedTerms &&
+            emailError == nil &&
+            passwordError == nil &&
+            confirmPasswordError == nil
     }
 
     // MARK: - Dependencies

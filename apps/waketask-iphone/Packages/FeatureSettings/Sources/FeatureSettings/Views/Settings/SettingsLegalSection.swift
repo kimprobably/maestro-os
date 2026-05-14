@@ -2,7 +2,6 @@ import SwiftUI
 
 /// "Legal" section: Privacy Policy / Terms of Service / Subscription Terms links.
 struct SettingsLegalSection: View {
-
     let onShowPrivacy: () -> Void
     let onShowTerms: () -> Void
     let onShowSubscriptionTerms: () -> Void

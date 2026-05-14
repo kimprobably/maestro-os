@@ -1,15 +1,14 @@
-import SwiftUI
-import DesignSystem
 import Core
+import DesignSystem
+import SwiftUI
 
 /// Main chat interface view
 /// Implements WhatsApp-style chat with auto-scroll and keyboard handling
 public struct ChatView: View {
-
     @State private var viewModel: ChatViewModel
     @FocusState private var isInputFocused: Bool
     @Namespace private var bottomID
-    public var onRequireSubscription: (() -> Void)? = nil
+    public var onRequireSubscription: (() -> Void)?
 
     public init(viewModel: ChatViewModel, onRequireSubscription: (() -> Void)? = nil) {
         self.viewModel = viewModel
@@ -28,7 +27,7 @@ public struct ChatView: View {
                 await viewModel.appear()
             }
             .onChange(of: DeepLinkBus.shared.latest) { _, deepLink in
-                if let deepLink = deepLink {
+                if let deepLink {
                     viewModel.handleDeepLink(deepLink)
                     DeepLinkBus.shared.clear()
                 }

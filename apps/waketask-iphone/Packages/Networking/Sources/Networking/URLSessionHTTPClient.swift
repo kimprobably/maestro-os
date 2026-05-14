@@ -1,5 +1,5 @@
-import Foundation
 import Core
+import Foundation
 
 /// URLSession-based implementation of HTTPClient
 ///
@@ -36,7 +36,7 @@ public final class URLSessionHTTPClient: HTTPClient, @unchecked Sendable {
         self.defaultHeaders = defaultHeaders
         self.interceptors = interceptors
         self.retryPolicy = retryPolicy
-        self.sleeper = DefaultSleeper()
+        sleeper = DefaultSleeper()
         self.urlCache = urlCache ?? .shared
     }
 
@@ -49,7 +49,7 @@ public final class URLSessionHTTPClient: HTTPClient, @unchecked Sendable {
     ///   - retryPolicy: Retry policy for backoff calculation
     ///   - sleeper: Sleep implementation for retry delays
     ///   - urlCache: URL cache to use
-    internal init(
+    init(
         baseURL: URL,
         session: URLSession,
         defaultHeaders: [String: String] = ["Accept": "application/json"],
@@ -126,7 +126,7 @@ public final class URLSessionHTTPClient: HTTPClient, @unchecked Sendable {
                     attempt: attempt
                 )
 
-                if shouldRetry.shouldRetry && attempt < retryPolicy.maxAttempts {
+                if shouldRetry.shouldRetry, attempt < retryPolicy.maxAttempts {
                     // Log retry decision with delay info
                     let delayText = shouldRetry.delay > 0 ? String(format: "%.1fs", shouldRetry.delay) : "immediate"
                     AppLogger.debug(
@@ -160,7 +160,7 @@ public final class URLSessionHTTPClient: HTTPClient, @unchecked Sendable {
                     attempt: attempt
                 )
 
-                if shouldRetry.shouldRetry && attempt < retryPolicy.maxAttempts {
+                if shouldRetry.shouldRetry, attempt < retryPolicy.maxAttempts {
                     let delayText = shouldRetry.delay > 0 ? String(format: "%.1fs", shouldRetry.delay) : "immediate"
                     AppLogger.debug(
                         "Retrying after error: \(AppLogger.redacted(error.localizedDescription)) (attempt \(attempt + 1)) - delay: \(delayText)",
@@ -215,7 +215,7 @@ public final class URLSessionHTTPClient: HTTPClient, @unchecked Sendable {
             )
 
             switch decision {
-            case .retry(let explicitDelay):
+            case let .retry(explicitDelay):
                 let delay = explicitDelay ?? retryPolicy.nextDelay(for: attempt)
                 return RetryResult(shouldRetry: true, delay: delay)
             case .noRetry:
@@ -240,7 +240,7 @@ public final class URLSessionHTTPClient: HTTPClient, @unchecked Sendable {
         if attempt > 1 {
             logMessage += " (attempt \(attempt))"
         }
-        if let requestID = requestID {
+        if let requestID {
             logMessage += " [ID: \(requestID)]"
         }
 
@@ -299,7 +299,7 @@ public final class URLSessionHTTPClient: HTTPClient, @unchecked Sendable {
     /// - Returns: true if the response is cacheable
     @inline(__always)
     private func shouldCache(_ response: HTTPResponse) -> Bool {
-        return CacheControl.isCacheable(status: response.statusCode, headers: response.headers)
+        CacheControl.isCacheable(status: response.statusCode, headers: response.headers)
     }
 
     /// Applies synthetic TTL to cacheable responses when server headers are missing
@@ -320,7 +320,8 @@ public final class URLSessionHTTPClient: HTTPClient, @unchecked Sendable {
         guard shouldCache(response),
               CacheControl.ttl(from: response.headers) == nil,
               let defaultTTL = request.cachePolicy?.defaultTTL,
-              let url = urlRequest.url else {
+              let url = urlRequest.url
+        else {
             return
         }
 

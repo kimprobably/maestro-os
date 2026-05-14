@@ -1,19 +1,18 @@
-import SwiftUI
 import DesignSystem
+import SwiftUI
 
 /// Individual onboarding page view
 /// Displays icon, title, and description for a single onboarding step
 struct OnboardingPageView: View {
-    
     let page: OnboardingPage
-    
+
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var isVisible = false
-    
+
     var body: some View {
         VStack(spacing: DSSpacing.xl) {
             Spacer()
-            
+
             // Icon with gradient background
             // CUSTOMIZATION: Replace this ZStack with custom illustrations or animations
             // Example: Image(page.imageName ?? "default-illustration")
@@ -21,7 +20,7 @@ struct OnboardingPageView: View {
                 Circle()
                     .fill(DSGradient.primaryLinear.opacity(0.15))
                     .frame(width: 160, height: 160)
-                
+
                 if let imageName = page.imageName {
                     // Custom image from assets
                     Image(imageName)
@@ -36,7 +35,7 @@ struct OnboardingPageView: View {
                         .symbolRenderingMode(.hierarchical)
                 }
             }
-            
+
             // Content Card
             SAICard(style: .tinted) {
                 VStack(spacing: DSSpacing.lg) {
@@ -45,7 +44,7 @@ struct OnboardingPageView: View {
                         .fontWeight(.bold)
                         .multilineTextAlignment(.center)
                         .foregroundStyle(DSColors.textPrimary)
-                    
+
                     Text(page.description)
                         .font(DSTypography.body)
                         .multilineTextAlignment(.center)
@@ -55,7 +54,7 @@ struct OnboardingPageView: View {
                 .padding(DSSpacing.xl)
             }
             .padding(.horizontal, DSSpacing.lg)
-            
+
             Spacer()
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -73,20 +72,20 @@ struct OnboardingPageView: View {
         .accessibilityElement(children: .combine)
         .accessibilityLabel("\(page.title). \(page.description)")
     }
-    
+
     // MARK: - Helpers
-    
+
     private func colorForAccent(_ accent: String) -> Color {
         switch accent.lowercased() {
-        case "blue": return .blue
-        case "green": return .green
-        case "purple": return .purple
-        case "orange": return .orange
-        case "red": return .red
-        case "pink": return .pink
-        case "yellow": return .yellow
-        case "primary": return DSColors.primary
-        default: return .blue
+        case "blue": .blue
+        case "green": .green
+        case "purple": .purple
+        case "orange": .orange
+        case "red": .red
+        case "pink": .pink
+        case "yellow": .yellow
+        case "primary": DSColors.primary
+        default: .blue
         }
     }
 }
@@ -94,18 +93,17 @@ struct OnboardingPageView: View {
 // MARK: - Preview
 
 #if DEBUG
-#Preview {
-    OnboardingPageView(page: OnboardingPage.defaultPages[0])
-}
-
-#Preview("All Pages") {
-    TabView {
-        ForEach(OnboardingPage.defaultPages) { page in
-            OnboardingPageView(page: page)
-        }
+    #Preview {
+        OnboardingPageView(page: OnboardingPage.defaultPages[0])
     }
-    .tabViewStyle(.page)
-    .indexViewStyle(.page(backgroundDisplayMode: .always))
-}
-#endif
 
+    #Preview("All Pages") {
+        TabView {
+            ForEach(OnboardingPage.defaultPages) { page in
+                OnboardingPageView(page: page)
+            }
+        }
+        .tabViewStyle(.page)
+        .indexViewStyle(.page(backgroundDisplayMode: .always))
+    }
+#endif

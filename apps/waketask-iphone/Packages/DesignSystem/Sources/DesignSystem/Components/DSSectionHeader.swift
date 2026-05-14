@@ -3,11 +3,10 @@ import SwiftUI
 /// Section header component with title, optional subtitle, and divider
 /// Used for consistent section headers across the app with proper accessibility
 public struct DSSectionHeader: View {
-    
     let title: String
     let subtitle: String?
     let showDivider: Bool
-    
+
     public init(
         title: String,
         subtitle: String? = nil,
@@ -17,7 +16,7 @@ public struct DSSectionHeader: View {
         self.subtitle = subtitle
         self.showDivider = showDivider
     }
-    
+
     public var body: some View {
         VStack(alignment: .leading, spacing: DSSpacing.xs) {
             // Title
@@ -25,14 +24,14 @@ public struct DSSectionHeader: View {
                 .font(DSTypography.titleL)
                 .foregroundStyle(DSColors.textPrimary)
                 .accessibilityAddTraits(.isHeader)
-            
+
             // Optional subtitle
-            if let subtitle = subtitle {
+            if let subtitle {
                 Text(subtitle)
                     .font(DSTypography.caption)
                     .foregroundStyle(DSColors.textSecondary)
             }
-            
+
             // Divider
             if showDivider {
                 Rectangle()
@@ -47,22 +46,22 @@ public struct DSSectionHeader: View {
 // MARK: - Preview
 
 #if DEBUG
-#Preview("With Divider") {
-    VStack(spacing: DSSpacing.xl) {
-        DSSectionHeader(title: "Quick Actions")
-        DSSectionHeader(title: "Featured")
-        DSSectionHeader(title: "Recent Chats", subtitle: "Last 7 days")
+    #Preview("With Divider") {
+        VStack(spacing: DSSpacing.xl) {
+            DSSectionHeader(title: "Quick Actions")
+            DSSectionHeader(title: "Featured")
+            DSSectionHeader(title: "Recent Chats", subtitle: "Last 7 days")
+        }
+        .padding()
+        .background(DSColors.background)
     }
-    .padding()
-    .background(DSColors.background)
-}
 
-#Preview("Without Divider") {
-    VStack(spacing: DSSpacing.xl) {
-        DSSectionHeader(title: "Settings", showDivider: false)
-        DSSectionHeader(title: "Profile", showDivider: false)
+    #Preview("Without Divider") {
+        VStack(spacing: DSSpacing.xl) {
+            DSSectionHeader(title: "Settings", showDivider: false)
+            DSSectionHeader(title: "Profile", showDivider: false)
+        }
+        .padding()
+        .background(DSColors.background)
     }
-    .padding()
-    .background(DSColors.background)
-}
 #endif

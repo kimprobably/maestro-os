@@ -1,18 +1,17 @@
-import XCTest
 @testable import AI
 import Networking
+import XCTest
 
 /// Verifies the request body, headers, and path that `ProxyLLMClient` emits
 /// for each code path (explicit model/temperature, defaults, legacy entry
 /// point, default headers, multi-message history, custom path).
 final class ProxyLLMClientRequestTests: ProxyLLMClientTestCase {
-
     func testStreamResponse_withModel_includesModelInRequest() async throws {
         let messages = [LLMMessage(role: "user", content: "Hello")]
-        mockHTTPClient.mockResponse = HTTPResponse(
+        mockHTTPClient.mockResponse = try HTTPResponse(
             statusCode: 200,
             headers: [:],
-            data: "data: [DONE]".data(using: .utf8)!,
+            data: XCTUnwrap("data: [DONE]".data(using: .utf8)),
             requestID: nil
         )
 
@@ -22,13 +21,14 @@ final class ProxyLLMClientRequestTests: ProxyLLMClientTestCase {
             temperature: 0.7
         )
 
-        for try await _ in stream { }
+        for try await _ in stream {}
 
         XCTAssertEqual(mockHTTPClient.sentRequests.count, 1)
         let request = mockHTTPClient.sentRequests[0]
 
         if let body = request.body,
-           let json = try? JSONSerialization.jsonObject(with: body) as? [String: Any] {
+           let json = try? JSONSerialization.jsonObject(with: body) as? [String: Any]
+        {
             XCTAssertEqual(json["model"] as? String, "gpt-4")
             XCTAssertEqual(json["temperature"] as? Double, 0.7)
         } else {
@@ -38,22 +38,23 @@ final class ProxyLLMClientRequestTests: ProxyLLMClientTestCase {
 
     func testStreamResponse_withoutModel_usesDefault() async throws {
         let messages = [LLMMessage(role: "user", content: "Hello")]
-        mockHTTPClient.mockResponse = HTTPResponse(
+        mockHTTPClient.mockResponse = try HTTPResponse(
             statusCode: 200,
             headers: [:],
-            data: "data: [DONE]".data(using: .utf8)!,
+            data: XCTUnwrap("data: [DONE]".data(using: .utf8)),
             requestID: nil
         )
 
         let stream = client.streamResponse(messages: messages)
 
-        for try await _ in stream { }
+        for try await _ in stream {}
 
         XCTAssertEqual(mockHTTPClient.sentRequests.count, 1)
         let request = mockHTTPClient.sentRequests[0]
 
         if let body = request.body,
-           let json = try? JSONSerialization.jsonObject(with: body) as? [String: Any] {
+           let json = try? JSONSerialization.jsonObject(with: body) as? [String: Any]
+        {
             XCTAssertEqual(json["model"] as? String, "default")
             XCTAssertEqual(json["temperature"] as? Double, 0.2)
         } else {
@@ -63,22 +64,23 @@ final class ProxyLLMClientRequestTests: ProxyLLMClientTestCase {
 
     func testStreamResponse_legacyMethod_usesDefaults() async throws {
         let messages = [LLMMessage(role: "user", content: "Hello")]
-        mockHTTPClient.mockResponse = HTTPResponse(
+        mockHTTPClient.mockResponse = try HTTPResponse(
             statusCode: 200,
             headers: [:],
-            data: "data: [DONE]".data(using: .utf8)!,
+            data: XCTUnwrap("data: [DONE]".data(using: .utf8)),
             requestID: nil
         )
 
         let stream = client.streamResponse(messages: messages)
 
-        for try await _ in stream { }
+        for try await _ in stream {}
 
         XCTAssertEqual(mockHTTPClient.sentRequests.count, 1)
         let request = mockHTTPClient.sentRequests[0]
 
         if let body = request.body,
-           let json = try? JSONSerialization.jsonObject(with: body) as? [String: Any] {
+           let json = try? JSONSerialization.jsonObject(with: body) as? [String: Any]
+        {
             XCTAssertEqual(json["model"] as? String, "default")
             XCTAssertEqual(json["temperature"] as? Double, 0.2)
         }
@@ -86,16 +88,16 @@ final class ProxyLLMClientRequestTests: ProxyLLMClientTestCase {
 
     func testStreamResponse_setsCorrectHeaders() async throws {
         let messages = [LLMMessage(role: "user", content: "Hello")]
-        mockHTTPClient.mockResponse = HTTPResponse(
+        mockHTTPClient.mockResponse = try HTTPResponse(
             statusCode: 200,
             headers: [:],
-            data: "data: [DONE]".data(using: .utf8)!,
+            data: XCTUnwrap("data: [DONE]".data(using: .utf8)),
             requestID: nil
         )
 
         let stream = client.streamResponse(messages: messages)
 
-        for try await _ in stream { }
+        for try await _ in stream {}
 
         XCTAssertEqual(mockHTTPClient.sentRequests.count, 1)
         let request = mockHTTPClient.sentRequests[0]
@@ -112,16 +114,16 @@ final class ProxyLLMClientRequestTests: ProxyLLMClientTestCase {
         )
 
         let messages = [LLMMessage(role: "user", content: "Hello")]
-        mockHTTPClient.mockResponse = HTTPResponse(
+        mockHTTPClient.mockResponse = try HTTPResponse(
             statusCode: 200,
             headers: [:],
-            data: "data: [DONE]".data(using: .utf8)!,
+            data: XCTUnwrap("data: [DONE]".data(using: .utf8)),
             requestID: nil
         )
 
         let stream = customClient.streamResponse(messages: messages)
 
-        for try await _ in stream { }
+        for try await _ in stream {}
 
         let request = mockHTTPClient.sentRequests[0]
         XCTAssertEqual(request.headers["X-Custom"], "value")
@@ -132,25 +134,26 @@ final class ProxyLLMClientRequestTests: ProxyLLMClientTestCase {
         let messages = [
             LLMMessage(role: "system", content: "You are helpful"),
             LLMMessage(role: "user", content: "Hello"),
-            LLMMessage(role: "assistant", content: "Hi there!")
+            LLMMessage(role: "assistant", content: "Hi there!"),
         ]
 
-        mockHTTPClient.mockResponse = HTTPResponse(
+        mockHTTPClient.mockResponse = try HTTPResponse(
             statusCode: 200,
             headers: [:],
-            data: "data: [DONE]".data(using: .utf8)!,
+            data: XCTUnwrap("data: [DONE]".data(using: .utf8)),
             requestID: nil
         )
 
         let stream = client.streamResponse(messages: messages)
 
-        for try await _ in stream { }
+        for try await _ in stream {}
 
         let request = mockHTTPClient.sentRequests[0]
 
         if let body = request.body,
            let json = try? JSONSerialization.jsonObject(with: body) as? [String: Any],
-           let messagesArray = json["messages"] as? [[String: String]] {
+           let messagesArray = json["messages"] as? [[String: String]]
+        {
             XCTAssertEqual(messagesArray.count, 3)
             XCTAssertEqual(messagesArray[0]["role"], "system")
             XCTAssertEqual(messagesArray[0]["content"], "You are helpful")
@@ -171,16 +174,16 @@ final class ProxyLLMClientRequestTests: ProxyLLMClientTestCase {
         )
 
         let messages = [LLMMessage(role: "user", content: "Hello")]
-        mockHTTPClient.mockResponse = HTTPResponse(
+        mockHTTPClient.mockResponse = try HTTPResponse(
             statusCode: 200,
             headers: [:],
-            data: "data: [DONE]".data(using: .utf8)!,
+            data: XCTUnwrap("data: [DONE]".data(using: .utf8)),
             requestID: nil
         )
 
         let stream = customClient.streamResponse(messages: messages)
 
-        for try await _ in stream { }
+        for try await _ in stream {}
 
         XCTAssertEqual(mockHTTPClient.sentRequests.count, 1)
         let request = mockHTTPClient.sentRequests[0]

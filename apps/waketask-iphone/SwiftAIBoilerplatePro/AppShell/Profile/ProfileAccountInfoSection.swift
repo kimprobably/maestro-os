@@ -1,9 +1,8 @@
-import SwiftUI
 import DesignSystem
+import SwiftUI
 
 /// "Account" section with User ID and Account Type rows.
 struct ProfileAccountInfoSection: View {
-
     let viewModel: ProfileViewModel
 
     var body: some View {

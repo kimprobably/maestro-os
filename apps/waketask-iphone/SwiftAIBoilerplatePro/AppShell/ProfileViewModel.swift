@@ -1,19 +1,18 @@
-import Foundation
-import SwiftUI
-import PhotosUI
 import Auth
-import Payments
-import Storage
 import Core
+import Foundation
+import Payments
+import PhotosUI
+import Storage
+import SwiftUI
 
 /// Profile screen view model
 /// Manages user profile data, subscription status, and account actions
 @MainActor
 @Observable
 public final class ProfileViewModel {
-    
     // MARK: - State
-    
+
     var user: AuthUser?
     var subscriptionStatus: SubscriptionInfo?
     var isLoading = false
@@ -27,15 +26,15 @@ public final class ProfileViewModel {
     var editingName: String = ""
     var selectedPhoto: PhotosPickerItem?
     var profileImageData: Data?
-    
+
     // MARK: - Subscription Info
-    
+
     public struct SubscriptionInfo {
         let isActive: Bool
         let planName: String?
         let expiryDate: Date?
         let willRenew: Bool
-        
+
         public init(isActive: Bool, planName: String? = nil, expiryDate: Date? = nil, willRenew: Bool = false) {
             self.isActive = isActive
             self.planName = planName
@@ -43,9 +42,9 @@ public final class ProfileViewModel {
             self.willRenew = willRenew
         }
     }
-    
+
     // MARK: - Dependencies
-    
+
     private let authClient: any AuthClient
     private let paymentsClient: any PaymentsClient
     private let photoStorageClient: (any ProfilePhotoStorageClient)?
@@ -61,43 +60,43 @@ public final class ProfileViewModel {
         self.paymentsClient = paymentsClient
         self.photoStorageClient = photoStorageClient
     }
-    
+
     // MARK: - Computed Properties
-    
+
     /// Check if there are unsaved changes
     var hasChanges: Bool {
-        guard let user = user else { return false }
-        
+        guard let user else { return false }
+
         let nameChanged = editingName != user.name
         let photoChanged = profileImageData != nil
-        
+
         return nameChanged || photoChanged
     }
-    
+
     /// Check if profile can be saved
     var canSave: Bool {
         let nameValid = !editingName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
         return nameValid && hasChanges
     }
-    
+
     // MARK: - Public Methods
-    
+
     /// Load profile data
     public func loadProfile() async {
         isLoading = true
         errorMessage = nil
-        
+
         defer { isLoading = false }
-        
+
         // Load user info from auth client
         let loadedUser = await authClient.currentUser()
-        
+
         // Check for persisted profile updates
-        if let loadedUser = loadedUser {
+        if let loadedUser {
             let savedName = UserDefaults.standard.string(forKey: "profileName_\(loadedUser.id)")
-            
+
             // Try to load photo from backend first, fallback to UserDefaults
-            if let photoStorageClient = photoStorageClient {
+            if let photoStorageClient {
                 do {
                     if let photoData = try await photoStorageClient.download(userId: loadedUser.id) {
                         profileImageData = photoData
@@ -114,7 +113,7 @@ public final class ProfileViewModel {
                 let savedPhotoData = UserDefaults.standard.data(forKey: "profilePhoto_\(loadedUser.id)")
                 profileImageData = savedPhotoData
             }
-            
+
             // Apply persisted name if any
             if savedName != nil || profileImageData != nil {
                 user = AuthUser(
@@ -129,21 +128,21 @@ public final class ProfileViewModel {
         } else {
             user = loadedUser
         }
-        
+
         // Load subscription status
         await loadSubscriptionStatus()
-        
-        AppLogger.debug("Profile loaded for user: \(self.user?.id ?? "nil")", category: AppLogger.ui)
+
+        AppLogger.debug("Profile loaded for user: \(user?.id ?? "nil")", category: AppLogger.ui)
     }
-    
+
     /// Load subscription status from payments client
     private func loadSubscriptionStatus() async {
         let state = await paymentsClient.currentState()
-        
+
         if state.isSubscribed {
             // Check if will renew based on expiry date (simplified logic)
             let willRenew = state.expirationDate.map { $0 > Date().addingTimeInterval(24 * 60 * 60) } ?? true
-            
+
             subscriptionStatus = SubscriptionInfo(
                 isActive: true,
                 planName: "Pro",
@@ -159,9 +158,9 @@ public final class ProfileViewModel {
             )
         }
     }
-    
+
     // MARK: - Actions
-    
+
     /// Sign out the current user
     public func signOut() async {
         do {
@@ -172,7 +171,7 @@ public final class ProfileViewModel {
             AppLogger.error("Sign out failed: \(error)", category: AppLogger.ui)
         }
     }
-    
+
     /// Delete account (placeholder for buyers to implement)
     public func deleteAccount() async {
         // TODO: Buyers should implement actual account deletion
@@ -181,24 +180,24 @@ public final class ProfileViewModel {
         // 2. Deleting user data from backend
         // 3. Deleting local data
         // 4. Signing out
-        
+
         AppLogger.info("Delete account requested (stub implementation)", category: AppLogger.ui)
         errorMessage = "Account deletion is not yet implemented. Please contact support."
     }
-    
+
     /// Restore purchases - REQUIRED by App Store Guideline 3.1.1
     /// Must be user-initiated only (not called automatically on launch)
     public func restorePurchases() async {
         isRestoringPurchases = true
         errorMessage = nil
-        
+
         defer { isRestoringPurchases = false }
-        
+
         do {
             // restore() returns the state directly - no race condition
             let restoredState = try await paymentsClient.restore()
             AppLogger.info("Restore successful, isSubscribed: \(restoredState.isSubscribed)", category: AppLogger.ui)
-            
+
             if restoredState.isSubscribed {
                 // Update local subscription status
                 let willRenew = restoredState.expirationDate.map { $0 > Date().addingTimeInterval(24 * 60 * 60) } ?? true
@@ -218,7 +217,7 @@ public final class ProfileViewModel {
             AppLogger.error("Restore failed: \(error)", category: AppLogger.ui)
         }
     }
-    
+
     /// Start editing profile
     public func startEditingProfile() {
         editingName = user?.name ?? ""
@@ -226,78 +225,78 @@ public final class ProfileViewModel {
         // Keep existing profileImageData (already loaded in loadProfile)
         showEditProfile = true
     }
-    
+
     /// Handle photo selection with validation and processing
     public func loadPhoto() async {
-        guard let selectedPhoto = selectedPhoto else { return }
-        
+        guard let selectedPhoto else { return }
+
         isLoadingPhoto = true
         errorMessage = nil
-        
+
         defer { isLoadingPhoto = false }
-        
+
         do {
             // Load raw image data
             guard let rawData = try await selectedPhoto.loadTransferable(type: Data.self) else {
                 errorMessage = "Failed to load selected photo"
                 return
             }
-            
+
             // Process image (validate, crop, compress)
             let processedData = ImageUtilities.processForProfile(rawData, targetSizeKB: 500)
-            
+
             switch processedData {
-            case .success(let data):
+            case let .success(data):
                 profileImageData = data
                 AppLogger.info("Profile photo processed successfully (\(data.count / 1024)KB)", category: AppLogger.ui)
-                
-            case .failure(let error):
+
+            case let .failure(error):
                 errorMessage = error.localizedDescription
                 AppLogger.error("Photo processing failed: \(error)", category: AppLogger.ui)
             }
-            
+
         } catch {
             AppLogger.error("Failed to load photo: \(error)", category: AppLogger.ui)
             errorMessage = "Failed to load photo. Please try again."
         }
     }
-    
+
     /// Remove profile photo
     public func removePhoto() {
         profileImageData = nil
         selectedPhoto = nil
         AppLogger.info("Profile photo removed", category: AppLogger.ui)
     }
-    
+
     /// Save profile changes
     public func saveProfile() async {
         guard !editingName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
             errorMessage = "Name cannot be empty"
             return
         }
-        
+
         isLoading = true
         errorMessage = nil
         successMessage = nil
-        
+
         defer { isLoading = false }
-        
+
         guard let currentUser = user else {
             errorMessage = "User not found"
             return
         }
-        
+
         var photoURL: URL? = nil
-        
+
         // Upload photo to backend if storage client available
-        if let photoData = profileImageData, let photoStorageClient = photoStorageClient {
+        if let photoData = profileImageData, let photoStorageClient {
             do {
                 photoURL = try await photoStorageClient.upload(data: photoData, userId: currentUser.id)
                 AppLogger.info("Profile photo uploaded to storage", category: AppLogger.ui)
-                
+
                 // Clear UserDefaults since we now have it in storage
                 UserDefaults.standard.removeObject(forKey: "profilePhoto_\(currentUser.id)")
-                
+
             } catch {
                 AppLogger.error("Photo upload failed, falling back to local storage: \(error)", category: AppLogger.ui)
                 // Fallback: Save to UserDefaults
@@ -308,10 +307,10 @@ public final class ProfileViewModel {
             UserDefaults.standard.set(photoData, forKey: "profilePhoto_\(currentUser.id)")
             AppLogger.info("Profile photo saved locally", category: AppLogger.ui)
         }
-        
+
         // TODO: Implement backend profile update
         // try await authClient.updateProfile(name: editingName, avatarURL: photoURL)
-        
+
         // For now, persist to UserDefaults
         let updatedUser = AuthUser(
             id: currentUser.id,
@@ -319,19 +318,19 @@ public final class ProfileViewModel {
             name: editingName,
             avatarURL: photoURL ?? currentUser.avatarURL
         )
-        
+
         // Persist the updated name
         UserDefaults.standard.set(editingName, forKey: "profileName_\(currentUser.id)")
-        
+
         // Update local state
         user = updatedUser
-        
+
         successMessage = "Profile updated successfully"
         AppLogger.info("Profile saved successfully", category: AppLogger.ui)
-        
+
         showEditProfile = false
     }
-    
+
     /// Cancel profile editing
     public func cancelEditing() {
         editingName = ""

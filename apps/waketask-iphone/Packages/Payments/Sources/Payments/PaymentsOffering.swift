@@ -7,7 +7,7 @@ public struct PaymentsOffering: Sendable, Identifiable, Equatable {
     public let price: String
     public let pricePerMonth: String?
     public let packageType: PackageType
-    
+
     public init(
         id: String,
         title: String,
@@ -21,22 +21,21 @@ public struct PaymentsOffering: Sendable, Identifiable, Equatable {
         self.pricePerMonth = pricePerMonth
         self.packageType = packageType
     }
-    
+
     /// Package type for common subscription periods
     public enum PackageType: String, Sendable, Equatable {
         case monthly
         case annual
         case lifetime
         case unknown
-        
+
         public var displayName: String {
             switch self {
-            case .monthly: return "Monthly"
-            case .annual: return "Annual"
-            case .lifetime: return "Lifetime"
-            case .unknown: return "Subscription"
+            case .monthly: "Monthly"
+            case .annual: "Annual"
+            case .lifetime: "Lifetime"
+            case .unknown: "Subscription"
             }
         }
     }
 }
-

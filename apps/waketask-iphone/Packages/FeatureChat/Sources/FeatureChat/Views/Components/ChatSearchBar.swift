@@ -1,5 +1,5 @@
-import SwiftUI
 import DesignSystem
+import SwiftUI
 
 /// Search bar for filtering conversations
 struct ChatSearchBar: View {
@@ -8,13 +8,13 @@ struct ChatSearchBar: View {
     let cornerRadius: CGFloat
     let strokeWidth: CGFloat
     let onSearchChange: (String) -> Void
-    
+
     var body: some View {
         HStack(spacing: DSSpacing.sm) {
             Image(systemName: "magnifyingglass")
                 .foregroundStyle(DSColors.textSecondary)
                 .font(.body)
-            
+
             TextField("Search conversations", text: $searchText)
                 .font(.body)
                 .foregroundStyle(DSColors.textPrimary)
@@ -23,7 +23,7 @@ struct ChatSearchBar: View {
                 .onChange(of: searchText) { _, newValue in
                     onSearchChange(newValue)
                 }
-            
+
             if !searchText.isEmpty {
                 Button {
                     searchText = ""
@@ -52,4 +52,3 @@ struct ChatSearchBar: View {
         .animation(.easeInOut(duration: 0.2), value: isSearchFocused)
     }
 }
-

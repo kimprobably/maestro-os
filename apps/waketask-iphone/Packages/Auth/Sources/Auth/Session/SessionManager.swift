@@ -1,7 +1,7 @@
+import Core
 import Foundation
 import Networking
 import Storage
-import Core
 
 /// Main session manager implementing AuthClient and SessionStore.
 ///
@@ -11,7 +11,6 @@ import Core
 /// - `SessionManager+Persistence.swift`  — keychain persistence + initial load
 @available(iOS 17.0, *)
 public actor SessionManager: @preconcurrency AuthClient, @preconcurrency SessionStore {
-
     // MARK: - Properties
 
     let httpClient: any HTTPClient
@@ -50,8 +49,8 @@ public actor SessionManager: @preconcurrency AuthClient, @preconcurrency Session
         self.apple = apple
         self.google = google
         self.config = config
-        self.sleeper = DefaultSleeper()
-        self.api = SupabaseAuthAPI(httpClient: httpClient, config: config)
+        sleeper = DefaultSleeper()
+        api = SupabaseAuthAPI(httpClient: httpClient, config: config)
 
         Task {
             await loadInitialSession()
@@ -73,7 +72,7 @@ public actor SessionManager: @preconcurrency AuthClient, @preconcurrency Session
         self.google = google
         self.config = config
         self.sleeper = sleeper
-        self.api = SupabaseAuthAPI(httpClient: httpClient, config: config)
+        api = SupabaseAuthAPI(httpClient: httpClient, config: config)
 
         Task {
             await loadInitialSession()
@@ -97,9 +96,9 @@ public actor SessionManager: @preconcurrency AuthClient, @preconcurrency Session
 
     func currentAuthState() -> AuthState {
         if let user = currentSession?.user {
-            return .authenticated(user)
+            .authenticated(user)
         } else {
-            return .unauthenticated
+            .unauthenticated
         }
     }
 }

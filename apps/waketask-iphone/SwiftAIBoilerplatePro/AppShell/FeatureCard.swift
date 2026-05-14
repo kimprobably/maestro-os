@@ -1,12 +1,11 @@
-import SwiftUI
 import DesignSystem
+import SwiftUI
 
 /// Reusable card component for featured content
 /// Displays an icon, title, and description in a modern card layout
 struct FeatureCard: View {
-    
     let item: HomeContent.FeatureItem
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: DSSpacing.md) {
             // Icon
@@ -15,19 +14,19 @@ struct FeatureCard: View {
                 .foregroundStyle(colorForAccent(item.accentColor))
                 .symbolRenderingMode(.hierarchical)
                 .frame(width: 60, height: 60)
-            
+
             // Title
             Text(item.title)
                 .font(DSTypography.titleM)
                 .foregroundStyle(DSColors.textPrimary)
                 .lineLimit(2)
-            
+
             // Description
             Text(item.description)
                 .font(DSTypography.body)
                 .foregroundStyle(DSColors.textSecondary)
                 .lineLimit(3)
-            
+
             Spacer()
         }
         .frame(width: 250, height: 200)
@@ -42,21 +41,21 @@ struct FeatureCard: View {
         )
         .elevation(DSElevation.soft)
     }
-    
+
     // MARK: - Helpers
-    
+
     private func colorForAccent(_ accent: String) -> Color {
         switch accent.lowercased() {
-        case "blue": return .blue
-        case "green": return .green
-        case "purple": return .purple
-        case "orange": return .orange
-        case "red": return .red
-        case "pink": return .pink
-        case "yellow": return .yellow
-        case "gray": return .gray
-        case "primary": return DSColors.primary
-        default: return .blue
+        case "blue": .blue
+        case "green": .green
+        case "purple": .purple
+        case "orange": .orange
+        case "red": .red
+        case "pink": .pink
+        case "yellow": .yellow
+        case "gray": .gray
+        case "primary": DSColors.primary
+        default: .blue
         }
     }
 }
@@ -64,16 +63,15 @@ struct FeatureCard: View {
 // MARK: - Preview
 
 #if DEBUG
-#Preview {
-    ScrollView(.horizontal) {
-        HStack(spacing: DSSpacing.lg) {
-            ForEach(HomeContent.FeatureItem.defaults) { item in
-                FeatureCard(item: item)
+    #Preview {
+        ScrollView(.horizontal) {
+            HStack(spacing: DSSpacing.lg) {
+                ForEach(HomeContent.FeatureItem.defaults) { item in
+                    FeatureCard(item: item)
+                }
             }
+            .padding()
         }
-        .padding()
+        .background(DSColors.background)
     }
-    .background(DSColors.background)
-}
 #endif
-

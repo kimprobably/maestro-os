@@ -1,11 +1,10 @@
-import XCTest
 @testable import FeatureRating
+import XCTest
 
 /// Prompt-decision, yearly-limit, user-response, and `stopAskingAfterRating`
 /// + reset coverage for `RatingEngine`. Scoring/decay/edge-case coverage
 /// lives in `RatingEngineTests.swift`.
 final class RatingEnginePromptTests: RatingEngineTestCase {
-
     // MARK: - shouldPrompt decision
 
     func testShouldPromptWhenAllConditionsMet() {

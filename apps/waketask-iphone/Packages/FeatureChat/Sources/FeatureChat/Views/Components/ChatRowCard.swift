@@ -1,7 +1,7 @@
-import SwiftUI
-import Storage
-import DesignSystem
 import Core
+import DesignSystem
+import Storage
+import SwiftUI
 
 /// Row card representing a conversation in the chat history list
 struct ChatRowCard: View {
@@ -21,18 +21,18 @@ struct ChatRowCard: View {
                         .foregroundStyle(DSColors.textPrimary)
                         .lineLimit(1)
                         .frame(maxWidth: .infinity, alignment: .leading)
-                    
+
                     Text(formatDate(conversation.updatedAt))
                         .font(.caption)
                         .foregroundStyle(DSColors.textSecondary)
                 }
-                
+
                 // Hairline divider
                 Rectangle()
                     .fill(DSColors.separator.opacity(0.3))
                     .frame(height: 1 / displayScale)
                     .padding(.vertical, DSSpacing.sm)
-                
+
                 // Preview and chevron
                 HStack {
                     if let persona = conversation.personaName {
@@ -46,9 +46,9 @@ struct ChatRowCard: View {
                             .foregroundStyle(DSColors.textSecondary)
                             .lineLimit(1)
                     }
-                    
+
                     Spacer()
-                    
+
                     Image(systemName: "chevron.right")
                         .font(.caption.weight(.semibold))
                         .foregroundStyle(DSColors.textSecondary.opacity(0.5))
@@ -66,4 +66,3 @@ struct ChatRowCard: View {
         .buttonStyle(.plain)
     }
 }
-

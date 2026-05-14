@@ -1,6 +1,6 @@
-import XCTest
-@testable import SwiftAIBoilerplatePro
 import Core
+@testable import SwiftAIBoilerplatePro
+import XCTest
 
 @MainActor
 final class WakeFlowViewModelTests: XCTestCase {
@@ -191,7 +191,7 @@ private actor InMemoryWakeRunRepository: WakeRunRepository {
             .filter { alarmID == nil || $0.alarmID == alarmID }
             .sorted(by: { $0.scheduledAt > $1.scheduledAt })
             .prefix(limit)
-            .map { $0 }
+            .map(\.self)
     }
 }
 
@@ -199,10 +199,12 @@ private final class TestClock: @unchecked Sendable {
     private var value: Date
 
     init(start: Date) {
-        self.value = start
+        value = start
     }
 
-    func now() -> Date { value }
+    func now() -> Date {
+        value
+    }
 
     func advance(seconds: TimeInterval) {
         value = value.addingTimeInterval(seconds)

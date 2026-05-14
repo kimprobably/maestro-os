@@ -1,18 +1,17 @@
-import SwiftUI
 import Auth
 import DesignSystem
+import SwiftUI
 
 /// Email sign-up screen with validation and terms acceptance.
 /// Form fields and the view model live alongside in `AppShell/Auth/`.
 @available(iOS 17.0, *)
 struct EmailSignUpView: View {
-
     @State private var viewModel: EmailSignUpViewModel
     @FocusState private var focusedField: EmailSignUpField?
     @State private var showTerms = false
 
     init(authClient: any AuthClient, onSuccess: @escaping () -> Void, onSwitchToLogin: @escaping () -> Void) {
-        self.viewModel = EmailSignUpViewModel(
+        viewModel = EmailSignUpViewModel(
             authClient: authClient,
             onSuccess: onSuccess,
             onSwitchToLogin: onSwitchToLogin

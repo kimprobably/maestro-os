@@ -2,29 +2,28 @@ import SwiftUI
 
 /// Chat bubble component for messages
 public struct ChatBubble: View {
-    
     public enum Role: Sendable {
         case user
         case assistant
         case system
     }
-    
+
     let role: Role
     let text: String
     let isStreaming: Bool
-    
+
     public init(role: Role, text: String, isStreaming: Bool = false) {
         self.role = role
         self.text = text
         self.isStreaming = isStreaming
     }
-    
+
     public var body: some View {
         HStack(alignment: .top, spacing: 0) {
             if role == .user {
                 Spacer(minLength: 0)
             }
-            
+
             VStack(alignment: role == .user ? .trailing : .leading, spacing: DSSpacing.xs) {
                 Text(text.isEmpty ? " " : text)
                     .font(DSTypography.body)
@@ -33,7 +32,7 @@ public struct ChatBubble: View {
                     .background(bubbleColor)
                     .foregroundStyle(textColor)
                     .clipShape(RoundedRectangle(cornerRadius: DSRadius.lg))
-                
+
                 if isStreaming {
                     HStack(spacing: DSSpacing.xs) {
                         ProgressView()
@@ -45,7 +44,7 @@ public struct ChatBubble: View {
                 }
             }
             .frame(maxWidth: 280, alignment: role == .user ? .trailing : .leading)
-            
+
             if role != .user {
                 Spacer(minLength: 0)
             }
@@ -54,34 +53,34 @@ public struct ChatBubble: View {
         .accessibilityElement(children: .combine)
         .accessibilityLabel(accessibilityLabelText)
     }
-    
+
     // MARK: - Private Computed Properties
-    
+
     private var bubbleColor: Color {
         switch role {
         case .user:
-            return DSColors.bubbleUserOrFallback
+            DSColors.bubbleUserOrFallback
         case .assistant, .system:
-            return DSColors.bubbleAssistantOrFallback
+            DSColors.bubbleAssistantOrFallback
         }
     }
-    
+
     private var textColor: Color {
         switch role {
         case .user:
-            return DSColors.background
+            DSColors.background
         case .assistant, .system:
-            return DSColors.textPrimary
+            DSColors.textPrimary
         }
     }
-    
+
     private var accessibilityLabelText: String {
         let roleLabel = switch role {
         case .user: "Your message"
         case .assistant: "Assistant message"
         case .system: "System message"
         }
-        
+
         return "\(roleLabel): \(text)"
     }
 }
@@ -102,4 +101,3 @@ public struct ChatBubble: View {
     ChatBubble(role: .assistant, text: "Thinking about your question...", isStreaming: true)
         .padding()
 }
-

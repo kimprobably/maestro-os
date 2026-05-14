@@ -20,67 +20,66 @@ import SwiftUI
 /// }
 /// ```
 public struct SAIButton: View {
-    
     public enum Style {
         case primary
         case secondary
         case quiet
     }
-    
+
     public enum Size {
         case sm
         case md
         case lg
-        
+
         var height: CGFloat {
             switch self {
-            case .sm: return 32
-            case .md: return 44
-            case .lg: return 52
+            case .sm: 32
+            case .md: 44
+            case .lg: 52
             }
         }
-        
+
         var horizontalPadding: CGFloat {
             switch self {
-            case .sm: return DSSpacing.md
-            case .md: return DSSpacing.lg
-            case .lg: return DSSpacing.xl
+            case .sm: DSSpacing.md
+            case .md: DSSpacing.lg
+            case .lg: DSSpacing.xl
             }
         }
-        
+
         var fontSize: CGFloat {
             switch self {
-            case .sm: return 14
-            case .md: return 16
-            case .lg: return 18
+            case .sm: 14
+            case .md: 16
+            case .lg: 18
             }
         }
-        
+
         var minWidth: CGFloat {
             switch self {
-            case .lg: return 160   // primary CTA baseline
-            case .md: return 140
-            case .sm: return 120
+            case .lg: 160 // primary CTA baseline
+            case .md: 140
+            case .sm: 120
             }
         }
     }
-    
+
     public enum ButtonLayout {
         case inline
         case block
     }
-    
+
     private let title: String
     private let style: Style
     private let size: Size
     private let icon: Image?
     private let layout: ButtonLayout
     private let action: () -> Void
-    
+
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @Environment(\.isEnabled) private var isEnabled
     @State private var isPressed = false
-    
+
     public init(
         _ title: String,
         style: Style = .primary,
@@ -96,11 +95,11 @@ public struct SAIButton: View {
         self.layout = layout
         self.action = action
     }
-    
+
     public var body: some View {
         Button(action: handleTap) {
             HStack(spacing: DSSpacing.xs) {
-                if let icon = icon {
+                if let icon {
                     icon
                         .font(.system(size: size.fontSize, weight: .semibold))
                 }
@@ -121,28 +120,28 @@ public struct SAIButton: View {
         .buttonStyle(SAIButtonStyle(isPressed: $isPressed))
         .opacity(isEnabled ? 1.0 : 0.5)
     }
-    
+
     // MARK: - Tap Handler
-    
+
     private func handleTap() {
         guard isEnabled else { return }
         Haptics.tap()
         action()
     }
-    
+
     // MARK: - Style Helpers
-    
+
     private var foregroundColor: Color {
         switch style {
         case .primary:
-            return DSColors.background
+            DSColors.background
         case .secondary:
-            return DSColors.accentPrimary
+            DSColors.accentPrimary
         case .quiet:
-            return DSColors.textPrimary
+            DSColors.textPrimary
         }
     }
-    
+
     @ViewBuilder
     private var backgroundView: some View {
         switch style {
@@ -154,7 +153,7 @@ public struct SAIButton: View {
             isPressed ? DSColors.chipBackground : Color.clear
         }
     }
-    
+
     @ViewBuilder
     private var overlayView: some View {
         if style == .secondary {
@@ -169,7 +168,7 @@ public struct SAIButton: View {
 private struct SAIButtonStyle: ButtonStyle {
     @Binding var isPressed: Bool
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
-    
+
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .scaleEffect(scale(for: configuration))
@@ -178,7 +177,7 @@ private struct SAIButtonStyle: ButtonStyle {
                 isPressed = newValue
             }
     }
-    
+
     private func scale(for configuration: Configuration) -> CGFloat {
         guard !reduceMotion else { return 1.0 }
         return configuration.isPressed ? 0.96 : 1.0
@@ -197,7 +196,7 @@ private struct SAIButtonStyle: ButtonStyle {
             SAIButton("Large Primary", style: .primary, size: .lg) {}
             SAIButton("With Icon", style: .primary, size: .md, icon: Image(systemName: "arrow.right")) {}
         }
-        
+
         // Secondary buttons
         VStack(spacing: DSSpacing.md) {
             Text("Secondary").font(DSTypography.caption).foregroundStyle(DSColors.textSecondary)
@@ -205,7 +204,7 @@ private struct SAIButtonStyle: ButtonStyle {
             SAIButton("Medium Secondary", style: .secondary, size: .md) {}
             SAIButton("Large Secondary", style: .secondary, size: .lg) {}
         }
-        
+
         // Quiet buttons
         VStack(spacing: DSSpacing.md) {
             Text("Quiet").font(DSTypography.caption).foregroundStyle(DSColors.textSecondary)
@@ -240,4 +239,3 @@ private struct SAIButtonStyle: ButtonStyle {
     .padding(DSSpacing.xl)
     .background(DSColors.background)
 }
-

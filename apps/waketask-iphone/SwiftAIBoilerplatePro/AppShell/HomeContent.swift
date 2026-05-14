@@ -3,9 +3,8 @@ import Foundation
 /// Home screen content configuration
 /// Buyers can easily customize this to match their app's features and branding
 public struct HomeContent {
-    
     // MARK: - Models
-    
+
     /// Featured content card in carousel
     public struct FeatureItem: Identifiable, Equatable, Sendable {
         public let id: UUID
@@ -13,7 +12,7 @@ public struct HomeContent {
         public let description: String
         public let systemImage: String
         public let accentColor: String
-        
+
         public init(
             id: UUID = UUID(),
             title: String,
@@ -28,7 +27,7 @@ public struct HomeContent {
             self.accentColor = accentColor
         }
     }
-    
+
     /// Quick action button
     public struct QuickAction: Identifiable, Equatable, Sendable {
         public let id: UUID
@@ -36,14 +35,14 @@ public struct HomeContent {
         public let systemImage: String
         public let accentColor: String
         public let action: ActionType
-        
+
         public enum ActionType: Equatable, Sendable {
             case newChat
             case history
             case upgrade
             case settings
         }
-        
+
         public init(
             id: UUID = UUID(),
             title: String,
@@ -58,14 +57,14 @@ public struct HomeContent {
             self.action = action
         }
     }
-    
+
     // MARK: - Configuration
-    
+
     public let welcomeTitle: String
     public let welcomeSubtitle: String
     public let featuredItems: [FeatureItem]
     public let quickActions: [QuickAction]
-    
+
     public init(
         welcomeTitle: String = "Ready For A Reliable Morning?",
         welcomeSubtitle: String = "Set your next alarm run and lock in your first task before bed.",
@@ -81,11 +80,10 @@ public struct HomeContent {
 
 // MARK: - Default Content
 
-extension HomeContent.FeatureItem {
-    
+public extension HomeContent.FeatureItem {
     /// Default featured items for the boilerplate
     /// Buyers should customize these for their specific app
-    public static let defaults: [HomeContent.FeatureItem] = [
+    static let defaults: [HomeContent.FeatureItem] = [
         HomeContent.FeatureItem(
             title: "Adaptive Mission Rotation",
             description: "WakeTask rotates cognitive, movement, and scan-style missions to prevent autopilot dismissals.",
@@ -109,15 +107,14 @@ extension HomeContent.FeatureItem {
             description: "Finish one deliberate micro-task after wake verification before your morning run is marked complete.",
             systemImage: "checkmark.seal.fill",
             accentColor: "blue"
-        )
+        ),
     ]
 }
 
-extension HomeContent.QuickAction {
-    
+public extension HomeContent.QuickAction {
     /// Default quick actions for the boilerplate
     /// Buyers can customize or add more actions
-    public static let defaults: [HomeContent.QuickAction] = [
+    static let defaults: [HomeContent.QuickAction] = [
         HomeContent.QuickAction(
             title: "Start Wake Run",
             systemImage: "alarm.badge.checkmark",
@@ -141,6 +138,6 @@ extension HomeContent.QuickAction {
             systemImage: "gearshape.fill",
             accentColor: "gray",
             action: .settings
-        )
+        ),
     ]
 }

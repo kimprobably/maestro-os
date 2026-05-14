@@ -1,15 +1,15 @@
-import Foundation
 import Core
+import Foundation
 import Storage
 
 @available(iOS 17.0, *)
 extension ChatViewModel {
-
     /// Extract and persist memories from recent conversation.
     /// Called after a successful message exchange without blocking it.
     func extractAndSaveMemories() async {
         guard let extractor = memoryExtractor,
-              let repository = memoryRepository else {
+              let repository = memoryRepository
+        else {
             return
         }
 

@@ -1,10 +1,9 @@
+import Core
 import Foundation
 import UIKit
-import Core
 
 /// Helper for managing App Store subscriptions
 public enum SubscriptionManager {
-    
     /// Open the App Store subscription management page
     /// This allows users to view, modify, or cancel their subscriptions
     @MainActor
@@ -13,7 +12,7 @@ public enum SubscriptionManager {
             AppLogger.error("Invalid subscription management URL", category: AppLogger.payments)
             return
         }
-        
+
         if UIApplication.shared.canOpenURL(url) {
             UIApplication.shared.open(url, options: [:]) { success in
                 if success {
@@ -26,7 +25,7 @@ public enum SubscriptionManager {
             AppLogger.error("Cannot open App Store subscriptions URL", category: AppLogger.payments)
         }
     }
-    
+
     /// Open the App Store page for this app (for reviews and general info)
     @MainActor
     public static func openAppStorePage(appID: String) {
@@ -34,7 +33,7 @@ public enum SubscriptionManager {
             AppLogger.error("Invalid App Store URL for app ID: \(appID)", category: AppLogger.payments)
             return
         }
-        
+
         if UIApplication.shared.canOpenURL(url) {
             UIApplication.shared.open(url, options: [:]) { success in
                 if success {
@@ -46,4 +45,3 @@ public enum SubscriptionManager {
         }
     }
 }
-

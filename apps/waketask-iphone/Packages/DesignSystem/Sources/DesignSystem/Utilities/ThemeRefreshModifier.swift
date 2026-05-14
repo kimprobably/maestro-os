@@ -3,7 +3,7 @@ import SwiftUI
 /// View modifier that forces refresh when design system theme changes
 struct ThemeRefreshModifier: ViewModifier {
     @State private var refreshID = UUID()
-    
+
     func body(content: Content) -> some View {
         content
             .id(refreshID)

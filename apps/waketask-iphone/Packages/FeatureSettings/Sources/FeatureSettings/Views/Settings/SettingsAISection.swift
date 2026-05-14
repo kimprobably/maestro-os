@@ -1,10 +1,9 @@
-import SwiftUI
 import DesignSystem
+import SwiftUI
 
 /// Optional "AI" section that reveals the AI Memories manager when the host
 /// wires an `onShowMemoryManagement` callback.
 struct SettingsAISection: View {
-
     let onShowMemoryManagement: () -> Void
 
     var body: some View {

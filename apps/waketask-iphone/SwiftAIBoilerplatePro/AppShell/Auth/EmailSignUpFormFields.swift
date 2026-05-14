@@ -1,5 +1,5 @@
-import SwiftUI
 import DesignSystem
+import SwiftUI
 
 /// Fields currently focused in the sign-up form.
 enum EmailSignUpField: Hashable {
@@ -9,7 +9,6 @@ enum EmailSignUpField: Hashable {
 /// Email + password + confirm-password fields with live validation errors
 /// and a password-strength indicator.
 struct EmailSignUpFormFields: View {
-
     @Bindable var viewModel: EmailSignUpViewModel
     var focusedField: FocusState<EmailSignUpField?>.Binding
     let onSubmit: () -> Void
@@ -77,7 +76,7 @@ struct EmailSignUpFormFields: View {
     private var passwordStrengthView: some View {
         VStack(spacing: DSSpacing.xs) {
             HStack(spacing: DSSpacing.sm) {
-                ForEach(0..<4, id: \.self) { index in
+                ForEach(0 ..< 4, id: \.self) { index in
                     Capsule()
                         .fill(index < viewModel.passwordStrength.rawValue ? strengthColor : Color.gray.opacity(0.3))
                         .frame(height: 4)
@@ -95,10 +94,10 @@ struct EmailSignUpFormFields: View {
 
     private var strengthColor: Color {
         switch viewModel.passwordStrength {
-        case .weak: return .red
-        case .fair: return .orange
-        case .good: return .yellow
-        case .strong: return .green
+        case .weak: .red
+        case .fair: .orange
+        case .good: .yellow
+        case .strong: .green
         }
     }
 
@@ -136,10 +135,10 @@ enum PasswordStrength: Int {
 
     var label: String {
         switch self {
-        case .weak: return "Weak"
-        case .fair: return "Fair"
-        case .good: return "Good"
-        case .strong: return "Strong"
+        case .weak: "Weak"
+        case .fair: "Fair"
+        case .good: "Good"
+        case .strong: "Strong"
         }
     }
 

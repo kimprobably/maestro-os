@@ -20,34 +20,33 @@ import Foundation
 /// )
 /// ```
 public struct RatingConfig: Sendable {
-    
     // MARK: - Scoring Thresholds
-    
+
     /// Minimum sentiment score needed to trigger a prompt (default: 5.0)
     /// A higher threshold means the user needs more positive actions before being asked.
     public let positiveThreshold: Double
-    
+
     /// Minimum number of recorded actions before prompting (default: 5)
     /// Prevents prompting users who have barely used the app.
     public let minimumActions: Int
-    
+
     /// Daily decay factor applied to the sentiment score (default: 0.95)
     /// Score decays as: `score *= decayFactor ^ daysSinceLastAction`
     /// - 0.95 = gentle decay (score halves in ~14 days)
     /// - 0.90 = moderate decay (score halves in ~7 days)
     /// - 0.80 = aggressive decay (score halves in ~3 days)
     public let decayFactor: Double
-    
+
     // MARK: - Rate Limiting
-    
+
     /// Minimum days between rating prompts (default: 30)
     /// Apple recommends not asking too frequently.
     public let cooldownDays: Int
-    
+
     /// Maximum number of prompts per calendar year (default: 3)
     /// Apple limits `SKStoreReviewController` to 3 displays per year.
     public let maxPromptsPerYear: Int
-    
+
     /// Whether to permanently stop asking after the user taps "Rate on App Store" (default: true)
     ///
     /// When `true`, once a user taps the accept button in the pre-prompt popup,
@@ -59,26 +58,26 @@ public struct RatingConfig: Sendable {
     /// and score threshold to naturally gate re-prompting. This can be useful if
     /// your app ships major updates and you want a chance to collect fresh reviews.
     public let stopAskingAfterRating: Bool
-    
+
     // MARK: - Pre-Prompt UI Copy
-    
+
     /// Title shown in the pre-prompt popup (default: "Enjoying the app?")
     public let title: String
-    
+
     /// Message shown below the title (default: "Your feedback helps us improve...")
     public let message: String
-    
+
     /// Accept button title (default: "Rate on App Store")
     public let acceptTitle: String
-    
+
     /// Decline button title (default: "Not now")
     public let declineTitle: String
-    
+
     /// SF Symbol name for the prompt icon (default: "star.bubble")
     public let icon: String
-    
+
     // MARK: - Initialization
-    
+
     /// Create a rating configuration
     /// - Parameters:
     ///   - positiveThreshold: Score needed to trigger prompt (default: 5.0)
@@ -117,7 +116,7 @@ public struct RatingConfig: Sendable {
         self.declineTitle = declineTitle
         self.icon = icon
     }
-    
+
     /// Default configuration suitable for most apps
     public static let `default` = RatingConfig()
 }

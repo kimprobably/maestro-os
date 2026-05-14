@@ -1,7 +1,7 @@
-import Foundation
 import Core
+import Foundation
 
-struct WakeTaskStoreSnapshot: Codable, Sendable {
+struct WakeTaskStoreSnapshot: Codable {
     var alarms: [WakeAlarm]
     var runs: [WakeRun]
 
@@ -15,10 +15,10 @@ actor WakeTaskLocalStore {
 
     init(fileURL: URL) {
         self.fileURL = fileURL
-        self.encoder = JSONEncoder()
-        self.decoder = JSONDecoder()
-        self.encoder.dateEncodingStrategy = .iso8601
-        self.decoder.dateDecodingStrategy = .iso8601
+        encoder = JSONEncoder()
+        decoder = JSONDecoder()
+        encoder.dateEncodingStrategy = .iso8601
+        decoder.dateDecodingStrategy = .iso8601
     }
 
     func load() throws -> WakeTaskStoreSnapshot {

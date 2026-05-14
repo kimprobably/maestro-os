@@ -16,15 +16,14 @@ import SwiftUI
 /// )
 /// ```
 public struct SAIStreamingBubble: View {
-    
     private let text: String
     private let isStreaming: Bool
     private let isTyping: Bool
     private let badges: [String]
-    
+
     @State private var caretVisible = true
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
-    
+
     public init(
         text: String,
         isStreaming: Bool = false,
@@ -36,14 +35,14 @@ public struct SAIStreamingBubble: View {
         self.isTyping = isTyping
         self.badges = badges
     }
-    
+
     public var body: some View {
         VStack(alignment: .leading, spacing: DSSpacing.sm) {
             // Tool badges
             if !badges.isEmpty {
                 badgesRow
             }
-            
+
             // Message content
             HStack(alignment: .top, spacing: DSSpacing.xs) {
                 if isTyping {
@@ -57,12 +56,12 @@ public struct SAIStreamingBubble: View {
             .cornerRadius(DSRadius.lg)
         }
     }
-    
+
     // MARK: - Typing Indicator
-    
+
     private var typingIndicator: some View {
         HStack(spacing: DSSpacing.xs) {
-            ForEach(0..<3, id: \.self) { index in
+            ForEach(0 ..< 3, id: \.self) { index in
                 Circle()
                     .fill(DSColors.textSecondary)
                     .frame(width: 8, height: 8)
@@ -77,22 +76,22 @@ public struct SAIStreamingBubble: View {
             }
         }
     }
-    
+
     // MARK: - Message Content
-    
+
     private var messageContent: some View {
         HStack(alignment: .top, spacing: 0) {
             Text(text)
                 .font(DSTypography.body)
                 .foregroundStyle(DSColors.textPrimary)
                 .textSelection(.enabled)
-            
+
             if isStreaming {
                 streamingCaret
             }
         }
     }
-    
+
     private var streamingCaret: some View {
         Rectangle()
             .fill(DSColors.accentPrimary)
@@ -108,9 +107,9 @@ public struct SAIStreamingBubble: View {
                 }
             }
     }
-    
+
     // MARK: - Tool Badges
-    
+
     private var badgesRow: some View {
         HStack(spacing: DSSpacing.xs) {
             ForEach(badges, id: \.self) { badge in
@@ -128,14 +127,14 @@ public struct SAIStreamingBubble: View {
             }
         }
     }
-    
+
     private func badgeIcon(for badge: String) -> String {
         switch badge.lowercased() {
-        case "web", "search": return "globe"
-        case "math", "calculate": return "function"
-        case "code": return "chevron.left.forwardslash.chevron.right"
-        case "image": return "photo"
-        default: return "sparkles"
+        case "web", "search": "globe"
+        case "math", "calculate": "function"
+        case "code": "chevron.left.forwardslash.chevron.right"
+        case "image": "photo"
+        default: "sparkles"
         }
     }
 }
@@ -158,26 +157,26 @@ private extension String {
             text: "",
             isTyping: true
         )
-        
+
         // Streaming state
         SAIStreamingBubble(
             text: "Let me help you with that",
             isStreaming: true
         )
-        
+
         // Complete state
         SAIStreamingBubble(
             text: "Let me help you with that. Here's a comprehensive answer to your question with all the details you need.",
             isStreaming: false
         )
-        
+
         // With badges
         SAIStreamingBubble(
             text: "I've searched the web and found the answer.",
             isStreaming: false,
             badges: ["Web", "Search"]
         )
-        
+
         // Multiple badges
         SAIStreamingBubble(
             text: "I can help you with code and calculations.",
@@ -195,13 +194,13 @@ private extension String {
             text: "",
             isTyping: true
         )
-        
+
         SAIStreamingBubble(
             text: "Streaming response...",
             isStreaming: true,
             badges: ["Web"]
         )
-        
+
         SAIStreamingBubble(
             text: "Complete response with all the details.",
             isStreaming: false
@@ -224,13 +223,13 @@ private extension String {
                     .foregroundStyle(DSColors.background)
                     .cornerRadius(DSRadius.lg)
             }
-            
+
             // Assistant typing
             SAIStreamingBubble(
                 text: "",
                 isTyping: true
             )
-            
+
             // User message
             HStack {
                 Spacer()
@@ -240,7 +239,7 @@ private extension String {
                     .foregroundStyle(DSColors.background)
                     .cornerRadius(DSRadius.lg)
             }
-            
+
             // Assistant streaming
             SAIStreamingBubble(
                 text: "Of course! I'd be happy to help you with coding. What",
@@ -252,4 +251,3 @@ private extension String {
     }
     .background(DSColors.background)
 }
-

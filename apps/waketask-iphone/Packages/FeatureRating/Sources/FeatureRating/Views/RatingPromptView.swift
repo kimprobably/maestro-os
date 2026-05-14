@@ -1,5 +1,5 @@
-import SwiftUI
 import DesignSystem
+import SwiftUI
 
 /// A beautiful pre-prompt popup that asks the user if they'd like to rate the app.
 ///
@@ -9,15 +9,14 @@ import DesignSystem
 ///
 /// The view uses DesignSystem tokens for consistent theming across all 5 themes.
 public struct RatingPromptView: View {
-    
     let config: RatingConfig
     let onAccept: () -> Void
     let onDecline: () -> Void
-    
+
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var isAppearing = false
     @State private var starScale: CGFloat = 0.5
-    
+
     public init(
         config: RatingConfig,
         onAccept: @escaping () -> Void,
@@ -27,14 +26,14 @@ public struct RatingPromptView: View {
         self.onAccept = onAccept
         self.onDecline = onDecline
     }
-    
+
     public var body: some View {
         ZStack {
             // Dimmed backdrop
             Color.black.opacity(0.4)
                 .ignoresSafeArea()
                 .onTapGesture { onDecline() }
-            
+
             // Card
             promptCard
                 .padding(.horizontal, DSSpacing.xl)
@@ -51,9 +50,9 @@ public struct RatingPromptView: View {
         }
         .accessibilityAddTraits(.isModal)
     }
-    
+
     // MARK: - Card Content
-    
+
     private var promptCard: some View {
         VStack(spacing: DSSpacing.lg) {
             // Icon
@@ -73,13 +72,13 @@ public struct RatingPromptView: View {
         )
         .elevation(DSElevation.level3)
     }
-    
+
     private var iconView: some View {
         ZStack {
             Circle()
                 .fill(DSColors.surfaceTinted)
                 .frame(width: 72, height: 72)
-            
+
             Image(systemName: config.icon)
                 .font(.system(size: 32, weight: .medium))
                 .foregroundStyle(DSGradient.primaryLinear)
@@ -87,14 +86,14 @@ public struct RatingPromptView: View {
         }
         .accessibilityHidden(true)
     }
-    
+
     private var textContent: some View {
         VStack(spacing: DSSpacing.sm) {
             Text(config.title)
                 .font(DSTypography.titleL)
                 .foregroundStyle(DSColors.textPrimary)
                 .multilineTextAlignment(.center)
-            
+
             Text(config.message)
                 .font(DSTypography.body)
                 .foregroundStyle(DSColors.textSecondary)
@@ -102,7 +101,7 @@ public struct RatingPromptView: View {
                 .lineSpacing(DSTypography.bodyLineSpacing)
         }
     }
-    
+
     private var buttonStack: some View {
         VStack(spacing: DSSpacing.md) {
             // Primary CTA
@@ -110,7 +109,7 @@ public struct RatingPromptView: View {
                 onAccept()
             }
             .accessibilityLabel("Rate this app on the App Store")
-            
+
             // Secondary decline
             SAIButton(config.declineTitle, style: .quiet, size: .md) {
                 onDecline()
@@ -124,46 +123,46 @@ public struct RatingPromptView: View {
 // MARK: - Preview
 
 #if DEBUG
-#Preview("Rating Prompt - Default") {
-    ZStack {
-        DSColors.background.ignoresSafeArea()
-        
-        RatingPromptView(
-            config: .default,
-            onAccept: {},
-            onDecline: {}
-        )
-    }
-}
+    #Preview("Rating Prompt - Default") {
+        ZStack {
+            DSColors.background.ignoresSafeArea()
 
-#Preview("Rating Prompt - Custom") {
-    ZStack {
-        DSColors.background.ignoresSafeArea()
-        
-        RatingPromptView(
-            config: RatingConfig(
-                title: "Loving Capishi?",
-                message: "You've been crushing your interviews! Help others discover Capishi by leaving a quick review.",
-                acceptTitle: "Rate Capishi",
-                declineTitle: "Maybe later",
-                icon: "hands.sparkles"
-            ),
-            onAccept: {},
-            onDecline: {}
-        )
+            RatingPromptView(
+                config: .default,
+                onAccept: {},
+                onDecline: {}
+            )
+        }
     }
-}
 
-#Preview("Rating Prompt - Dark") {
-    ZStack {
-        DSColors.background.ignoresSafeArea()
-        
-        RatingPromptView(
-            config: .default,
-            onAccept: {},
-            onDecline: {}
-        )
+    #Preview("Rating Prompt - Custom") {
+        ZStack {
+            DSColors.background.ignoresSafeArea()
+
+            RatingPromptView(
+                config: RatingConfig(
+                    title: "Loving Capishi?",
+                    message: "You've been crushing your interviews! Help others discover Capishi by leaving a quick review.",
+                    acceptTitle: "Rate Capishi",
+                    declineTitle: "Maybe later",
+                    icon: "hands.sparkles"
+                ),
+                onAccept: {},
+                onDecline: {}
+            )
+        }
     }
-    .preferredColorScheme(.dark)
-}
+
+    #Preview("Rating Prompt - Dark") {
+        ZStack {
+            DSColors.background.ignoresSafeArea()
+
+            RatingPromptView(
+                config: .default,
+                onAccept: {},
+                onDecline: {}
+            )
+        }
+        .preferredColorScheme(.dark)
+    }
 #endif

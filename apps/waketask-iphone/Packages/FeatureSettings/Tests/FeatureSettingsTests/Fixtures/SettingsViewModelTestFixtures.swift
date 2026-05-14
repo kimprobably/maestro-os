@@ -1,15 +1,14 @@
-import XCTest
-@testable import FeatureSettings
-import Storage
 import Auth
-import Payments
 import Core
+@testable import FeatureSettings
+import Payments
+import Storage
+import XCTest
 
 /// Shared base class for every `SettingsViewModel` test file. Provides a
 /// fresh view model + fakes per test.
 @MainActor
 class SettingsViewModelTestCase: XCTestCase {
-
     var viewModel: SettingsViewModel!
     var fakeSettingsRepo: FakeSettingsRepository!
     var fakeAuthClient: FakeAuthClient!
@@ -75,21 +74,21 @@ final class FakeAuthClient: AuthClient, @unchecked Sendable {
         return user
     }
 
-    func signUpWithEmail(email: String, password: String) async throws -> AuthUser {
+    func signUpWithEmail(email: String, password _: String) async throws -> AuthUser {
         if shouldFail { throw AuthError.invalidCredentials }
         let user = AuthUser(id: "123", email: email)
         currentAuthUser = user
         return user
     }
 
-    func signInWithEmail(email: String, password: String) async throws -> AuthUser {
+    func signInWithEmail(email: String, password _: String) async throws -> AuthUser {
         if shouldFail { throw AuthError.invalidCredentials }
         let user = AuthUser(id: "123", email: email)
         currentAuthUser = user
         return user
     }
 
-    func resetPassword(email: String) async throws {
+    func resetPassword(email _: String) async throws {
         if shouldFail { throw AuthError.invalidCredentials }
     }
 
@@ -127,7 +126,7 @@ final class FakePaymentsClient: PaymentsClient, @unchecked Sendable {
 
     private var stateContinuation: AsyncStream<PaymentsState>.Continuation?
 
-    func configure(_ config: PaymentsConfig) {}
+    func configure(_: PaymentsConfig) {}
 
     func states() -> AsyncStream<PaymentsState> {
         AsyncStream { continuation in
@@ -144,7 +143,7 @@ final class FakePaymentsClient: PaymentsClient, @unchecked Sendable {
         PaymentsState(isSubscribed: isSubscribed)
     }
 
-    func purchase(productID: String) async throws {
+    func purchase(productID _: String) async throws {
         if shouldFail { throw PaymentsError.cancelled }
         isSubscribed = true
     }

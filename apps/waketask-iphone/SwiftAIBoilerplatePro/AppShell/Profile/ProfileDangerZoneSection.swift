@@ -1,10 +1,9 @@
-import SwiftUI
 import DesignSystem
+import SwiftUI
 
 /// "Danger Zone" section: Sign Out + Delete Account.
 /// Confirmation alerts live on the parent ProfileView (bound to `viewModel.show…Confirmation`).
 struct ProfileDangerZoneSection: View {
-
     let viewModel: ProfileViewModel
 
     var body: some View {

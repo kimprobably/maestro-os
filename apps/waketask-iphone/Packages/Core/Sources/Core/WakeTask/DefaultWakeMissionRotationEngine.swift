@@ -5,7 +5,7 @@ public struct DefaultWakeMissionRotationEngine: WakeMissionRotationEngine {
 
     public init(randomIndex: @escaping @Sendable (Int) -> Int = { upperBound in
         guard upperBound > 0 else { return 0 }
-        return Int.random(in: 0..<upperBound)
+        return Int.random(in: 0 ..< upperBound)
     }) {
         self.randomIndex = randomIndex
     }
@@ -25,7 +25,7 @@ public struct DefaultWakeMissionRotationEngine: WakeMissionRotationEngine {
         }
 
         var generated: [WakeMission] = []
-        for index in 0..<count {
+        for index in 0 ..< count {
             let modality = ordered[index % ordered.count]
             generated.append(
                 WakeMission(modality: modality, prompt: prompt(for: modality, strictness: alarm.strictness))
@@ -36,11 +36,10 @@ public struct DefaultWakeMissionRotationEngine: WakeMissionRotationEngine {
     }
 
     private func recentWindowModalities(from runs: [WakeRun], strictness: WakeStrictness) -> Set<WakeMissionModality> {
-        let window: Int
-        switch strictness {
-        case .relaxed: window = 1
-        case .balanced: window = 2
-        case .strict: window = 3
+        let window = switch strictness {
+        case .relaxed: 1
+        case .balanced: 2
+        case .strict: 3
         }
 
         let recentRuns = runs.sorted { $0.scheduledAt > $1.scheduledAt }.prefix(window)
@@ -50,23 +49,23 @@ public struct DefaultWakeMissionRotationEngine: WakeMissionRotationEngine {
     private func prompt(for modality: WakeMissionModality, strictness: WakeStrictness) -> String {
         switch (modality, strictness) {
         case (.cognitive, .relaxed):
-            return "Solve a quick pattern: 7 + 5 - 3"
+            "Solve a quick pattern: 7 + 5 - 3"
         case (.cognitive, .balanced):
-            return "Reverse these numbers out loud: 8, 3, 1"
+            "Reverse these numbers out loud: 8, 3, 1"
         case (.cognitive, .strict):
-            return "Count backward by 7 from 84"
+            "Count backward by 7 from 84"
         case (.movement, .relaxed):
-            return "Take 8 steps away from your bed"
+            "Take 8 steps away from your bed"
         case (.movement, .balanced):
-            return "Do 12 marching steps with your phone"
+            "Do 12 marching steps with your phone"
         case (.movement, .strict):
-            return "Complete 15 quick squats"
+            "Complete 15 quick squats"
         case (.scanPhoto, .relaxed):
-            return "Photograph the sink area"
+            "Photograph the sink area"
         case (.scanPhoto, .balanced):
-            return "Photograph your bathroom mirror"
+            "Photograph your bathroom mirror"
         case (.scanPhoto, .strict):
-            return "Photograph your kitchen counter"
+            "Photograph your kitchen counter"
         }
     }
 }

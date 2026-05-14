@@ -3,7 +3,6 @@ import Storage
 
 /// Mappers between Storage DTOs and Chat domain models
 public enum ChatMappers {
-
     /// Convert MessageDTO to ChatMessage
     public static func toChatMessage(_ dto: MessageDTO) -> ChatMessage {
         let role = ChatMessage.Role(rawValue: dto.role.rawValue) ?? .system

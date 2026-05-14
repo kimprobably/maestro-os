@@ -2,7 +2,6 @@ import UIKit
 
 /// Utilities for image processing in profile photo uploads
 enum ImageUtilities {
-    
     /// Compress image to target size in KB
     /// - Parameters:
     ///   - image: The UIImage to compress
@@ -12,16 +11,16 @@ enum ImageUtilities {
         let maxBytes = maxSizeKB * 1024
         var compression: CGFloat = 0.9
         var imageData = image.jpegData(compressionQuality: compression)
-        
+
         // Progressively reduce quality until under target size
-        while let data = imageData, data.count > maxBytes && compression > 0.1 {
+        while let data = imageData, data.count > maxBytes, compression > 0.1 {
             compression -= 0.1
             imageData = image.jpegData(compressionQuality: compression)
         }
-        
+
         return imageData
     }
-    
+
     /// Validate image data
     /// - Parameters:
     ///   - data: Image data to validate
@@ -33,15 +32,15 @@ enum ImageUtilities {
         guard data.count <= maxBytes else {
             return .failure(.tooLarge(sizeInMB: Double(data.count) / 1024.0 / 1024.0))
         }
-        
+
         // Check if valid image
         guard let image = UIImage(data: data) else {
             return .failure(.invalidFormat)
         }
-        
+
         return .success(image)
     }
-    
+
     /// Process image for profile photo: validate and compress
     /// - Parameters:
     ///   - data: Raw image data from photo picker
@@ -52,39 +51,38 @@ enum ImageUtilities {
     static func processForProfile(_ data: Data, targetSizeKB: Int = 500) -> Result<Data, ImageError> {
         // Validate
         let validationResult = validate(data)
-        guard case .success(let image) = validationResult else {
-            if case .failure(let error) = validationResult {
+        guard case let .success(image) = validationResult else {
+            if case let .failure(error) = validationResult {
                 return .failure(error)
             }
             return .failure(.processingFailed)
         }
-        
+
         // Compress (no cropping - preserves user's selected framing)
         guard let compressedData = compress(image, maxSizeKB: targetSizeKB) else {
             return .failure(.compressionFailed)
         }
-        
+
         return .success(compressedData)
     }
-    
+
     enum ImageError: Error, LocalizedError {
         case tooLarge(sizeInMB: Double)
         case invalidFormat
         case compressionFailed
         case processingFailed
-        
+
         var errorDescription: String? {
             switch self {
-            case .tooLarge(let size):
-                return "Image too large (\(String(format: "%.1f", size))MB). Please choose a smaller image."
+            case let .tooLarge(size):
+                "Image too large (\(String(format: "%.1f", size))MB). Please choose a smaller image."
             case .invalidFormat:
-                return "Invalid image format. Please choose a valid photo."
+                "Invalid image format. Please choose a valid photo."
             case .compressionFailed:
-                return "Failed to compress image. Please try a different photo."
+                "Failed to compress image. Please try a different photo."
             case .processingFailed:
-                return "Failed to process image. Please try again."
+                "Failed to process image. Please try again."
             }
         }
     }
 }
-

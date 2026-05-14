@@ -1,9 +1,8 @@
-import SwiftUI
 import DesignSystem
+import SwiftUI
 
 /// "About" section: version + build rows.
 struct ProfileAboutSection: View {
-
     var body: some View {
         VStack(alignment: .leading, spacing: DSSpacing.md) {
             DSSectionHeader(title: "About")

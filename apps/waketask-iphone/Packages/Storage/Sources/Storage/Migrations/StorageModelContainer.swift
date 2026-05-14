@@ -1,10 +1,9 @@
+import Core
 import Foundation
 import SwiftData
-import Core
 
 /// Factory for creating SwiftData model containers
 public enum StorageModelContainer {
-    
     /// Creates a configured ModelContainer for the Storage module
     /// - Parameter inMemory: If true, creates an in-memory store for testing
     /// - Returns: Configured ModelContainer
@@ -13,11 +12,11 @@ public enum StorageModelContainer {
             Conversation.self,
             Message.self,
             Settings.self,
-            Memory.self
+            Memory.self,
         ])
-        
+
         let modelConfiguration: ModelConfiguration
-        
+
         if inMemory {
             // Create in-memory configuration for testing
             modelConfiguration = ModelConfiguration(
@@ -34,23 +33,23 @@ public enum StorageModelContainer {
             )
             AppLogger.debug("Created persistent model container", category: AppLogger.storage)
         }
-        
+
         do {
             let container = try ModelContainer(
                 for: schema,
                 configurations: [modelConfiguration]
             )
-            
+
             // Validate and handle migrations
             try StorageMigration.validateSchema(for: container)
-            
+
             return container
         } catch {
             AppLogger.error("Failed to create model container: \(error)", category: AppLogger.storage)
             throw StorageError.underlying(error)
         }
     }
-    
+
     /// Creates repository instances with a shared model context
     /// - Parameters:
     ///   - container: The model container to use
@@ -90,7 +89,7 @@ public enum StorageModelContainer {
         memory: any MemoryRepository
     ) {
         let context = ModelContext(container)
-        
+
         return (
             conversations: ConversationRepositoryImpl(modelContext: context),
             messages: MessageRepositoryImpl(modelContext: context),

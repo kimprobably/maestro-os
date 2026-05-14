@@ -1,38 +1,37 @@
-import XCTest
 @testable import Auth
 import Storage
+import XCTest
 
 @available(iOS 17.0, *)
 final class SupabaseAuthAPITests: XCTestCase {
-    
     private var api: SupabaseAuthAPI!
     private var httpClient: SupabaseHTTPClient!
     private var config: AuthConfig!
     private var session: URLSession!
-    
+
     override func setUp() {
         super.setUp()
-        
+
         config = AuthConfig(
             supabaseURL: URL(string: "https://test.supabase.co")!,
             supabaseAnonKey: "test-anon-key"
         )
-        
+
         let configuration = URLSessionConfiguration.ephemeral
         configuration.protocolClasses = [URLProtocolStub.self]
         session = URLSession(configuration: configuration)
-        
+
         httpClient = SupabaseHTTPClient(baseURL: config.supabaseURL, session: session)
         api = SupabaseAuthAPI(httpClient: httpClient, config: config)
-        
+
         URLProtocolStub.reset()
     }
-    
+
     override func tearDown() {
         URLProtocolStub.reset()
         super.tearDown()
     }
-    
+
     func testExchangeAppleIDTokenSuccess() async throws {
         // Given
         let responseJSON = """
@@ -51,18 +50,18 @@ final class SupabaseAuthAPITests: XCTestCase {
             }
         }
         """
-        
+
         // Stub both possible query parameter orderings (dictionary order is not guaranteed)
         let url1 = "https://test.supabase.co/auth/v1/token?grant_type=id_token&provider=apple"
         let url2 = "https://test.supabase.co/auth/v1/token?provider=apple&grant_type=id_token"
-        
-        let response = HTTPURLResponse(
-            url: URL(string: url1)!,
+
+        let response = try HTTPURLResponse(
+            url: XCTUnwrap(URL(string: url1)),
             statusCode: 200,
             httpVersion: nil,
             headerFields: nil
         )
-        
+
         URLProtocolStub.stubsLock.withLock {
             URLProtocolStub.stubs[url1] = (
                 data: responseJSON.data(using: .utf8),
@@ -75,25 +74,25 @@ final class SupabaseAuthAPITests: XCTestCase {
                 error: nil
             )
         }
-        
+
         // When
         let session = try await api.exchangeAppleIDToken(
             idToken: "apple-id-token",
             nonce: "test-nonce"
         )
-        
+
         // Then
         XCTAssertEqual(session.accessToken, "access-token-123")
         XCTAssertEqual(session.refreshToken, "refresh-token-456")
         XCTAssertEqual(session.user.id, "user-123")
         XCTAssertEqual(session.user.email, "test@example.com")
         XCTAssertEqual(session.user.name, "Test User")
-        
+
         // Verify expiresAt is computed correctly
         let expectedExpiry = Date.now.addingTimeInterval(3600)
         XCTAssertEqual(session.expiresAt.timeIntervalSince1970, expectedExpiry.timeIntervalSince1970, accuracy: 2)
     }
-    
+
     func testRefreshSuccess() async throws {
         // Given
         let responseJSON = """
@@ -108,7 +107,7 @@ final class SupabaseAuthAPITests: XCTestCase {
             }
         }
         """
-        
+
         let url = "https://test.supabase.co/auth/v1/token?grant_type=refresh_token"
         URLProtocolStub.stubsLock.withLock {
             URLProtocolStub.stubs[url] = (
@@ -122,28 +121,28 @@ final class SupabaseAuthAPITests: XCTestCase {
                 error: nil
             )
         }
-        
+
         // When
         let session = try await api.refresh(refreshToken: "old-refresh-token")
-        
+
         // Then
         XCTAssertEqual(session.accessToken, "new-access-token")
         XCTAssertEqual(session.refreshToken, "new-refresh-token")
         XCTAssertEqual(session.user.id, "user-123")
     }
-    
+
     func testServer401MapsToInvalidCredentials() async throws {
         // Given
         let url1 = "https://test.supabase.co/auth/v1/token?grant_type=id_token&provider=apple"
         let url2 = "https://test.supabase.co/auth/v1/token?provider=apple&grant_type=id_token"
-        
-        let response = HTTPURLResponse(
-            url: URL(string: url1)!,
+
+        let response = try HTTPURLResponse(
+            url: XCTUnwrap(URL(string: url1)),
             statusCode: 401,
             httpVersion: nil,
             headerFields: nil
         )
-        
+
         URLProtocolStub.stubsLock.withLock {
             URLProtocolStub.stubs[url1] = (
                 data: "{}".data(using: .utf8),
@@ -156,7 +155,7 @@ final class SupabaseAuthAPITests: XCTestCase {
                 error: nil
             )
         }
-        
+
         // When/Then
         do {
             _ = try await api.exchangeAppleIDToken(idToken: "token", nonce: "nonce")
@@ -165,7 +164,7 @@ final class SupabaseAuthAPITests: XCTestCase {
             XCTAssertEqual(error, .invalidCredentials)
         }
     }
-    
+
     func testServer500MapsToServerError() async throws {
         // Given
         let errorJSON = """
@@ -174,7 +173,7 @@ final class SupabaseAuthAPITests: XCTestCase {
             "error_description": "Something went wrong"
         }
         """
-        
+
         let url = "https://test.supabase.co/auth/v1/token?grant_type=refresh_token"
         URLProtocolStub.stubsLock.withLock {
             URLProtocolStub.stubs[url] = (
@@ -188,7 +187,7 @@ final class SupabaseAuthAPITests: XCTestCase {
                 error: nil
             )
         }
-        
+
         // When/Then
         do {
             _ = try await api.refresh(refreshToken: "token")
@@ -202,7 +201,7 @@ final class SupabaseAuthAPITests: XCTestCase {
             }
         }
     }
-    
+
     func testRefreshTokenRotation() async throws {
         // Given - Supabase returns a new refresh token
         let responseJSON = """
@@ -214,7 +213,7 @@ final class SupabaseAuthAPITests: XCTestCase {
             "user": {"id": "user-123"}
         }
         """
-        
+
         let url = "https://test.supabase.co/auth/v1/token?grant_type=refresh_token"
         URLProtocolStub.stubsLock.withLock {
             URLProtocolStub.stubs[url] = (
@@ -228,14 +227,14 @@ final class SupabaseAuthAPITests: XCTestCase {
                 error: nil
             )
         }
-        
+
         // When
         let session = try await api.refresh(refreshToken: "old-refresh-token")
-        
+
         // Then - Should use the new rotated refresh token
         XCTAssertEqual(session.refreshToken, "rotated-refresh-token")
     }
-    
+
     func testRefreshWithoutNewRefreshTokenKeepsExisting() async throws {
         // Given - Supabase doesn't return refresh token (keeps existing)
         let responseJSON = """
@@ -246,7 +245,7 @@ final class SupabaseAuthAPITests: XCTestCase {
             "user": {"id": "user-123"}
         }
         """
-        
+
         let url = "https://test.supabase.co/auth/v1/token?grant_type=refresh_token"
         URLProtocolStub.stubsLock.withLock {
             URLProtocolStub.stubs[url] = (
@@ -260,14 +259,14 @@ final class SupabaseAuthAPITests: XCTestCase {
                 error: nil
             )
         }
-        
+
         // When
         let session = try await api.refresh(refreshToken: "existing-refresh-token")
-        
+
         // Then - Should keep the existing refresh token
         XCTAssertEqual(session.refreshToken, "existing-refresh-token")
     }
-    
+
     func testURLErrorMapsToNetworkError() async throws {
         // Given
         let url = "https://test.supabase.co/auth/v1/token?grant_type=refresh_token"
@@ -278,7 +277,7 @@ final class SupabaseAuthAPITests: XCTestCase {
                 error: URLError(.notConnectedToInternet)
             )
         }
-        
+
         // When/Then
         do {
             _ = try await api.refresh(refreshToken: "token")

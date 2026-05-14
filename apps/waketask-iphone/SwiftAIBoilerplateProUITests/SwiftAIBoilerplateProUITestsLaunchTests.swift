@@ -1,9 +1,8 @@
-//___FILEHEADER___
+// ___FILEHEADER___
 
 import XCTest
 
 final class ___FILEBASENAMEASIDENTIFIER___: XCTestCase {
-
     override class var runsForEachTargetApplicationUIConfiguration: Bool {
         true
     }
@@ -13,7 +12,7 @@ final class ___FILEBASENAMEASIDENTIFIER___: XCTestCase {
     }
 
     @MainActor
-    func testLaunch() throws {
+    func testLaunch() {
         let app = XCUIApplication()
         app.launch()
 

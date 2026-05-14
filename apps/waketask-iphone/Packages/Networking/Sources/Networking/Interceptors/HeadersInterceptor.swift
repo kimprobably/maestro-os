@@ -1,7 +1,7 @@
 import Foundation
 
 #if canImport(UIKit)
-import UIKit
+    import UIKit
 #endif
 
 /// Interceptor that adds standard headers and telemetry information to requests
@@ -10,7 +10,7 @@ public struct HeadersInterceptor: HTTPInterceptor {
     private let platform: String
     private let deviceModel: String?
     private let extraHeaders: [String: String]
-    
+
     /// Creates a headers interceptor
     /// - Parameters:
     ///   - appVersion: Application version string
@@ -28,7 +28,7 @@ public struct HeadersInterceptor: HTTPInterceptor {
         self.deviceModel = deviceModel ?? Self.detectDeviceModel()
         self.extraHeaders = extraHeaders
     }
-    
+
     /// Adapts the request by adding standard headers if not already present
     /// - Parameter request: The mutable URLRequest to modify
     public func adapt(_ request: inout URLRequest) {
@@ -36,25 +36,25 @@ public struct HeadersInterceptor: HTTPInterceptor {
         var standardHeaders: [String: String] = [
             "User-Agent": buildUserAgent(),
             "X-App-Version": appVersion,
-            "X-Platform": platform
+            "X-Platform": platform,
         ]
-        
+
         // Add device model if available
-        if let deviceModel = deviceModel {
+        if let deviceModel {
             standardHeaders["X-Device-Model"] = deviceModel
         }
-        
+
         // Add extra headers
         for (key, value) in extraHeaders {
             standardHeaders[key] = value
         }
-        
+
         // Set headers only if not already present (request headers take precedence)
         for (key, value) in standardHeaders where request.value(forHTTPHeaderField: key) == nil {
             request.setValue(value, forHTTPHeaderField: key)
         }
     }
-    
+
     /// Headers interceptor does not handle retries
     /// - Parameters:
     ///   - response: HTTP response
@@ -63,35 +63,35 @@ public struct HeadersInterceptor: HTTPInterceptor {
     ///   - attempt: Current attempt number
     /// - Returns: Always returns .noRetry
     public func shouldRetry(
-        response: HTTPURLResponse?,
-        data: Data?,
-        error: Error?,
-        attempt: Int
+        response _: HTTPURLResponse?,
+        data _: Data?,
+        error _: Error?,
+        attempt _: Int
     ) -> RetryDecision {
-        return .noRetry
+        .noRetry
     }
-    
+
     // MARK: - Private Helpers
-    
+
     /// Builds a User-Agent string
     /// - Returns: Formatted User-Agent string
     private func buildUserAgent() -> String {
         var components = [appVersion, platform]
-        
-        if let deviceModel = deviceModel {
+
+        if let deviceModel {
             components.append(deviceModel)
         }
-        
+
         return components.joined(separator: " ")
     }
-    
+
     /// Detects the current device model
     /// - Returns: Device model string, or nil if detection fails
     private static func detectDeviceModel() -> String? {
         #if canImport(UIKit)
-        return MainActor.assumeIsolated { UIDevice.current.model }
+            return MainActor.assumeIsolated { UIDevice.current.model }
         #else
-        return nil
+            return nil
         #endif
     }
 }

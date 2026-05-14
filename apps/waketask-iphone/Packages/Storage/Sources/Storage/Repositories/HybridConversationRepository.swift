@@ -1,5 +1,5 @@
-import Foundation
 import Core
+import Foundation
 
 /// Hybrid repository that syncs between local SwiftData and Supabase
 /// - Writes to both local and remote (with fallback to local-only if remote fails)
@@ -7,7 +7,6 @@ import Core
 /// - Provides offline-first experience with cloud sync
 @available(iOS 17.0, macOS 14.0, *)
 public final class HybridConversationRepository: ConversationRepository {
-    
     private let local: any ConversationRepository
     private let remote: (any ConversationRepository)?
     private let syncEnabled: Bool
@@ -19,15 +18,15 @@ public final class HybridConversationRepository: ConversationRepository {
     public init(local: any ConversationRepository, remote: (any ConversationRepository)? = nil) {
         self.local = local
         self.remote = remote
-        self.syncEnabled = remote != nil
+        syncEnabled = remote != nil
     }
-    
+
     public func create(title: String, personaName: String?) async throws -> ConversationDTO {
         // Create locally first (offline-first)
         let localConversation = try await local.create(title: title, personaName: personaName)
-        
+
         // Sync to remote if available
-        if syncEnabled, let remote = remote {
+        if syncEnabled, let remote {
             Task {
                 do {
                     _ = try await remote.create(title: title, personaName: personaName)
@@ -37,16 +36,16 @@ public final class HybridConversationRepository: ConversationRepository {
                 }
             }
         }
-        
+
         return localConversation
     }
-    
+
     public func rename(id: UUID, title: String) async throws {
         // Update locally first
         try await local.rename(id: id, title: title)
-        
+
         // Sync to remote if available
-        if syncEnabled, let remote = remote {
+        if syncEnabled, let remote {
             Task {
                 do {
                     try await remote.rename(id: id, title: title)
@@ -57,13 +56,13 @@ public final class HybridConversationRepository: ConversationRepository {
             }
         }
     }
-    
+
     public func delete(id: UUID) async throws {
         // Delete locally first
         try await local.delete(id: id)
-        
+
         // Sync deletion to remote if available
-        if syncEnabled, let remote = remote {
+        if syncEnabled, let remote {
             Task {
                 do {
                     try await remote.delete(id: id)
@@ -74,13 +73,13 @@ public final class HybridConversationRepository: ConversationRepository {
             }
         }
     }
-    
+
     public func list(limit: Int, after: Date?) async throws -> [ConversationDTO] {
         // Always return local data for fast response
         let localConversations = try await local.list(limit: limit, after: after)
-        
+
         // Sync from remote in background (pull changes from other devices)
-        if syncEnabled, let remote = remote, after == nil { // Only sync on initial load
+        if syncEnabled, let remote, after == nil { // Only sync on initial load
             Task {
                 do {
                     let remoteConversations = try await remote.list(limit: 100, after: nil)
@@ -90,17 +89,17 @@ public final class HybridConversationRepository: ConversationRepository {
                 }
             }
         }
-        
+
         return localConversations
     }
-    
+
     /// Sync remote conversations to local storage
     /// Implements last-write-wins conflict resolution
     private func syncRemoteToLocal(_ remoteConversations: [ConversationDTO]) async {
         do {
             let localConversations = try await local.list(limit: 1000, after: nil)
             let localMap = Dictionary(uniqueKeysWithValues: localConversations.map { ($0.id, $0) })
-            
+
             for remote in remoteConversations {
                 if let local = localMap[remote.id] {
                     // Conversation exists locally - check if remote is newer
@@ -110,7 +109,7 @@ public final class HybridConversationRepository: ConversationRepository {
                     }
                 } else {
                     // New conversation from another device - create locally
-                    _ = try await self.local.create(title: remote.title, personaName: remote.personaName)
+                    _ = try await local.create(title: remote.title, personaName: remote.personaName)
                     AppLogger.debug("Created local conversation from remote: \(remote.id)", category: AppLogger.storage)
                 }
             }
@@ -119,4 +118,3 @@ public final class HybridConversationRepository: ConversationRepository {
         }
     }
 }
-

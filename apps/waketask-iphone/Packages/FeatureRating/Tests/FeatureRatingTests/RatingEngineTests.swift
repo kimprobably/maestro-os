@@ -1,11 +1,10 @@
-import XCTest
 @testable import FeatureRating
+import XCTest
 
 /// Scoring, decay, and edge-case coverage for `RatingEngine`.
 /// Prompt-decision, yearly-limit, and user-response coverage lives in
 /// `RatingEnginePromptTests.swift`.
 final class RatingEngineTests: RatingEngineTestCase {
-
     // MARK: - Scoring
 
     func testPositiveActionIncreasesScore() {

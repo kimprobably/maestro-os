@@ -1,12 +1,11 @@
-import XCTest
 @testable import AI
-import Networking
 import Core
+import Networking
+import XCTest
 
 /// Error-path coverage — HTTP status failures, transport errors, invalid
 /// UTF-8 bodies, and structured-concurrency cancellation.
 final class ProxyLLMClientErrorTests: ProxyLLMClientTestCase {
-
     func testStreamResponse_serverError_throwsAppError() async {
         let messages = [LLMMessage(role: "user", content: "Hello")]
         mockHTTPClient.mockResponse = HTTPResponse(
@@ -23,7 +22,7 @@ final class ProxyLLMClientErrorTests: ProxyLLMClientTestCase {
             }
             XCTFail("Should have thrown an error")
         } catch let error as AppError {
-            if case .server(let code, _) = error {
+            if case let .server(code, _) = error {
                 XCTAssertEqual(code, 500)
             } else {
                 XCTFail("Expected AppError.server, got \(error)")
@@ -99,7 +98,7 @@ final class ProxyLLMClientErrorTests: ProxyLLMClientTestCase {
             }
             XCTFail("Should have thrown an error")
         } catch let error as AppError {
-            if case .server(let code, _) = error {
+            if case let .server(code, _) = error {
                 XCTAssertEqual(code, 401)
             } else {
                 XCTFail("Expected AppError.server with 401, got \(error)")

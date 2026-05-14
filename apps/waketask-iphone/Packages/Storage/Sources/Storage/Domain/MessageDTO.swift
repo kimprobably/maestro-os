@@ -7,13 +7,13 @@ public struct MessageDTO: Sendable, Equatable {
         case assistant
         case system
     }
-    
+
     public let id: UUID
     public let role: Role
     public let text: String
     public let createdAt: Date
     public let conversationID: UUID
-    
+
     public init(
         id: UUID,
         role: Role,
@@ -35,13 +35,13 @@ public struct MessageDTO: Sendable, Equatable {
 extension MessageDTO {
     /// Maps from SwiftData model to DTO
     init(_ model: Message, conversationID: UUID) {
-        self.id = model.id
-        self.role = Role(rawValue: model.role) ?? .system
-        self.text = model.text
-        self.createdAt = model.createdAt
+        id = model.id
+        role = Role(rawValue: model.role) ?? .system
+        text = model.text
+        createdAt = model.createdAt
         self.conversationID = conversationID
     }
-    
+
     /// Maps from DTO to SwiftData model role string
     var roleString: String {
         role.rawValue
