@@ -2,22 +2,33 @@
 set -euo pipefail
 
 REPORT_PATH="reports/ios/appium-exploratory-report.json"
+SCHEME="${SCHEME:-SwiftAIBoilerplatePro}"
+PROJECT="${PROJECT:-SwiftAIBoilerplatePro.xcodeproj}"
+DESTINATION="${DESTINATION:-platform=iOS Simulator,name=iPhone 17 Pro,OS=26.2}"
+DERIVED_DATA_PATH="${DERIVED_DATA_PATH:-.build/DerivedData}"
 mkdir -p "$(dirname "$REPORT_PATH")"
 
-# Foundation placeholder only. This must never write a passing report.
-# The real hosted macOS Appium/XCUITest traversal must replace this skeleton in the iOS validation phase.
+mkdir -p "$DERIVED_DATA_PATH"
+
+echo "[appium-exploratory] Running exploratory UI traversal test"
+xcodebuild \
+  -project "$PROJECT" \
+  -scheme "$SCHEME" \
+  -destination "$DESTINATION" \
+  -derivedDataPath "$DERIVED_DATA_PATH" \
+  CODE_SIGNING_ALLOWED=NO \
+  test \
+  -only-testing:SwiftAIBoilerplateProUITests/IntegrationWakeExploratoryUITests
+
 cat > "$REPORT_PATH" <<JSON
 {
-  "ok": false,
-  "buttons_tapped": 0,
-  "screens_visited": [],
-  "crashes": 0,
-  "failures": 1,
-  "failures_detail": [
-    "Foundation Appium placeholder only. Hosted macOS simulator traversal has not run, and allow_macos_deferred=false forbids treating this as pass evidence."
-  ]
+  "ok": true,
+  "generated_at_utc": "$(date -u +"%Y-%m-%dT%H:%M:%SZ")",
+  "automation_engine": "xcodebuild-xcuitest-exploratory",
+  "suite": "IntegrationWakeExploratoryUITests",
+  "destination": "$DESTINATION",
+  "failures": 0
 }
 JSON
 
-echo "Appium placeholder wrote non-passing report at $REPORT_PATH"
-exit 0
+echo "[appium-exploratory] Report written to $REPORT_PATH"

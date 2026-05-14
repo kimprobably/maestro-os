@@ -107,6 +107,11 @@ final class CompositionRootTests: XCTestCase {
         let viewModel = composition.makeProfileViewModel()
         XCTAssertNotNil(viewModel)
     }
+
+    func testMakeWakeFlowViewModel_createsViewModel() {
+        let viewModel = composition.makeWakeFlowViewModel()
+        XCTAssertNotNil(viewModel)
+    }
     
     func testMakeChatHistoryViewModel_createsViewModel() {
         let viewModel = composition.makeChatHistoryViewModel()
@@ -251,9 +256,9 @@ final class CompositionRootTests: XCTestCase {
         XCTAssertNotNil(vm2)
         XCTAssertNotNil(settingsVM)
         XCTAssertNotNil(homeVM)
-        
+        XCTAssertNotNil(composition.makeWakeFlowViewModel())
+
         // All should be independent instances
         XCTAssertTrue(vm1 !== vm2)
     }
 }
-
