@@ -7,6 +7,7 @@ import Core
 public final class WakeFlowViewModel {
     public private(set) var alarms: [WakeAlarm] = []
     public private(set) var activeRun: WakeRun?
+    public private(set) var recentRuns: [WakeRun] = []
     public private(set) var weeklyConsistency: Double = 0
     public private(set) var isLoading = false
     public private(set) var errorMessage: String?
@@ -38,6 +39,7 @@ public final class WakeFlowViewModel {
 
         do {
             alarms = try await alarmRepository.listAlarms()
+            recentRuns = try await runRepository.listRuns(alarmID: nil, limit: 10)
             weeklyConsistency = try await computeWeeklyConsistency()
         } catch {
             errorMessage = "Failed to load wake data"
@@ -46,6 +48,42 @@ public final class WakeFlowViewModel {
     }
 
     public func createAlarm(title: String, hour: Int, minute: Int, strictness: WakeStrictness, firstTaskTitle: String) async {
+        await upsertAlarm(
+            id: UUID(),
+            title: title,
+            hour: hour,
+            minute: minute,
+            enabled: true,
+            strictness: strictness,
+            firstTaskTitle: firstTaskTitle,
+            createdAt: now()
+        )
+    }
+
+    public func updateAlarm(id: UUID, title: String, hour: Int, minute: Int, strictness: WakeStrictness, firstTaskTitle: String) async {
+        guard let existing = alarms.first(where: { $0.id == id }) else { return }
+        await upsertAlarm(
+            id: id,
+            title: title,
+            hour: hour,
+            minute: minute,
+            enabled: existing.enabled,
+            strictness: strictness,
+            firstTaskTitle: firstTaskTitle,
+            createdAt: existing.createdAt
+        )
+    }
+
+    private func upsertAlarm(
+        id: UUID,
+        title: String,
+        hour: Int,
+        minute: Int,
+        enabled: Bool,
+        strictness: WakeStrictness,
+        firstTaskTitle: String,
+        createdAt: Date
+    ) async {
         let window: TimeInterval
         switch strictness {
         case .relaxed: window = 180
@@ -54,13 +92,15 @@ public final class WakeFlowViewModel {
         }
 
         let alarm = WakeAlarm(
+            id: id,
             title: title,
             hour: hour,
             minute: minute,
+            enabled: enabled,
             strictness: strictness,
             wakeCheckWindowSeconds: window,
             firstTaskTitle: firstTaskTitle,
-            createdAt: now(),
+            createdAt: createdAt,
             updatedAt: now()
         )
 
@@ -102,6 +142,7 @@ public final class WakeFlowViewModel {
             )
             try await runRepository.saveRun(run)
             activeRun = run
+            recentRuns = try await runRepository.listRuns(alarmID: nil, limit: 10)
         } catch {
             errorMessage = "Failed to start alarm"
         }
@@ -122,20 +163,23 @@ public final class WakeFlowViewModel {
 
     public func dismissAlarm() async {
         guard let run = activeRun,
-              let alarm = alarms.first(where: { $0.id == run.alarmID }) else { return }
+              let alarm = alarms.first(where: { $0.id == run.alarmID }),
+              run.allMissionsCompleted else { return }
 
         let updated = contractEvaluator.dismiss(run, at: now(), wakeCheckWindow: alarm.wakeCheckWindowSeconds)
         await persistActiveRun(updated)
     }
 
     public func completeWakeCheck() async {
-        guard let run = activeRun else { return }
+        guard let run = activeRun,
+              run.state == .dismissedAwaitingCheck || run.state == .escalated else { return }
         let updated = contractEvaluator.completeWakeCheck(run, at: now())
         await persistActiveRun(updated)
     }
 
     public func completeFirstTask() async {
-        guard let run = activeRun else { return }
+        guard let run = activeRun,
+              run.state == .verified else { return }
         let updated = contractEvaluator.completeFirstTask(run, at: now())
         await persistActiveRun(updated)
         do {
@@ -148,13 +192,16 @@ public final class WakeFlowViewModel {
     public func evaluateEscalationIfNeeded() async {
         guard let run = activeRun else { return }
         let updated = contractEvaluator.evaluateEscalation(run, now: now())
-        await persistActiveRun(updated)
+        if updated != run {
+            await persistActiveRun(updated)
+        }
     }
 
     private func persistActiveRun(_ run: WakeRun) async {
         do {
             try await runRepository.saveRun(run)
             activeRun = run
+            recentRuns = try await runRepository.listRuns(alarmID: nil, limit: 10)
         } catch {
             errorMessage = "Failed to update run"
         }

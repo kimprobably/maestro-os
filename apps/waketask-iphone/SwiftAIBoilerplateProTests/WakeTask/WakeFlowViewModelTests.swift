@@ -28,6 +28,9 @@ final class WakeFlowViewModelTests: XCTestCase {
 
         await viewModel.load()
         await viewModel.triggerAlarm(alarmID: alarm.id)
+        for mission in viewModel.activeRun?.missions ?? [] {
+            await viewModel.completeMission(missionID: mission.id)
+        }
         await viewModel.dismissAlarm()
 
         XCTAssertEqual(viewModel.activeRun?.state, .dismissedAwaitingCheck)
@@ -61,12 +64,84 @@ final class WakeFlowViewModelTests: XCTestCase {
 
         await viewModel.load()
         await viewModel.triggerAlarm(alarmID: alarm.id)
+        for mission in viewModel.activeRun?.missions ?? [] {
+            await viewModel.completeMission(missionID: mission.id)
+        }
+        await viewModel.dismissAlarm()
         await viewModel.completeWakeCheck()
         XCTAssertEqual(viewModel.activeRun?.state, .verified)
 
         await viewModel.completeFirstTask()
         XCTAssertEqual(viewModel.activeRun?.state, .completed)
         XCTAssertEqual(viewModel.weeklyConsistency, 1)
+    }
+
+    func testDismissWaitsForMissionCompletion() async {
+        let alarmRepo = InMemoryWakeAlarmRepository()
+        let runRepo = InMemoryWakeRunRepository()
+        let now = TestClock(start: Date())
+
+        let alarm = WakeAlarm(
+            title: "Alarm",
+            hour: 7,
+            minute: 0,
+            strictness: .strict,
+            wakeCheckWindowSeconds: 60,
+            firstTaskTitle: "Hydrate"
+        )
+        await alarmRepo.seed(alarm)
+
+        let viewModel = WakeFlowViewModel(
+            alarmRepository: alarmRepo,
+            runRepository: runRepo,
+            missionEngine: DefaultWakeMissionRotationEngine(randomIndex: { _ in 0 }),
+            now: now.now
+        )
+
+        await viewModel.load()
+        await viewModel.triggerAlarm(alarmID: alarm.id)
+        await viewModel.dismissAlarm()
+
+        XCTAssertEqual(viewModel.activeRun?.state, .triggered)
+    }
+
+    func testUpdateAlarmPreservesIdentityAndUpdatesEditableFields() async {
+        let alarmRepo = InMemoryWakeAlarmRepository()
+        let runRepo = InMemoryWakeRunRepository()
+        let now = TestClock(start: Date())
+
+        let alarm = WakeAlarm(
+            title: "Original",
+            hour: 7,
+            minute: 0,
+            strictness: .balanced,
+            wakeCheckWindowSeconds: 120,
+            firstTaskTitle: "Hydrate"
+        )
+        await alarmRepo.seed(alarm)
+
+        let viewModel = WakeFlowViewModel(
+            alarmRepository: alarmRepo,
+            runRepository: runRepo,
+            missionEngine: DefaultWakeMissionRotationEngine(randomIndex: { _ in 0 }),
+            now: now.now
+        )
+
+        await viewModel.load()
+        await viewModel.updateAlarm(
+            id: alarm.id,
+            title: "Weekday",
+            hour: 6,
+            minute: 45,
+            strictness: .strict,
+            firstTaskTitle: "Drink water"
+        )
+
+        XCTAssertEqual(viewModel.alarms.first?.id, alarm.id)
+        XCTAssertEqual(viewModel.alarms.first?.title, "Weekday")
+        XCTAssertEqual(viewModel.alarms.first?.hour, 6)
+        XCTAssertEqual(viewModel.alarms.first?.minute, 45)
+        XCTAssertEqual(viewModel.alarms.first?.wakeCheckWindowSeconds, 60)
     }
 }
 

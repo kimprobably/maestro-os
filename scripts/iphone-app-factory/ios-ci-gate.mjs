@@ -32,6 +32,31 @@ if (existsSync(existingReport)) {
   }
 }
 
+function validateGithubWorkflow() {
+  const workflowCandidates = [
+    join(appDir, ".github/workflows/ios-quality.yml"),
+    ".github/workflows/waketask-ios-quality.yml"
+  ];
+  const workflow = workflowCandidates.find((candidate) => existsSync(candidate));
+  if (!workflow) {
+    failures.push("missing iOS quality workflow for GitHub macOS validation");
+    return "github_workflow_invalid";
+  }
+
+  const qualityScript = join(appDir, "scripts/ci/ios-quality.sh");
+  const text = [
+    readFileSync(workflow, "utf8"),
+    existsSync(qualityScript) ? readFileSync(qualityScript, "utf8") : ""
+  ].join("\n");
+  if (!/macos-|runs-on:\s*\[?\s*macos/i.test(text)) failures.push("iOS CI workflow does not use a macOS runner");
+  if (!/xcodebuild/i.test(text)) failures.push("iOS CI workflow missing xcodebuild");
+  return failures.length === 0 ? "github_workflow_ready" : "github_workflow_invalid";
+}
+
+if (status === "unknown" && mode === "github") {
+  status = validateGithubWorkflow();
+}
+
 if (status === "unknown" && process.platform === "darwin" && existsSync(join(appDir, "scripts/ci/ios-quality.sh"))) {
   const result = spawnSync("sh", ["scripts/ci/ios-quality.sh"], {
     cwd: appDir,
@@ -45,15 +70,7 @@ if (status === "unknown" && process.platform === "darwin" && existsSync(join(app
 }
 
 if (status === "unknown" && mode === "github") {
-  const workflow = join(appDir, ".github/workflows/ios-quality.yml");
-  if (!existsSync(workflow)) {
-    failures.push("missing .github/workflows/ios-quality.yml for GitHub macOS validation");
-  } else {
-    const text = readFileSync(workflow, "utf8");
-    if (!/macos-|runs-on:\s*\[?\s*macos/i.test(text)) failures.push("iOS CI workflow does not use a macOS runner");
-    if (!/xcodebuild/i.test(text)) failures.push("iOS CI workflow missing xcodebuild");
-    status = failures.length === 0 ? "github_workflow_ready" : "github_workflow_invalid";
-  }
+  status = validateGithubWorkflow();
 }
 
 if (status === "unknown" && allowDeferred) {

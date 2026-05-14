@@ -13,7 +13,10 @@ function file(path) {
 
 const ci = file(".github/workflows/ios-quality.yml") || file(".github/workflows/ios-ci.yml");
 const qualityScript = file("scripts/ci/ios-quality.sh") || file("scripts/ios/quality-gates.sh");
-const appiumScript = file("scripts/qa/appium-exploratory-clicks.mjs") || file("scripts/qa/appium-exploratory-clicks.js");
+const appiumScript =
+  file("scripts/qa/appium-exploratory-clicks.mjs") ||
+  file("scripts/qa/appium-exploratory-clicks.js") ||
+  file("scripts/qa/appium-exploratory-tapper.sh");
 const combined = `${ci}\n${qualityScript}\n${appiumScript}`;
 
 if (!combined.trim()) failures.push("missing iOS quality workflow/scripts");

@@ -4,8 +4,12 @@ public extension L10n {
     enum Wake {
         public static var title: String { String(localized: "wake.title", bundle: bundle) }
         public static var addAlarm: String { String(localized: "wake.addAlarm", bundle: bundle) }
+        public static var editAlarm: String { String(localized: "wake.editAlarm", bundle: bundle) }
         public static var alarms: String { String(localized: "wake.alarms", bundle: bundle) }
         public static var activeRun: String { String(localized: "wake.activeRun", bundle: bundle) }
+        public static var reliabilityLedger: String { String(localized: "wake.reliabilityLedger", bundle: bundle) }
+        public static var noReliabilityEvents: String { String(localized: "wake.noReliabilityEvents", bundle: bundle) }
+        public static var escalated: String { String(localized: "wake.escalated", bundle: bundle) }
         public static var noAlarms: String { String(localized: "wake.noAlarms", bundle: bundle) }
         public static var thisWeek: String { String(localized: "wake.thisWeek", bundle: bundle) }
         public static var consistency: String { String(localized: "wake.consistency", bundle: bundle) }
@@ -59,6 +63,10 @@ public extension L10n.Wake {
 
         public static func enableAlarm(_ title: String) -> String {
             String(format: String(localized: "wake.a11y.enableAlarm %@", bundle: L10n.bundle), title)
+        }
+
+        public static func editAlarm(_ title: String) -> String {
+            String(format: String(localized: "wake.a11y.editAlarm %@", bundle: L10n.bundle), title)
         }
 
         public static func completeMission(_ title: String) -> String {

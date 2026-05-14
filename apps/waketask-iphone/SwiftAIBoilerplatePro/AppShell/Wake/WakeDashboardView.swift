@@ -12,6 +12,7 @@ struct WakeDashboardView: View {
     @State private var draftFirstTask = ""
     @State private var draftTime = Date()
     @State private var draftStrictness: WakeStrictness = .balanced
+    @State private var draftAlarmID: UUID?
 
     init(viewModel: WakeFlowViewModel) {
         self.viewModel = viewModel
@@ -22,6 +23,7 @@ struct WakeDashboardView: View {
             List {
                 consistencySection
                 alarmsSection
+                reliabilitySection
                 if let run = viewModel.activeRun {
                     activeRunSection(run)
                 }
@@ -46,6 +48,12 @@ struct WakeDashboardView: View {
             }
             .refreshable {
                 await viewModel.load()
+            }
+            .task(id: viewModel.activeRun?.id) {
+                while viewModel.activeRun?.state == .dismissedAwaitingCheck {
+                    await viewModel.evaluateEscalationIfNeeded()
+                    try? await Task.sleep(nanoseconds: 15_000_000_000)
+                }
             }
             .sheet(isPresented: $showCreateAlarm) {
                 createAlarmSheet
@@ -124,6 +132,12 @@ struct WakeDashboardView: View {
                             .accessibilityLabel(L10n.Wake.A11y.startRun(alarm.title))
                             .accessibilityHint(L10n.Wake.A11y.startRunHint)
                             .accessibilityIdentifier("wakeStartRunButton-\(alarm.id.uuidString)")
+                            Button(L10n.Wake.editAlarm) {
+                                editAlarm(alarm)
+                            }
+                            .buttonStyle(.bordered)
+                            .accessibilityLabel(L10n.Wake.A11y.editAlarm(alarm.title))
+                            .accessibilityIdentifier("wakeEditAlarmButton-\(alarm.id.uuidString)")
                         }
                     }
                     .padding(.vertical, DSSpacing.xs)
@@ -133,6 +147,39 @@ struct WakeDashboardView: View {
             }
         } header: {
             Text(L10n.Wake.alarms)
+        }
+    }
+
+    private var reliabilitySection: some View {
+        Section {
+            if viewModel.recentRuns.isEmpty {
+                Text(L10n.Wake.noReliabilityEvents)
+                    .foregroundStyle(DSColors.textSecondary)
+                    .accessibilityIdentifier("wakeReliabilityEmptyText")
+            } else {
+                ForEach(viewModel.recentRuns) { run in
+                    HStack(alignment: .firstTextBaseline) {
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text(run.scheduledAt.formatted(date: .abbreviated, time: .shortened))
+                                .font(DSTypography.bodySemibold)
+                            Text(L10n.Wake.runState(run.state.rawValue.capitalized))
+                                .font(DSTypography.caption)
+                                .foregroundStyle(DSColors.textSecondary)
+                        }
+                        Spacer()
+                        if run.escalationTriggeredAt != nil {
+                            Text(L10n.Wake.escalated)
+                                .font(DSTypography.caption)
+                                .foregroundStyle(DSColors.statusError)
+                                .accessibilityIdentifier("wakeReliabilityEscalatedBadge")
+                        }
+                    }
+                    .accessibilityElement(children: .combine)
+                    .accessibilityIdentifier("wakeReliabilityRow-\(run.id.uuidString)")
+                }
+            }
+        } header: {
+            Text(L10n.Wake.reliabilityLedger)
         }
     }
 
@@ -166,6 +213,7 @@ struct WakeDashboardView: View {
                 Task { await viewModel.completeWakeCheck() }
             }
             .buttonStyle(.bordered)
+            .disabled(run.state != .dismissedAwaitingCheck && run.state != .escalated)
             .accessibilityLabel(L10n.Wake.A11y.completeWakeCheckLabel)
             .accessibilityHint(L10n.Wake.A11y.completeWakeCheckHint)
             .accessibilityIdentifier("wakeCompleteWakeCheckButton")
@@ -174,6 +222,7 @@ struct WakeDashboardView: View {
                 Task { await viewModel.completeFirstTask() }
             }
             .buttonStyle(.borderedProminent)
+            .disabled(run.state != .verified)
             .accessibilityLabel(L10n.Wake.A11y.completeFirstTaskLabel)
             .accessibilityHint(L10n.Wake.A11y.completeFirstTaskHint)
             .accessibilityIdentifier("wakeCompleteFirstTaskButton")
@@ -183,6 +232,7 @@ struct WakeDashboardView: View {
             }
             .buttonStyle(.bordered)
             .tint(DSColors.statusError)
+            .disabled(!run.allMissionsCompleted)
             .accessibilityLabel(L10n.Wake.A11y.dismissAlarmLabel)
             .accessibilityHint(L10n.Wake.A11y.dismissAlarmHint)
             .accessibilityIdentifier("wakeDismissAlarmButton")
@@ -215,7 +265,7 @@ struct WakeDashboardView: View {
                         .accessibilityIdentifier("wakeFirstTaskField")
                 }
             }
-            .navigationTitle(L10n.Wake.newAlarm)
+            .navigationTitle(draftAlarmID == nil ? L10n.Wake.newAlarm : L10n.Wake.editAlarm)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button(L10n.Common.cancel) {
@@ -251,18 +301,41 @@ struct WakeDashboardView: View {
 
     private func saveAlarm() async {
         let components = Calendar.current.dateComponents([.hour, .minute], from: draftTime)
-        await viewModel.createAlarm(
-            title: draftTitle.trimmingCharacters(in: .whitespacesAndNewlines),
-            hour: components.hour ?? 7,
-            minute: components.minute ?? 0,
-            strictness: draftStrictness,
-            firstTaskTitle: draftFirstTask.trimmingCharacters(in: .whitespacesAndNewlines)
-        )
+        let title = draftTitle.trimmingCharacters(in: .whitespacesAndNewlines)
+        let firstTask = draftFirstTask.trimmingCharacters(in: .whitespacesAndNewlines)
+        if let draftAlarmID {
+            await viewModel.updateAlarm(
+                id: draftAlarmID,
+                title: title,
+                hour: components.hour ?? 7,
+                minute: components.minute ?? 0,
+                strictness: draftStrictness,
+                firstTaskTitle: firstTask
+            )
+        } else {
+            await viewModel.createAlarm(
+                title: title,
+                hour: components.hour ?? 7,
+                minute: components.minute ?? 0,
+                strictness: draftStrictness,
+                firstTaskTitle: firstTask
+            )
+        }
         resetDraft()
         showCreateAlarm = false
     }
 
+    private func editAlarm(_ alarm: WakeAlarm) {
+        draftAlarmID = alarm.id
+        draftTitle = alarm.title
+        draftFirstTask = alarm.firstTaskTitle
+        draftStrictness = alarm.strictness
+        draftTime = Calendar.current.date(from: DateComponents(hour: alarm.hour, minute: alarm.minute)) ?? Date()
+        showCreateAlarm = true
+    }
+
     private func resetDraft() {
+        draftAlarmID = nil
         draftTitle = ""
         draftFirstTask = ""
         draftTime = Date()
