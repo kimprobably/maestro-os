@@ -1,0 +1,47 @@
+digraph DaytonaCliAuthRuntimeSmoke {
+    graph [
+        goal="Verify Claude Code and Codex CLI auth work inside a fresh Daytona sandbox",
+        persona="cli-auth-smoke",
+        inputs="none",
+        outputs="cli_auth_runtime_report",
+        model_stylesheet="
+            *      { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: low; }
+            .codex { backend: cli; provider: openai; model: gpt-5.3-codex-spark; reasoning_effort: low; }
+        "
+    ]
+
+    start [shape=Mdiamond, label="Start"]
+    exit [shape=Msquare, label="Exit"]
+
+    check_claude_runtime [
+        label="Check Claude Runtime",
+        type="command",
+        script="mkdir -p .workflow/fabro; node -e \"const fs=require('fs'); const {spawnSync}=require('child_process'); const clean=(value)=>String(value||'').replace(/sk-[A-Za-z0-9_-]+/g,'[redacted]').trim().slice(0,800); const usable=(key)=>{const value=process.env[key]||''; const unresolved=value.charCodeAt(0)===123 && value.charCodeAt(1)===123; return Boolean(value && !unresolved);}; const run=(cmd,args,timeout=120000)=>{const r=spawnSync(cmd,args,{encoding:'utf8',timeout,env:{...process.env,CI:'1'}}); return {cmd:[cmd,...args].join(' '), status:r.status, signal:r.signal||null, stdout:clean(r.stdout), stderr:clean(r.stderr)};}; const env={CLAUDE_CODE_OAUTH_TOKEN:usable('CLAUDE_CODE_OAUTH_TOKEN')}; const checks=[run('claude',['--version'],45000), run('claude',['-p','Reply with exactly OK.'],120000)]; const missing=Object.entries(env).filter(([,ok])=>!ok).map(([key])=>key); const failed=checks.filter((check)=>check.status!==0); const report={ok:missing.length===0 && failed.length===0, env, missing, checks, failed}; fs.writeFileSync('.workflow/fabro/daytona-cli-auth-runtime-smoke.json', JSON.stringify(report,null,2)+'\\n'); console.log(JSON.stringify(report,null,2)); if(!report.ok) process.exit(1);\""
+    ]
+
+    check_codex_runtime [
+        label="Check Codex Runtime",
+        class="codex",
+        prompt="Reply with exactly OK."
+    ]
+
+    write_report [
+        label="Write Report",
+        type="command",
+        script="node -e \"const fs=require('fs'); const report=JSON.parse(fs.readFileSync('.workflow/fabro/daytona-cli-auth-runtime-smoke.json','utf8')); const lines=['# Daytona CLI Auth Runtime Smoke','', 'ok=' + report.ok, '', '## Env', ...Object.entries(report.env).map(([key,value])=>'- ' + key + '=' + value), '', '## Checks', ...report.checks.map((check)=>'- ' + check.cmd + ' status=' + check.status + (check.signal ? ' signal=' + check.signal : '') + (check.stdout ? ' output=' + check.stdout.split('\\n')[0] : '') + (check.stderr ? ' stderr=' + check.stderr.split('\\n')[0] : ''))]; fs.writeFileSync('.workflow/fabro/daytona-cli-auth-runtime-smoke.md', lines.join('\\n')+'\\n'); console.log(lines.join('\\n')); if(!report.ok) process.exit(1);\""
+    ]
+
+    fail_runtime [
+        label="Fail Runtime",
+        type="command",
+        script="node -e \"const fs=require('fs'); const body=fs.existsSync('.workflow/fabro/daytona-cli-auth-runtime-smoke.json') ? fs.readFileSync('.workflow/fabro/daytona-cli-auth-runtime-smoke.json','utf8') : '{}'; console.error(body); process.exit(1);\""
+    ]
+
+    start -> check_claude_runtime
+    check_claude_runtime -> check_codex_runtime [condition="outcome=succeeded"]
+    check_claude_runtime -> fail_runtime [label="Fail"]
+    check_codex_runtime -> write_report [condition="outcome=succeeded"]
+    check_codex_runtime -> fail_runtime [label="Fail"]
+    write_report -> exit [condition="outcome=succeeded"]
+    write_report -> fail_runtime [label="Fail"]
+}
