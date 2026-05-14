@@ -39,7 +39,7 @@ public enum AppLogger {
     /// - Parameters:
     ///   - message: Debug message to log
     ///   - category: Logger category (defaults to .ui)
-    public static func debug(_ message: @autoclosure @escaping () -> String, category: Logger = AppLogger.ui) {
+    public static func debug(_ message: @autoclosure () -> String, category: Logger = AppLogger.ui) {
         category.debug("\(message())")
     }
 
@@ -47,7 +47,7 @@ public enum AppLogger {
     /// - Parameters:
     ///   - message: Info message to log
     ///   - category: Logger category (defaults to .ui)
-    public static func info(_ message: @autoclosure @escaping () -> String, category: Logger = AppLogger.ui) {
+    public static func info(_ message: @autoclosure () -> String, category: Logger = AppLogger.ui) {
         category.info("\(message())")
     }
 
@@ -55,7 +55,7 @@ public enum AppLogger {
     /// - Parameters:
     ///   - message: Error message to log
     ///   - category: Logger category (defaults to .ui)
-    public static func error(_ message: @autoclosure @escaping () -> String, category: Logger = AppLogger.ui) {
+    public static func error(_ message: @autoclosure () -> String, category: Logger = AppLogger.ui) {
         category.error("\(message())")
     }
 

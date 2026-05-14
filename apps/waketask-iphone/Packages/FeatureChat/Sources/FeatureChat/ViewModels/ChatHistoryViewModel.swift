@@ -26,7 +26,8 @@ public final class ChatHistoryViewModel {
 
         do {
             conversations = try await conversationRepository.list(limit: 100, after: nil)
-            AppLogger.debug("Loaded \(conversations.count) conversations", category: AppLogger.ui)
+            let conversationCount = conversations.count
+            AppLogger.debug("Loaded \(conversationCount) conversations", category: AppLogger.ui)
         } catch {
             AppLogger.error("Failed to load conversations: \(error)", category: AppLogger.ui)
         }
