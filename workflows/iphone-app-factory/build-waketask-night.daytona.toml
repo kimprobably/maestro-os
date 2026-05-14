@@ -1,0 +1,45 @@
+_version = 1
+
+[workflow]
+graph = "build-iphone-app.cli.fabro"
+
+[run]
+goal = "Build a differentiated iPhone app from a researched app opportunity using SwiftAIBoilerplatePro"
+
+[run.metadata]
+factory = "iphone-app"
+app = "waketask"
+topic = "task-alarm"
+restart = "cli-routed-after-openrouter-credit-failure"
+
+[run.inputs]
+app_type = "alarm clock apps that require a task or engagement before dismissal, such as puzzles, movement, scanning, commitment stakes, or accountability"
+target_audience = "US iPhone users who oversleep, snooze repeatedly, or need high-friction wake-up accountability"
+app_name = "WakeTask"
+bundle_id = "com.keen.waketask"
+app_dir = "apps/waketask-iphone"
+spec_kitty_feature = "waketask-iphone-app"
+boilerplate_repo = "SwiftAIBoilerplatePro/SwiftAIBoilerplatePro-Distribution"
+max_competitors = "12"
+use_mobbin = "true"
+ios_validation_mode = "github"
+allow_macos_deferred = "false"
+
+[run.sandbox]
+provider = "daytona"
+preserve = false
+stop_on_terminal = true
+
+[run.sandbox.daytona]
+auto_stop_interval = 30
+
+[run.sandbox.env]
+APIFY_TOKEN = "{{ env.APIFY_TOKEN }}"
+GITHUB_TOKEN = "{{ env.GITHUB_TOKEN }}"
+GH_TOKEN = "{{ env.GH_TOKEN }}"
+OPENROUTER_API_KEY = "{{ env.OPENROUTER_API_KEY }}"
+CLAUDE_CODE_OAUTH_TOKEN = "{{ env.CLAUDE_CODE_OAUTH_TOKEN }}"
+CLAUDE_CODE_CREDENTIALS_JSON_BASE64 = "{{ env.CLAUDE_CODE_CREDENTIALS_JSON_BASE64 }}"
+CODEX_AUTH_JSON_BASE64 = "{{ env.CODEX_AUTH_JSON_BASE64 }}"
+MOBBIN_EMAIL = "{{ env.MOBBIN_EMAIL }}"
+MOBBIN_PASSWORD = "{{ env.MOBBIN_PASSWORD }}"
