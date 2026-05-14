@@ -159,7 +159,7 @@ struct WakeDashboardView: View {
                     .foregroundStyle(DSColors.textSecondary)
                     .accessibilityIdentifier("wakeReliabilityEmptyText")
             } else {
-                ForEach(viewModel.recentRuns) { run in
+                ForEach(viewModel.recentRuns, id: \.id) { run in
                     HStack(alignment: .firstTextBaseline) {
                         VStack(alignment: .leading, spacing: 4) {
                             Text(run.scheduledAt.formatted(date: .abbreviated, time: .shortened))
@@ -173,7 +173,7 @@ struct WakeDashboardView: View {
                         if run.escalationTriggeredAt != nil {
                             Text(L10n.Wake.escalated)
                                 .font(DSTypography.caption)
-                                .foregroundStyle(DSColors.statusError)
+                                .foregroundStyle(DSColors.danger)
                                 .accessibilityIdentifier("wakeReliabilityEscalatedBadge")
                         }
                     }
@@ -235,7 +235,7 @@ struct WakeDashboardView: View {
                 Task { await viewModel.dismissAlarm() }
             }
             .buttonStyle(.bordered)
-            .tint(DSColors.statusError)
+            .tint(DSColors.danger)
             .disabled(!run.allMissionsCompleted)
             .accessibilityLabel(L10n.Wake.A11y.dismissAlarmLabel)
             .accessibilityHint(L10n.Wake.A11y.dismissAlarmHint)
