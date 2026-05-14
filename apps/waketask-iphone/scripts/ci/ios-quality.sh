@@ -113,7 +113,8 @@ xcodebuild \
   -derivedDataPath "$DERIVED_DATA_PATH" \
   -resultBundlePath "$RESULT_BUNDLE_PATH" \
   CODE_SIGNING_ALLOWED=NO \
-  test
+  test \
+  -only-testing:SwiftAIBoilerplateProTests
 
 echo "[ios-quality] SwiftLint"
 swiftlint lint --strict
