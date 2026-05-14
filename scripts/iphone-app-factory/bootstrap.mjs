@@ -37,10 +37,13 @@ const qualityBar = {
     "Appium/XCUITest exploratory tapper clicks every reachable enabled button/control",
     "App Store 4.3 hardening checks release strings and metadata",
     "Mobbin, if used, is pattern research only and credentials remain in environment variables",
+    "credential availability may be checked only as true/false presence; secret values must never be printed, logged, or written to artifacts",
     "final review fanout must approve product fidelity, iOS architecture, security, quality, QA, and release readiness"
   ],
   forbidden: [
     "hardcoded secrets",
+    "printing environment variables or credential values in logs",
+    "writing API tokens, passwords, cookies, OAuth credentials, or base64 auth blobs to workflow artifacts",
     "fake fixture-only research without marking the limitation",
     "rebuilding auth, payments, AI, storage, networking, localization, settings, or design system without ADR approval",
     "declaring iOS validation complete without macOS or GitHub Actions evidence",

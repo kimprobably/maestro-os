@@ -17,6 +17,8 @@ Foundation scope:
 
 Use SwiftAIBoilerplatePro conventions.
 
+Secret handling is blocking: never print environment variables or credential values. Generated config may include placeholder keys only; do not write real tokens, passwords, cookies, OAuth credentials, or base64 auth blobs into app files, docs, CI, reports, or logs.
+
 Write `.workflow/iphone-app-factory/evidence/foundation.md` with:
 
 - `Files changed`

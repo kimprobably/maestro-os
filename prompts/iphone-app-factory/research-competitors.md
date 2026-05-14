@@ -15,4 +15,6 @@ Find up to `{{ inputs.max_competitors|default("12") }}` competitor iPhone apps. 
 
 Write `.workflow/iphone-app-factory/research/competitors.md`.
 
+Secret handling is blocking: never print environment variables or credential values. If checking credential availability, report only true/false presence and never echo, grep, dump, log, or write the value.
+
 Be explicit about evidence quality. Do not overfit to the largest apps if smaller fast-growing products better match the opportunity.

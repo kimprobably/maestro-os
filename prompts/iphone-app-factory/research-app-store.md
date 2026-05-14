@@ -6,6 +6,8 @@ Research iPhone apps related to `{{ inputs.app_type|default("consumer life-impro
 
 Use the existing Consumer Radar/App Store reviews tooling if available. Prefer live Apify/App Store data when credentials are present. If live scraping is unavailable, mark the limitation explicitly and do not invent review quotes.
 
+Secret handling is blocking: never print environment variables or credential values. To check whether `APIFY_TOKEN` or another credential exists, use a boolean/presence-only command such as `node -e "console.log(Boolean(process.env.APIFY_TOKEN))"` and never echo, grep, dump, log, or write the value.
+
 Write `.workflow/iphone-app-factory/research/app-store.md` with:
 
 - candidate apps and App Store links

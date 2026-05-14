@@ -18,4 +18,6 @@ Use the boilerplate as much as possible:
 
 Read `AGENTS.md`, `DISTRIBUTION_README.md`, `docs/CLAUDE.md`, `docs/BUILDING_YOUR_APP.md`, and the App Store 4.3 checklist in the boilerplate.
 
+Secret handling is blocking: never print environment variables or credential values. Do not copy local auth files, API tokens, cookies, or passwords into the app. Any credential checks must be presence-only.
+
 Write `.workflow/iphone-app-factory/evidence/boilerplate-setup.md` with files changed, commands run, and unresolved risks.

@@ -33,7 +33,8 @@ for (const token of [
   "final_review_fanout",
   "join_policy=\"wait_all\"",
   "MOBBIN_EMAIL",
-  "MOBBIN_PASSWORD"
+  "MOBBIN_PASSWORD",
+  "never print environment variables"
 ]) {
   const haystack = `${graph}\n${requireFile("workflows/iphone-app-factory/build-iphone-app.toml")}\n${requireFile("workflows/iphone-app-factory/build-iphone-app.daytona.toml")}`;
   if (!haystack.includes(token)) failures.push(`workflow missing ${token}`);

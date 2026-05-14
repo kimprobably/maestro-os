@@ -7,6 +7,7 @@ Review security and privacy before simplification.
 Check:
 
 - no hardcoded secrets
+- no workflow logs, reports, docs, scripts, or generated artifacts print real environment variable values or credentials
 - no PII in logs
 - privacy/legal text matches behavior
 - secure network/client usage
