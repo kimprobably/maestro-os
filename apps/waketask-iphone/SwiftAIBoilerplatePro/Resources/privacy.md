@@ -1,49 +1,45 @@
 # Privacy Policy
 
-**Last Updated:** October 8, 2025
+**Last Updated:** May 14, 2026
 
-## Information We Collect
-- Account info (email, name)
-- Usage data
-- AI conversations
-- Device info
+## Overview
+WakeTask helps users reliably wake up by running alarms, wake missions, and post-dismiss wake checks.
 
-## How We Use It
-- Provide services
-- Process AI requests
-- Improve app
-- Send notifications
+## Data We Collect
+- Account information you provide (such as email when you create an account).
+- Alarm and wake-flow configuration (alarm times, strictness, mission preferences, first-task setup).
+- Reliability activity records (trigger events, mission completion, wake-check outcomes, escalation outcomes).
+- Subscription status and purchase entitlement state.
+- Basic diagnostic events needed to keep the app stable.
+
+## How We Use Data
+- Deliver alarm and wake verification functionality.
+- Show your reliability timeline and weekly consistency summaries.
+- Maintain account access, sync features (when enabled), and subscription access.
+- Detect errors and improve reliability/performance.
+
+## Mission Validation and Sensors
+For MVP, wake mission validation is processed on-device where possible. WakeTask does not use ad SDK interruptions in the critical wake path.
 
 ## Data Sharing
-- **AI Providers:** Your prompts go to AI services (OpenAI, Anthropic)
-- **Analytics:** Anonymous usage stats
-- **Apple:** Payment processing
+- Service providers we use to operate the app (for example: authentication, payments, and infrastructure).
+- Legal disclosure when required by law.
 
-## Your Rights
-- Access your data
-- Delete your account
-- Export conversations
-- Opt-out of marketing
+We do not sell your personal information.
+
+## Retention
+We retain data as long as needed to provide the service, comply with legal obligations, resolve disputes, and enforce agreements.
+
+## Your Choices
+- You can request account deletion.
+- You can request access to your stored data.
+- You can manage notification permissions in iOS Settings.
 
 ## Security
-- Encryption in transit
-- Secure storage
-- Regular audits
+We use reasonable safeguards including encrypted transport and platform security controls, but no system is guaranteed 100% secure.
 
 ## Children
-Not for users under 13.
-
-## Changes
-We'll notify you of policy updates.
+WakeTask is not directed to children under 13.
 
 ## Contact
-Email: privacy@yourapp.com
-
-## GDPR (EU)
-You have right to data portability, erasure, and complaint filing.
-
-## CCPA (California)
-We don't sell your data. Contact us for data disclosure.
-
-*Customize this policy with legal counsel.*
-
+For privacy questions: `privacy@waketask.app`

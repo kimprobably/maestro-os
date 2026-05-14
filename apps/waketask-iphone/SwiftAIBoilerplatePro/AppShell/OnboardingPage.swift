@@ -35,23 +35,22 @@ extension OnboardingPage {
     /// Buyers should customize these for their specific app
     static let defaultPages: [OnboardingPage] = [
         OnboardingPage(
-            title: "AI-Powered Conversations",
-            description: "Have natural conversations with advanced AI. Get answers, ideas, and assistance instantly.",
-            systemImage: "brain.head.profile",
-            accentColor: "blue"
+            title: "Wake With Intent",
+            description: "Build alarms with strictness, mission stacks, and a wake-check that keeps you moving after dismissal.",
+            systemImage: "alarm.fill",
+            accentColor: "orange"
         ),
         OnboardingPage(
-            title: "Your Data, Secure",
-            description: "All conversations are encrypted and stored securely. Your privacy is our priority.",
-            systemImage: "lock.shield",
+            title: "Proof You Actually Woke Up",
+            description: "Every alarm run is logged in a reliability timeline: trigger, mission completion, wake-check status, and escalation.",
+            systemImage: "checklist.checked",
             accentColor: "green"
         ),
         OnboardingPage(
-            title: "Seamless Experience",
-            description: "Pick up where you left off on any device. Your chat history syncs automatically.",
-            systemImage: "arrow.triangle.2.circlepath",
-            accentColor: "purple"
+            title: "Private By Default",
+            description: "Wake validation runs on-device for MVP. No ad interruptions appear in the critical wake path.",
+            systemImage: "hand.raised.shield",
+            accentColor: "indigo"
         )
     ]
 }
-

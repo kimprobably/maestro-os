@@ -7,7 +7,7 @@ import SwiftUI
 public struct BrandConfig {
     
     /// App display name shown in UI
-    public static let appDisplayName = "SwiftAI Pro"
+    public static let appDisplayName = "WakeTask"
     
     /// Accent color for highlights and CTAs
     public static let accentColor: Color = DSColors.primary

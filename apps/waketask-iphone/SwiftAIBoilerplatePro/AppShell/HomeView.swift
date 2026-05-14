@@ -62,7 +62,7 @@ struct HomeView: View {
             .task {
                 await viewModel.loadData()
             }
-            .navigationTitle("Home")
+            .navigationTitle("WakeTask")
             .navigationBarTitleDisplayMode(.large)
         }
     }
@@ -115,7 +115,7 @@ struct HomeView: View {
     
     private var featuredSection: some View {
         VStack(alignment: .leading, spacing: 0) {
-            DSSectionHeader(title: "Featured")
+            DSSectionHeader(title: "Wake System")
                 .padding(.bottom, DSSpacing.xs)
             
             ScrollView(.horizontal, showsIndicators: false) {
@@ -137,7 +137,7 @@ struct HomeView: View {
         VStack(alignment: .leading, spacing: 0) {
             // Section header with trailing action
             HStack(alignment: .center) {
-                DSSectionHeader(title: "Recent Chats", showDivider: false)
+                DSSectionHeader(title: "Recent Runs", showDivider: false)
                 
                 Spacer()
                 
@@ -177,7 +177,7 @@ struct HomeView: View {
     private func recentConversationRow(_ conversation: ConversationDTO) -> some View {
         // Apply shadow to outer wrapper to prevent clipping
         HStack(spacing: DSSpacing.md) {
-            Image(systemName: "message.fill")
+            Image(systemName: "alarm.fill")
                 .font(.title3)
                 .foregroundStyle(DSColors.accentPrimary)
                 .frame(width: 40, height: 40)
@@ -256,4 +256,3 @@ struct HomeView: View {
     }
 }
 #endif
-

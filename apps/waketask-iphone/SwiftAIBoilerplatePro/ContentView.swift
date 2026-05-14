@@ -6,7 +6,7 @@ struct ContentView: View {
             VStack(spacing: 16) {
                 Image(systemName: "bolt.horizontal.circle.fill")
                     .font(.system(size: 44))
-                Text("SwiftAI Boilerplate Pro")
+                Text("WakeTask")
                     .font(.title).bold()
                 Text("Clean SwiftUI app entry. Packages coming next.")
                     .foregroundStyle(.secondary)

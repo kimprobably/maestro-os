@@ -23,7 +23,7 @@ struct MainTabView: View {
         var title: String {
             switch self {
             case .home: return "Home"
-            case .chat: return "Chat"
+            case .chat: return "Runs"
             case .profile: return "Profile"
             }
         }
@@ -31,7 +31,7 @@ struct MainTabView: View {
         var icon: String {
             switch self {
             case .home: return "house.fill"
-            case .chat: return "message.fill"
+            case .chat: return "alarm.fill"
             case .profile: return "person.fill"
             }
         }

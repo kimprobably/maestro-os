@@ -188,11 +188,11 @@ struct LaunchScreenStyle: View {
                     .font(.system(size: 48, weight: .medium))
                     .foregroundStyle(DSColors.accentPrimary)
                 
-                Text("AI Boilerplate")
+                Text("WakeTask")
                     .font(.system(size: 30, weight: .semibold))
                     .foregroundStyle(DSColors.textPrimary)
                 
-                Text("Swift · AI · Native")
+                Text("Wake · Verify · Act")
                     .font(.system(size: 16))
                     .foregroundStyle(DSColors.textSecondary)
                 

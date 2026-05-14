@@ -67,8 +67,8 @@ public struct HomeContent {
     public let quickActions: [QuickAction]
     
     public init(
-        welcomeTitle: String = "Welcome Back",
-        welcomeSubtitle: String = "What would you like to explore today?",
+        welcomeTitle: String = "Ready For A Reliable Morning?",
+        welcomeSubtitle: String = "Set your next alarm run and lock in your first task before bed.",
         featuredItems: [FeatureItem] = FeatureItem.defaults,
         quickActions: [QuickAction] = QuickAction.defaults
     ) {
@@ -87,27 +87,27 @@ extension HomeContent.FeatureItem {
     /// Buyers should customize these for their specific app
     public static let defaults: [HomeContent.FeatureItem] = [
         HomeContent.FeatureItem(
-            title: "GPT-4 Powered",
-            description: "Experience the most advanced AI model for natural conversations",
-            systemImage: "cpu.fill",
-            accentColor: "purple"
-        ),
-        HomeContent.FeatureItem(
-            title: "Lightning Fast",
-            description: "Get instant responses with our optimized streaming technology",
-            systemImage: "bolt.fill",
+            title: "Adaptive Mission Rotation",
+            description: "WakeTask rotates cognitive, movement, and scan-style missions to prevent autopilot dismissals.",
+            systemImage: "arrow.triangle.2.circlepath.circle.fill",
             accentColor: "orange"
         ),
         HomeContent.FeatureItem(
-            title: "Private & Secure",
-            description: "Your conversations are encrypted and never shared",
-            systemImage: "lock.shield.fill",
+            title: "Post-Dismiss Wake Check",
+            description: "A timed wake-check confirms you're still up. Miss it and escalation rules kick in automatically.",
+            systemImage: "timer",
+            accentColor: "red"
+        ),
+        HomeContent.FeatureItem(
+            title: "Reliability Ledger",
+            description: "See each alarm outcome with clear reasons so you can tune strictness and stop relapse patterns.",
+            systemImage: "chart.line.uptrend.xyaxis",
             accentColor: "green"
         ),
         HomeContent.FeatureItem(
-            title: "Multi-Device Sync",
-            description: "Access your chats from any device, anytime",
-            systemImage: "icloud.fill",
+            title: "First-Task Bridge",
+            description: "Finish one deliberate micro-task after wake verification before your morning run is marked complete.",
+            systemImage: "checkmark.seal.fill",
             accentColor: "blue"
         )
     ]
@@ -119,21 +119,21 @@ extension HomeContent.QuickAction {
     /// Buyers can customize or add more actions
     public static let defaults: [HomeContent.QuickAction] = [
         HomeContent.QuickAction(
-            title: "New Chat",
-            systemImage: "plus.message.fill",
-            accentColor: "blue",
+            title: "Start Wake Run",
+            systemImage: "alarm.badge.checkmark",
+            accentColor: "orange",
             action: .newChat
         ),
         HomeContent.QuickAction(
-            title: "History",
-            systemImage: "clock.fill",
-            accentColor: "purple",
+            title: "Reliability Log",
+            systemImage: "list.bullet.clipboard",
+            accentColor: "indigo",
             action: .history
         ),
         HomeContent.QuickAction(
-            title: "Upgrade",
-            systemImage: "star.fill",
-            accentColor: "orange",
+            title: "WakeTask Pro",
+            systemImage: "crown.fill",
+            accentColor: "yellow",
             action: .upgrade
         ),
         HomeContent.QuickAction(
@@ -144,4 +144,3 @@ extension HomeContent.QuickAction {
         )
     ]
 }
-
