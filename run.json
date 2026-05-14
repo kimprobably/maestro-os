@@ -3405,7 +3405,7 @@
     "kind": "running"
   },
   "status_updated_at": "2026-05-14T10:40:41.620927Z",
-  "last_event_at": "2026-05-14T11:08:38.898592Z",
+  "last_event_at": "2026-05-14T11:08:43.384493Z",
   "pending_control": null,
   "checkpoints": [
     {
@@ -5935,9 +5935,9 @@
       }
     },
     {
-      "seq": 0,
+      "seq": 282,
       "checkpoint": {
-        "timestamp": "2026-05-14T11:08:39.226021Z",
+        "timestamp": "2026-05-14T11:08:43.377228Z",
         "current_node": "architecture_fanout",
         "completed_nodes": [
           "start",
@@ -5958,15 +5958,344 @@
         ],
         "node_retries": {},
         "context_values": {
+          "internal.retry_count.research_evidence_gate": 0,
+          "command.output": "blob://sha256/0bfd50c993c393a0234f020a69195b46aa44c532a31c3e4603a9b1c63cafbc88",
+          "response.research_synthesis": "Completed.\n\nCreated:\n- [.workflow/iphone-app-factory/research-synthesis.md](/home/daytona/workspace/.workflow/iphone-app-factory/research-synthesis.md)\n- [.workflow/iphone-app-factory/opportunity-matrix.json](/home/daytona/workspace/.workflow/iphone-app-factory/opportunity-matrix.json)\n\nNotes:\n- I used all available required inputs.\n- `.workflow/iphone-app-factory/research/design-patterns.md` was not present, so I explicitly documented that limitation in the synthesis.\n- `opportunity-matrix.json` is strict valid JSON (parse-checked).",
+          "failure_signature": "",
+          "thread.spec_fanout.current_node": "spec_join",
+          "internal.node_visit_count": 1,
+          "parallel.results": [
+            {
+              "id": "arch_codex",
+              "status": "succeeded",
+              "head_sha": "81ea1dfa0d4454f79fd225992e1b69a06b2718e4"
+            },
+            {
+              "id": "arch_claude",
+              "status": "succeeded",
+              "head_sha": "a5a3271a1f15ce4ea903128468a61594a3edd94d"
+            }
+          ],
+          "last_response": "Completed. I reviewed the four required artifacts and wrote the red-team report to:\n\n[.workflow/iphone-app-factory/spec-red-team.md](/home/daytona/workspace/.workflow/iphone-app-factory/spec-red-team.",
+          "graph.persona": "iphone-app-factory",
+          "internal.retry_count.spec_red_team": 0,
+          "failure_class": "",
+          "graph.secret_policy": "never print environment variables or credential values; credential checks must be presence-only true/false checks; do not run environment dump commands.",
+          "graph.fallback_retry_target": "architecture_consensus",
+          "internal.retry_count.spec_fanout": 0,
+          "parallel.fan_in.best_head_sha": "a7de32a110fd67c390987800a372dae24dbdb28d",
+          "response.spec_consensus": "Created all requested outputs:\n\n- [spec.md](/home/daytona/workspace/.workflow/iphone-app-factory/spec.md)\n- [definition-of-done.md](/home/daytona/workspace/.workflow/iphone-app-factory/definition-of-done.md)\n- [spec-consensus.md](/home/daytona/workspace/.workflow/iphone-app-factory/spec-consensus.md)\n\nValidation checks passed:\n- `spec.md` contains all required section headings exactly.\n- Definition of Done is checklist-based and testable (`18` checklist items).\n- Consensus doc captures merge rationale, contradiction resolution, and requirement-to-test traceability.",
+          "internal.retry_count.architecture_fanout": 0,
+          "thread.research.current_node": "research_synthesis",
+          "current_node": "architecture_fanout",
+          "internal.run_id": "01KRK15YVT2214YB2CZ78HWJJM",
+          "thread.research_synthesis.current_node": "research_evidence_gate",
+          "last_stage": "spec_red_team",
+          "parallel.fan_in.best_outcome": "succeeded",
+          "graph.inputs": "app_type,target_audience,app_name,bundle_id,app_dir,spec_kitty_feature,boilerplate_repo,max_competitors,use_mobbin,ios_validation_mode,allow_macos_deferred",
+          "internal.fidelity": "compact",
+          "internal.retry_count.research_synthesis": 0,
+          "internal.retry_count.prompt_quality_gate": 0,
+          "graph.goal": "Build a differentiated iPhone app from a researched app opportunity using SwiftAIBoilerplatePro",
+          "graph.default_max_retries": "2",
+          "thread.spec_quality_gate.current_node": "spec_kitty_gate",
+          "thread.start.current_node": "bootstrap",
+          "internal.retry_count.start": 0,
+          "thread.spec_red_team.current_node": "spec_quality_gate",
+          "internal.retry_count.spec_join": 0,
+          "thread.spec.current_node": "spec_consensus",
+          "internal.retry_count.spec_consensus": 0,
+          "thread.spec_kitty_gate.current_node": "architecture_fanout",
+          "internal.retry_count.bootstrap": 0,
+          "internal.retry_count.spec_quality_gate": 0,
+          "response.spec_cross_critique": "Wrote the cross-critique to:\n\n- [.workflow/iphone-app-factory/spec-cross-critique.md](/home/daytona/workspace/.workflow/iphone-app-factory/spec-cross-critique.md)\n\nIt includes strict findings on consensus, contradictions, missing acceptance criteria, App Store 4.3 risks, boilerplate rebuild risks, testability gaps, and non-verifiable claims, plus hard merge rules for implementation readiness.",
+          "response.spec_red_team": "Completed. I reviewed the four required artifacts and wrote the red-team report to:\n\n[.workflow/iphone-app-factory/spec-red-team.md](/home/daytona/workspace/.workflow/iphone-app-factory/spec-red-team.md)\n\nIt ends with exactly:\n\n`VERDICT: APPROVED`",
+          "thread.bootstrap.current_node": "prompt_quality_gate",
+          "parallel.fan_in.best_id": "spec_claude",
+          "internal.retry_count.research_join": 0,
+          "internal.thread_id": "spec_kitty_gate",
+          "parallel.branch_count": 2,
+          "internal.retry_count.spec_cross_critique": 0,
+          "graph.rankdir": "LR",
+          "thread.review.current_node": "spec_red_team",
+          "graph.model_stylesheet": "\n            *                  { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: low; }\n            .research          { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            .design            { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            .spec              { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            .architecture      { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            .coding            { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            .review            { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            .verify            { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: medium; }\n            .security          { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            .simplify          { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            .macos             { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            #spec_codex        { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            #spec_claude       { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            #spec_kimi         { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            #spec_deepseek     { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            #arch_codex        { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            #arch_claude       { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n        ",
+          "thread.research_fanout.current_node": "research_join",
+          "graph.retry_target": "spec_consensus",
+          "graph.outputs": "research_pack,spec,architecture,swift_app,ios_quality_report,appium_report,release_handoff",
+          "internal.retry_count.research_fanout": 0,
+          "internal.retry_count.spec_kitty_gate": 0,
+          "internal.work_dir": "/home/daytona/workspace",
+          "thread.research_evidence_gate.current_node": "spec_fanout",
+          "thread.prompt_quality_gate.current_node": "research_fanout",
+          "outcome": "succeeded"
+        },
+        "node_outcomes": {
+          "spec_consensus": {
+            "status": "succeeded",
+            "context_updates": {
+              "last_stage": "spec_consensus",
+              "response.spec_consensus": "Created all requested outputs:\n\n- [spec.md](/home/daytona/workspace/.workflow/iphone-app-factory/spec.md)\n- [definition-of-done.md](/home/daytona/workspace/.workflow/iphone-app-factory/definition-of-done.md)\n- [spec-consensus.md](/home/daytona/workspace/.workflow/iphone-app-factory/spec-consensus.md)\n\nValidation checks passed:\n- `spec.md` contains all required section headings exactly.\n- Definition of Done is checklist-based and testable (`18` checklist items).\n- Consensus doc captures merge rationale, contradiction resolution, and requirement-to-test traceability.",
+              "last_response": "Created all requested outputs:\n\n- [spec.md](/home/daytona/workspace/.workflow/iphone-app-factory/spec.md)\n- [definition-of-done.md](/home/daytona/workspace/.workflow/iphone-app-factory/definition-of-d"
+            },
+            "notes": "Stage completed: spec_consensus",
+            "usage": {
+              "input": {
+                "usage": {
+                  "model": {
+                    "provider": "openai",
+                    "model_id": "gpt-5.3-codex"
+                  },
+                  "tokens": {
+                    "input_tokens": 316852,
+                    "output_tokens": 4674,
+                    "reasoning_tokens": 0,
+                    "cache_read_tokens": 0,
+                    "cache_write_tokens": 0
+                  }
+                },
+                "facts": {
+                  "provider": "open_ai"
+                }
+              },
+              "total_usd_micros": 619927
+            }
+          },
+          "spec_fanout": {
+            "status": "succeeded",
+            "jump_to_node": "spec_join",
+            "notes": "Parallel node dispatched 4 branches (4 succeeded, 0 failed)",
+            "usage": null
+          },
+          "spec_red_team": {
+            "status": "succeeded",
+            "context_updates": {
+              "last_stage": "spec_red_team",
+              "last_response": "Completed. I reviewed the four required artifacts and wrote the red-team report to:\n\n[.workflow/iphone-app-factory/spec-red-team.md](/home/daytona/workspace/.workflow/iphone-app-factory/spec-red-team.",
+              "response.spec_red_team": "Completed. I reviewed the four required artifacts and wrote the red-team report to:\n\n[.workflow/iphone-app-factory/spec-red-team.md](/home/daytona/workspace/.workflow/iphone-app-factory/spec-red-team.md)\n\nIt ends with exactly:\n\n`VERDICT: APPROVED`"
+            },
+            "notes": "Stage completed: spec_red_team",
+            "usage": {
+              "input": {
+                "usage": {
+                  "model": {
+                    "provider": "openai",
+                    "model_id": "gpt-5.3-codex"
+                  },
+                  "tokens": {
+                    "input_tokens": 83843,
+                    "output_tokens": 1508,
+                    "reasoning_tokens": 0,
+                    "cache_read_tokens": 0,
+                    "cache_write_tokens": 0
+                  }
+                },
+                "facts": {
+                  "provider": "open_ai"
+                }
+              },
+              "total_usd_micros": 167837
+            }
+          },
+          "research_join": {
+            "status": "succeeded",
+            "context_updates": {
+              "parallel.fan_in.best_outcome": "succeeded",
+              "parallel.fan_in.best_id": "app_store_research",
+              "parallel.fan_in.best_head_sha": "637cedc1f99ae162c37ba49f8b55306140de518e"
+            },
+            "notes": "Selected best candidate: app_store_research",
+            "usage": null
+          },
+          "start": {
+            "status": "succeeded",
+            "usage": null
+          },
+          "prompt_quality_gate": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/d99837be75a9872643e3c63f4b5feee850140e06899892eb7d6763a9320f39f2"
+            },
+            "notes": "Script completed: node scripts/iphone-app-factory/promptfoo-prompt-quality.mjs --config evals/iphone-app-factory/prompt-quality.yaml --registry evals/iphone-app-factory/prompt-registry.json --out .workflow/iphone-app-factory/evals/prompt-quality.json --allow-fallback true",
+            "usage": null
+          },
+          "spec_join": {
+            "status": "succeeded",
+            "context_updates": {
+              "parallel.fan_in.best_id": "spec_claude",
+              "parallel.fan_in.best_outcome": "succeeded",
+              "parallel.fan_in.best_head_sha": "a7de32a110fd67c390987800a372dae24dbdb28d"
+            },
+            "notes": "Selected best candidate: spec_claude",
+            "usage": null
+          },
+          "spec_kitty_gate": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/0bfd50c993c393a0234f020a69195b46aa44c532a31c3e4603a9b1c63cafbc88"
+            },
+            "notes": "Script completed: FEATURE='waketask-iphone-app'; if command -v spec-kitty >/dev/null 2>&1; then spec-kitty specify \"$FEATURE\" --mission-type software-dev --json > .workflow/iphone-app-factory/spec-kitty.json || spec-kitty verify-setup --json > .workflow/iphone-app-factory/spec-kitty.json; else echo 'spec-kitty is required for this workflow' >&2; exit 1; fi; cat .workflow/iphone-app-factory/spec-kitty.json",
+            "usage": null
+          },
+          "spec_cross_critique": {
+            "status": "succeeded",
+            "context_updates": {
+              "last_stage": "spec_cross_critique",
+              "last_response": "Wrote the cross-critique to:\n\n- [.workflow/iphone-app-factory/spec-cross-critique.md](/home/daytona/workspace/.workflow/iphone-app-factory/spec-cross-critique.md)\n\nIt includes strict findings on conse",
+              "response.spec_cross_critique": "Wrote the cross-critique to:\n\n- [.workflow/iphone-app-factory/spec-cross-critique.md](/home/daytona/workspace/.workflow/iphone-app-factory/spec-cross-critique.md)\n\nIt includes strict findings on consensus, contradictions, missing acceptance criteria, App Store 4.3 risks, boilerplate rebuild risks, testability gaps, and non-verifiable claims, plus hard merge rules for implementation readiness."
+            },
+            "notes": "Stage completed: spec_cross_critique",
+            "usage": {
+              "input": {
+                "usage": {
+                  "model": {
+                    "provider": "openai",
+                    "model_id": "gpt-5.3-codex"
+                  },
+                  "tokens": {
+                    "input_tokens": 348384,
+                    "output_tokens": 3105,
+                    "reasoning_tokens": 0,
+                    "cache_read_tokens": 0,
+                    "cache_write_tokens": 0
+                  }
+                },
+                "facts": {
+                  "provider": "open_ai"
+                }
+              },
+              "total_usd_micros": 653142
+            }
+          },
+          "research_synthesis": {
+            "status": "succeeded",
+            "context_updates": {
+              "last_stage": "research_synthesis",
+              "last_response": "Completed.\n\nCreated:\n- [.workflow/iphone-app-factory/research-synthesis.md](/home/daytona/workspace/.workflow/iphone-app-factory/research-synthesis.md)\n- [.workflow/iphone-app-factory/opportunity-matr",
+              "response.research_synthesis": "Completed.\n\nCreated:\n- [.workflow/iphone-app-factory/research-synthesis.md](/home/daytona/workspace/.workflow/iphone-app-factory/research-synthesis.md)\n- [.workflow/iphone-app-factory/opportunity-matrix.json](/home/daytona/workspace/.workflow/iphone-app-factory/opportunity-matrix.json)\n\nNotes:\n- I used all available required inputs.\n- `.workflow/iphone-app-factory/research/design-patterns.md` was not present, so I explicitly documented that limitation in the synthesis.\n- `opportunity-matrix.json` is strict valid JSON (parse-checked)."
+            },
+            "notes": "Stage completed: research_synthesis",
+            "usage": {
+              "input": {
+                "usage": {
+                  "model": {
+                    "provider": "openai",
+                    "model_id": "gpt-5.3-codex"
+                  },
+                  "tokens": {
+                    "input_tokens": 155023,
+                    "output_tokens": 3160,
+                    "reasoning_tokens": 0,
+                    "cache_read_tokens": 0,
+                    "cache_write_tokens": 0
+                  }
+                },
+                "facts": {
+                  "provider": "open_ai"
+                }
+              },
+              "total_usd_micros": 315530
+            }
+          },
+          "bootstrap": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/66b6c6d86164b03c97192d43da200a46e8f3c2e79c7d7af912ce945bde25fecb"
+            },
+            "notes": "Script completed: node scripts/iphone-app-factory/bootstrap.mjs --app-dir 'apps/waketask-iphone' --app-name 'WakeTask' --bundle-id 'com.keen.waketask' --boilerplate-repo 'SwiftAIBoilerplatePro/SwiftAIBoilerplatePro-Distribution'",
+            "usage": null
+          },
+          "research_fanout": {
+            "status": "succeeded",
+            "jump_to_node": "research_join",
+            "notes": "Parallel node dispatched 4 branches (4 succeeded, 0 failed)",
+            "usage": null
+          },
+          "research_evidence_gate": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/260813ac8d3fbc24ea1727ee85f705f98de763ca9ffae8d15e73b1f9372eb1f6"
+            },
+            "notes": "Script completed: node scripts/iphone-app-factory/research-evidence-gate.mjs",
+            "usage": null
+          },
+          "spec_quality_gate": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/352a9e42db9f8becfb6a2547abeb2b5528cbd57c8aab6991701b318ff11cbc2c"
+            },
+            "notes": "Script completed: node scripts/iphone-app-factory/spec-gate.mjs",
+            "usage": null
+          },
+          "architecture_fanout": {
+            "status": "succeeded",
+            "jump_to_node": "architecture_join",
+            "notes": "Parallel node dispatched 2 branches (2 succeeded, 0 failed)",
+            "usage": null
+          }
+        },
+        "next_node_id": "architecture_join",
+        "git_commit_sha": "350c6110eb030b15df9a1a6c8883b7111bf62161",
+        "node_visits": {
+          "research_join": 1,
+          "spec_consensus": 1,
+          "spec_join": 1,
+          "start": 1,
+          "spec_fanout": 1,
+          "bootstrap": 1,
+          "spec_red_team": 1,
+          "research_evidence_gate": 1,
+          "research_fanout": 1,
+          "research_synthesis": 1,
+          "spec_kitty_gate": 1,
+          "architecture_fanout": 1,
+          "spec_cross_critique": 1,
+          "spec_quality_gate": 1,
+          "prompt_quality_gate": 1
+        }
+      },
+      "diff": {
+        "summary": {
+          "files_changed": 10367,
+          "additions": 347839,
+          "deletions": 0
+        }
+      }
+    },
+    {
+      "seq": 0,
+      "checkpoint": {
+        "timestamp": "2026-05-14T11:08:43.664335Z",
+        "current_node": "architecture_join",
+        "completed_nodes": [
+          "start",
+          "bootstrap",
+          "prompt_quality_gate",
+          "research_fanout",
+          "research_join",
+          "research_synthesis",
+          "research_evidence_gate",
+          "spec_fanout",
+          "spec_join",
+          "spec_cross_critique",
+          "spec_consensus",
+          "spec_red_team",
+          "spec_quality_gate",
+          "spec_kitty_gate",
+          "architecture_fanout",
+          "architecture_join"
+        ],
+        "node_retries": {},
+        "context_values": {
           "thread.research_evidence_gate.current_node": "spec_fanout",
           "internal.retry_count.start": 0,
-          "parallel.fan_in.best_id": "spec_claude",
+          "thread.architecture_fanout.current_node": "architecture_join",
+          "parallel.fan_in.best_id": "arch_claude",
           "graph.goal": "Build a differentiated iPhone app from a researched app opportunity using SwiftAIBoilerplatePro",
           "graph.model_stylesheet": "\n            *                  { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: low; }\n            .research          { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            .design            { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            .spec              { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            .architecture      { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            .coding            { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            .review            { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            .verify            { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: medium; }\n            .security          { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            .simplify          { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            .macos             { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            #spec_codex        { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            #spec_claude       { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            #spec_kimi         { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            #spec_deepseek     { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            #arch_codex        { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            #arch_claude       { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n        ",
           "internal.retry_count.spec_join": 0,
           "internal.retry_count.spec_red_team": 0,
           "internal.retry_count.prompt_quality_gate": 0,
-          "internal.thread_id": "spec_kitty_gate",
+          "internal.thread_id": "architecture_fanout",
           "thread.bootstrap.current_node": "prompt_quality_gate",
           "thread.spec_fanout.current_node": "spec_join",
           "thread.research_fanout.current_node": "research_join",
@@ -5978,9 +6307,10 @@
           "outcome": "succeeded",
           "internal.retry_count.spec_cross_critique": 0,
           "graph.outputs": "research_pack,spec,architecture,swift_app,ios_quality_report,appium_report,release_handoff",
-          "parallel.fan_in.best_head_sha": "a7de32a110fd67c390987800a372dae24dbdb28d",
+          "parallel.fan_in.best_head_sha": "a5a3271a1f15ce4ea903128468a61594a3edd94d",
           "internal.retry_count.spec_quality_gate": 0,
           "internal.retry_count.research_synthesis": 0,
+          "internal.retry_count.architecture_join": 0,
           "thread.spec_red_team.current_node": "spec_quality_gate",
           "internal.retry_count.architecture_fanout": 0,
           "thread.spec.current_node": "spec_consensus",
@@ -5989,7 +6319,7 @@
           "thread.start.current_node": "bootstrap",
           "response.spec_consensus": "Created all requested outputs:\n\n- [spec.md](/home/daytona/workspace/.workflow/iphone-app-factory/spec.md)\n- [definition-of-done.md](/home/daytona/workspace/.workflow/iphone-app-factory/definition-of-done.md)\n- [spec-consensus.md](/home/daytona/workspace/.workflow/iphone-app-factory/spec-consensus.md)\n\nValidation checks passed:\n- `spec.md` contains all required section headings exactly.\n- Definition of Done is checklist-based and testable (`18` checklist items).\n- Consensus doc captures merge rationale, contradiction resolution, and requirement-to-test traceability.",
           "internal.retry_count.spec_kitty_gate": 0,
-          "current_node": "architecture_fanout",
+          "current_node": "architecture_join",
           "internal.node_visit_count": 1,
           "internal.fidelity": "compact",
           "graph.fallback_retry_target": "architecture_consensus",
@@ -6138,6 +6468,16 @@
             "notes": "Parallel node dispatched 4 branches (4 succeeded, 0 failed)",
             "usage": null
           },
+          "architecture_join": {
+            "status": "succeeded",
+            "context_updates": {
+              "parallel.fan_in.best_id": "arch_claude",
+              "parallel.fan_in.best_outcome": "succeeded",
+              "parallel.fan_in.best_head_sha": "a5a3271a1f15ce4ea903128468a61594a3edd94d"
+            },
+            "notes": "Selected best candidate: arch_claude",
+            "usage": null
+          },
           "spec_kitty_gate": {
             "status": "succeeded",
             "context_updates": {
@@ -6233,7 +6573,7 @@
             "usage": null
           }
         },
-        "next_node_id": "architecture_join",
+        "next_node_id": "architecture_consensus",
         "node_visits": {
           "research_fanout": 1,
           "research_evidence_gate": 1,
@@ -6243,6 +6583,7 @@
           "spec_consensus": 1,
           "spec_join": 1,
           "research_synthesis": 1,
+          "architecture_join": 1,
           "spec_kitty_gate": 1,
           "bootstrap": 1,
           "spec_fanout": 1,
@@ -6746,6 +7087,29 @@
       },
       "state": "succeeded"
     },
+    "architecture_join@1": {
+      "first_event_seq": 285,
+      "prompt": null,
+      "response": null,
+      "completion": null,
+      "provider_used": null,
+      "diff": null,
+      "script_invocation": null,
+      "script_timing": null,
+      "parallel_results": null,
+      "output": null,
+      "started_at": "2026-05-14T11:08:43.384493Z",
+      "handler": "parallel.fan_in",
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "total_tokens": 0,
+        "reasoning_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "state": "running"
+    },
     "prompt_quality_gate@1": {
       "first_event_seq": 31,
       "prompt": null,
@@ -7022,7 +7386,12 @@
       "first_event_seq": 253,
       "prompt": null,
       "response": null,
-      "completion": null,
+      "completion": {
+        "outcome": "succeeded",
+        "notes": "Parallel node dispatched 2 branches (2 succeeded, 0 failed)",
+        "failure_reason": null,
+        "timestamp": "2026-05-14T11:08:39.225848Z"
+      },
       "provider_used": {
         "mode": "cli",
         "provider": "openai",
@@ -7047,6 +7416,7 @@
       "output": null,
       "started_at": "2026-05-14T11:05:21.183341Z",
       "handler": "parallel",
+      "duration_ms": 197715,
       "usage": {
         "input_tokens": 306882,
         "output_tokens": 2639,
@@ -7060,7 +7430,7 @@
         "provider": "openai",
         "model_id": "gpt-5.3-codex"
       },
-      "state": "running"
+      "state": "succeeded"
     },
     "spec_kitty_gate@1": {
       "first_event_seq": 242,
