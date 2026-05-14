@@ -3,6 +3,184 @@ _version = 1
 [project]
 name = "maestro-os"
 
+[llm.providers.openrouter]
+display_name = "OpenRouter"
+adapter = "openai_compatible"
+base_url = "https://openrouter.ai/api/v1"
+credentials = ["env:OPENROUTER_API_KEY"]
+priority = 10
+aliases = ["or"]
+
+[llm.models."anthropic/claude-haiku-4-5"]
+provider = "openrouter"
+api_id = "anthropic/claude-haiku-4.5"
+display_name = "OpenRouter Claude Haiku 4.5"
+family = "claude-haiku"
+default = true
+aliases = ["openrouter-haiku"]
+estimated_output_tps = 100
+
+[llm.models."anthropic/claude-haiku-4-5".limits]
+context_window = 200000
+max_output = 64000
+
+[llm.models."anthropic/claude-haiku-4-5".features]
+tools = true
+vision = false
+reasoning = true
+reasoning_effort = "levels"
+
+[llm.models."anthropic/claude-haiku-4-5".controls]
+reasoning_effort = ["low", "medium", "high"]
+
+[llm.models."anthropic/claude-haiku-4-5".costs]
+input_cost_per_mtok = 1.00
+output_cost_per_mtok = 5.00
+
+[llm.models."moonshotai/kimi-k2.6"]
+provider = "openrouter"
+display_name = "OpenRouter Kimi K2.6"
+family = "kimi"
+aliases = ["openrouter-kimi"]
+estimated_output_tps = 60
+
+[llm.models."moonshotai/kimi-k2.6".limits]
+context_window = 262142
+max_output = 262142
+
+[llm.models."moonshotai/kimi-k2.6".features]
+tools = true
+vision = true
+reasoning = true
+reasoning_effort = "levels"
+
+[llm.models."moonshotai/kimi-k2.6".controls]
+reasoning_effort = ["low", "medium", "high"]
+
+[llm.models."moonshotai/kimi-k2.6".costs]
+input_cost_per_mtok = 0.74
+output_cost_per_mtok = 3.50
+
+[llm.models."google/gemini-3.1-flash-lite"]
+provider = "openrouter"
+display_name = "OpenRouter Gemini 3.1 Flash Lite"
+family = "gemini"
+aliases = ["openrouter-gemini-flash-lite"]
+estimated_output_tps = 200
+
+[llm.models."google/gemini-3.1-flash-lite".limits]
+context_window = 1048576
+max_output = 65536
+
+[llm.models."google/gemini-3.1-flash-lite".features]
+tools = true
+vision = true
+reasoning = true
+reasoning_effort = "levels"
+
+[llm.models."google/gemini-3.1-flash-lite".controls]
+reasoning_effort = ["low", "medium", "high"]
+
+[llm.models."google/gemini-3.1-flash-lite".costs]
+input_cost_per_mtok = 0.25
+output_cost_per_mtok = 1.50
+
+[llm.models."google/gemini-3.1-pro-preview"]
+provider = "openrouter"
+display_name = "OpenRouter Gemini 3.1 Pro Preview"
+family = "gemini"
+aliases = ["openrouter-gemini-pro"]
+estimated_output_tps = 85
+
+[llm.models."google/gemini-3.1-pro-preview".limits]
+context_window = 1048576
+max_output = 65536
+
+[llm.models."google/gemini-3.1-pro-preview".features]
+tools = true
+vision = true
+reasoning = true
+reasoning_effort = "levels"
+
+[llm.models."google/gemini-3.1-pro-preview".controls]
+reasoning_effort = ["low", "medium", "high"]
+
+[llm.models."google/gemini-3.1-pro-preview".costs]
+input_cost_per_mtok = 2.00
+output_cost_per_mtok = 12.00
+
+[llm.models."qwen/qwen3.6-plus"]
+provider = "openrouter"
+display_name = "OpenRouter Qwen3.6 Plus"
+family = "qwen"
+aliases = ["openrouter-qwen-plus"]
+estimated_output_tps = 100
+
+[llm.models."qwen/qwen3.6-plus".limits]
+context_window = 1000000
+max_output = 65536
+
+[llm.models."qwen/qwen3.6-plus".features]
+tools = true
+vision = true
+reasoning = true
+reasoning_effort = "levels"
+
+[llm.models."qwen/qwen3.6-plus".controls]
+reasoning_effort = ["low", "medium", "high"]
+
+[llm.models."qwen/qwen3.6-plus".costs]
+input_cost_per_mtok = 0.325
+output_cost_per_mtok = 1.95
+
+[llm.models."deepseek/deepseek-v4-pro"]
+provider = "openrouter"
+display_name = "OpenRouter DeepSeek V4 Pro"
+family = "deepseek"
+aliases = ["openrouter-deepseek-v4-pro"]
+estimated_output_tps = 100
+
+[llm.models."deepseek/deepseek-v4-pro".limits]
+context_window = 1048576
+max_output = 384000
+
+[llm.models."deepseek/deepseek-v4-pro".features]
+tools = true
+vision = false
+reasoning = true
+reasoning_effort = "levels"
+
+[llm.models."deepseek/deepseek-v4-pro".controls]
+reasoning_effort = ["low", "medium", "high"]
+
+[llm.models."deepseek/deepseek-v4-pro".costs]
+input_cost_per_mtok = 0.435
+output_cost_per_mtok = 0.87
+
+[llm.models."deepseek/deepseek-v4-flash"]
+provider = "openrouter"
+display_name = "OpenRouter DeepSeek V4 Flash"
+family = "deepseek"
+aliases = ["openrouter-deepseek-v4-flash"]
+estimated_output_tps = 150
+
+[llm.models."deepseek/deepseek-v4-flash".limits]
+context_window = 1048576
+max_output = 131072
+
+[llm.models."deepseek/deepseek-v4-flash".features]
+tools = true
+vision = false
+reasoning = true
+reasoning_effort = "levels"
+
+[llm.models."deepseek/deepseek-v4-flash".controls]
+reasoning_effort = ["low", "medium", "high"]
+
+[llm.models."deepseek/deepseek-v4-flash".costs]
+input_cost_per_mtok = 0.126
+output_cost_per_mtok = 0.252
+
 [run.agent]
 permissions = "full"
 
@@ -11,38 +189,35 @@ preserve = false
 stop_on_terminal = true
 
 [run.sandbox.env]
-OPENROUTER_API_KEY = "${{ secrets.OPENROUTER_API_KEY }}"
-APIFY_TOKEN = "${{ secrets.APIFY_TOKEN }}"
+OPENROUTER_API_KEY = "{{ env.OPENROUTER_API_KEY }}"
+OPENAI_API_KEY = "{{ env.OPENAI_API_KEY }}"
+CLAUDE_CODE_OAUTH_TOKEN = "{{ env.CLAUDE_CODE_OAUTH_TOKEN }}"
+CLAUDE_CODE_CREDENTIALS_JSON_BASE64 = "{{ env.CLAUDE_CODE_CREDENTIALS_JSON_BASE64 }}"
+CODEX_AUTH_JSON_BASE64 = "{{ env.CODEX_AUTH_JSON_BASE64 }}"
+APIFY_TOKEN = "{{ env.APIFY_TOKEN }}"
 APIFY_APPSTORE_ACTOR = "crawlerbros/appstore-scraper"
 APIFY_TIKTOK_ACTOR = "clockworks/tiktok-scraper"
 APIFY_INSTAGRAM_ACTOR = "apify/instagram-scraper"
-DAYTONA_API_URL = "${{ secrets.DAYTONA_API_URL }}"
-DAYTONA_API_KEY = "${{ secrets.DAYTONA_API_KEY }}"
-LINEAR_API_KEY = "${{ secrets.LINEAR_API_KEY }}"
-LINEAR_API_URL = "${{ secrets.LINEAR_API_URL }}"
-FABRO_SERVER = "${{ secrets.FABRO_SERVER }}"
-FABRO_DEV_TOKEN = "${{ secrets.FABRO_DEV_TOKEN }}"
-FABRO_SLACK_BOT_TOKEN = "${{ secrets.FABRO_SLACK_BOT_TOKEN }}"
-FABRO_SLACK_CHANNEL_ID = "${{ secrets.FABRO_SLACK_CHANNEL_ID }}"
-MAESTRO_AGENT_STATE_DIR = "/home/daytona/agent-state"
+DAYTONA_API_URL = "{{ env.DAYTONA_API_URL }}"
+DAYTONA_API_KEY = "{{ env.DAYTONA_API_KEY }}"
+LINEAR_API_KEY = "{{ env.LINEAR_API_KEY }}"
+LINEAR_API_URL = "{{ env.LINEAR_API_URL }}"
+FABRO_SERVER = "{{ env.FABRO_SERVER }}"
+FABRO_DEV_TOKEN = "{{ env.FABRO_DEV_TOKEN }}"
+FABRO_SLACK_BOT_TOKEN = "{{ env.FABRO_SLACK_BOT_TOKEN }}"
+FABRO_SLACK_CHANNEL_ID = "{{ env.FABRO_SLACK_CHANNEL_ID }}"
 PROMPTFOO_DISABLE_TELEMETRY = "1"
 
 [run.sandbox.daytona]
 auto_stop_interval = 60
 network = "allow_all"
-skip_clone = false
 
 [run.sandbox.daytona.labels]
 project = "maestro-os"
 purpose = "code-factory"
 
-[[run.sandbox.daytona.volumes]]
-volume_id = "beefe1da-59a0-48f6-9e19-a513d1790ce3"
-mount_path = "/home/daytona/agent-state"
-subpath = "agent-auth"
-
 [run.sandbox.daytona.snapshot]
-name = "maestro-code-factory-v5"
+name = "maestro-code-factory-v6"
 cpu = 2
 memory = "4GB"
 disk = "10GB"
@@ -74,7 +249,7 @@ RUN apt-get update \
 RUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash - \
   && apt-get update \
   && apt-get install -y --no-install-recommends nodejs \
-  && npm install -g @anthropic-ai/claude-code @openai/codex promptfoo \
+  && npm install -g @anthropic-ai/claude-code@2.1.141 @openai/codex promptfoo \
   && npm cache clean --force \
   && rm -rf /var/lib/apt/lists/*
 

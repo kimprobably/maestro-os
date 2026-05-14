@@ -19,6 +19,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
 
       - name: Set up Bun
         uses: oven-sh/setup-bun@v2
@@ -37,16 +39,38 @@ jobs:
         run: uv tool install spec-kitty-cli
 
       - name: Bun Tests
-        run: bun test
+        run: bun test cli/src/index.test.ts apps/generated-consumer-app-radar/tests/*.test.js
 
       - name: Bun Build Check
         run: bun run check
+
+      - name: JavaScript Syntax Checks
+        run: find scripts -name '*.mjs' -print0 | xargs -0 -n 1 node --check
+
+      - name: Fabro Workflow Contract Checks
+        run: |
+          node scripts/iphone-app-factory/validate-contract.mjs
+          ./bin/maestro workflow register workflows/iphone-app-factory/build-iphone-app.fabro
+          ./bin/maestro workflow register workflows/fabro/iphone-app-factory-contract-smoke.fabro
+
+      - name: Prompt Quality Gate
+        env:
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+        run: node scripts/iphone-app-factory/promptfoo-prompt-quality.mjs --allow-fallback true
 
       - name: Qlty Config
         run: qlty config validate --no-upgrade-check
 
       - name: Qlty Tool Install
         run: qlty check --all --install-only --no-progress --no-upgrade-check
+
+      - name: Qlty Workflow Syntax Gate
+        run: |
+          git fetch origin main --depth=1
+          qlty check .github/workflows/quality.yml --filter actionlint --no-progress --summary --fail-level high --no-upgrade-check
+
+      - name: Qlty Secret Scan
+        run: qlty check --all --filter gitleaks --no-progress --summary --fail-level high --no-upgrade-check
 
       - name: Qlty Report
         run: qlty check --all --no-progress --no-fail --summary --no-upgrade-check

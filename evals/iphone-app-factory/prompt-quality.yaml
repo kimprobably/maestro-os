@@ -1,0 +1,69 @@
+description: "iPhone App Factory prompt quality eval"
+
+providers:
+  - id: openrouter:anthropic/claude-haiku-4-5
+    config:
+      apiKeyEnvar: OPENROUTER_API_KEY
+      temperature: 0
+      max_tokens: 700
+      maxRetries: 0
+
+evaluateOptions:
+  maxConcurrency: 1
+
+defaultTest:
+  options:
+    provider:
+      id: openrouter:anthropic/claude-haiku-4-5
+      config:
+        apiKeyEnvar: OPENROUTER_API_KEY
+        temperature: 0
+        max_tokens: 700
+
+prompts:
+  - |
+    Evaluate whether this iPhone App Factory prompt suite is strong enough for overnight agentic app generation.
+
+    Prompt registry:
+    {{prompt_registry}}
+
+    Golden cases:
+    {{golden_cases}}
+
+    Representative prompts:
+    SPEC_CONSENSUS:
+    {{spec_consensus}}
+
+    ARCHITECTURE:
+    {{architecture_consensus}}
+
+    IMPLEMENT_INTEGRATION:
+    {{implement_integration}}
+
+    AI_UI_EXPLORER:
+    {{ai_ui_explorer}}
+
+    FINAL_CONSENSUS:
+    {{final_consensus}}
+
+    Return valid JSON only, no markdown fences:
+    {"verdict":"APPROVE","score":0.0,"covered":["spec_lab","boilerplate_reuse","ios_quality","appium_qa","mobbin_safety","release_hardening"],"gaps":[]}
+
+tests:
+  - description: "Prompt suite covers adversarial spec, boilerplate reuse, iOS QA, Mobbin safety, and release gates"
+    vars:
+      prompt_registry: file://prompt-registry.json
+      golden_cases: file://datasets/prompt-quality-golden.jsonl
+      spec_consensus: file://../../prompts/iphone-app-factory/spec-consensus.md
+      architecture_consensus: file://../../prompts/iphone-app-factory/architecture-consensus.md
+      implement_integration: file://../../prompts/iphone-app-factory/implement-integration.md
+      ai_ui_explorer: file://../../prompts/iphone-app-factory/ai-ui-explorer.md
+      final_consensus: file://../../prompts/iphone-app-factory/final-consensus.md
+    assert:
+      - type: contains-all
+        value: ["spec_lab", "boilerplate_reuse", "ios_quality", "appium_qa", "mobbin_safety", "release_hardening"]
+      - type: llm-rubric
+        value: "The prompt suite should make quality reproducible across prompt registry, golden cases, adversarial review, deterministic gates, and final release criteria."
+        threshold: 0.78
+
+outputPath: .workflow/iphone-app-factory/evals/promptfoo-output.json

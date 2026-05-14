@@ -23,7 +23,7 @@ digraph DaytonaAuthBootstrapSmoke {
         shape=parallelogram,
         goal_gate=true,
         retry_target="validate_bootstrap",
-        script="mkdir -p .workflow; test -x sandbox/bootstrap-agent-auth.sh || chmod +x sandbox/bootstrap-agent-auth.sh; sh -n sandbox/bootstrap-agent-auth.sh; node -e \"const fs=require('fs'); const body=fs.readFileSync('sandbox/bootstrap-agent-auth.sh','utf8'); for (const text of ['claude -p','codex login status','codex exec --skip-git-repo-check','Do not copy local ~/.claude or ~/.codex','MAESTRO_AGENT_STATE_DIR']) { if (!body.includes(text)) throw new Error('missing safety marker: ' + text); } console.log(JSON.stringify({bootstrap:true}));\" > .workflow/daytona-auth-bootstrap.json"
+        script="mkdir -p .workflow; test -x sandbox/bootstrap-agent-auth.sh || chmod +x sandbox/bootstrap-agent-auth.sh; sh -n sandbox/bootstrap-agent-auth.sh; node -e \"const fs=require('fs'); const body=fs.readFileSync('sandbox/bootstrap-agent-auth.sh','utf8'); for (const text of ['claude -p','codex login status','codex exec --skip-git-repo-check','CLAUDE_CODE_CREDENTIALS_JSON_BASE64','CODEX_AUTH_JSON_BASE64','OPENAI_API_KEY','Do not bulk-copy local ~/.claude or ~/.codex']) { if (!body.includes(text)) throw new Error('missing safety marker: ' + text); } console.log(JSON.stringify({bootstrap:true}));\" > .workflow/daytona-auth-bootstrap.json"
     ]
 
     write_report [

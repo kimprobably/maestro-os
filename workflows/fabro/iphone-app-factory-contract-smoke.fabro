@@ -1,0 +1,32 @@
+digraph IPhoneAppFactoryContractSmoke {
+    graph [
+        goal="Validate that the iPhone app factory workflow, prompts, and support gates are present",
+        persona="workflow-validator"
+    ]
+    rankdir=LR
+
+    start [shape=Mdiamond, label="Start"]
+    exit [shape=Msquare, label="Exit"]
+
+    validate_contract [
+        label="Validate Contract",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="validate_contract",
+        script="node scripts/iphone-app-factory/validate-contract.mjs"
+    ]
+
+    register_workflow [
+        label="Register Workflow",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="validate_contract",
+        script="./bin/maestro workflow register workflows/iphone-app-factory/build-iphone-app.fabro"
+    ]
+
+    start -> validate_contract
+    validate_contract -> register_workflow [condition="outcome=succeeded"]
+    validate_contract -> validate_contract [label="Retry", loop_restart=true]
+    register_workflow -> exit [condition="outcome=succeeded"]
+    register_workflow -> validate_contract [label="Fix"]
+}

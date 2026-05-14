@@ -54,52 +54,72 @@ requireMatches(
 );
 requireIncludes(
   project,
-  'name = "maestro-code-factory-v5"',
+  'name = "maestro-code-factory-v6"',
   "Daytona code factory snapshot",
 );
 requireIncludes(
   project,
-  'MAESTRO_AGENT_STATE_DIR = "/home/daytona/agent-state"',
-  "Daytona agent state env",
+  '[llm.providers.openrouter]',
+  "OpenRouter provider config",
 );
-requireMatches(
+requireIncludes(
   project,
-  /\[\[run\.sandbox\.daytona\.volumes\]\][\s\S]*mount_path = "\/home\/daytona\/agent-state"/,
-  "Daytona agent auth volume",
+  'adapter = "openai_compatible"',
+  "OpenRouter upstream adapter",
+);
+requireIncludes(
+  project,
+  'api_id = "anthropic/claude-haiku-4.5"',
+  "OpenRouter Haiku API mapping",
 );
 requireIncludes(project, "spec-kitty-cli==3.1.8", "Spec Kitty install");
 requireIncludes(project, "fabro --version", "Fabro CLI install");
 requireIncludes(
   project,
-  "@anthropic-ai/claude-code @openai/codex promptfoo",
+  "@anthropic-ai/claude-code@2.1.141 @openai/codex promptfoo",
   "agent CLI installs",
 );
 requireIncludes(project, "https://qlty.sh", "Qlty install");
 requireIncludes(project, "https://bun.sh/install", "Bun install");
 requireIncludes(
   project,
-  'OPENROUTER_API_KEY = "${{ secrets.OPENROUTER_API_KEY }}"',
-  "OpenRouter sandbox secret",
+  'OPENROUTER_API_KEY = "{{ env.OPENROUTER_API_KEY }}"',
+  "OpenRouter sandbox env",
 );
 requireIncludes(
   project,
-  'APIFY_TOKEN = "${{ secrets.APIFY_TOKEN }}"',
-  "Apify sandbox secret",
+  'OPENAI_API_KEY = "{{ env.OPENAI_API_KEY }}"',
+  "Codex sandbox env",
 );
 requireIncludes(
   project,
-  'DAYTONA_API_URL = "${{ secrets.DAYTONA_API_URL }}"',
-  "Daytona API URL secret",
+  'CLAUDE_CODE_OAUTH_TOKEN = "{{ env.CLAUDE_CODE_OAUTH_TOKEN }}"',
+  "legacy Claude Code token sandbox env",
 );
 requireIncludes(
   project,
-  'LINEAR_API_KEY = "${{ secrets.LINEAR_API_KEY }}"',
-  "Linear sandbox secret",
+  'CLAUDE_CODE_CREDENTIALS_JSON_BASE64 = "{{ env.CLAUDE_CODE_CREDENTIALS_JSON_BASE64 }}"',
+  "Claude Code credentials sandbox env",
 );
 requireIncludes(
   project,
-  'FABRO_SLACK_BOT_TOKEN = "${{ secrets.FABRO_SLACK_BOT_TOKEN }}"',
-  "Slack bot sandbox secret",
+  'APIFY_TOKEN = "{{ env.APIFY_TOKEN }}"',
+  "Apify sandbox env",
+);
+requireIncludes(
+  project,
+  'DAYTONA_API_URL = "{{ env.DAYTONA_API_URL }}"',
+  "Daytona API URL env",
+);
+requireIncludes(
+  project,
+  'LINEAR_API_KEY = "{{ env.LINEAR_API_KEY }}"',
+  "Linear sandbox env",
+);
+requireIncludes(
+  project,
+  'FABRO_SLACK_BOT_TOKEN = "{{ env.FABRO_SLACK_BOT_TOKEN }}"',
+  "Slack bot sandbox env",
 );
 requireIncludes(project, "include = [", "artifact include policy");
 requireIncludes(project, '".workflow/**"', "workflow artifact include");

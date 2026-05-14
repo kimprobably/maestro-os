@@ -7,7 +7,7 @@ Create the tool snapshot:
 
 ```bash
 daytona login --api-key "$DAYTONA_API_KEY"
-daytona snapshot create maestro-code-factory-v5 \
+daytona snapshot create maestro-code-factory-v6 \
   --dockerfile sandbox/Dockerfile \
   --context sandbox \
   --cpu 2 \
@@ -18,7 +18,7 @@ daytona snapshot create maestro-code-factory-v5 \
 Run the auth test:
 
 ```bash
-daytona create --snapshot maestro-code-factory-v5 --name maestro-dev-auth-test
+daytona create --snapshot maestro-code-factory-v6 --name maestro-dev-auth-test
 daytona exec maestro-dev-auth-test -- claude --version
 daytona exec maestro-dev-auth-test -- codex --version
 daytona ssh maestro-dev-auth-test
@@ -77,12 +77,17 @@ sandbox --cpu 1 --memory 1 --disk 3` created active snapshot
 - The CLI stream reported `INTERNAL_ERROR` during export, but the server-side
   snapshot is active with `errorReason: null`.
 
-Open issue: custom snapshot creation now works. The remaining repeatability gap
-is subscription auth state for Claude/Codex. For repeatability, use one of:
+Open issue at the time: custom snapshot creation worked, but repeatable
+subscription auth state for Claude/Codex was still unresolved. The preferred
+current path is non-interactive env auth:
 
-- Daytona volume mounted at the agent home/config paths.
+- `CLAUDE_CODE_CREDENTIALS_JSON_BASE64` for Claude Code subscription auth in
+  fresh sandboxes.
+- `CODEX_AUTH_JSON_BASE64` for Codex ChatGPT/subscription auth in fresh
+  sandboxes.
+- `OPENAI_API_KEY` only when intentionally using Codex/OpenAI API-key mode.
 - A bootstrap step that installs missing CLIs and asks Tim to authenticate only
-  when `claude -p hello` or `codex login status` fails.
+  when env/vault auth is not available.
 
 ## 2026-05-12 Agent Auth Bootstrap
 
@@ -108,9 +113,9 @@ The script verifies:
 - Missing auth prints the manual `/login` and `codex login` steps.
 
 It intentionally refuses to treat copied host auth directories as the pattern.
-Do not copy local `~/.claude` or `~/.codex` into snapshot build contexts; use
-a Daytona volume mounted at `MAESTRO_AGENT_STATE_DIR` for persistent
-agent home/config state.
+Do not copy local `~/.claude` or `~/.codex` into snapshot build contexts.
+Only use a Daytona volume mounted at `MAESTRO_AGENT_STATE_DIR` when persistent
+interactive CLI home/config state is explicitly required.
 
 Fabro smoke run `01KRFNBDPQ66ZX32BWYJX484MX` validated the bootstrap script
 syntax and safety markers.
@@ -140,17 +145,25 @@ from the v5 snapshot and additionally verified:
 ## 2026-05-13 Persistent Agent Auth Volume
 
 Fabro fork work added `[run.sandbox.daytona.volumes]` support so the runtime
-can pass Daytona volume mounts through sandbox creation. The local Daytona
-volume is:
+could pass Daytona volume mounts through sandbox creation. This is now an
+optional fallback, not the default path, because upstream main supports
+configurable providers. Claude Code subscription auth can be exported as
+base64-encoded `.credentials.json` and stored as
+`CLAUDE_CODE_CREDENTIALS_JSON_BASE64`.
+Codex ChatGPT auth can be exported as base64-encoded `~/.codex/auth.json` and
+stored as `CODEX_AUTH_JSON_BASE64`; the Fabro CLI backend materializes it before
+running `codex`.
+
+The old local Daytona volume was:
 
 - name: `maestro-agent-auth`
 - id: `beefe1da-59a0-48f6-9e19-a513d1790ce3`
 - mount path: `/home/daytona/agent-state`
 - subpath: `agent-auth`
 
-`.fabro/project.toml` mounts that volume and sets
-`MAESTRO_AGENT_STATE_DIR=/home/daytona/agent-state`. Inside a fresh sandbox,
-run:
+If a workflow intentionally needs persistent interactive CLI auth state, mount
+that volume and set `MAESTRO_AGENT_STATE_DIR=/home/daytona/agent-state`. Inside
+a fresh sandbox, run:
 
 ```bash
 sandbox/bootstrap-agent-auth.sh check

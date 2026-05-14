@@ -1,0 +1,39 @@
+_version = 1
+
+[workflow]
+graph = "build-iphone-app.fabro"
+
+[run]
+goal = "Build a differentiated iPhone app from a researched app opportunity using SwiftAIBoilerplatePro"
+
+[run.inputs]
+app_type = "consumer iPhone app in productivity, health, wellness, fitness, positivity, screen-time, or life-improvement"
+target_audience = "US consumer iPhone users"
+app_name = "Generated iPhone App"
+bundle_id = "com.maestro.generatediphoneapp"
+app_dir = "apps/generated-iphone-app"
+spec_kitty_feature = "iphone-app-factory"
+boilerplate_repo = "SwiftAIBoilerplatePro/SwiftAIBoilerplatePro-Distribution"
+max_competitors = "12"
+use_mobbin = "true"
+ios_validation_mode = "github"
+allow_macos_deferred = "false"
+
+[run.sandbox]
+provider = "daytona"
+preserve = false
+stop_on_terminal = true
+
+[run.sandbox.daytona]
+auto_stop_interval = 30
+
+[run.sandbox.env]
+APIFY_TOKEN = "{{ env.APIFY_TOKEN }}"
+GITHUB_TOKEN = "{{ env.GITHUB_TOKEN }}"
+GH_TOKEN = "{{ env.GH_TOKEN }}"
+OPENROUTER_API_KEY = "{{ env.OPENROUTER_API_KEY }}"
+CLAUDE_CODE_OAUTH_TOKEN = "{{ env.CLAUDE_CODE_OAUTH_TOKEN }}"
+CLAUDE_CODE_CREDENTIALS_JSON_BASE64 = "{{ env.CLAUDE_CODE_CREDENTIALS_JSON_BASE64 }}"
+CODEX_AUTH_JSON_BASE64 = "{{ env.CODEX_AUTH_JSON_BASE64 }}"
+MOBBIN_EMAIL = "{{ env.MOBBIN_EMAIL }}"
+MOBBIN_PASSWORD = "{{ env.MOBBIN_PASSWORD }}"

@@ -67,6 +67,75 @@ setup_persistent_agent_state() {
   log "agent_state_dir=$agent_state_dir"
 }
 
+decode_base64_to_file() {
+  value="$1"
+  target="$2"
+
+  if printf '%s' "$value" | base64 -d >"$target" 2>/dev/null; then
+    return 0
+  fi
+  if printf '%s' "$value" | base64 -D >"$target" 2>/dev/null; then
+    return 0
+  fi
+  return 1
+}
+
+install_claude_credentials_from_env() {
+  if [ -z "${CLAUDE_CODE_CREDENTIALS_JSON_BASE64:-}" ]; then
+    return 0
+  fi
+
+  home_dir="${HOME:-/root}"
+  creds_dir="$home_dir/.claude"
+  creds_file="$creds_dir/.credentials.json"
+  tmp_file="$creds_file.tmp.$$"
+  mkdir -p "$creds_dir"
+
+  if ! decode_base64_to_file "$CLAUDE_CODE_CREDENTIALS_JSON_BASE64" "$tmp_file"; then
+    rm -f "$tmp_file"
+    warn "CLAUDE_CODE_CREDENTIALS_JSON_BASE64 is not valid base64"
+    return 1
+  fi
+
+  node -e "const fs=require('fs'); const data=JSON.parse(fs.readFileSync(process.argv[1],'utf8')); if(!data.claudeAiOauth?.accessToken || !data.claudeAiOauth?.refreshToken) process.exit(2);" "$tmp_file" >/dev/null 2>&1 || {
+    rm -f "$tmp_file"
+    warn "CLAUDE_CODE_CREDENTIALS_JSON_BASE64 did not contain Claude OAuth credentials"
+    return 1
+  }
+
+  chmod 600 "$tmp_file"
+  mv "$tmp_file" "$creds_file"
+  log "claude_credentials_file=installed"
+}
+
+install_codex_auth_from_env() {
+  if [ -z "${CODEX_AUTH_JSON_BASE64:-}" ]; then
+    return 0
+  fi
+
+  home_dir="${HOME:-/root}"
+  auth_dir="$home_dir/.codex"
+  auth_file="$auth_dir/auth.json"
+  tmp_file="$auth_file.tmp.$$"
+  mkdir -p "$auth_dir"
+
+  if ! decode_base64_to_file "$CODEX_AUTH_JSON_BASE64" "$tmp_file"; then
+    rm -f "$tmp_file"
+    warn "CODEX_AUTH_JSON_BASE64 is not valid base64"
+    return 1
+  fi
+
+  node -e "JSON.parse(require('fs').readFileSync(process.argv[1],'utf8'));" "$tmp_file" >/dev/null 2>&1 || {
+    rm -f "$tmp_file"
+    warn "CODEX_AUTH_JSON_BASE64 did not contain JSON"
+    return 1
+  }
+
+  chmod 600 "$tmp_file"
+  mv "$tmp_file" "$auth_file"
+  log "codex_auth_file=installed"
+}
+
 install_codex_if_missing() {
   if need_command codex; then
     return 0
@@ -133,6 +202,8 @@ case "$mode" in
 esac
 
 setup_persistent_agent_state
+install_claude_credentials_from_env || true
+install_codex_auth_from_env || true
 
 claude_ok=0
 codex_ok=0
@@ -151,13 +222,18 @@ if [ "$claude_ok" -ne 1 ] || [ "$codex_ok" -ne 1 ]; then
   cat >&2 <<'EOF'
 
 Manual auth required inside this Daytona sandbox:
-  1. Run: claude
-  2. In Claude Code, complete /login.
-  3. Run: codex login
-  4. Re-run: sandbox/bootstrap-agent-auth.sh check
+  1. Prefer non-interactive env auth when available:
+       export CLAUDE_CODE_CREDENTIALS_JSON_BASE64=...
+       export CODEX_AUTH_JSON_BASE64=...
+       export OPENAI_API_KEY=...
+  2. Otherwise run: claude
+  3. In Claude Code, complete /login.
+  4. Run: codex login
+  5. Re-run: sandbox/bootstrap-agent-auth.sh check
 
-Do not copy local ~/.claude or ~/.codex directories into the snapshot build context.
-Use a Daytona volume mounted at MAESTRO_AGENT_STATE_DIR for persistent agent home/config state.
+Do not bulk-copy local ~/.claude or ~/.codex directories into the snapshot build context.
+Use a Daytona volume mounted at MAESTRO_AGENT_STATE_DIR only when persistent
+interactive CLI home/config state is required.
 EOF
   exit 2
 fi
