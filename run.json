@@ -3405,7 +3405,7 @@
     "kind": "running"
   },
   "status_updated_at": "2026-05-14T09:50:09.888736Z",
-  "last_event_at": "2026-05-14T09:50:13.792670Z",
+  "last_event_at": "2026-05-14T09:51:44.095738Z",
   "pending_control": null,
   "checkpoints": [
     {
@@ -3455,25 +3455,28 @@
     {
       "seq": 0,
       "checkpoint": {
-        "timestamp": "2026-05-14T09:50:14.063055Z",
-        "current_node": "bootstrap",
+        "timestamp": "2026-05-14T09:51:44.265137Z",
+        "current_node": "prompt_quality_gate",
         "completed_nodes": [
           "start",
-          "bootstrap"
+          "bootstrap",
+          "prompt_quality_gate"
         ],
         "node_retries": {},
         "context_values": {
           "failure_class": "",
           "failure_signature": "",
-          "command.output": "blob://sha256/cc8a3ceaedfc7fbd242babab964d7a27d36cdfbf4ece82f1095bb3e6b2f39642",
+          "command.output": "blob://sha256/a7045ac266fa6f08cd86ba8d865c8a8a0a02c085fee7c709b92cbb71fc8df94a",
           "internal.retry_count.bootstrap": 0,
           "internal.work_dir": "/home/daytona/workspace",
           "thread.start.current_node": "bootstrap",
+          "internal.retry_count.prompt_quality_gate": 0,
           "graph.goal": "Build a differentiated iPhone app from a researched app opportunity using SwiftAIBoilerplatePro",
           "graph.inputs": "app_type,target_audience,app_name,bundle_id,app_dir,spec_kitty_feature,boilerplate_repo,max_competitors,use_mobbin,ios_validation_mode,allow_macos_deferred",
           "graph.retry_target": "spec_consensus",
           "internal.retry_count.start": 0,
           "graph.model_stylesheet": "\n            *                  { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: low; }\n            .research          { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            .design            { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            .spec              { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            .architecture      { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            .coding            { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            .review            { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            .verify            { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: medium; }\n            .security          { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            .simplify          { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            .macos             { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            #spec_codex        { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            #spec_claude       { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            #spec_kimi         { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            #spec_deepseek     { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            #arch_codex        { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            #arch_claude       { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n        ",
+          "thread.bootstrap.current_node": "prompt_quality_gate",
           "graph.secret_policy": "never print environment variables or credential values; credential checks must be presence-only true/false checks; do not run environment dump commands.",
           "graph.persona": "iphone-app-factory",
           "graph.rankdir": "LR",
@@ -3482,12 +3485,24 @@
           "internal.run_id": "01KRJY9F9PKV1P01YH46A57WTS",
           "graph.fallback_retry_target": "architecture_consensus",
           "internal.fidelity": "compact",
-          "internal.thread_id": "start",
-          "current_node": "bootstrap",
+          "internal.thread_id": "bootstrap",
+          "current_node": "prompt_quality_gate",
           "internal.node_visit_count": 1,
           "outcome": "succeeded"
         },
         "node_outcomes": {
+          "prompt_quality_gate": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/a7045ac266fa6f08cd86ba8d865c8a8a0a02c085fee7c709b92cbb71fc8df94a"
+            },
+            "notes": "Script completed: node scripts/iphone-app-factory/promptfoo-prompt-quality.mjs --config evals/iphone-app-factory/prompt-quality.yaml --registry evals/iphone-app-factory/prompt-registry.json --out .workflow/iphone-app-factory/evals/prompt-quality.json --allow-fallback true",
+            "usage": null
+          },
+          "start": {
+            "status": "succeeded",
+            "usage": null
+          },
           "bootstrap": {
             "status": "succeeded",
             "context_updates": {
@@ -3495,15 +3510,12 @@
             },
             "notes": "Script completed: node scripts/iphone-app-factory/bootstrap.mjs --app-dir 'apps/waketask-iphone' --app-name 'WakeTask' --bundle-id 'com.keen.waketask' --boilerplate-repo 'SwiftAIBoilerplatePro/SwiftAIBoilerplatePro-Distribution'",
             "usage": null
-          },
-          "start": {
-            "status": "succeeded",
-            "usage": null
           }
         },
-        "next_node_id": "prompt_quality_gate",
+        "next_node_id": "research_fanout",
         "node_visits": {
           "bootstrap": 1,
+          "prompt_quality_gate": 1,
           "start": 1
         }
       },
@@ -3531,7 +3543,12 @@
       "first_event_seq": 20,
       "prompt": null,
       "response": null,
-      "completion": null,
+      "completion": {
+        "outcome": "succeeded",
+        "notes": "Script completed: node scripts/iphone-app-factory/bootstrap.mjs --app-dir 'apps/waketask-iphone' --app-name 'WakeTask' --bundle-id 'com.keen.waketask' --boilerplate-repo 'SwiftAIBoilerplatePro/SwiftAIBoilerplatePro-Distribution'",
+        "failure_reason": null,
+        "timestamp": "2026-05-14T09:50:14.062138Z"
+      },
       "provider_used": null,
       "diff": null,
       "script_invocation": {
@@ -3554,6 +3571,7 @@
       "termination": "exited",
       "started_at": "2026-05-14T09:50:11.257776Z",
       "handler": "command",
+      "duration_ms": 2535,
       "usage": {
         "input_tokens": 0,
         "output_tokens": 0,
@@ -3562,7 +3580,7 @@
         "cache_read_tokens": 0,
         "cache_write_tokens": 0
       },
-      "state": "running"
+      "state": "succeeded"
     },
     "start@1": {
       "first_event_seq": 16,
@@ -3592,6 +3610,43 @@
         "cache_write_tokens": 0
       },
       "state": "succeeded"
+    },
+    "prompt_quality_gate@1": {
+      "first_event_seq": 31,
+      "prompt": null,
+      "response": null,
+      "completion": null,
+      "provider_used": null,
+      "diff": null,
+      "script_invocation": {
+        "script": "node scripts/iphone-app-factory/promptfoo-prompt-quality.mjs --config evals/iphone-app-factory/prompt-quality.yaml --registry evals/iphone-app-factory/prompt-registry.json --out .workflow/iphone-app-factory/evals/prompt-quality.json --allow-fallback true",
+        "command": "exec 2>&1\nnode scripts/iphone-app-factory/promptfoo-prompt-quality.mjs --config evals/iphone-app-factory/prompt-quality.yaml --registry evals/iphone-app-factory/prompt-registry.json --out .workflow/iphone-app-factory/evals/prompt-quality.json --allow-fallback true",
+        "language": "shell"
+      },
+      "script_timing": {
+        "output": "blob://sha256/a7045ac266fa6f08cd86ba8d865c8a8a0a02c085fee7c709b92cbb71fc8df94a",
+        "exit_code": 0,
+        "duration_ms": 85174,
+        "termination": "exited",
+        "output_bytes": 4462,
+        "live_streaming": true
+      },
+      "parallel_results": null,
+      "output": null,
+      "output_bytes": 4462,
+      "live_streaming": true,
+      "termination": "exited",
+      "started_at": "2026-05-14T09:50:18.912657Z",
+      "handler": "command",
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "total_tokens": 0,
+        "reasoning_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "state": "running"
     }
   }
 }
