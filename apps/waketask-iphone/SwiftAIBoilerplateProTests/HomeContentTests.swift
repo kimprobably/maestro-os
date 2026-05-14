@@ -42,10 +42,10 @@ final class HomeContentTests: XCTestCase {
         let defaults = HomeContent.FeatureItem.defaults
         let titles = defaults.map { $0.title }
         
-        XCTAssertTrue(titles.contains("GPT-4 Powered"))
-        XCTAssertTrue(titles.contains("Lightning Fast"))
-        XCTAssertTrue(titles.contains("Private & Secure"))
-        XCTAssertTrue(titles.contains("Multi-Device Sync"))
+        XCTAssertTrue(titles.contains("Adaptive Mission Rotation"))
+        XCTAssertTrue(titles.contains("Post-Dismiss Wake Check"))
+        XCTAssertTrue(titles.contains("Reliability Ledger"))
+        XCTAssertTrue(titles.contains("First-Task Bridge"))
     }
     
     func testFeatureItem_equatable() {
@@ -133,8 +133,8 @@ final class HomeContentTests: XCTestCase {
     func testHomeContent_defaultValues() {
         let content = HomeContent()
         
-        XCTAssertEqual(content.welcomeTitle, "Welcome Back")
-        XCTAssertEqual(content.welcomeSubtitle, "What would you like to explore today?")
+        XCTAssertEqual(content.welcomeTitle, "Ready For A Reliable Morning?")
+        XCTAssertEqual(content.welcomeSubtitle, "Set your next alarm run and lock in your first task before bed.")
         XCTAssertEqual(content.featuredItems.count, 4)
         XCTAssertEqual(content.quickActions.count, 4)
     }
@@ -165,4 +165,3 @@ final class HomeContentTests: XCTestCase {
         XCTAssertEqual(content.quickActions.first?.title, "Custom")
     }
 }
-

@@ -76,9 +76,9 @@ final class OnboardingPageTests: XCTestCase {
         let pages = OnboardingPage.defaultPages
         let titles = pages.map { $0.title }
         
-        XCTAssertTrue(titles.contains("AI-Powered Conversations"))
-        XCTAssertTrue(titles.contains("Your Data, Secure"))
-        XCTAssertTrue(titles.contains("Seamless Experience"))
+        XCTAssertTrue(titles.contains("Wake With Intent"))
+        XCTAssertTrue(titles.contains("Proof You Actually Woke Up"))
+        XCTAssertTrue(titles.contains("Private By Default"))
     }
     
     func testDefaultPages_allHaveSystemImages() {
@@ -114,31 +114,31 @@ final class OnboardingPageTests: XCTestCase {
         XCTAssertEqual(ids.count, uniqueIDs.count, "All default pages should have unique IDs")
     }
     
-    func testDefaultPages_firstPage_isAIPowered() {
+    func testDefaultPages_firstPage_isWakePlan() {
         let firstPage = OnboardingPage.defaultPages.first
         
         XCTAssertNotNil(firstPage)
-        XCTAssertEqual(firstPage?.title, "AI-Powered Conversations")
-        XCTAssertEqual(firstPage?.systemImage, "brain.head.profile")
-        XCTAssertEqual(firstPage?.accentColor, "blue")
+        XCTAssertEqual(firstPage?.title, "Wake With Intent")
+        XCTAssertEqual(firstPage?.systemImage, "alarm.fill")
+        XCTAssertEqual(firstPage?.accentColor, "orange")
     }
     
-    func testDefaultPages_secondPage_isSecurity() {
+    func testDefaultPages_secondPage_isWakeProof() {
         let secondPage = OnboardingPage.defaultPages[safe: 1]
         
         XCTAssertNotNil(secondPage)
-        XCTAssertEqual(secondPage?.title, "Your Data, Secure")
-        XCTAssertEqual(secondPage?.systemImage, "lock.shield")
+        XCTAssertEqual(secondPage?.title, "Proof You Actually Woke Up")
+        XCTAssertEqual(secondPage?.systemImage, "checklist.checked")
         XCTAssertEqual(secondPage?.accentColor, "green")
     }
     
-    func testDefaultPages_thirdPage_isSeamless() {
+    func testDefaultPages_thirdPage_isPrivate() {
         let thirdPage = OnboardingPage.defaultPages[safe: 2]
         
         XCTAssertNotNil(thirdPage)
-        XCTAssertEqual(thirdPage?.title, "Seamless Experience")
-        XCTAssertEqual(thirdPage?.systemImage, "arrow.triangle.2.circlepath")
-        XCTAssertEqual(thirdPage?.accentColor, "purple")
+        XCTAssertEqual(thirdPage?.title, "Private By Default")
+        XCTAssertEqual(thirdPage?.systemImage, "hand.raised.shield")
+        XCTAssertEqual(thirdPage?.accentColor, "indigo")
     }
 }
 
@@ -149,4 +149,3 @@ private extension Array {
         return indices.contains(index) ? self[index] : nil
     }
 }
-
