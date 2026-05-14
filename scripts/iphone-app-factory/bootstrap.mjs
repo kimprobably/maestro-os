@@ -1,7 +1,10 @@
 #!/usr/bin/env node
 import {
   appendFileSync,
+  chmodSync,
+  chownSync,
   existsSync,
+  lstatSync,
   mkdirSync,
   readFileSync,
   readdirSync,
@@ -62,6 +65,49 @@ function replaceTextIfPresent(file, replacements) {
   if (updated !== original) writeFileSync(file, updated);
 }
 
+function normalizeWritableTree(dir) {
+  const uid = typeof process.getuid === "function" ? process.getuid() : null;
+  const gid = typeof process.getgid === "function" ? process.getgid() : null;
+  const errors = [];
+  let touched = 0;
+
+  function visit(path) {
+    let stat;
+    try {
+      stat = lstatSync(path);
+    } catch (error) {
+      errors.push(`${path}: ${error.message}`);
+      return;
+    }
+
+    if (stat.isSymbolicLink()) return;
+
+    if (uid === 0) {
+      try {
+        chownSync(path, uid, gid ?? stat.gid);
+      } catch (error) {
+        errors.push(`${path}: chown ${error.message}`);
+      }
+    }
+
+    try {
+      const ownerBits = stat.isDirectory() ? 0o700 : 0o600;
+      chmodSync(path, stat.mode | ownerBits);
+      touched += 1;
+    } catch (error) {
+      errors.push(`${path}: chmod ${error.message}`);
+    }
+
+    if (!stat.isDirectory()) return;
+    for (const child of readdirSync(path)) {
+      visit(join(path, child));
+    }
+  }
+
+  if (existsSync(dir)) visit(dir);
+  return { touched, errors };
+}
+
 function rebrandBoilerplate(dir) {
   replaceTextIfPresent(join(dir, "Config", "App.xcconfig"), [
     ["PRODUCT_NAME = BrandReadyAI", `PRODUCT_NAME = ${appName}`],
@@ -117,7 +163,9 @@ function createFallbackSeed(dir) {
 
 function materializeBoilerplate() {
   if (hasMaterializedBoilerplate(appDir)) {
-    return { status: "present", source: appDir };
+    const permissionNormalization = normalizeWritableTree(appDir);
+    rebrandBoilerplate(appDir);
+    return { status: "present", source: appDir, permissionNormalization };
   }
 
   mkdirSync(dirname(appDir), { recursive: true });
@@ -126,10 +174,23 @@ function materializeBoilerplate() {
   if (existsSync(archivePath)) {
     rmSync(appDir, { recursive: true, force: true });
     mkdirSync(appDir, { recursive: true });
-    const extracted = runQuiet("tar", ["-xzf", archivePath, "-C", appDir, "--strip-components", "1"]);
+    const extracted = runQuiet("tar", [
+      "-xzf",
+      archivePath,
+      "--no-same-owner",
+      "-C",
+      appDir,
+      "--strip-components",
+      "1"
+    ]);
     if (extracted.ok && hasMaterializedBoilerplate(appDir)) {
+      const permissionNormalization = normalizeWritableTree(appDir);
       rebrandBoilerplate(appDir);
-      return { status: "materialized", source: "vendor/SwiftAIBoilerplatePro-Distribution.tar.gz" };
+      return {
+        status: "materialized",
+        source: "vendor/SwiftAIBoilerplatePro-Distribution.tar.gz",
+        permissionNormalization
+      };
     }
   }
 
@@ -150,14 +211,16 @@ function materializeBoilerplate() {
 
   if (cloned.ok && hasMaterializedBoilerplate(appDir)) {
     rmSync(join(appDir, ".git"), { recursive: true, force: true });
+    const permissionNormalization = normalizeWritableTree(appDir);
     rebrandBoilerplate(appDir);
-    return { status: "materialized", source: "public-git-clone" };
+    return { status: "materialized", source: "public-git-clone", permissionNormalization };
   }
 
   rmSync(appDir, { recursive: true, force: true });
   mkdirSync(appDir, { recursive: true });
   createFallbackSeed(appDir);
-  return { status: "fallback_seed", source: "local-contract-fallback" };
+  const permissionNormalization = normalizeWritableTree(appDir);
+  return { status: "fallback_seed", source: "local-contract-fallback", permissionNormalization };
 }
 
 function installSecretShellGuards() {

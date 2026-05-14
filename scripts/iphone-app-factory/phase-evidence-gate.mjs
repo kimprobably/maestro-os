@@ -16,8 +16,36 @@ for (const term of ["Files changed", "Commands run", "Acceptance criteria", "Ris
   if (!text.includes(term)) failures.push(`${evidence} missing ${term}`);
 }
 
-if (/VERDICT:\s*REJECTED|\bFAIL(ED|URE)?\b/.test(text) && !/known deferred/i.test(text)) {
+const hasKnownDeferred = /known deferred/i.test(text);
+
+if (!hasKnownDeferred && /VERDICT:\s*REJECTED|\bFAIL(ED|URE)?\b/i.test(text)) {
   failures.push(`${evidence} contains failing verdict`);
+}
+
+if (!hasKnownDeferred && !/Verifier notes/i.test(text)) {
+  failures.push(`${evidence} missing Verifier notes`);
+}
+
+if (!hasKnownDeferred && /(^|\n)\s*-\s*\[\s\]/.test(text)) {
+  failures.push(`${evidence} has unchecked acceptance criteria`);
+}
+
+if (
+  !hasKnownDeferred &&
+  /status:\s*blocked|blocked by|blocking:|permission denied|not writable|cannot .*implement|could not .*implement|not implemented|retry target|verification failed/i.test(
+    text
+  )
+) {
+  failures.push(`${evidence} contains blocked or incomplete phase evidence`);
+}
+
+const verifierIndex = text.search(/Verifier notes/i);
+if (
+  !hasKnownDeferred &&
+  verifierIndex >= 0 &&
+  /rejected|failed|not acceptable|do not advance|retry/i.test(text.slice(verifierIndex))
+) {
+  failures.push(`${evidence} verifier notes reject phase`);
 }
 
 const report = { ok: failures.length === 0, phase, appDir, failures };
