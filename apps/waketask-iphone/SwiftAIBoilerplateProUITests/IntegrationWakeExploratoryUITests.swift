@@ -56,19 +56,22 @@ final class IntegrationWakeExploratoryUITests: XCTestCase {
         telemetry.tap(startRunButton, id: startRunButton.identifier)
         telemetry.visit("WakeActiveRun")
 
+        let firstMissionButton = app.buttons.matching(NSPredicate(format: "identifier BEGINSWITH 'wakeMissionButton-'")).firstMatch
+        XCTAssertTrue(scrollUntilExists(firstMissionButton, direction: .down))
+
         let dismissButton = app.buttons["wakeDismissAlarmButton"]
-        XCTAssertTrue(dismissButton.waitForExistence(timeout: 10))
         XCTAssertTrue(completeAllVisibleMissions(until: dismissButton))
+        XCTAssertTrue(scrollUntilExists(dismissButton, direction: .down))
         XCTAssertTrue(waitUntilEnabled(dismissButton))
         telemetry.tap(dismissButton, id: "wakeDismissAlarmButton")
 
         let wakeCheckButton = app.buttons["wakeCompleteWakeCheckButton"]
-        XCTAssertTrue(wakeCheckButton.waitForExistence(timeout: 10))
+        XCTAssertTrue(scrollUntilExists(wakeCheckButton, direction: .up))
         XCTAssertTrue(waitUntilEnabled(wakeCheckButton))
         telemetry.tap(wakeCheckButton, id: "wakeCompleteWakeCheckButton")
 
         let firstTaskButton = app.buttons["wakeCompleteFirstTaskButton"]
-        XCTAssertTrue(firstTaskButton.waitForExistence(timeout: 10))
+        XCTAssertTrue(scrollUntilExists(firstTaskButton, direction: .down))
         XCTAssertTrue(waitUntilEnabled(firstTaskButton))
         telemetry.tap(firstTaskButton, id: "wakeCompleteFirstTaskButton")
 
@@ -117,6 +120,7 @@ final class IntegrationWakeExploratoryUITests: XCTestCase {
                 let missionButton = missionButtons.element(boundBy: index)
                 guard missionButton.exists,
                       missionButton.isEnabled,
+                      missionButton.isHittable,
                       !tappedMissionIDs.contains(missionButton.identifier)
                 else {
                     continue
@@ -131,11 +135,36 @@ final class IntegrationWakeExploratoryUITests: XCTestCase {
             }
 
             if !didTap {
+                app.swipeUp()
                 waitForUIUpdate()
             }
         }
 
         return dismissButton.exists && dismissButton.isEnabled
+    }
+
+    private enum ScrollDirection {
+        case up
+        case down
+    }
+
+    private func scrollUntilExists(_ element: XCUIElement, direction: ScrollDirection, timeout: TimeInterval = 12) -> Bool {
+        let deadline = Date().addingTimeInterval(timeout)
+        while Date() < deadline {
+            if element.exists, element.isHittable {
+                return true
+            }
+
+            switch direction {
+            case .up:
+                app.swipeDown()
+            case .down:
+                app.swipeUp()
+            }
+            waitForUIUpdate()
+        }
+
+        return element.exists
     }
 
     private func enterMainAppIfNeeded(timeout: TimeInterval = 30) {
