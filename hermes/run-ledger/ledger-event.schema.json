@@ -1,0 +1,65 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "FabroRunLedgerEvent",
+  "type": "object",
+  "required": [
+    "recorded_at",
+    "run_id",
+    "event_kind",
+    "current_status",
+    "next_action"
+  ],
+  "properties": {
+    "recorded_at": { "type": "string", "format": "date-time" },
+    "run_id": { "type": "string" },
+    "workflow_file": { "type": ["string", "null"] },
+    "event_kind": {
+      "type": "string",
+      "enum": [
+        "observed",
+        "started",
+        "status_changed",
+        "stage_changed",
+        "failure_classified",
+        "decision",
+        "gate_recorded",
+        "approval_needed",
+        "completed",
+        "failed"
+      ]
+    },
+    "fabro_event_cursor": { "type": ["integer", "null"] },
+    "fabro_event_id": { "type": ["string", "null"] },
+    "current_status": { "type": "string" },
+    "current_node": { "type": ["string", "null"] },
+    "next_node_id": { "type": ["string", "null"] },
+    "failure_class": {
+      "type": ["string", "null"],
+      "enum": [
+        "transient_infra",
+        "deterministic",
+        "control_plane",
+        "quality_gate",
+        "approval_blocked",
+        "unknown",
+        null
+      ]
+    },
+    "latest_git_sha": { "type": ["string", "null"] },
+    "run_branch": { "type": ["string", "null"] },
+    "sandbox_name": { "type": ["string", "null"] },
+    "sandbox_id": { "type": ["string", "null"] },
+    "evidence": { "type": "object" },
+    "decision": { "type": ["string", "null"] },
+    "known_failures": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "open_quality_risks": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "next_action": { "type": "string" }
+  },
+  "additionalProperties": false
+}

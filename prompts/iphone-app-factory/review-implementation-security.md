@@ -18,3 +18,11 @@ Check:
 Write `.workflow/iphone-app-factory/reviews/implementation-security.md`.
 
 Mark security, privacy, or secrets issues as blocking.
+
+End with exactly one verdict line:
+
+`VERDICT: APPROVED`
+
+or
+
+`VERDICT: REJECTED`

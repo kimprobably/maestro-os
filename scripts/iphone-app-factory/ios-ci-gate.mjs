@@ -1,7 +1,7 @@
 #!/usr/bin/env node
-import { existsSync, readFileSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { spawnSync } from "node:child_process";
-import { join } from "node:path";
+import { dirname, join } from "node:path";
 
 function arg(name, fallback = "") {
   const idx = process.argv.indexOf(name);
@@ -17,7 +17,38 @@ const failures = [];
 let status = "unknown";
 
 function write(report) {
+  mkdirSync(dirname(reportPath), { recursive: true });
   writeFileSync(reportPath, `${JSON.stringify(report, null, 2)}\n`);
+}
+
+function artifactNames(value) {
+  if (!Array.isArray(value)) return [];
+  return value
+    .map((artifact) => typeof artifact === "string" ? artifact : artifact?.name)
+    .filter(Boolean);
+}
+
+function hostedGithubEvidence(report) {
+  const github = report.github_actions || report.githubActions || report.github || {};
+  const runId = github.run_id || github.runId || report.github_run_id || report.actions_run_id || report.run_id;
+  const commitSha = github.commit_sha || github.commitSha || github.head_sha || github.headSha || report.commit_sha || report.head_sha;
+  const conclusion = github.conclusion || github.status || report.conclusion || report.github_conclusion;
+  const artifacts = artifactNames(github.artifacts || report.artifacts || report.artifact_names || []);
+  const failures = [];
+  if (!runId) failures.push("missing GitHub Actions run id");
+  if (!commitSha) failures.push("missing GitHub Actions commit SHA");
+  if (!/^(success|succeeded|passed)$/i.test(String(conclusion || ""))) {
+    failures.push("GitHub Actions conclusion must be success/passed");
+  }
+  if (artifacts.length === 0) failures.push("missing GitHub Actions artifact names");
+  return {
+    ok: failures.length === 0,
+    failures,
+    run_id: runId ? String(runId) : null,
+    commit_sha: commitSha ? String(commitSha) : null,
+    conclusion: conclusion ? String(conclusion) : null,
+    artifacts,
+  };
 }
 
 if (!existsSync(appDir)) failures.push(`missing app_dir ${appDir}`);
@@ -26,13 +57,19 @@ const existingReport = join(appDir, "reports/ios/ios-quality-report.json");
 if (existsSync(existingReport)) {
   const parsed = JSON.parse(readFileSync(existingReport, "utf8"));
   if (parsed.ok === true || parsed.status === "passed") {
-    status = "passed_existing_report";
+    const evidence = hostedGithubEvidence(parsed);
+    if (mode === "github" && !allowDeferred && !evidence.ok) {
+      failures.push(...evidence.failures);
+      status = "failed_github_evidence";
+    } else {
+      status = mode === "github" ? "passed_github_actions" : "passed_existing_report";
+    }
   } else {
     failures.push("reports/ios/ios-quality-report.json exists but is not passing");
   }
 }
 
-if (status === "unknown" && process.platform === "darwin" && existsSync(join(appDir, "scripts/ci/ios-quality.sh"))) {
+if (status === "unknown" && mode !== "github" && process.platform === "darwin" && existsSync(join(appDir, "scripts/ci/ios-quality.sh"))) {
   const result = spawnSync("sh", ["scripts/ci/ios-quality.sh"], {
     cwd: appDir,
     encoding: "utf8",
@@ -52,7 +89,14 @@ if (status === "unknown" && mode === "github") {
     const text = readFileSync(workflow, "utf8");
     if (!/macos-|runs-on:\s*\[?\s*macos/i.test(text)) failures.push("iOS CI workflow does not use a macOS runner");
     if (!/xcodebuild/i.test(text)) failures.push("iOS CI workflow missing xcodebuild");
-    status = failures.length === 0 ? "github_workflow_ready" : "github_workflow_invalid";
+    if (failures.length === 0 && allowDeferred) {
+      status = "github_workflow_ready_deferred";
+    } else if (failures.length === 0) {
+      failures.push("missing hosted GitHub Actions iOS evidence while allow_macos_deferred=false");
+      status = "missing_github_actions_evidence";
+    } else {
+      status = "github_workflow_invalid";
+    }
   }
 }
 

@@ -16,3 +16,11 @@ Check:
 Write `.workflow/iphone-app-factory/reviews/implementation-boilerplate.md`.
 
 Reject if the implementation bypasses boilerplate infrastructure without an ADR.
+
+End with exactly one verdict line:
+
+`VERDICT: APPROVED`
+
+or
+
+`VERDICT: REJECTED`

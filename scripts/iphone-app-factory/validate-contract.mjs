@@ -26,11 +26,13 @@ for (const token of [
   "boilerplate_gate",
   "implementation_review_fanout",
   "implementation_review_gate",
+  "prompt_context_budget_gate",
   "quality_contract_gate",
   "macos_ci_gate",
   "ai_ui_explorer",
   "appium_gate",
   "app_store_gate",
+  "artifact_metadata_gate",
   "final_review_fanout",
   "join_policy=\"wait_all\"",
   ".spec              { provider: openrouter",
@@ -94,6 +96,8 @@ for (const script of [
   "ios-ci-gate.mjs",
   "appium-report-gate.mjs",
   "app-store-hardening-gate.mjs",
+  "prompt-context-budget-gate.mjs",
+  "artifact-metadata-gate.mjs",
   "research-evidence-gate.mjs",
   "publish-handoff.mjs"
 ]) {

@@ -15,3 +15,11 @@ Check:
 Write `.workflow/iphone-app-factory/reviews/implementation-tests.md`.
 
 Reject missing or fake tests as blocking.
+
+End with exactly one verdict line:
+
+`VERDICT: APPROVED`
+
+or
+
+`VERDICT: REJECTED`

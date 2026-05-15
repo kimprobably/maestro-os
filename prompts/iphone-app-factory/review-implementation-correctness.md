@@ -15,3 +15,11 @@ Check that the implementation actually satisfies the spec, not just the evidence
 Write `.workflow/iphone-app-factory/reviews/implementation-correctness.md`.
 
 Use `blocking` for issues that must go back to implementation before simplification.
+
+End with exactly one verdict line:
+
+`VERDICT: APPROVED`
+
+or
+
+`VERDICT: REJECTED`

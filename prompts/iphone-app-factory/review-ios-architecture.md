@@ -5,3 +5,11 @@ Review the generated app against `.workflow/iphone-app-factory/architecture.md`,
 Write `.workflow/iphone-app-factory/reviews/ios-architecture.md`.
 
 Reject for unnecessary platform rewrites, broken module boundaries, large files, concurrency issues, or weak CompositionRoot wiring.
+
+End with exactly one verdict line:
+
+`VERDICT: APPROVED`
+
+or
+
+`VERDICT: REJECTED`

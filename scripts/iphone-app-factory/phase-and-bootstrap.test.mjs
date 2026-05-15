@@ -137,6 +137,7 @@ test("bootstrap normalizes extracted boilerplate permissions before rebrand", ()
       join(archiveRoot, "Config/App.xcconfig"),
       "PRODUCT_NAME = BrandReadyAI\nPRODUCT_BUNDLE_IDENTIFIER = com.brandready.ai\n"
     );
+    writeFileSync(join(archiveRoot, "Config/._App.xcconfig"), "appledouble");
     writeFileSync(join(archiveRoot, "SwiftAIBoilerplatePro.xcodeproj/project.pbxproj"), "// project\n");
     chmodSync(join(archiveRoot, "Config/App.xcconfig"), 0o444);
 
@@ -161,8 +162,37 @@ test("bootstrap normalizes extracted boilerplate permissions before rebrand", ()
     );
 
     assert.equal(result.status, 0, result.stderr);
+    const report = JSON.parse(result.stdout);
+    assert.equal(report.appleDoubleCleanup.remaining_count, 0);
     const appConfig = readFileSync(join(dir, "apps/waketask-iphone/Config/App.xcconfig"), "utf8");
     assert.match(appConfig, /PRODUCT_NAME = WakeTask/);
     assert.match(appConfig, /PRODUCT_BUNDLE_IDENTIFIER = com\.keen\.waketask/);
+  });
+});
+
+test("bootstrap removes AppleDouble files from an existing materialized app", () => {
+  withTempDir((dir) => {
+    const appDir = join(dir, "apps/waketask-iphone");
+    mkdirSync(join(appDir, "Config"), { recursive: true });
+    mkdirSync(join(appDir, "SwiftAIBoilerplatePro.xcodeproj"), { recursive: true });
+    for (const pkg of ["Core", "Networking", "Storage", "DesignSystem", "Localization"]) {
+      mkdirSync(join(appDir, "Packages", pkg), { recursive: true });
+    }
+    writeFileSync(
+      join(appDir, "Config/App.xcconfig"),
+      "PRODUCT_NAME = BrandReadyAI\nPRODUCT_BUNDLE_IDENTIFIER = com.brandready.ai\n"
+    );
+    writeFileSync(join(appDir, "Config/._App.xcconfig"), "appledouble");
+
+    const result = runNode(
+      bootstrap,
+      ["--app-dir", "apps/waketask-iphone", "--app-name", "WakeTask", "--bundle-id", "com.keen.waketask"],
+      dir
+    );
+
+    assert.equal(result.status, 0, result.stderr);
+    const report = JSON.parse(result.stdout);
+    assert.equal(report.appleDoubleCleanup.removed_count, 1);
+    assert.equal(report.appleDoubleCleanup.remaining_count, 0);
   });
 });

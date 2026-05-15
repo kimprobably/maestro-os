@@ -22,6 +22,8 @@ const handoff = {
     maybe(`${root}/ios-ci-gate.json`),
     maybe(`${root}/appium-gate.json`),
     maybe(`${root}/app-store-hardening-gate.json`),
+    maybe(`${root}/prompt-context-budget.json`),
+    maybe(`${root}/artifact-metadata-gate.json`),
     maybe(join(appDir, "reports/ios/ios-quality-report.json")),
     maybe(join(appDir, "reports/ios/appium-exploratory-report.json"))
   ].filter(Boolean),

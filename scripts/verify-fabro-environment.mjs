@@ -124,6 +124,9 @@ requireIncludes(
 requireIncludes(project, "include = [", "artifact include policy");
 requireIncludes(project, '".workflow/**"', "workflow artifact include");
 requireIncludes(project, '"reports/**"', "report artifact include");
+requireIncludes(project, '"reports/ios/**"', "iOS report artifact include");
+requireIncludes(project, '".github/workflows/**"', "GitHub workflow artifact include");
+requireIncludes(project, '"apps/*-iphone/**"', "iPhone app artifact include");
 
 requireMatches(
   project,

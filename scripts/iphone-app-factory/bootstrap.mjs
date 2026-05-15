@@ -108,6 +108,59 @@ function normalizeWritableTree(dir) {
   return { touched, errors };
 }
 
+function cleanupAppleDoubleFiles(dir) {
+  const removed = [];
+  const errors = [];
+
+  function visit(path) {
+    let stat;
+    try {
+      stat = lstatSync(path);
+    } catch (error) {
+      errors.push(`${path}: ${error.message}`);
+      return;
+    }
+
+    if (stat.isSymbolicLink()) return;
+
+    const name = path.split("/").pop() || "";
+    if (name.startsWith("._")) {
+      try {
+        rmSync(path, { recursive: true, force: true });
+        removed.push(path);
+      } catch (error) {
+        errors.push(`${path}: remove ${error.message}`);
+      }
+      return;
+    }
+
+    if (!stat.isDirectory()) return;
+    for (const child of readdirSync(path)) {
+      visit(join(path, child));
+    }
+  }
+
+  if (existsSync(dir)) visit(dir);
+
+  const remaining = [];
+  function scanRemaining(path) {
+    if (!existsSync(path)) return;
+    const stat = lstatSync(path);
+    const name = path.split("/").pop() || "";
+    if (name.startsWith("._")) {
+      remaining.push(path);
+      return;
+    }
+    if (!stat.isDirectory() || stat.isSymbolicLink()) return;
+    for (const child of readdirSync(path)) {
+      scanRemaining(join(path, child));
+    }
+  }
+  scanRemaining(dir);
+
+  return { removed_count: removed.length, remaining_count: remaining.length, errors };
+}
+
 function rebrandBoilerplate(dir) {
   replaceTextIfPresent(join(dir, "Config", "App.xcconfig"), [
     ["PRODUCT_NAME = BrandReadyAI", `PRODUCT_NAME = ${appName}`],
@@ -286,6 +339,11 @@ mkdirSync(`${root}/reviews`, { recursive: true });
 mkdirSync(dirname(appDir), { recursive: true });
 const secretShellGuards = installSecretShellGuards();
 const boilerplateMaterialization = materializeBoilerplate();
+const appleDoubleCleanup = cleanupAppleDoubleFiles(appDir);
+if (appleDoubleCleanup.errors.length > 0 || appleDoubleCleanup.remaining_count > 0) {
+  console.error(JSON.stringify({ ok: false, appDir, appleDoubleCleanup }, null, 2));
+  process.exit(1);
+}
 
 const qualityBar = {
   appDir,
@@ -335,6 +393,7 @@ console.log(
     bundleId,
     boilerplateRepo,
     secretShellGuards,
-    boilerplateMaterialization
+    boilerplateMaterialization,
+    appleDoubleCleanup
   })
 );

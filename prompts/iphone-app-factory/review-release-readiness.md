@@ -11,3 +11,11 @@ Review release readiness evidence:
 Write `.workflow/iphone-app-factory/reviews/release-readiness.md`.
 
 Reject if the app claims App Store readiness without macOS/Xcode evidence.
+
+End with exactly one verdict line:
+
+`VERDICT: APPROVED`
+
+or
+
+`VERDICT: REJECTED`

@@ -46,7 +46,7 @@ digraph BuildIPhoneApp {
         shape=parallelogram,
         goal_gate=true,
         retry_target="prompt_quality_gate",
-        script="node scripts/iphone-app-factory/promptfoo-prompt-quality.mjs --config evals/iphone-app-factory/prompt-quality.yaml --registry evals/iphone-app-factory/prompt-registry.json --out .workflow/iphone-app-factory/evals/prompt-quality.json --allow-fallback true"
+        script="node scripts/iphone-app-factory/promptfoo-prompt-quality.mjs --config evals/iphone-app-factory/prompt-quality.yaml --registry evals/iphone-app-factory/prompt-registry.json --out .workflow/iphone-app-factory/evals/prompt-quality.json --allow-fallback true --accepted-risk-promptfoo-failure false"
     ]
 
     research_fanout [label="Research Fan-Out", shape=component, join_policy="wait_all", max_parallel=1]
@@ -173,6 +173,13 @@ digraph BuildIPhoneApp {
     implementation_security_review [label="Implementation Security", class="security", prompt="@../../prompts/iphone-app-factory/review-implementation-security.md"]
     implementation_boilerplate_review [label="Implementation Boilerplate", class="review", prompt="@../../prompts/iphone-app-factory/review-implementation-boilerplate.md"]
     implementation_review_join [label="Implementation Review Join", shape=tripleoctagon, join_policy="wait_all"]
+    implementation_review_fan_in_gate [
+        label="Implementation Review Fan-In Gate",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="implementation_review_fanout",
+        script="node scripts/iphone-app-factory/review-fan-in-gate.mjs --mode implementation --reviews-dir .workflow/iphone-app-factory/reviews"
+    ]
     implementation_review_consensus [
         label="Implementation Review Consensus",
         class="review",
@@ -187,6 +194,13 @@ digraph BuildIPhoneApp {
         goal_gate=true,
         retry_target="implement_integration",
         script="./bin/maestro verify text-gate .workflow/iphone-app-factory/reviews/implementation-consensus.md --pass 'VERDICT:\\s*APPROVED' --fail 'VERDICT:\\s*REJECTED|\\bREJECTED\\b'"
+    ]
+    prompt_context_budget_gate [
+        label="Prompt Context Budget Gate",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="implementation_review_consensus",
+        script="node scripts/iphone-app-factory/prompt-context-budget-gate.mjs --root .workflow/iphone-app-factory"
     ]
 
     simplification [
@@ -248,6 +262,13 @@ digraph BuildIPhoneApp {
     release_readiness_review [label="Release Readiness", class="review", prompt="@../../prompts/iphone-app-factory/review-release-readiness.md"]
     qa_review [label="QA Evidence", class="review", prompt="@../../prompts/iphone-app-factory/review-qa-evidence.md"]
     final_review_join [label="Final Review Join", shape=tripleoctagon, join_policy="wait_all"]
+    final_review_fan_in_gate [
+        label="Final Review Fan-In Gate",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="final_review_fanout",
+        script="node scripts/iphone-app-factory/review-fan-in-gate.mjs --mode final --reviews-dir .workflow/iphone-app-factory/reviews"
+    ]
     final_consensus [
         label="Final Consensus",
         class="review",
@@ -269,6 +290,13 @@ digraph BuildIPhoneApp {
         goal_gate=true,
         retry_target="final_consensus",
         script="node scripts/iphone-app-factory/publish-handoff.mjs '{{ inputs.app_dir|default('apps/generated-iphone-app') }}'"
+    ]
+    artifact_metadata_gate [
+        label="Artifact Metadata Gate",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="publish_handoff",
+        script="node scripts/iphone-app-factory/artifact-metadata-gate.mjs '{{ inputs.app_dir|default('apps/generated-iphone-app') }}'"
     ]
     memory_summary [
         label="Memory Summary",
@@ -366,11 +394,15 @@ digraph BuildIPhoneApp {
     implementation_test_review -> implementation_review_join
     implementation_security_review -> implementation_review_join
     implementation_boilerplate_review -> implementation_review_join
-    implementation_review_join -> implementation_review_consensus
+    implementation_review_join -> implementation_review_fan_in_gate
+    implementation_review_fan_in_gate -> implementation_review_consensus [condition="outcome=succeeded"]
+    implementation_review_fan_in_gate -> implement_integration [label="Fix"]
     implementation_review_consensus -> implementation_review_gate [condition="outcome=succeeded"]
     implementation_review_consensus -> implement_integration [label="Fix"]
-    implementation_review_gate -> simplification [condition="outcome=succeeded"]
+    implementation_review_gate -> prompt_context_budget_gate [condition="outcome=succeeded"]
     implementation_review_gate -> implement_integration [label="Fix"]
+    prompt_context_budget_gate -> simplification [condition="outcome=succeeded"]
+    prompt_context_budget_gate -> implementation_review_consensus [label="Compact"]
 
     simplification -> quality_contract_gate [condition="outcome=succeeded"]
     simplification -> simplification [label="Retry", loop_restart=true]
@@ -399,13 +431,17 @@ digraph BuildIPhoneApp {
     code_quality_review -> final_review_join
     release_readiness_review -> final_review_join
     qa_review -> final_review_join
-    final_review_join -> final_consensus
+    final_review_join -> final_review_fan_in_gate
+    final_review_fan_in_gate -> final_consensus [condition="outcome=succeeded"]
+    final_review_fan_in_gate -> simplification [label="Fix"]
     final_consensus -> final_gate [condition="outcome=succeeded"]
     final_consensus -> simplification [label="Fix"]
     final_gate -> publish_handoff [condition="outcome=succeeded"]
     final_gate -> simplification [label="Fix"]
-    publish_handoff -> memory_summary [condition="outcome=succeeded"]
+    publish_handoff -> artifact_metadata_gate [condition="outcome=succeeded"]
     publish_handoff -> final_consensus [label="Fix"]
+    artifact_metadata_gate -> memory_summary [condition="outcome=succeeded"]
+    artifact_metadata_gate -> publish_handoff [label="Fix"]
     memory_summary -> exit [condition="outcome=succeeded"]
     memory_summary -> publish_handoff [label="Fix"]
 }
