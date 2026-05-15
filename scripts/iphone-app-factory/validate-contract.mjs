@@ -15,6 +15,7 @@ function requireFile(path) {
 const graph = requireFile(workflow);
 for (const token of [
   "research_fanout",
+  "run_input_gate",
   "research_evidence_gate",
   "prompt_quality_gate",
   "spec_fanout",
@@ -27,6 +28,7 @@ for (const token of [
   "implementation_review_fanout",
   "implementation_review_gate",
   "prompt_context_budget_gate",
+  "final_prompt_context_budget_gate",
   "quality_contract_gate",
   "macos_ci_gate",
   "ai_ui_explorer",
@@ -88,6 +90,7 @@ for (const evalFile of [
 
 for (const script of [
   "bootstrap.mjs",
+  "run-input-gate.mjs",
   "promptfoo-prompt-quality.mjs",
   "spec-gate.mjs",
   "boilerplate-contract-gate.mjs",

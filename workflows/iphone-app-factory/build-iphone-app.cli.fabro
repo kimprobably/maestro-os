@@ -40,6 +40,13 @@ digraph BuildIPhoneApp {
         retry_target="bootstrap",
         script="node scripts/iphone-app-factory/bootstrap.mjs --app-dir '{{ inputs.app_dir|default('apps/generated-iphone-app') }}' --app-name '{{ inputs.app_name|default('Generated iPhone App') }}' --bundle-id '{{ inputs.bundle_id|default('com.maestro.generatediphoneapp') }}' --boilerplate-repo '{{ inputs.boilerplate_repo|default('SwiftAIBoilerplatePro/SwiftAIBoilerplatePro-Distribution') }}'"
     ]
+    run_input_gate [
+        label="Run Input Gate",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="run_input_gate",
+        script="node scripts/iphone-app-factory/run-input-gate.mjs --app-type '{{ inputs.app_type|default('') }}' --target-audience '{{ inputs.target_audience|default('') }}' --app-name '{{ inputs.app_name|default('Generated iPhone App') }}' --bundle-id '{{ inputs.bundle_id|default('com.maestro.generatediphoneapp') }}' --app-dir '{{ inputs.app_dir|default('apps/generated-iphone-app') }}' --spec-kitty-feature '{{ inputs.spec_kitty_feature|default('iphone-app-factory') }}' --ios-validation-mode '{{ inputs.ios_validation_mode|default('github') }}' --allow-macos-deferred '{{ inputs.allow_macos_deferred|default('false') }}'"
+    ]
 
     prompt_quality_gate [
         label="Prompt Quality Gate",
@@ -269,6 +276,13 @@ digraph BuildIPhoneApp {
         retry_target="final_review_fanout",
         script="node scripts/iphone-app-factory/review-fan-in-gate.mjs --mode final --reviews-dir .workflow/iphone-app-factory/reviews"
     ]
+    final_prompt_context_budget_gate [
+        label="Final Prompt Context Budget Gate",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="final_review_fanout",
+        script="node scripts/iphone-app-factory/prompt-context-budget-gate.mjs --root .workflow/iphone-app-factory"
+    ]
     final_consensus [
         label="Final Consensus",
         class="review",
@@ -304,7 +318,9 @@ digraph BuildIPhoneApp {
         script="printf '{\"kind\":\"iphone_app_factory.completed\",\"payload\":{\"app_dir\":\"{{ inputs.app_dir|default('apps/generated-iphone-app') }}\",\"app_name\":\"{{ inputs.app_name|default('Generated iPhone App') }}\"}}' | ./bin/maestro memory append 'team/iphone-app-factory/builds' >/dev/null; echo memory-updated"
     ]
 
-    start -> bootstrap
+    start -> run_input_gate
+    run_input_gate -> bootstrap [condition="outcome=succeeded"]
+    run_input_gate -> run_input_gate [label="Fix Inputs", loop_restart=true]
     bootstrap -> prompt_quality_gate [condition="outcome=succeeded"]
     bootstrap -> bootstrap [label="Retry", loop_restart=true]
     prompt_quality_gate -> research_fanout [condition="outcome=succeeded"]
@@ -432,8 +448,10 @@ digraph BuildIPhoneApp {
     release_readiness_review -> final_review_join
     qa_review -> final_review_join
     final_review_join -> final_review_fan_in_gate
-    final_review_fan_in_gate -> final_consensus [condition="outcome=succeeded"]
+    final_review_fan_in_gate -> final_prompt_context_budget_gate [condition="outcome=succeeded"]
     final_review_fan_in_gate -> simplification [label="Fix"]
+    final_prompt_context_budget_gate -> final_consensus [condition="outcome=succeeded"]
+    final_prompt_context_budget_gate -> final_review_fanout [label="Compact"]
     final_consensus -> final_gate [condition="outcome=succeeded"]
     final_consensus -> simplification [label="Fix"]
     final_gate -> publish_handoff [condition="outcome=succeeded"]
