@@ -56,19 +56,9 @@ final class IntegrationWakeExploratoryUITests: XCTestCase {
         telemetry.tap(startRunButton, id: startRunButton.identifier)
         telemetry.visit("WakeActiveRun")
 
-        let missionButtons = app.buttons.matching(NSPredicate(format: "identifier BEGINSWITH 'wakeMissionButton-'"))
-        var tappedMissions = 0
-        while missionButtons.count > 0, tappedMissions < 5 {
-            let missionButton = missionButtons.firstMatch
-            XCTAssertTrue(missionButton.waitForExistence(timeout: 10))
-            telemetry.tap(missionButton, id: missionButton.identifier)
-            tappedMissions += 1
-            waitForUIUpdate()
-        }
-        XCTAssertEqual(missionButtons.count, 0)
-
         let dismissButton = app.buttons["wakeDismissAlarmButton"]
         XCTAssertTrue(dismissButton.waitForExistence(timeout: 10))
+        XCTAssertTrue(completeAllVisibleMissions(until: dismissButton))
         XCTAssertTrue(waitUntilEnabled(dismissButton))
         telemetry.tap(dismissButton, id: "wakeDismissAlarmButton")
 
@@ -105,6 +95,47 @@ final class IntegrationWakeExploratoryUITests: XCTestCase {
         }
 
         return element.exists && element.isEnabled
+    }
+
+    private func completeAllVisibleMissions(until dismissButton: XCUIElement, timeout: TimeInterval = 15) -> Bool {
+        let deadline = Date().addingTimeInterval(timeout)
+        let missionButtons = app.buttons.matching(NSPredicate(format: "identifier BEGINSWITH 'wakeMissionButton-'"))
+        var tappedMissionIDs = Set<String>()
+
+        while Date() < deadline {
+            if dismissButton.exists, dismissButton.isEnabled {
+                return true
+            }
+
+            let missionCount = missionButtons.count
+            guard missionCount > 0 else {
+                return false
+            }
+
+            var didTap = false
+            for index in 0 ..< missionCount {
+                let missionButton = missionButtons.element(boundBy: index)
+                guard missionButton.exists,
+                      missionButton.isEnabled,
+                      !tappedMissionIDs.contains(missionButton.identifier)
+                else {
+                    continue
+                }
+
+                let missionID = missionButton.identifier
+                telemetry.tap(missionButton, id: missionID)
+                tappedMissionIDs.insert(missionID)
+                didTap = true
+                waitForUIUpdate()
+                break
+            }
+
+            if !didTap {
+                waitForUIUpdate()
+            }
+        }
+
+        return dismissButton.exists && dismissButton.isEnabled
     }
 
     private func enterMainAppIfNeeded(timeout: TimeInterval = 30) {
