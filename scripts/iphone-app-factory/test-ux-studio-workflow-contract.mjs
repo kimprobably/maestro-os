@@ -153,6 +153,7 @@ test("UX studio workflow scripts do not interpolate raw Fabro inputs", () => {
 test("UX studio implementation stages use CLI file-writing agents", () => {
   const graph = readRequiredFile(workflowPath);
   assert.match(graph, /run-codex-prompt\.mjs --prompt prompts\/iphone-app-factory\/ux-baseline-screenshot-capture\.md/);
+  assert.match(graph, /run-codex-prompt\.mjs --prompt prompts\/iphone-app-factory\/ux-mobbin-mcp-research\.md/);
   assert.match(graph, /run-codex-prompt\.mjs --prompt prompts\/iphone-app-factory\/ux-implement-visual-system\.md/);
   assert.match(graph, /run-codex-prompt\.mjs --prompt prompts\/iphone-app-factory\/ux-implement-screen-flows\.md/);
   assert.doesNotMatch(graph, /provider:\s*openai/);

@@ -1,21 +1,22 @@
 #!/usr/bin/env node
 import { spawnSync } from "node:child_process";
-import { mkdirSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
+import { homedir } from "node:os";
 
 const RAILWAY_WEB_URL = "https://fabro-maestro-production.up.railway.app";
 const RAILWAY_API_URL = `${RAILWAY_WEB_URL}/api/v1`;
 const REPORT_PATH = ".workflow/iphone-app-ux-studio/preflight.json";
+const MOBBIN_MCP_URL = "https://api.mobbin.com/mcp";
 
 const REQUIRED_TOOLS = ["node", "npm", "gh", "fabro", "codex", "claude", "promptfoo", "qlty"];
 const NETWORK_TARGETS = [
-  "https://api.github.com/rate_limit",
-  "https://apps.apple.com/",
-  "https://developer.apple.com/design/human-interface-guidelines/",
-  "https://mobbin.com/mcp",
-  "https://api.mobbin.com/mcp",
-  "https://pageflows.com/",
-  "https://www.reddit.com/",
+  { url: "https://api.github.com/rate_limit", required: true },
+  { url: "https://apps.apple.com/", required: false },
+  { url: "https://developer.apple.com/design/human-interface-guidelines/", required: false },
+  { url: MOBBIN_MCP_URL, required: true },
+  { url: "https://pageflows.com/", required: false },
+  { url: "https://www.reddit.com/", required: false },
 ];
 
 const ENV_GROUPS = [
@@ -24,9 +25,8 @@ const ENV_GROUPS = [
   ["GITHUB_TOKEN", "GH_TOKEN"],
   ["CLAUDE_CODE_OAUTH_TOKEN", "CLAUDE_CODE_CREDENTIALS_JSON_BASE64"],
   ["CODEX_AUTH_JSON_BASE64"],
-  ["MOBBIN_EMAIL"],
-  ["MOBBIN_PASSWORD"],
 ];
+const MOBBIN_MCP_ENV_GROUPS = [["CODEX_MCP_CREDENTIALS_JSON_BASE64"]];
 
 function argValue(name, fallback) {
   const index = process.argv.indexOf(name);
@@ -131,6 +131,21 @@ function checkEnvGroups(groups) {
   return { missing, present_count: present.length };
 }
 
+function codexHome() {
+  return process.env.CODEX_HOME || join(process.env.HOME || homedir(), ".codex");
+}
+
+function installCodexMcpCredentialsFromEnv() {
+  const encoded = process.env.CODEX_MCP_CREDENTIALS_JSON_BASE64 || "";
+  if (!encoded || encoded.includes("{{") || encoded.includes("}}")) return false;
+  const decoded = Buffer.from(encoded, "base64").toString("utf8");
+  JSON.parse(decoded);
+  const home = codexHome();
+  mkdirSync(home, { recursive: true });
+  writeFileSync(join(home, ".credentials.json"), decoded, { mode: 0o600 });
+  return true;
+}
+
 function run(command, args = [], options = {}) {
   const result = spawnSync(command, args, {
     encoding: "utf8",
@@ -143,6 +158,14 @@ function run(command, args = [], options = {}) {
     stdout: (result.stdout || "").trim(),
     stderr: (result.stderr || "").trim(),
     error: result.error ? result.error.message : null,
+  };
+}
+
+function runText(command, args = [], options = {}) {
+  const result = run(command, args, options);
+  return {
+    ...result,
+    text: `${result.stdout || ""}\n${result.stderr || ""}`,
   };
 }
 
@@ -189,6 +212,17 @@ async function fetchStatus(url) {
       redirected: response.status >= 300 && response.status < 400,
     };
   } catch (error) {
+    const fallback = run("curl", ["-I", "-L", "--max-time", "20", "--silent", "--show-error", "--output", "/dev/null", "--write-out", "%{http_code}", url], { timeout: 25000 });
+    if (fallback.ok) {
+      const status = Number(fallback.stdout.trim());
+      return {
+        url,
+        ok: status >= 200 && status < 500,
+        status,
+        redirected: false,
+        fallback: "curl",
+      };
+    }
     return {
       url,
       ok: false,
@@ -203,33 +237,36 @@ async function fetchStatus(url) {
 async function networkReport() {
   const checks = [];
   for (const target of NETWORK_TARGETS) {
-    checks.push(await fetchStatus(target));
+    const check = await fetchStatus(target.url);
+    checks.push({ ...check, required: target.required });
   }
   return checks;
 }
 
 function mobbinMcpReport() {
-  const result = run("claude", ["mcp", "list"], { timeout: 15000 });
-  if (!result.ok) {
-    return {
-      mobbin_mcp_configured: false,
-      mobbin_mcp_authorized: false,
-      mobbin_mcp_check: {
-        ok: false,
-        status: result.status,
-      },
-    };
-  }
+  const codexMcpConfig = ["-c", "mcp_oauth_credentials_store=\"file\""];
+  const claudeAdd = run("claude", ["mcp", "add", "--transport", "http", "mobbin", MOBBIN_MCP_URL], { timeout: 30000 });
+  const codexAdd = run("codex", [...codexMcpConfig, "mcp", "add", "mobbin", "--url", MOBBIN_MCP_URL], { timeout: 30000 });
+  const claudeList = runText("claude", ["mcp", "list"], { timeout: 15000 });
+  const codexList = runText("codex", [...codexMcpConfig, "mcp", "list"], { timeout: 15000 });
 
-  const output = `${result.stdout}\n${result.stderr}`;
-  const hasMobbin = /mobbin/i.test(output);
+  const output = `${claudeList.text}\n${codexList.text}`;
+  const hasMobbin = /mobbin/i.test(claudeList.text);
+  const hasCodexMobbin = /mobbin/i.test(codexList.text);
+  const hasCodexOauth = /mobbin[\s\S]*\boauth\b/i.test(codexList.text);
   const hasUnauthorized = /(unauthori[sz]ed|not authorized|login required|oauth required|needs auth)/i.test(output);
   return {
-    mobbin_mcp_configured: hasMobbin,
-    mobbin_mcp_authorized: hasMobbin && !hasUnauthorized,
+    mobbin_mcp_configured: hasCodexMobbin,
+    mobbin_mcp_authorized: hasCodexMobbin && hasCodexOauth,
+    claude_mobbin_mcp_configured: hasMobbin,
+    claude_mobbin_mcp_authorized: hasMobbin && !hasUnauthorized,
+    codex_mobbin_mcp_configured: hasCodexMobbin,
+    codex_mobbin_mcp_authorized: hasCodexMobbin && hasCodexOauth,
     mobbin_mcp_check: {
       ok: true,
-      status: result.status,
+      status: claudeList.status,
+      claude_add_status: claudeAdd.status,
+      codex_add_status: codexAdd.status,
     },
   };
 }
@@ -262,10 +299,12 @@ if (!allowLocal && (!isRailwayFabroUrl(apiUrl) || !isRailwayFabroUrl(webUrl))) {
   failures.push("FABRO_SERVER must use the Railway-hosted Fabro URL unless --allow-local is set");
 }
 
-const envGroups = useMobbinMcp
-  ? ENV_GROUPS
-  : ENV_GROUPS.filter((group) => !group.some((key) => key.startsWith("MOBBIN_")));
-checks.env = checkEnvGroups(envGroups);
+checks.env = checkEnvGroups(ENV_GROUPS);
+if (useMobbinMcp) {
+  const mobbinEnv = checkEnvGroups(MOBBIN_MCP_ENV_GROUPS);
+  checks.env.missing.push(...mobbinEnv.missing);
+  checks.env.present_count += mobbinEnv.present_count;
+}
 if (checks.env.missing.length > 0) {
   failures.push(`missing environment keys: ${checks.env.missing.join(", ")}`);
 }
@@ -273,6 +312,14 @@ if (checks.env.missing.length > 0) {
 checks.mobbin_mcp_configured = false;
 checks.mobbin_mcp_authorized = false;
 checks.mobbin_mcp_check = { ok: false, skipped: true };
+checks.codex_mcp_credentials_installed = false;
+if (useMobbinMcp && !skipMobbinMcp && envPresent("CODEX_MCP_CREDENTIALS_JSON_BASE64")) {
+  try {
+    checks.codex_mcp_credentials_installed = installCodexMcpCredentialsFromEnv();
+  } catch {
+    failures.push("CODEX_MCP_CREDENTIALS_JSON_BASE64 could not be installed");
+  }
+}
 if (!skipTools) {
   checks.tools = toolReport();
   for (const [tool, result] of Object.entries(checks.tools)) {
@@ -282,6 +329,8 @@ if (!skipTools) {
 
 if (useMobbinMcp && !skipMobbinMcp) {
   Object.assign(checks, mobbinMcpReport());
+  if (!checks.codex_mobbin_mcp_configured) failures.push("Mobbin MCP is not configured for Codex CLI");
+  if (!checks.codex_mobbin_mcp_authorized) failures.push("Mobbin MCP OAuth authorization is missing for Codex CLI");
 }
 
 if (!skipGit) {
@@ -293,7 +342,7 @@ if (!skipGit) {
 if (!skipNetwork) {
   checks.network = await networkReport();
   for (const target of checks.network) {
-    if (!target.ok) failures.push(`network target failed: ${target.url}`);
+    if (!target.ok && target.required) failures.push(`required network target failed: ${target.url}`);
   }
 }
 

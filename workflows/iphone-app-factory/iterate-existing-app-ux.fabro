@@ -78,7 +78,13 @@ digraph IterateExistingAppUX {
     research_fanout [label="Research Fan-Out", shape=component, join_policy="wait_all", max_parallel=1]
     competitor_flow_research [label="Competitor Flow Research", class="ux-research", prompt="@../../prompts/iphone-app-factory/ux-competitor-flow-research.md"]
     app_store_review_mining [label="App Store Review Mining", class="ux-research", prompt="@../../prompts/iphone-app-factory/ux-app-store-review-mining.md"]
-    mobbin_mcp_research [label="Mobbin MCP Research", class="ux-research", prompt="@../../prompts/iphone-app-factory/ux-mobbin-mcp-research.md"]
+    mobbin_mcp_research [
+        label="Mobbin MCP Research",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="mobbin_mcp_research",
+        script="node scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/ux-mobbin-mcp-research.md --stage mobbin-mcp-research --out .workflow/iphone-app-ux-studio/codex/mobbin-mcp-research.json"
+    ]
     pageflows_research [label="Pageflows Research", class="ux-research", prompt="@../../prompts/iphone-app-factory/ux-pageflows-research.md"]
     apple_hig_research [label="Apple HIG Research", class="ux-research", prompt="@../../prompts/iphone-app-factory/ux-apple-hig-research.md"]
     behavioral_ux_research [label="Behavioral UX Research", class="ux-research", prompt="@../../prompts/iphone-app-factory/ux-behavioral-research.md"]

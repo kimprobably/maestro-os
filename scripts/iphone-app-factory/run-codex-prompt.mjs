@@ -50,6 +50,7 @@ function redactString(value) {
     "OPENROUTER_API_KEY",
     "OPENAI_API_KEY",
     "CODEX_AUTH_JSON_BASE64",
+    "CODEX_MCP_CREDENTIALS_JSON_BASE64",
     "CLAUDE_CODE_OAUTH_TOKEN",
     "CLAUDE_CODE_CREDENTIALS_JSON_BASE64",
     "GITHUB_TOKEN",
@@ -105,6 +106,46 @@ function installCodexAuthFromEnv() {
   return true;
 }
 
+function installCodexMcpCredentialsFromEnv() {
+  const encoded = process.env.CODEX_MCP_CREDENTIALS_JSON_BASE64 || "";
+  if (!encoded || encoded.includes("{{") || encoded.includes("}}")) return false;
+  const decoded = Buffer.from(encoded, "base64").toString("utf8");
+  JSON.parse(decoded);
+  const codexHome = process.env.CODEX_HOME || join(process.env.HOME || homedir(), ".codex");
+  mkdirSync(codexHome, { recursive: true });
+  writeFileSync(join(codexHome, ".credentials.json"), decoded, { mode: 0o600 });
+  return true;
+}
+
+function wantsMobbinMcp(stageName) {
+  return String(process.env.UX_USE_MOBBIN_MCP || "true").toLowerCase() !== "false"
+    && /mobbin/i.test(stageName || "");
+}
+
+function ensureCodexMobbinMcp(stageName) {
+  if (!wantsMobbinMcp(stageName)) {
+    return { configured: false, skipped: true, status: null };
+  }
+  const mcpConfig = ["-c", "mcp_oauth_credentials_store=\"file\""];
+  const add = spawnSync("codex", [...mcpConfig, "mcp", "add", "mobbin", "--url", "https://api.mobbin.com/mcp"], {
+    encoding: "utf8",
+    timeout: 30000,
+    stdio: ["ignore", "pipe", "pipe"],
+  });
+  const list = spawnSync("codex", [...mcpConfig, "mcp", "list"], {
+    encoding: "utf8",
+    timeout: 15000,
+    stdio: ["ignore", "pipe", "pipe"],
+  });
+  const text = `${list.stdout || ""}\n${list.stderr || ""}`;
+  return {
+    configured: /mobbin/i.test(text),
+    skipped: false,
+    status: list.status,
+    add_status: add.status,
+  };
+}
+
 const promptPath = resolve(argValue("--prompt"));
 const stage = argValue("--stage", "codex-prompt");
 const model = argValue("--model", "gpt-5.3-codex");
@@ -115,11 +156,24 @@ const timeoutMs = Number(argValue("--timeout-ms", process.env.CODEX_EXEC_TIMEOUT
 
 const failures = [];
 let codexAuthInstalled = false;
+let codexMcpCredentialsInstalled = false;
+let codexMobbinMcp = { configured: false, skipped: true, status: null };
 if (!existsSync(promptPath)) failures.push(`missing prompt file: ${promptPath}`);
 try {
   codexAuthInstalled = installCodexAuthFromEnv();
 } catch {
   failures.push("CODEX_AUTH_JSON_BASE64 could not be installed");
+}
+try {
+  codexMcpCredentialsInstalled = installCodexMcpCredentialsFromEnv();
+} catch {
+  failures.push("CODEX_MCP_CREDENTIALS_JSON_BASE64 could not be installed");
+}
+try {
+  codexMobbinMcp = ensureCodexMobbinMcp(stage);
+  if (!codexMobbinMcp.skipped && !codexMobbinMcp.configured) failures.push("Mobbin MCP could not be configured for Codex CLI");
+} catch {
+  failures.push("Mobbin MCP setup failed for Codex CLI");
 }
 
 let renderedPrompt = "";
@@ -143,6 +197,8 @@ if (failures.length === 0) {
     "exec",
     "--skip-git-repo-check",
     "--dangerously-bypass-approvals-and-sandbox",
+    "-c",
+    "mcp_oauth_credentials_store=\"file\"",
     "--model",
     model,
     "--cd",
@@ -175,6 +231,8 @@ const report = {
   stdout_excerpt: result ? redactString(result.stdout).slice(-3000) : "",
   stderr_excerpt: result ? redactString(result.stderr).slice(-3000) : "",
   codex_auth_installed: codexAuthInstalled,
+  codex_mcp_credentials_installed: codexMcpCredentialsInstalled,
+  codex_mobbin_mcp: codexMobbinMcp,
   failures,
 };
 

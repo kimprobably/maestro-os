@@ -170,3 +170,68 @@ test("run-codex-prompt installs Codex auth from CODEX_AUTH_JSON_BASE64 without p
     assert.doesNotMatch(JSON.stringify(report), /codex-secret-value/);
   });
 });
+
+test("run-codex-prompt configures Mobbin MCP for Mobbin research stages", () => {
+  withTempDir((dir) => {
+    const promptPath = join(dir, "prompt.md");
+    const capturePath = join(dir, "captured-commands.txt");
+    writeFileSync(promptPath, "Use Mobbin MCP for pattern research.");
+    const fakeBin = writeFakeCodex(
+      dir,
+      [
+        "printf '%s\\n' \"$@\" >> \"$CODEX_COMMAND_CAPTURE\"",
+        "case \"$*\" in *\"mcp add mobbin\"*) exit 0;; *\"mcp list\"*) printf '%s\\n' 'mobbin https://api.mobbin.com/mcp'; exit 0;; esac",
+        "cat >/dev/null; printf 'codex ok\\n'",
+      ].join("\n"),
+    );
+
+    const result = run(
+      dir,
+      ["--prompt", promptPath, "--stage", "mobbin-mcp-research", "--out", ".workflow/codex/mobbin.json"],
+      {
+        PATH: `${fakeBin}${delimiter}${process.env.PATH}`,
+        CODEX_COMMAND_CAPTURE: capturePath,
+      },
+    );
+
+    assert.equal(result.status, 0, result.stderr || result.stdout);
+    const commands = readFileSync(capturePath, "utf8");
+    assert.match(commands, /mcp\nadd\nmobbin\n--url\nhttps:\/\/api\.mobbin\.com\/mcp/);
+    assert.match(commands, /mcp\nlist/);
+    assert.match(commands, /exec/);
+    const report = JSON.parse(readFileSync(join(dir, ".workflow/codex/mobbin.json"), "utf8"));
+    assert.equal(report.codex_mobbin_mcp.configured, true);
+  });
+});
+
+test("run-codex-prompt installs Codex MCP credentials without printing them", () => {
+  withTempDir((dir) => {
+    const promptPath = join(dir, "prompt.md");
+    const home = join(dir, "home");
+    const codexHome = join(home, ".codex");
+    const credentialsJson = '{"mobbin":{"access_token":"codex-mcp-secret-value"}}';
+    writeFileSync(promptPath, "Check MCP credentials.");
+    const fakeBin = writeFakeCodex(
+      dir,
+      "test -f \"$HOME/.codex/.credentials.json\" || exit 13; cat >/dev/null; printf 'codex ok\\n'",
+    );
+
+    const result = run(
+      dir,
+      ["--prompt", promptPath, "--stage", "mcp-state-install", "--out", ".workflow/codex/mcp-state.json"],
+      {
+        PATH: `${fakeBin}${delimiter}${process.env.PATH}`,
+        HOME: home,
+        CODEX_MCP_CREDENTIALS_JSON_BASE64: Buffer.from(credentialsJson).toString("base64"),
+      },
+    );
+
+    assert.equal(result.status, 0, result.stderr || result.stdout);
+    assert.ok(existsSync(join(codexHome, ".credentials.json")));
+    assert.equal(readFileSync(join(codexHome, ".credentials.json"), "utf8"), credentialsJson);
+    assert.doesNotMatch(`${result.stdout}\n${result.stderr}`, /codex-mcp-secret-value/);
+    const report = JSON.parse(readFileSync(join(dir, ".workflow/codex/mcp-state.json"), "utf8"));
+    assert.equal(report.codex_mcp_credentials_installed, true);
+    assert.doesNotMatch(JSON.stringify(report), /codex-mcp-secret-value/);
+  });
+});

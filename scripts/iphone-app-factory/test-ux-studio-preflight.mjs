@@ -15,8 +15,7 @@ const completeEnv = {
   GITHUB_TOKEN: "github-secret-value",
   CLAUDE_CODE_OAUTH_TOKEN: "claude-secret-value",
   CODEX_AUTH_JSON_BASE64: Buffer.from('{"token":"codex-secret-value"}').toString("base64"),
-  MOBBIN_EMAIL: "person@example.com",
-  MOBBIN_PASSWORD: "mobbin-secret-value",
+  CODEX_MCP_CREDENTIALS_JSON_BASE64: Buffer.from('{"mobbin":{"access_token":"codex-mcp-secret-value"}}').toString("base64"),
 };
 
 const secretValues = Object.values(completeEnv);
@@ -47,7 +46,7 @@ function runPreflight({
       cwd,
       env: {
         PATH: pathPrefix ? `${pathPrefix}${delimiter}${process.env.PATH}` : process.env.PATH,
-        HOME: process.env.HOME,
+        HOME: cwd,
         ...completeEnv,
         FABRO_SERVER: "https://fabro-maestro-production.up.railway.app/api/v1",
         ...env,
@@ -83,20 +82,19 @@ test("--skip-network mode validates required env presence without printing value
   }
 });
 
-test("missing MOBBIN_EMAIL reports only the key name", () => {
-  const { cwd, result } = runPreflight({ env: { MOBBIN_EMAIL: "" } });
+test("Mobbin email and password are not required when Mobbin MCP is enabled", () => {
+  const { cwd, result } = runPreflight({ env: { MOBBIN_EMAIL: "", MOBBIN_PASSWORD: "" } });
   try {
-    assert.notEqual(result.status, 0);
+    assert.equal(result.status, 0, result.stderr || result.stdout);
     const report = readReport(cwd);
-    assert.deepEqual(report.checks.env.missing, ["MOBBIN_EMAIL"]);
-    assert.match(result.stdout, /MOBBIN_EMAIL/);
+    assert.deepEqual(report.checks.env.missing, []);
     assert.doesNotMatch(result.stdout, /person@example\.com|mobbin-secret-value/);
   } finally {
     cleanup(cwd);
   }
 });
 
-test("Mobbin credentials are optional when use_mobbin_mcp=false", () => {
+test("Mobbin MCP is optional when use_mobbin_mcp=false", () => {
   const { cwd, result } = runPreflight({
     env: { MOBBIN_EMAIL: "", MOBBIN_PASSWORD: "" },
     args: ["--skip-network", "--skip-tools", "--skip-git", "--use-mobbin-mcp", "false"],
@@ -229,7 +227,8 @@ test("Fabro URLs with secret query or fragment values are redacted from stdout a
 
 test("generated report includes Mobbin MCP booleans and never credentials", () => {
   const fakeBin = makeFakeBin({
-    claude: "if [ \"$1\" = \"mcp\" ] && [ \"$2\" = \"list\" ]; then printf '%s\\n' 'mobbin https://api.mobbin.com/mcp'; exit 0; fi; exit 1",
+    claude: "if [ \"$1\" = \"mcp\" ] && [ \"$2\" = \"add\" ]; then exit 0; fi; if [ \"$1\" = \"mcp\" ] && [ \"$2\" = \"list\" ]; then printf '%s\\n' 'mobbin https://api.mobbin.com/mcp'; exit 0; fi; exit 1",
+    codex: "case \"$*\" in *\"mcp add mobbin\"*) exit 0;; *\"mcp list\"*) printf '%s\\n' 'mobbin https://api.mobbin.com/mcp enabled OAuth'; exit 0;; esac; exit 1",
   });
   const { cwd, result } = runPreflight({
     args: ["--skip-network", "--skip-tools", "--skip-git"],
@@ -242,9 +241,35 @@ test("generated report includes Mobbin MCP booleans and never credentials", () =
     assert.equal(typeof report.checks.mobbin_mcp_authorized, "boolean");
     assert.equal(report.checks.mobbin_mcp_configured, true);
     assert.equal(report.checks.mobbin_mcp_authorized, true);
+    assert.equal(report.checks.codex_mobbin_mcp_configured, true);
+    assert.equal(report.checks.codex_mobbin_mcp_authorized, true);
     const serialized = JSON.stringify(report);
     for (const value of secretValues) {
       assert.doesNotMatch(serialized, new RegExp(value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")));
+    }
+  } finally {
+    cleanup(cwd);
+    cleanup(fakeBin);
+  }
+});
+
+test("Mobbin MCP OAuth authorization is required when enabled", () => {
+  const fakeBin = makeFakeBin({
+    claude: "if [ \"$1\" = \"mcp\" ] && [ \"$2\" = \"add\" ]; then exit 0; fi; if [ \"$1\" = \"mcp\" ] && [ \"$2\" = \"list\" ]; then printf '%s\\n' 'mobbin https://api.mobbin.com/mcp'; exit 0; fi; exit 1",
+    codex: "case \"$*\" in *\"mcp add mobbin\"*) exit 0;; *\"mcp list\"*) printf '%s\\n' 'mobbin https://api.mobbin.com/mcp'; exit 0;; esac; exit 1",
+  });
+  const { cwd, result } = runPreflight({
+    args: ["--skip-network", "--skip-tools", "--skip-git"],
+    pathPrefix: fakeBin,
+  });
+  try {
+    assert.notEqual(result.status, 0);
+    const report = readReport(cwd);
+    assert.equal(report.checks.mobbin_mcp_configured, true);
+    assert.equal(report.checks.mobbin_mcp_authorized, false);
+    assert.match(result.stdout, /Mobbin MCP OAuth authorization is missing for Codex CLI/);
+    for (const value of secretValues) {
+      assert.doesNotMatch(result.stdout, new RegExp(value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")));
     }
   } finally {
     cleanup(cwd);

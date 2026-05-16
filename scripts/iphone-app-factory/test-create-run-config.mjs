@@ -120,6 +120,9 @@ test("create-run-config writes a Railway UX iteration TOML", () => {
     assert.match(toml, /app_dir = "apps\/waketask-ios"/);
     assert.match(toml, /use_mobbin_mcp = "true"/);
     assert.match(toml, /use_design_corpus = "true"/);
+    assert.match(toml, /CODEX_MCP_CREDENTIALS_JSON_BASE64 = "{{ env\.CODEX_MCP_CREDENTIALS_JSON_BASE64 }}"/);
+    assert.doesNotMatch(toml, /MOBBIN_EMAIL/);
+    assert.doesNotMatch(toml, /MOBBIN_PASSWORD/);
   });
 });
 

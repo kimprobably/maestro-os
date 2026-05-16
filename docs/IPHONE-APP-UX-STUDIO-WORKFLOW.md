@@ -17,21 +17,20 @@ Do not use it to rebuild an app from scratch, replace product architecture, chan
 
 ## Mobbin MCP Setup
 
-Mobbin is optional but expected for high-quality design research when credentials are available. Configure it for Claude Code on the worker host:
+Mobbin is optional but expected for high-quality design research when MCP OAuth is available. Configure it for Claude Code and Codex CLI on the worker host:
 
 ```bash
 claude mcp add mobbin --transport http https://api.mobbin.com/mcp
+codex mcp add mobbin --url https://api.mobbin.com/mcp
 claude mcp list
+codex mcp list
 ```
 
-Provide Mobbin credentials through the run environment only:
+Complete OAuth through the MCP client once, then let the cloud profile reuse that authorization. The automated Fabro research stage uses Codex MCP, so Codex Mobbin OAuth is the hard preflight requirement; Claude Code Mobbin auth is useful for manual/cloud-agent design research but is not required by the Daytona stage. The UX Studio workflow does not require `MOBBIN_EMAIL` or `MOBBIN_PASSWORD`.
 
-```bash
-export MOBBIN_EMAIL="<email>"
-export MOBBIN_PASSWORD="<password>"
-```
+Daytona workers do not inherit the operator's local Codex OAuth store. For remote runs, use Codex's file-backed MCP OAuth store and provide the base64 contents of `.codex/.credentials.json` through `CODEX_MCP_CREDENTIALS_JSON_BASE64`; the workflow restores that file into `$CODEX_HOME` before checking Mobbin MCP.
 
-Do not write Mobbin credentials, cookies, MCP session material, screenshots, or raw proprietary assets into prompts, committed config, postmortems, or app code. Agents may abstract patterns and interaction principles from Mobbin. They must not copy layouts, copy, brand identity, visual assets, or distinctive screen compositions.
+Do not write Mobbin credentials, OAuth tokens, cookies, MCP session material, screenshots, or raw proprietary assets into prompts, committed config, postmortems, or app code. Agents may abstract patterns and interaction principles from Mobbin. They must not copy layouts, copy, brand identity, visual assets, or distinctive screen compositions.
 
 ## Private Design Corpus Policy
 
@@ -52,13 +51,13 @@ export FABRO_SERVER="https://fabro-maestro-production.up.railway.app/api/v1"
 node scripts/iphone-app-factory/ux-studio-preflight.mjs --server "$FABRO_SERVER"
 ```
 
-The run environment must include Fabro/GitHub/agent credentials, OpenRouter, Apify, and Mobbin variables when Mobbin research is enabled. The Daytona config must allow network access for GitHub, App Store, Apple HIG, Mobbin MCP, Page Flows, Reddit, CI, and package installation.
+The run environment must include Fabro/GitHub/agent credentials, OpenRouter, Apify, and Mobbin MCP OAuth when Mobbin research is enabled. The Daytona config must allow network access for GitHub, App Store, Apple HIG, Mobbin MCP, Page Flows, Reddit, CI, and package installation.
 
 Local Fabro is only for isolated experiments. A local run will not appear in the shared Railway UI and should not be used for overnight or handoff-quality UX Studio work unless the run explicitly sets an allow-local mode.
 
 The workflow starts from the `maestro-os` workflow checkout, then runs `checkout_existing_app` to clone `repo_url` into `app_dir`. Use a concrete relative checkout directory such as `apps/waketask-ios`; do not use `app_dir = "."`, because that would point implementation stages at the workflow repository instead of the iPhone app.
 
-If Mobbin MCP is intentionally disabled, set `use_mobbin_mcp = "false"` and `UX_USE_MOBBIN_MCP = "false"` in the run config. Preflight will not require `MOBBIN_EMAIL` or `MOBBIN_PASSWORD`, but the run should record the weaker reference set in the postmortem and final review.
+If Mobbin MCP is intentionally disabled, set `use_mobbin_mcp = "false"` and `UX_USE_MOBBIN_MCP = "false"` in the run config. The run should record the weaker reference set in the postmortem and final review.
 
 ## Expected Artifacts
 
@@ -126,7 +125,7 @@ node scripts/fabro/babysit-run.mjs --run-id <run-id> --server "$FABRO_SERVER"
 Set the named variables in the run environment. Do not paste values into logs or prompts.
 
 Mobbin MCP is not configured:
-Run `claude mcp add mobbin --transport http https://api.mobbin.com/mcp`, restart the agent session, then rerun preflight.
+Run `claude mcp add mobbin --transport http https://api.mobbin.com/mcp` and `codex mcp add mobbin --url https://api.mobbin.com/mcp`, complete OAuth, restart the agent session, then rerun preflight.
 
 Mobbin MCP is configured but not authorized:
 Complete the interactive Mobbin authorization in Claude Code. Non-interactive workflow runs should fail clearly rather than dumping credentials.
