@@ -14,7 +14,7 @@ const NETWORK_TARGETS = [
   { url: "https://api.github.com/rate_limit", required: true },
   { url: "https://apps.apple.com/", required: false },
   { url: "https://developer.apple.com/design/human-interface-guidelines/", required: false },
-  { url: MOBBIN_MCP_URL, required: true },
+  { url: MOBBIN_MCP_URL, required: false },
   { url: "https://pageflows.com/", required: false },
   { url: "https://www.reddit.com/", required: false },
 ];
@@ -186,11 +186,13 @@ function toolReport() {
 function gitReport() {
   const branch = run("git", ["branch", "--show-current"], { timeout: 15000 });
   const upstream = run("git", ["rev-parse", "--abbrev-ref", "--symbolic-full-name", "@{u}"], { timeout: 15000 });
+  const branchName = branch.stdout || null;
   return {
     git_available: branch.ok,
-    branch: branch.stdout || null,
+    branch: branchName,
     has_upstream: upstream.ok,
     upstream: upstream.ok ? upstream.stdout : null,
+    fabro_run_branch: Boolean(branchName && branchName.startsWith("fabro/run/")),
   };
 }
 
@@ -336,7 +338,7 @@ if (useMobbinMcp && !skipMobbinMcp) {
 if (!skipGit) {
   checks.git = gitReport();
   if (!checks.git.git_available) failures.push("git is not available");
-  if (!checks.git.has_upstream) failures.push("current branch has no upstream");
+  if (!checks.git.has_upstream && !checks.git.fabro_run_branch) failures.push("current branch has no upstream");
 }
 
 if (!skipNetwork) {
