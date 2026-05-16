@@ -33,6 +33,21 @@ function hasUrlCredentials(value) {
   }
 }
 
+function githubAuthArgs(value) {
+  const token = process.env.GITHUB_TOKEN || process.env.GH_TOKEN || "";
+  if (!token) return [];
+
+  try {
+    const url = new URL(value);
+    if (url.protocol !== "https:" || url.hostname !== "github.com") return [];
+  } catch {
+    return [];
+  }
+
+  const credential = Buffer.from(`x-access-token:${token}`, "utf8").toString("base64");
+  return ["-c", `http.https://github.com/.extraheader=AUTHORIZATION: basic ${credential}`];
+}
+
 function safeRelativeAppDir(appDir) {
   const normalized = String(appDir || "").replace(/\\/g, "/");
   if (!normalized || normalized === ".") throw new Error("app_dir must be a relative checkout directory, not current directory");
@@ -71,6 +86,7 @@ let sha = null;
 let action = "none";
 try {
   if (failures.length === 0) {
+    const authArgs = githubAuthArgs(repoUrl);
     const fullAppDir = resolve(appDir);
     if (existsSync(appDir) && !existsSync(`${appDir}/.git`)) {
       const entries = readdirSync(appDir).filter((entry) => entry !== ".DS_Store");
@@ -79,10 +95,10 @@ try {
 
     if (!existsSync(`${appDir}/.git`)) {
       mkdirSync(dirname(fullAppDir), { recursive: true });
-      run("git", ["clone", "--branch", baseBranch, "--depth", "1", repoUrl, appDir]);
+      run("git", [...authArgs, "clone", "--branch", baseBranch, "--depth", "1", repoUrl, appDir]);
       action = "cloned";
     } else {
-      run("git", ["fetch", "origin", baseBranch, "--depth", "1"], { cwd: appDir });
+      run("git", [...authArgs, "fetch", "origin", baseBranch, "--depth", "1"], { cwd: appDir });
       action = "updated";
     }
 
