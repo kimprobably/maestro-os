@@ -1,0 +1,20 @@
+diff --git a/scripts/iphone-app-factory/run-codex-prompt.mjs b/scripts/iphone-app-factory/run-codex-prompt.mjs
+index 65e2348..a530675 100644
+--- a/scripts/iphone-app-factory/run-codex-prompt.mjs
++++ b/scripts/iphone-app-factory/run-codex-prompt.mjs
+@@ -153,6 +153,7 @@ const outPath = resolve(argValue("--out", `.workflow/iphone-app-ux-studio/codex/
+ const renderedPromptPath = resolve(argValue("--rendered-prompt-out", `.workflow/iphone-app-ux-studio/codex/${stage}.prompt.md`));
+ const lastMessagePath = resolve(argValue("--last-message-out", `.workflow/iphone-app-ux-studio/codex/${stage}.last-message.md`));
+ const timeoutMs = Number(argValue("--timeout-ms", process.env.CODEX_EXEC_TIMEOUT_MS || "3600000"));
++const maxBuffer = Number(argValue("--max-buffer", process.env.CODEX_EXEC_MAX_BUFFER || `${100 * 1024 * 1024}`));
+ 
+ const failures = [];
+ let codexAuthInstalled = false;
+@@ -211,6 +212,7 @@ if (failures.length === 0) {
+     input: renderedPrompt,
+     encoding: "utf8",
+     timeout: timeoutMs,
++    maxBuffer,
+     stdio: ["pipe", "pipe", "pipe"],
+   });
+ 
