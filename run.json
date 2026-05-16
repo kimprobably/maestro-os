@@ -2525,7 +2525,7 @@
     "kind": "running"
   },
   "status_updated_at": "2026-05-16T21:41:29.752396628Z",
-  "last_event_at": "2026-05-16T21:41:34.625771757Z",
+  "last_event_at": "2026-05-16T21:41:38.175497670Z",
   "pending_control": null,
   "checkpoints": [
     {
@@ -2573,13 +2573,78 @@
       "diff": {}
     },
     {
-      "seq": 0,
+      "seq": 28,
       "checkpoint": {
-        "timestamp": "2026-05-16T21:41:34.667502847Z",
+        "timestamp": "2026-05-16T21:41:36.410305456Z",
         "current_node": "remote_environment_preflight",
         "completed_nodes": [
           "start",
           "remote_environment_preflight"
+        ],
+        "node_retries": {},
+        "context_values": {
+          "graph.model_stylesheet": "\n            *                  { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: low; }\n            .ux-research       { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: high; }\n            .design            { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: high; }\n            .critique          { provider: openrouter; model: google/gemini-3.1-pro-preview; reasoning_effort: high; }\n            .review            { provider: openrouter; model: google/gemini-3.1-pro-preview; reasoning_effort: high; }\n            .verify            { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: medium; }\n            .security          { provider: openrouter; model: google/gemini-3.1-pro-preview; reasoning_effort: high; }\n        ",
+          "graph.default_max_retries": "2",
+          "current_node": "remote_environment_preflight",
+          "graph.inputs": "repo_url,base_branch,run_branch,app_name,bundle_id,app_dir,app_domain,target_audience,design_goal,max_competitors,use_mobbin_mcp,use_design_corpus,design_corpus_write_mode,selected_direction_mode,ios_validation_mode,allow_macos_deferred,fabro_server",
+          "graph.rankdir": "LR",
+          "internal.work_dir": "/home/daytona/workspace",
+          "internal.retry_count.start": 0,
+          "graph.retry_target": "design_tournament_consensus",
+          "internal.run_id": "01KRSBSAQDKD9Q2KXFFJA0R3GH",
+          "internal.thread_id": "start",
+          "internal.node_visit_count": 1,
+          "failure_class": "",
+          "command.output": "blob://sha256/b8cdad27e93504a6e5b14817e21e8cc9de8a68269782f2229a6b16e284124b3b",
+          "graph.goal": "Iterate on an existing iPhone app UX with private design research, adversarial design options, hosted iOS validation, and postmortem learning capture",
+          "graph.persona": "iphone-app-ux-studio",
+          "graph.outputs": "existing_app_intake,reference_pack,design_tournament,screen_spec,ux_implementation_evidence,screenshot_manifest,appium_report,ios_quality_report,ux_handoff,postmortem",
+          "graph.secret_policy": "never print environment variables or credential values; credential checks must be presence-only true/false checks; do not run environment dump commands; Mobbin and competitor screenshots are private research references only.",
+          "outcome": "succeeded",
+          "failure_signature": "",
+          "thread.start.current_node": "remote_environment_preflight",
+          "internal.retry_count.remote_environment_preflight": 0,
+          "internal.fidelity": "compact",
+          "graph.fallback_retry_target": "implement_screen_flows"
+        },
+        "node_outcomes": {
+          "remote_environment_preflight": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/b8cdad27e93504a6e5b14817e21e8cc9de8a68269782f2229a6b16e284124b3b"
+            },
+            "notes": "Script completed: node scripts/iphone-app-factory/ux-studio-preflight.mjs --server https://fabro-maestro-production.up.railway.app/api/v1 --expected-control-plane railway",
+            "usage": null
+          },
+          "start": {
+            "status": "succeeded",
+            "usage": null
+          }
+        },
+        "next_node_id": "checkout_existing_app",
+        "git_commit_sha": "f60dc77979968fcbbb6c88180804be0c4e786ccc",
+        "node_visits": {
+          "remote_environment_preflight": 1,
+          "start": 1
+        }
+      },
+      "diff": {
+        "summary": {
+          "files_changed": 0,
+          "additions": 0,
+          "deletions": 0
+        }
+      }
+    },
+    {
+      "seq": 0,
+      "checkpoint": {
+        "timestamp": "2026-05-16T21:41:38.267781109Z",
+        "current_node": "checkout_existing_app",
+        "completed_nodes": [
+          "start",
+          "remote_environment_preflight",
+          "checkout_existing_app"
         ],
         "node_retries": {},
         "context_values": {
@@ -2591,7 +2656,7 @@
           "failure_signature": "",
           "graph.default_max_retries": "2",
           "graph.outputs": "existing_app_intake,reference_pack,design_tournament,screen_spec,ux_implementation_evidence,screenshot_manifest,appium_report,ios_quality_report,ux_handoff,postmortem",
-          "current_node": "remote_environment_preflight",
+          "current_node": "checkout_existing_app",
           "graph.inputs": "repo_url,base_branch,run_branch,app_name,bundle_id,app_dir,app_domain,target_audience,design_goal,max_competitors,use_mobbin_mcp,use_design_corpus,design_corpus_write_mode,selected_direction_mode,ios_validation_mode,allow_macos_deferred,fabro_server",
           "graph.rankdir": "LR",
           "graph.fallback_retry_target": "implement_screen_flows",
@@ -2599,13 +2664,15 @@
           "internal.node_visit_count": 1,
           "outcome": "succeeded",
           "graph.model_stylesheet": "\n            *                  { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: low; }\n            .ux-research       { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: high; }\n            .design            { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: high; }\n            .critique          { provider: openrouter; model: google/gemini-3.1-pro-preview; reasoning_effort: high; }\n            .review            { provider: openrouter; model: google/gemini-3.1-pro-preview; reasoning_effort: high; }\n            .verify            { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: medium; }\n            .security          { provider: openrouter; model: google/gemini-3.1-pro-preview; reasoning_effort: high; }\n        ",
-          "command.output": "blob://sha256/b8cdad27e93504a6e5b14817e21e8cc9de8a68269782f2229a6b16e284124b3b",
+          "command.output": "blob://sha256/7349a2b4b2a981fc96f06b93d4d73e7511e01dd33b041b42f5da37f048e729db",
           "internal.retry_count.remote_environment_preflight": 0,
+          "internal.retry_count.checkout_existing_app": 0,
           "graph.persona": "iphone-app-ux-studio",
           "internal.retry_count.start": 0,
           "internal.fidelity": "compact",
-          "internal.thread_id": "start",
-          "internal.work_dir": "/home/daytona/workspace"
+          "internal.thread_id": "remote_environment_preflight",
+          "internal.work_dir": "/home/daytona/workspace",
+          "thread.remote_environment_preflight.current_node": "checkout_existing_app"
         },
         "node_outcomes": {
           "start": {
@@ -2619,10 +2686,19 @@
             },
             "notes": "Script completed: node scripts/iphone-app-factory/ux-studio-preflight.mjs --server https://fabro-maestro-production.up.railway.app/api/v1 --expected-control-plane railway",
             "usage": null
+          },
+          "checkout_existing_app": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/7349a2b4b2a981fc96f06b93d4d73e7511e01dd33b041b42f5da37f048e729db"
+            },
+            "notes": "Script completed: node scripts/iphone-app-factory/checkout-existing-app.mjs",
+            "usage": null
           }
         },
-        "next_node_id": "checkout_existing_app",
+        "next_node_id": "existing_app_intake",
         "node_visits": {
+          "checkout_existing_app": 1,
           "start": 1,
           "remote_environment_preflight": 1
         }
@@ -2651,7 +2727,12 @@
       "first_event_seq": 20,
       "prompt": null,
       "response": null,
-      "completion": null,
+      "completion": {
+        "outcome": "succeeded",
+        "notes": "Script completed: node scripts/iphone-app-factory/ux-studio-preflight.mjs --server https://fabro-maestro-production.up.railway.app/api/v1 --expected-control-plane railway",
+        "failure_reason": null,
+        "timestamp": "2026-05-16T21:41:34.666581066Z"
+      },
       "provider_used": null,
       "diff": null,
       "script_invocation": {
@@ -2673,6 +2754,44 @@
       "live_streaming": true,
       "termination": "exited",
       "started_at": "2026-05-16T21:41:30.597507912Z",
+      "handler": "command",
+      "duration_ms": 4028,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "total_tokens": 0,
+        "reasoning_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "state": "succeeded"
+    },
+    "checkout_existing_app@1": {
+      "first_event_seq": 31,
+      "prompt": null,
+      "response": null,
+      "completion": null,
+      "provider_used": null,
+      "diff": null,
+      "script_invocation": {
+        "script": "node scripts/iphone-app-factory/checkout-existing-app.mjs",
+        "command": "exec 2>&1\nnode scripts/iphone-app-factory/checkout-existing-app.mjs",
+        "language": "shell"
+      },
+      "script_timing": {
+        "output": "blob://sha256/7349a2b4b2a981fc96f06b93d4d73e7511e01dd33b041b42f5da37f048e729db",
+        "exit_code": 0,
+        "duration_ms": 1755,
+        "termination": "exited",
+        "output_bytes": 255,
+        "live_streaming": true
+      },
+      "parallel_results": null,
+      "output": null,
+      "output_bytes": 255,
+      "live_streaming": true,
+      "termination": "exited",
+      "started_at": "2026-05-16T21:41:36.412443660Z",
       "handler": "command",
       "usage": {
         "input_tokens": 0,
