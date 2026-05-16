@@ -20,7 +20,8 @@ const registryPath = argValue("--registry", "evals/iphone-app-factory/prompt-reg
 const outPath = resolve(argValue("--out", ".workflow/iphone-app-factory/evals/prompt-quality.json"));
 const allowFallback = booleanArg("--allow-fallback", true);
 const acceptedRiskPromptfooFailure = booleanArg("--accepted-risk-promptfoo-failure", false);
-const allowPromptfooFallback = acceptedRiskPromptfooFailure || booleanArg("--allow-promptfoo-fallback", false);
+const legacyAllowPromptfooFallbackRequested = booleanArg("--allow-promptfoo-fallback", false);
+const allowPromptfooFallback = acceptedRiskPromptfooFailure;
 const skipPromptfoo = booleanArg("--skip-promptfoo", false);
 const timeoutMs = Number(process.env.PROMPTFOO_MAX_EVAL_TIME_MS || "120000");
 
@@ -32,6 +33,70 @@ function writeReport(report) {
 
 function readJson(path) {
   return JSON.parse(readFileSync(path, "utf8"));
+}
+
+function secretQueryParameterName(name) {
+  let decoded = String(name).replace(/\+/g, " ");
+  try {
+    decoded = decodeURIComponent(decoded);
+  } catch {
+    decoded = String(name);
+  }
+  const normalized = decoded
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "_")
+    .replace(/^_+|_+$/g, "");
+  return normalized
+    .split("_")
+    .some((part) => ["auth", "authorization", "credential", "key", "password", "secret", "signature", "token"].includes(part));
+}
+
+function redactString(value) {
+  let text = String(value || "")
+    .replace(/\b([a-z][a-z0-9+.-]*:\/\/)([^/?#\s"'<>@]+@)/gi, "$1[redacted]@")
+    .replace(/([?#&])([^=&#\s]+)=([^&#\s]*)/g, (match, separator, name) => {
+      if (!secretQueryParameterName(name)) return match;
+      return `${separator}${name}=[redacted]`;
+    })
+    .replace(/sk-or-v1-[A-Za-z0-9_-]+/g, "[redacted]")
+    .replace(/xox[baprs]-[A-Za-z0-9-]+/g, "[redacted]")
+    .replace(/xapp-[A-Za-z0-9-]+/g, "[redacted]")
+    .replace(/lin_api_[A-Za-z0-9_-]+/g, "[redacted]")
+    .replace(/apify_api_[A-Za-z0-9_-]+/g, "[redacted]")
+    .replace(/\bBearer\s+[A-Za-z0-9._~+/=-]{12,}/gi, "Bearer [redacted]");
+
+  for (const key of ["OPENROUTER_API_KEY", "OPENAI_API_KEY"]) {
+    const secret = process.env[key];
+    if (!secret) continue;
+    text = text.replaceAll(secret, "[redacted]");
+  }
+  return text;
+}
+
+function minimalPromptfooEnv() {
+  const env = {};
+  for (const key of ["PATH", "HOME", "TMPDIR", "TEMP", "USER", "LOGNAME", "SHELL", "SystemRoot", "COMSPEC"]) {
+    if (process.env[key]) env[key] = process.env[key];
+  }
+  env.OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY || "";
+  env.OPENAI_API_KEY = process.env.OPENAI_API_KEY || process.env.OPENROUTER_API_KEY || "";
+  env.OPENAI_BASE_URL = process.env.OPENAI_BASE_URL || "https://openrouter.ai/api/v1";
+  env.PROMPTFOO_DISABLE_TELEMETRY = "1";
+  env.PROMPTFOO_MAX_EVAL_TIME_MS = String(timeoutMs);
+  env.CI = process.env.CI || "1";
+  return env;
+}
+
+function promptfooCommandCheck() {
+  if (skipPromptfoo) return { available: false, reason: "skipped by --skip-promptfoo" };
+  const result = spawnSync("promptfoo", ["--version"], {
+    encoding: "utf8",
+    env: minimalPromptfooEnv(),
+    timeout: 15000,
+  });
+  if (result.error) return { available: false, reason: result.error.code || result.error.message };
+  if (result.status !== 0) return { available: false, reason: "promptfoo --version failed" };
+  return { available: true, version: redactString(result.stdout || result.stderr).trim().split("\n")[0] };
 }
 
 function readPromptfooSummary() {
@@ -123,9 +188,13 @@ for (const entry of registry.prompts || []) {
   }
 }
 
-const workflowText = existsSync("workflows/iphone-app-factory/build-iphone-app.fabro")
-  ? readFileSync("workflows/iphone-app-factory/build-iphone-app.fabro", "utf8")
-  : "";
+const workflowText = [
+  "workflows/iphone-app-factory/build-iphone-app.fabro",
+  "workflows/iphone-app-factory/iterate-existing-app-ux.fabro",
+]
+  .filter((path) => existsSync(path))
+  .map((path) => readFileSync(path, "utf8"))
+  .join("\n");
 for (const entry of registry.prompts || []) {
   if (!workflowText.includes(entry.path)) {
     const basename = entry.path.split("/").pop();
@@ -133,23 +202,17 @@ for (const entry of registry.prompts || []) {
   }
 }
 
-const promptfooAvailable = !skipPromptfoo && spawnSync("sh", ["-lc", "command -v npx >/dev/null 2>&1"], {
-  encoding: "utf8",
-}).status === 0;
-
 let promptfooResult = null;
-if (promptfooAvailable) {
+const promptfooMissingEnv = [];
+if (!skipPromptfoo && !process.env.OPENROUTER_API_KEY) promptfooMissingEnv.push("OPENROUTER_API_KEY");
+const promptfooCheck = promptfooCommandCheck();
+if (promptfooCheck.available && promptfooMissingEnv.length === 0) {
   promptfooResult = spawnSync(
-    "sh",
-    ["-lc", `npx -y promptfoo@latest eval -c ${JSON.stringify(config)} --no-progress-bar`],
+    "promptfoo",
+    ["eval", "-c", config, "--no-progress-bar"],
     {
       encoding: "utf8",
-      env: {
-        ...process.env,
-        OPENAI_API_KEY: process.env.OPENAI_API_KEY || process.env.OPENROUTER_API_KEY || "",
-        OPENAI_BASE_URL: process.env.OPENAI_BASE_URL || "https://openrouter.ai/api/v1",
-        PROMPTFOO_DISABLE_TELEMETRY: "1",
-      },
+      env: minimalPromptfooEnv(),
       timeout: timeoutMs + 15000,
     },
   );
@@ -159,8 +222,13 @@ const promptfooOk = Boolean(promptfooResult && promptfooResult.status === 0);
 const fallbackOk = fallbackFailures.length === 0;
 const promptfooFailed = Boolean(promptfooResult && promptfooResult.status !== 0);
 const promptfooUnavailable = !promptfooResult;
-const promptfooSummary = readPromptfooSummary();
-const ok = fallbackOk && (!promptfooUnavailable || allowFallback) && (!promptfooFailed || allowPromptfooFallback);
+const promptfooUnavailableReason = promptfooMissingEnv.length > 0
+  ? `missing environment keys: ${promptfooMissingEnv.join(", ")}`
+  : promptfooCheck.available
+    ? null
+    : promptfooCheck.reason;
+const promptfooSummary = promptfooResult ? readPromptfooSummary() : { promptfoo_failures: [], critical_gaps: [] };
+const ok = fallbackOk && (promptfooOk || allowPromptfooFallback);
 const report = {
   ok,
   registry_path: registryPath,
@@ -171,9 +239,14 @@ const report = {
   promptfoo_attempted: Boolean(promptfooResult),
   promptfoo_ok: promptfooOk,
   promptfoo_status: promptfooResult ? promptfooResult.status : null,
-  promptfoo_stdout_excerpt: promptfooResult ? promptfooResult.stdout.slice(-3000) : "",
-  promptfoo_stderr_excerpt: promptfooResult ? promptfooResult.stderr.slice(-3000) : "",
+  promptfoo_available: promptfooCheck.available,
+  promptfoo_version: promptfooCheck.version || null,
+  promptfoo_missing_env: promptfooMissingEnv,
+  promptfoo_unavailable_reason: promptfooUnavailable ? promptfooUnavailableReason : null,
+  promptfoo_stdout_excerpt: promptfooResult ? redactString(promptfooResult.stdout).slice(-3000) : "",
+  promptfoo_stderr_excerpt: promptfooResult ? redactString(promptfooResult.stderr).slice(-3000) : "",
   allow_promptfoo_fallback: allowPromptfooFallback,
+  legacy_allow_promptfoo_fallback_requested: legacyAllowPromptfooFallbackRequested,
   accepted_risk_promptfoo_failure: acceptedRiskPromptfooFailure,
   skip_promptfoo: skipPromptfoo,
   fallback_used: !promptfooOk,

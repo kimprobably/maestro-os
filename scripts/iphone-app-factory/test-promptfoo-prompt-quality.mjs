@@ -25,6 +25,8 @@ test("promptfoo prompt quality fallback requires structured JSON config and Wake
       script,
       "--skip-promptfoo",
       "true",
+      "--accepted-risk-promptfoo-failure",
+      "true",
       "--out",
       out,
     ], {
@@ -36,7 +38,7 @@ test("promptfoo prompt quality fallback requires structured JSON config and Wake
     const report = JSON.parse(readFileSync(out, "utf8"));
     assert.equal(report.ok, true);
     assert.equal(report.skip_promptfoo, true);
-    assert.equal(report.accepted_risk_promptfoo_failure, false);
+    assert.equal(report.accepted_risk_promptfoo_failure, true);
 
     const yaml = readFileSync(join(repoRoot, "evals/iphone-app-factory/prompt-quality.yaml"), "utf8");
     assert.match(yaml, /JSON\.parse\(output\)/);
@@ -46,5 +48,29 @@ test("promptfoo prompt quality fallback requires structured JSON config and Wake
     assert.match(dataset, /waketask-control-plane/);
     assert.match(dataset, /waketask-hosted-ios-evidence/);
     assert.match(dataset, /waketask-artifacts-metadata/);
+  });
+});
+
+test("promptfoo prompt quality fails closed when promptfoo is skipped without accepted risk", () => {
+  withTempDir((dir) => {
+    const out = join(dir, "prompt-quality.json");
+    const result = spawnSync(process.execPath, [
+      script,
+      "--skip-promptfoo",
+      "true",
+      "--out",
+      out,
+    ], {
+      cwd: repoRoot,
+      encoding: "utf8",
+      stdio: ["ignore", "pipe", "pipe"],
+    });
+    assert.notEqual(result.status, 0);
+    const report = JSON.parse(readFileSync(out, "utf8"));
+    assert.equal(report.fallback_ok, true);
+    assert.equal(report.promptfoo_attempted, false);
+    assert.equal(report.promptfoo_unavailable_reason, "skipped by --skip-promptfoo");
+    assert.equal(report.accepted_risk_promptfoo_failure, false);
+    assert.equal(report.ok, false);
   });
 });

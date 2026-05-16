@@ -1,0 +1,51 @@
+# Verify UX Studio Phase
+
+Independently verify the current UX Studio implementation phase for `{{ inputs.app_dir|default("apps/generated-iphone-app") }}`.
+
+Read:
+
+- `.workflow/iphone-app-ux-studio/implementation-plan.md`
+- `.workflow/iphone-app-ux-studio/design/screen-spec.md`
+- `.workflow/iphone-app-ux-studio/design/screen-spec.json`
+- `.workflow/iphone-app-ux-studio/evidence/visual-system.md` when verifying `visual-system`
+- `.workflow/iphone-app-ux-studio/evidence/screen-flows.md` when verifying `screen-flows`
+- changed app source, tests, screenshot manifests, Appium identifiers, and relevant review notes
+
+Use the current Fabro stage label or the immediately preceding implementation stage to identify the phase. If that is ambiguous, inspect pending verifier notes and update only one evidence file:
+
+- `visual-system`: `.workflow/iphone-app-ux-studio/evidence/visual-system.md`
+- `screen-flows`: `.workflow/iphone-app-ux-studio/evidence/screen-flows.md`
+
+## Verify
+
+Check that:
+
+- the phase stayed inside its scope and did not rebuild auth, payments, entitlements, networking, storage, localization infrastructure, bundle ID, release configuration, or unrelated app behavior
+- the evidence lists files changed, commands run, acceptance criteria, risks, and phase-specific notes
+- implementation claims are visible in code, tests, previews, screenshots, Appium output, or other concrete artifacts
+- `visual-system` has app-specific SwiftUI tokens/components, Dynamic Type behavior, VoiceOver support, and state coverage rather than generic styling
+- `screen-flows` implements the selected direction across required screen ids or clearly documents absent screens without hiding gaps
+- Appium identifiers remain stable or are intentionally changed with replacement identifiers documented
+- screenshot states are captured or explicitly identified as still pending for the retry target
+- Mobbin, Pageflows, competitor screenshots, competitor copy, brand identity, and proprietary interaction sequences are treated as abstract references only and are not copied
+- no secrets, credentials, tokens, cookies, private keys, signed URLs, customer data, or environment values appear in evidence or logs
+
+## Required Update
+
+Update the same evidence file by replacing the pending verifier line under `## Verifier notes`.
+
+If acceptable, write a concise verifier note that avoids the gate rejection phrases and includes concrete evidence, for example:
+
+`- Accepted by independent verifier: reviewed files, commands, and screenshots; phase scope is acceptable to advance.`
+
+If not acceptable, write a concise rejection note that includes the exact retry target, for example:
+
+`- Rejected by independent verifier: retry visual-system because Dynamic Type evidence is missing.`
+
+Do not self-approve implementation work you performed in the same stage. If you made edits, leave `- Pending independent verifier.` and explain the edits outside the evidence file.
+
+## Output Rules
+
+- Preserve the evidence headings and existing useful evidence.
+- Do not delete risks; refine them if needed.
+- Do not print secrets or environment values. If a source contains secret material, write only: `secret material omitted`.

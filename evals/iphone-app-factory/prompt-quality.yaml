@@ -5,7 +5,7 @@ providers:
     config:
       apiKeyEnvar: OPENROUTER_API_KEY
       temperature: 0
-      max_tokens: 700
+      max_tokens: 1200
       maxRetries: 0
 
 evaluateOptions:
@@ -18,7 +18,7 @@ defaultTest:
       config:
         apiKeyEnvar: OPENROUTER_API_KEY
         temperature: 0
-        max_tokens: 700
+        max_tokens: 1200
 
 prompts:
   - |
@@ -46,14 +46,34 @@ prompts:
     FINAL_CONSENSUS:
     {{final_consensus}}
 
+    UX_EXISTING_APP_INTAKE:
+    {{ux_existing_app_intake}}
+
+    UX_MOBBIN_MCP_RESEARCH:
+    {{ux_mobbin_mcp_research}}
+
+    UX_DESIGN_TOURNAMENT_CONSENSUS:
+    {{ux_design_tournament_consensus}}
+
+    UX_SCREEN_SPEC:
+    {{ux_screen_spec}}
+
+    UX_SCREENSHOT_EVIDENCE_REVIEW:
+    {{ux_screenshot_evidence_review}}
+
+    UX_POSTMORTEM_LEARNING_CAPTURE:
+    {{ux_postmortem_learning_capture}}
+
     Return valid JSON only, no markdown fences. It must match this shape:
     {
       "verdict": "APPROVE",
       "score": 0.0,
-      "covered": ["spec_lab","boilerplate_reuse","ios_quality","appium_qa","mobbin_safety","release_hardening"],
+      "covered": ["spec_lab","boilerplate_reuse","ios_quality","appium_qa","mobbin_safety","release_hardening","mobbin_mcp","design_corpus","adversarial_design","screenshots","accessibility","postmortem"],
       "golden_case_results": [{"id":"case-id","pass":true,"reason":"short reason"}],
       "critical_gaps": [],
       "gaps": [{"id":"gap-id","severity":"low","reason":"short reason"}],
+      "risks": [{"id":"risk-id","severity":"low","reason":"short reason"}],
+      "required_artifacts": [".workflow/iphone-app-ux-studio/research/existing-app-intake.md",".workflow/iphone-app-ux-studio/research/mobbin-mcp-research.md",".workflow/iphone-app-ux-studio/design/tournament-consensus.json","reports/ios/screenshots/manifest.json",".workflow/iphone-app-ux-studio/postmortem.md"],
       "accepted_risk": false
     }
 
@@ -67,11 +87,17 @@ tests:
       implement_integration: file://../../prompts/iphone-app-factory/implement-integration.md
       ai_ui_explorer: file://../../prompts/iphone-app-factory/ai-ui-explorer.md
       final_consensus: file://../../prompts/iphone-app-factory/final-consensus.md
+      ux_existing_app_intake: file://../../prompts/iphone-app-factory/ux-existing-app-intake.md
+      ux_mobbin_mcp_research: file://../../prompts/iphone-app-factory/ux-mobbin-mcp-research.md
+      ux_design_tournament_consensus: file://../../prompts/iphone-app-factory/ux-design-tournament-consensus.md
+      ux_screen_spec: file://../../prompts/iphone-app-factory/ux-screen-spec.md
+      ux_screenshot_evidence_review: file://../../prompts/iphone-app-factory/ux-screenshot-evidence-review.md
+      ux_postmortem_learning_capture: file://../../prompts/iphone-app-factory/ux-postmortem-learning-capture.md
     assert:
       - type: javascript
         value: |
           const parsed = JSON.parse(output);
-          const requiredKeys = ["verdict", "score", "covered", "golden_case_results", "critical_gaps", "gaps", "accepted_risk"];
+          const requiredKeys = ["verdict", "score", "covered", "golden_case_results", "critical_gaps", "gaps", "risks", "required_artifacts", "accepted_risk"];
           for (const key of requiredKeys) {
             if (!(key in parsed)) return { pass: false, reason: `missing ${key}` };
           }
@@ -79,11 +105,29 @@ tests:
           if (!Array.isArray(parsed.golden_case_results)) return { pass: false, reason: "golden_case_results must be an array" };
           if (!Array.isArray(parsed.critical_gaps)) return { pass: false, reason: "critical_gaps must be an array" };
           if (!Array.isArray(parsed.gaps)) return { pass: false, reason: "gaps must be an array" };
+          if (!Array.isArray(parsed.risks)) return { pass: false, reason: "risks must be an array" };
+          if (!Array.isArray(parsed.required_artifacts)) return { pass: false, reason: "required_artifacts must be an array" };
           if (parsed.accepted_risk !== false) return { pass: false, reason: "accepted_risk must be false for overnight runs" };
-          const requiredCases = ["spec-lab", "boilerplate-first", "ios-qa", "mobbin-safe", "waketask-control-plane", "waketask-hosted-ios-evidence", "waketask-artifacts-metadata"];
+          const requiredCases = ["spec-lab", "boilerplate-first", "ios-qa", "mobbin-safe", "waketask-control-plane", "waketask-hosted-ios-evidence", "waketask-artifacts-metadata", "waketask-review-fan-in", "ux-existing-app-intake", "ux-mobbin-mcp-safe", "ux-design-tournament", "ux-screenshot-evidence", "ux-postmortem-learning"];
           const seenCases = new Set(parsed.golden_case_results.map((entry) => entry.id));
           for (const id of requiredCases) {
             if (!seenCases.has(id)) return { pass: false, reason: `missing golden case result ${id}` };
+          }
+          const requiredCoverage = ["spec_lab", "boilerplate_reuse", "ios_quality", "appium_qa", "mobbin_safety", "release_hardening", "mobbin_mcp", "design_corpus", "adversarial_design", "screenshots", "accessibility", "postmortem"];
+          const seenCoverage = new Set(parsed.covered);
+          for (const id of requiredCoverage) {
+            if (!seenCoverage.has(id)) return { pass: false, reason: `missing coverage ${id}` };
+          }
+          const requiredArtifacts = [
+            ".workflow/iphone-app-ux-studio/research/existing-app-intake.md",
+            ".workflow/iphone-app-ux-studio/research/mobbin-mcp-research.md",
+            ".workflow/iphone-app-ux-studio/design/tournament-consensus.json",
+            "reports/ios/screenshots/manifest.json",
+            ".workflow/iphone-app-ux-studio/postmortem.md",
+          ];
+          const artifactText = JSON.stringify(parsed.required_artifacts);
+          for (const artifact of requiredArtifacts) {
+            if (!artifactText.includes(artifact)) return { pass: false, reason: `missing required artifact ${artifact}` };
           }
           if (parsed.golden_case_results.some((entry) => entry.pass !== true)) {
             return { pass: false, reason: "one or more golden cases failed" };
@@ -93,7 +137,7 @@ tests:
           }
           return true;
       - type: contains-all
-        value: ["spec_lab", "boilerplate_reuse", "ios_quality", "appium_qa", "mobbin_safety", "release_hardening"]
+        value: ["spec_lab", "boilerplate_reuse", "ios_quality", "appium_qa", "mobbin_safety", "release_hardening", "mobbin_mcp", "design_corpus", "adversarial_design", "screenshots", "accessibility", "postmortem", "required_artifacts", "risks"]
       - type: llm-rubric
         value: "The prompt suite should make quality reproducible across prompt registry, golden cases, adversarial review, deterministic gates, and final release criteria."
         threshold: 0.78

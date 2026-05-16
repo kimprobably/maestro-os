@@ -75,3 +75,168 @@ test("create-run-config rejects generic defaults", () => {
     assert.match(result.stderr, /app_name is generic/);
   });
 });
+
+test("create-run-config writes a Railway UX iteration TOML", () => {
+  withTempDir((dir) => {
+    const result = runConfig(dir, [
+      "--mode",
+      "ux-iteration",
+      "--repo-url",
+      "https://github.com/kimprobably/waketask-ios.git",
+      "--base-branch",
+      "main",
+      "--run-branch",
+      "ux-studio/waketask-test",
+      "--target-audience",
+      "US iPhone users who oversleep",
+      "--app-name",
+      "WakeTask",
+      "--bundle-id",
+      "com.keen.waketask",
+      "--app-dir",
+      "apps/waketask-ios",
+      "--app-domain",
+      "alarm_clock",
+      "--design-goal",
+      "Make setup calm and wake mode unmistakable.",
+      "--use-mobbin-mcp",
+      "true",
+      "--use-design-corpus",
+      "true",
+      "--selected-direction-mode",
+      "automatic",
+    ]);
+    assert.equal(result.status, 0, result.stderr);
+    const report = JSON.parse(result.stdout);
+    const toml = readFileSync(report.path, "utf8");
+    assert.equal(report.mode, "ux-iteration");
+    assert.match(toml, /graph = "iterate-existing-app-ux\.fabro"/);
+    assert.match(toml, /control_plane = "railway"/);
+    assert.match(toml, /fabro_server = "https:\/\/fabro-maestro-production\.up\.railway\.app\/api\/v1"/);
+    assert.match(toml, /FABRO_SERVER = "https:\/\/fabro-maestro-production\.up\.railway\.app\/api\/v1"/);
+    assert.match(toml, /network = "allow_all"/);
+    assert.match(toml, /repo_url = "https:\/\/github\.com\/kimprobably\/waketask-ios\.git"/);
+    assert.match(toml, /run_branch = "ux-studio\/waketask-test"/);
+    assert.match(toml, /app_dir = "apps\/waketask-ios"/);
+    assert.match(toml, /use_mobbin_mcp = "true"/);
+    assert.match(toml, /use_design_corpus = "true"/);
+  });
+});
+
+test("create-run-config rejects unresolved UX run branch templates", () => {
+  withTempDir((dir) => {
+    const result = runConfig(dir, [
+      "--mode",
+      "ux-iteration",
+      "--repo-url",
+      "https://github.com/kimprobably/waketask-ios.git",
+      "--base-branch",
+      "main",
+      "--run-branch",
+      "ux-studio/{{ run.id }}",
+      "--target-audience",
+      "US iPhone users who oversleep",
+      "--app-name",
+      "WakeTask",
+      "--bundle-id",
+      "com.keen.waketask",
+      "--app-dir",
+      "apps/waketask-ios",
+      "--app-domain",
+      "alarm_clock",
+      "--design-goal",
+      "Make setup calm and wake mode unmistakable.",
+    ]);
+    assert.notEqual(result.status, 0);
+    assert.match(result.stderr, /run_branch must be concrete/);
+  });
+});
+
+test("create-run-config rejects current directory for UX iteration app_dir", () => {
+  withTempDir((dir) => {
+    const result = runConfig(dir, [
+      "--mode",
+      "ux-iteration",
+      "--repo-url",
+      "https://github.com/kimprobably/waketask-ios.git",
+      "--base-branch",
+      "main",
+      "--run-branch",
+      "ux-studio/waketask-test",
+      "--target-audience",
+      "US iPhone users who oversleep",
+      "--app-name",
+      "WakeTask",
+      "--bundle-id",
+      "com.keen.waketask",
+      "--app-dir",
+      ".",
+      "--app-domain",
+      "alarm_clock",
+      "--design-goal",
+      "Make setup calm and wake mode unmistakable.",
+    ]);
+    assert.notEqual(result.status, 0);
+    assert.match(result.stderr, /app_dir must be a checkout directory/);
+  });
+});
+
+test("create-run-config rejects credential-bearing UX repository URLs", () => {
+  withTempDir((dir) => {
+    const result = runConfig(dir, [
+      "--mode",
+      "ux-iteration",
+      "--repo-url",
+      "https://token-secret@github.com/kimprobably/waketask-ios.git",
+      "--base-branch",
+      "main",
+      "--run-branch",
+      "ux-studio/waketask-test",
+      "--target-audience",
+      "US iPhone users who oversleep",
+      "--app-name",
+      "WakeTask",
+      "--bundle-id",
+      "com.keen.waketask",
+      "--app-dir",
+      "apps/waketask-ios",
+      "--app-domain",
+      "alarm_clock",
+      "--design-goal",
+      "Make setup calm and wake mode unmistakable.",
+    ]);
+    assert.notEqual(result.status, 0);
+    assert.match(result.stderr, /repo_url must not include credentials/);
+    assert.doesNotMatch(result.stderr, /token-secret/);
+  });
+});
+
+test("create-run-config rejects unsafe UX branch names and app domains", () => {
+  withTempDir((dir) => {
+    const result = runConfig(dir, [
+      "--mode",
+      "ux-iteration",
+      "--repo-url",
+      "https://github.com/kimprobably/waketask-ios.git",
+      "--base-branch",
+      "main",
+      "--run-branch",
+      "ux-studio/../../main",
+      "--target-audience",
+      "US iPhone users who oversleep",
+      "--app-name",
+      "WakeTask",
+      "--bundle-id",
+      "com.keen.waketask",
+      "--app-dir",
+      "apps/waketask-ios",
+      "--app-domain",
+      "alarm clock",
+      "--design-goal",
+      "Make setup calm and wake mode unmistakable.",
+    ]);
+    assert.notEqual(result.status, 0);
+    assert.match(result.stderr, /run_branch contains unsafe characters/);
+    assert.match(result.stderr, /app_domain contains unsafe characters/);
+  });
+});

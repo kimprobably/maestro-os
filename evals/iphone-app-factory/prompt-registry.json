@@ -2,6 +2,17 @@
   "workflow": "iphone-app-factory",
   "dataset_version": "iphone-app-factory-prompts-v1",
   "rubric_version": "iphone-app-factory-prompt-rubric-v1",
+  "required_marker_coverage": [
+    "no secret output",
+    "Mobbin MCP preferred",
+    "no proprietary cloning",
+    "structured artifact path",
+    "what_to_adapt",
+    "what_not_to_copy",
+    "screenshot evidence",
+    "adversarial critique",
+    "postmortem learning capture"
+  ],
   "prompts": [
     {
       "path": "prompts/iphone-app-factory/research-app-store.md",
@@ -162,6 +173,116 @@
       "path": "prompts/iphone-app-factory/final-consensus.md",
       "stage": "final-review",
       "must_include": ["VERDICT: APPROVED", "VERDICT: REJECTED", "boilerplate"]
+    },
+    {
+      "path": "prompts/iphone-app-factory/ux-app-store-review-mining.md",
+      "stage": "ux-research",
+      "must_include": [".workflow/iphone-app-ux-studio/research/app-store-review-mining.md", "Do not output secrets", "environment dump commands", "Do not clone proprietary screens", "what_to_adapt", "what_not_to_copy"]
+    },
+    {
+      "path": "prompts/iphone-app-factory/ux-apple-hig-research.md",
+      "stage": "ux-research",
+      "must_include": [".workflow/iphone-app-ux-studio/research/apple-hig-research.md", "Do not output secrets", "Do not clone proprietary third-party screens", "what_to_adapt", "what_not_to_copy"]
+    },
+    {
+      "path": "prompts/iphone-app-factory/ux-baseline-screenshot-capture.md",
+      "stage": "ux-evidence",
+      "must_include": ["Capture current app screenshots before any redesign work starts", "reports/ios/screenshots/manifest.json", "reports/ios/screenshots/before/", "Do not include secrets", "Reject your own capture"]
+    },
+    {
+      "path": "prompts/iphone-app-factory/ux-behavioral-research.md",
+      "stage": "ux-research",
+      "must_include": [".workflow/iphone-app-ux-studio/research/behavioral-ux-research.md", "Do not output secrets", "Do not clone proprietary screens", "what_to_adapt", "what_not_to_copy"]
+    },
+    {
+      "path": "prompts/iphone-app-factory/ux-competitor-flow-research.md",
+      "stage": "ux-research",
+      "must_include": [".workflow/iphone-app-ux-studio/research/competitor-flows.md", "Do not output secrets", "Do not clone proprietary screens", "what_to_adapt", "what_not_to_copy"]
+    },
+    {
+      "path": "prompts/iphone-app-factory/ux-design-cross-critique.md",
+      "stage": "ux-design-review",
+      "must_include": [".workflow/iphone-app-ux-studio/design/cross-critique.md", "adversarial panel", "unsafe copying", "Do not print, persist", "secret material omitted"]
+    },
+    {
+      "path": "prompts/iphone-app-factory/ux-design-direction-candidate.md",
+      "stage": "ux-design",
+      "must_include": [".workflow/iphone-app-ux-studio/design/directions/<direction_label>.md", "what_to_adapt", "what_not_to_copy", "critique it adversarially", "Do not print, persist"]
+    },
+    {
+      "path": "prompts/iphone-app-factory/ux-design-opportunity-synthesis.md",
+      "stage": "ux-synthesis",
+      "must_include": [".workflow/iphone-app-ux-studio/research/design-opportunity-synthesis.md", ".workflow/iphone-app-ux-studio/research/reference-pack.json", "Do not output secrets", "Do not clone proprietary screens", "what_to_adapt", "what_not_to_copy", "private_only=true"]
+    },
+    {
+      "path": "prompts/iphone-app-factory/ux-design-tournament-consensus.md",
+      "stage": "ux-design",
+      "must_include": ["adversarial design tournament", ".workflow/iphone-app-ux-studio/design/tournament-consensus.md", ".workflow/iphone-app-ux-studio/design/tournament-consensus.json", "adversarial critique", "no_clone_statement", "Do not leak credentials"]
+    },
+    {
+      "path": "prompts/iphone-app-factory/ux-existing-app-intake.md",
+      "stage": "ux-research",
+      "must_include": [".workflow/iphone-app-ux-studio/research/existing-app-intake.md", ".workflow/iphone-app-ux-studio/research/reference-gap-analysis.json", "Do not output secrets", "environment dump commands", "Do not clone proprietary screens", "what_to_adapt", "what_not_to_copy"]
+    },
+    {
+      "path": "prompts/iphone-app-factory/ux-implement-screen-flows.md",
+      "stage": "ux-implementation",
+      "must_include": [".workflow/iphone-app-ux-studio/evidence/screen-flows.md", "screenshot evidence is ready", "Do not copy assets", "Do not output secrets", "secret material omitted"]
+    },
+    {
+      "path": "prompts/iphone-app-factory/ux-implement-visual-system.md",
+      "stage": "ux-implementation",
+      "must_include": [".workflow/iphone-app-ux-studio/evidence/visual-system.md", "Acceptance criteria", "Do not copy assets", "Do not output secrets", "secret material omitted"]
+    },
+    {
+      "path": "prompts/iphone-app-factory/ux-implementation-plan.md",
+      "stage": "ux-implementation-plan",
+      "must_include": [".workflow/iphone-app-ux-studio/implementation-plan.md", "Screenshot States To Capture", "do not copy assets", "Do not output secrets", "secret material omitted"]
+    },
+    {
+      "path": "prompts/iphone-app-factory/ux-mobbin-mcp-research.md",
+      "stage": "ux-research",
+      "must_include": ["Prefer the official Mobbin MCP", "Do not use Google OAuth", "Do not output secrets", "Do not clone proprietary screens", "what_to_adapt", "what_not_to_copy", ".workflow/iphone-app-ux-studio/research/mobbin-mcp-research.md"]
+    },
+    {
+      "path": "prompts/iphone-app-factory/ux-pageflows-research.md",
+      "stage": "ux-research",
+      "must_include": [".workflow/iphone-app-ux-studio/research/pageflows-research.md", "Do not output secrets", "Do not clone proprietary screens", "what_to_adapt", "what_not_to_copy"]
+    },
+    {
+      "path": "prompts/iphone-app-factory/ux-review-ux-quality.md",
+      "stage": "ux-final-review",
+      "must_include": [".workflow/iphone-app-ux-studio/reviews/ux-quality.md", "screenshot evidence is missing", "copied rather than abstracted", "Do not output secrets", "VERDICT: APPROVED", "VERDICT: REJECTED"]
+    },
+    {
+      "path": "prompts/iphone-app-factory/ux-review-accessibility.md",
+      "stage": "ux-final-review",
+      "must_include": [".workflow/iphone-app-ux-studio/reviews/accessibility.md", "Dynamic Type", "VoiceOver", "Contrast And Motion", "Automation Identifiers", "Do not output secrets", "VERDICT: APPROVED", "VERDICT: REJECTED"]
+    },
+    {
+      "path": "prompts/iphone-app-factory/ux-final-consensus.md",
+      "stage": "ux-final-review",
+      "must_include": [".workflow/iphone-app-ux-studio/reviews/final-consensus.md", ".workflow/iphone-app-ux-studio/final-review-gate.json", "Blocking Issues", "Release Handoff Notes", "Do not output secrets", "VERDICT: APPROVED", "VERDICT: REJECTED"]
+    },
+    {
+      "path": "prompts/iphone-app-factory/ux-screen-spec.md",
+      "stage": "ux-spec",
+      "must_include": [".workflow/iphone-app-ux-studio/design/screen-spec.md", ".workflow/iphone-app-ux-studio/design/screen-spec.json", "screenshot acceptance criteria", "no_clone_statement", "Do not print, persist"]
+    },
+    {
+      "path": "prompts/iphone-app-factory/ux-screenshot-evidence-review.md",
+      "stage": "ux-review",
+      "must_include": ["reports/ios/screenshots/manifest.json", "before/after screenshots", ".workflow/iphone-app-ux-studio/reviews/screenshot-evidence.md", "VERDICT: APPROVED", "VERDICT: REJECTED"]
+    },
+    {
+      "path": "prompts/iphone-app-factory/ux-verify-phase.md",
+      "stage": "ux-verify",
+      "must_include": [".workflow/iphone-app-ux-studio/evidence/visual-system.md", ".workflow/iphone-app-ux-studio/evidence/screen-flows.md", "screenshot states", "not copied", "Do not print secrets", "Accepted by independent verifier"]
+    },
+    {
+      "path": "prompts/iphone-app-factory/ux-postmortem-learning-capture.md",
+      "stage": "ux-postmortem",
+      "must_include": [".workflow/iphone-app-ux-studio/postmortem.md", "Learning Capture", "prompt improvements", "workflow improvements", "design corpus additions", "ux_postmortem_learning", "postmortem_learning", "what-to-adapt", "what-not-to-copy", "Do not print secrets", "secret material omitted"]
     }
   ]
 }

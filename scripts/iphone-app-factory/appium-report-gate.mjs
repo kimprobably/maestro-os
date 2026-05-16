@@ -7,8 +7,10 @@ function arg(name, fallback = "") {
   return idx >= 0 && process.argv[idx + 1] ? process.argv[idx + 1] : fallback;
 }
 
-const appDir = process.argv[2] || "apps/generated-iphone-app";
-const allowDeferred = arg("--allow-deferred", "false") === "true";
+const appDir = process.argv[2] && !process.argv[2].startsWith("--")
+  ? process.argv[2]
+  : process.env.APP_DIR || process.env.UX_APP_DIR || "apps/generated-iphone-app";
+const allowDeferred = arg("--allow-deferred", process.env.UX_ALLOW_MACOS_DEFERRED || "false") === "true";
 const root = ".workflow/iphone-app-factory";
 const candidates = [
   join(appDir, "reports/ios/appium-exploratory-report.json"),

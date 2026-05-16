@@ -1,0 +1,348 @@
+digraph IterateExistingAppUX {
+    graph [
+        goal="Iterate on an existing iPhone app UX with private design research, adversarial design directions, hosted iOS validation, and postmortem learning capture",
+        persona="iphone-app-ux-studio",
+        secret_policy="never print environment variables or credential values; credential checks must be presence-only true/false checks; do not run environment dump commands; Mobbin and competitor screenshots are private research references only.",
+        inputs="repo_url,base_branch,run_branch,app_name,bundle_id,app_dir,app_domain,target_audience,design_goal,max_competitors,use_mobbin_mcp,use_design_corpus,design_corpus_write_mode,selected_direction_mode,ios_validation_mode,allow_macos_deferred,fabro_server",
+        outputs="existing_app_intake,reference_pack,design_tournament,screen_spec,ux_implementation_evidence,screenshot_manifest,appium_report,ios_quality_report,ux_handoff,postmortem",
+        default_max_retries=2,
+        retry_target="design_tournament_consensus",
+        fallback_retry_target="implement_screen_flows",
+        model_stylesheet="
+            *                  { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: low; }
+            .ux-research       { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: high; }
+            .design            { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: high; }
+            .critique          { provider: openrouter; model: google/gemini-3.1-pro-preview; reasoning_effort: high; }
+            .review            { provider: openrouter; model: google/gemini-3.1-pro-preview; reasoning_effort: high; }
+            .verify            { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: medium; }
+            .security          { provider: openrouter; model: google/gemini-3.1-pro-preview; reasoning_effort: high; }
+        "
+    ]
+    rankdir=LR
+
+    start [shape=Mdiamond, label="Start"]
+    exit  [shape=Msquare, label="Exit"]
+
+    remote_environment_preflight [
+        label="Remote Railway/Daytona Preflight",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="remote_environment_preflight",
+        script="node scripts/iphone-app-factory/ux-studio-preflight.mjs --server https://fabro-maestro-production.up.railway.app/api/v1 --expected-control-plane railway"
+    ]
+    checkout_existing_app [
+        label="Checkout Existing App",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="checkout_existing_app",
+        script="node scripts/iphone-app-factory/checkout-existing-app.mjs"
+    ]
+
+    existing_app_intake [
+        label="Existing App Intake",
+        class="ux-research",
+        goal_gate=true,
+        retry_target="existing_app_intake",
+        prompt="@../../prompts/iphone-app-factory/ux-existing-app-intake.md"
+    ]
+    baseline_screenshot_capture [
+        label="Baseline Screenshot Capture",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="existing_app_intake",
+        timeout="3600s",
+        script="node scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/ux-baseline-screenshot-capture.md --stage baseline-screenshot-capture --out .workflow/iphone-app-ux-studio/codex/baseline-screenshot-capture.json"
+    ]
+    design_corpus_preflight [
+        label="Design Corpus Preflight",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="design_corpus_preflight",
+        script="node scripts/iphone-app-factory/design-corpus.mjs init"
+    ]
+    retrieve_existing_references [
+        label="Retrieve Existing References",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="design_corpus_preflight",
+        script="mkdir -p .workflow/iphone-app-ux-studio/research; node scripts/iphone-app-factory/design-corpus.mjs reference-pack > .workflow/iphone-app-ux-studio/research/reference-pack.json"
+    ]
+    reference_gap_analysis [
+        label="Reference Gap Analysis",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="retrieve_existing_references",
+        script="mkdir -p .workflow/iphone-app-ux-studio/research; node -e \"const fs=require('fs'); const path='.workflow/iphone-app-ux-studio/research/reference-pack.json'; const pack=fs.existsSync(path)?JSON.parse(fs.readFileSync(path,'utf8')):{}; const refs=pack.references||pack.reference_pack?.references||[]; const report={ok:true,total_references:refs.length,needs_live_research:refs.length<12,missing:['competitor_flow_research','app_store_review_mining','mobbin_mcp_research','pageflows_research','apple_hig_research','behavioral_ux_research'],railway_fabro_required:true}; fs.writeFileSync('.workflow/iphone-app-ux-studio/research/reference-gap-analysis.json', JSON.stringify(report,null,2)+'\\n'); console.log(JSON.stringify(report));\""
+    ]
+
+    research_fanout [label="Research Fan-Out", shape=component, join_policy="wait_all", max_parallel=1]
+    competitor_flow_research [label="Competitor Flow Research", class="ux-research", prompt="@../../prompts/iphone-app-factory/ux-competitor-flow-research.md"]
+    app_store_review_mining [label="App Store Review Mining", class="ux-research", prompt="@../../prompts/iphone-app-factory/ux-app-store-review-mining.md"]
+    mobbin_mcp_research [label="Mobbin MCP Research", class="ux-research", prompt="@../../prompts/iphone-app-factory/ux-mobbin-mcp-research.md"]
+    pageflows_research [label="Pageflows Research", class="ux-research", prompt="@../../prompts/iphone-app-factory/ux-pageflows-research.md"]
+    apple_hig_research [label="Apple HIG Research", class="ux-research", prompt="@../../prompts/iphone-app-factory/ux-apple-hig-research.md"]
+    behavioral_ux_research [label="Behavioral UX Research", class="ux-research", prompt="@../../prompts/iphone-app-factory/ux-behavioral-research.md"]
+    research_join [label="Research Join", shape=tripleoctagon, join_policy="wait_all"]
+    design_opportunity_synthesis [
+        label="Design Opportunity Synthesis",
+        class="ux-research",
+        goal_gate=true,
+        retry_target="research_fanout",
+        prompt="@../../prompts/iphone-app-factory/ux-design-opportunity-synthesis.md"
+    ]
+    reference_pack_gate [
+        label="Reference Pack Gate",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="research_fanout",
+        script="node scripts/iphone-app-factory/reference-pack-gate.mjs"
+    ]
+
+    design_direction_fanout [label="Design Direction Fan-Out", shape=component, join_policy="wait_all", max_parallel=1]
+    calm_accountability_direction [label="Calm Accountability Direction", class="design", prompt="@../../prompts/iphone-app-factory/ux-design-direction-candidate.md"]
+    hard_wake_direction [label="Hard Wake Direction", class="design", prompt="@../../prompts/iphone-app-factory/ux-design-direction-candidate.md"]
+    gamified_streak_direction [label="Gamified Streak Direction", class="design", prompt="@../../prompts/iphone-app-factory/ux-design-direction-candidate.md"]
+    minimal_native_direction [label="Minimal Native Direction", class="design", prompt="@../../prompts/iphone-app-factory/ux-design-direction-candidate.md"]
+    design_direction_join [label="Design Direction Join", shape=tripleoctagon, join_policy="wait_all"]
+    design_cross_critique [
+        label="Design Cross Critique",
+        class="critique",
+        goal_gate=true,
+        retry_target="design_direction_fanout",
+        prompt="@../../prompts/iphone-app-factory/ux-design-cross-critique.md"
+    ]
+    design_tournament_consensus [
+        label="Design Tournament Consensus",
+        class="critique",
+        goal_gate=true,
+        retry_target="design_direction_fanout",
+        prompt="@../../prompts/iphone-app-factory/ux-design-tournament-consensus.md"
+    ]
+    design_tournament_gate [
+        label="Design Tournament Gate",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="design_direction_fanout",
+        script="node scripts/iphone-app-factory/design-tournament-gate.mjs"
+    ]
+    screen_ux_spec [
+        label="Screen UX Spec",
+        class="design",
+        goal_gate=true,
+        retry_target="design_tournament_consensus",
+        prompt="@../../prompts/iphone-app-factory/ux-screen-spec.md"
+    ]
+    implementation_plan_gate [
+        label="Implementation Plan Gate",
+        class="review",
+        goal_gate=true,
+        retry_target="screen_ux_spec",
+        prompt="@../../prompts/iphone-app-factory/ux-implementation-plan.md"
+    ]
+
+    implement_visual_system [
+        label="Implement Visual System",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="implement_visual_system",
+        timeout="3600s",
+        script="node scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/ux-implement-visual-system.md --stage visual-system --out .workflow/iphone-app-ux-studio/codex/visual-system.json"
+    ]
+    verify_visual_system [label="Verify Visual System", class="verify", goal_gate=true, retry_target="implement_visual_system", prompt="@../../prompts/iphone-app-factory/ux-verify-phase.md"]
+    gate_visual_system [label="Visual System Gate", shape=parallelogram, goal_gate=true, retry_target="implement_visual_system", script="node scripts/iphone-app-factory/phase-evidence-gate.mjs visual-system"]
+
+    implement_screen_flows [
+        label="Implement Screen Flows",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="implement_screen_flows",
+        timeout="3600s",
+        script="node scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/ux-implement-screen-flows.md --stage screen-flows --out .workflow/iphone-app-ux-studio/codex/screen-flows.json"
+    ]
+    verify_screen_flows [label="Verify Screen Flows", class="verify", goal_gate=true, retry_target="implement_screen_flows", prompt="@../../prompts/iphone-app-factory/ux-verify-phase.md"]
+    gate_screen_flows [label="Screen Flows Gate", shape=parallelogram, goal_gate=true, retry_target="implement_screen_flows", script="node scripts/iphone-app-factory/phase-evidence-gate.mjs screen-flows"]
+
+    screenshot_evidence_review [
+        label="Screenshot Evidence Review",
+        class="review",
+        goal_gate=true,
+        retry_target="implement_screen_flows",
+        prompt="@../../prompts/iphone-app-factory/ux-screenshot-evidence-review.md"
+    ]
+    screenshot_evidence_gate [
+        label="Screenshot Evidence Gate",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="implement_screen_flows",
+        script="node scripts/iphone-app-factory/ios-screenshot-manifest-gate.mjs --manifest reports/ios/screenshots/manifest.json --phase after --require-before-after true"
+    ]
+    appium_exploratory_gate [
+        label="Appium Exploratory Gate",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="implement_screen_flows",
+        script="node scripts/iphone-app-factory/appium-report-gate.mjs"
+    ]
+    ios_quality_gate [
+        label="iOS Quality Gate",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="implement_screen_flows",
+        timeout="3600s",
+        script="node scripts/iphone-app-factory/ios-ci-gate.mjs"
+    ]
+    prompt_context_budget_gate [
+        label="UX Prompt Context Budget Gate",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="screen_ux_spec",
+        script="node scripts/iphone-app-factory/prompt-context-budget-gate.mjs --root .workflow/iphone-app-ux-studio --out .workflow/iphone-app-ux-studio/prompt-context-budget.json"
+    ]
+
+    final_review_fanout [label="Final Review Fan-Out", shape=component, join_policy="wait_all", max_parallel=1]
+    ux_quality_review [label="UX Quality Review", class="review", prompt="@../../prompts/iphone-app-factory/ux-review-ux-quality.md"]
+    product_fidelity_review [label="Product Fidelity Review", class="review", prompt="@../../prompts/iphone-app-factory/review-product-fidelity.md"]
+    ios_architecture_review [label="iOS Architecture Review", class="review", prompt="@../../prompts/iphone-app-factory/review-ios-architecture.md"]
+    accessibility_review [label="Accessibility Review", class="review", prompt="@../../prompts/iphone-app-factory/ux-review-accessibility.md"]
+    security_privacy_review [label="Security Privacy Review", class="security", prompt="@../../prompts/iphone-app-factory/review-security-privacy.md"]
+    release_readiness_review [label="Release Readiness Review", class="review", prompt="@../../prompts/iphone-app-factory/review-release-readiness.md"]
+    final_review_join [label="Final Review Join", shape=tripleoctagon, join_policy="wait_all"]
+    ux_final_review_gate [
+        label="UX Final Review Gate",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="implement_screen_flows",
+        script="node scripts/iphone-app-factory/ux-final-review-gate.mjs"
+    ]
+    final_consensus [
+        label="Final Consensus",
+        class="review",
+        goal_gate=true,
+        retry_target="final_review_fanout",
+        prompt="@../../prompts/iphone-app-factory/ux-final-consensus.md"
+    ]
+    publish_handoff [
+        label="Publish Handoff",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="final_consensus",
+        script="node scripts/iphone-app-factory/publish-handoff.mjs"
+    ]
+    postmortem_learning_capture [
+        label="Postmortem Learning Capture",
+        class="review",
+        goal_gate=true,
+        retry_target="postmortem_learning_capture",
+        prompt="@../../prompts/iphone-app-factory/ux-postmortem-learning-capture.md"
+    ]
+    postmortem_gate [
+        label="Postmortem Gate",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="postmortem_learning_capture",
+        script="node scripts/iphone-app-factory/ux-postmortem-gate.mjs"
+    ]
+
+    start -> remote_environment_preflight
+    remote_environment_preflight -> checkout_existing_app [condition="outcome=succeeded"]
+    remote_environment_preflight -> remote_environment_preflight [label="Retry Railway Preflight"]
+    checkout_existing_app -> existing_app_intake [condition="outcome=succeeded"]
+    checkout_existing_app -> remote_environment_preflight [label="Fix Checkout"]
+
+    existing_app_intake -> baseline_screenshot_capture [condition="outcome=succeeded"]
+    existing_app_intake -> existing_app_intake [label="Retry Intake"]
+    baseline_screenshot_capture -> design_corpus_preflight [condition="outcome=succeeded"]
+    baseline_screenshot_capture -> existing_app_intake [label="Retry Baseline"]
+    design_corpus_preflight -> retrieve_existing_references [condition="outcome=succeeded"]
+    design_corpus_preflight -> remote_environment_preflight [label="Fix Environment"]
+    retrieve_existing_references -> reference_gap_analysis [condition="outcome=succeeded"]
+    retrieve_existing_references -> design_corpus_preflight [label="Retry Corpus"]
+    reference_gap_analysis -> research_fanout [condition="outcome=succeeded"]
+    reference_gap_analysis -> retrieve_existing_references [label="Retry Corpus"]
+
+    research_fanout -> competitor_flow_research
+    research_fanout -> app_store_review_mining
+    research_fanout -> mobbin_mcp_research
+    research_fanout -> pageflows_research
+    research_fanout -> apple_hig_research
+    research_fanout -> behavioral_ux_research
+    competitor_flow_research -> research_join
+    app_store_review_mining -> research_join
+    mobbin_mcp_research -> research_join
+    pageflows_research -> research_join
+    apple_hig_research -> research_join
+    behavioral_ux_research -> research_join
+    research_join -> design_opportunity_synthesis
+    design_opportunity_synthesis -> reference_pack_gate [condition="outcome=succeeded"]
+    design_opportunity_synthesis -> research_fanout [label="Research Fix"]
+    reference_pack_gate -> design_direction_fanout [condition="outcome=succeeded"]
+    reference_pack_gate -> research_fanout [label="Fill Reference Gaps"]
+
+    design_direction_fanout -> calm_accountability_direction
+    design_direction_fanout -> hard_wake_direction
+    design_direction_fanout -> gamified_streak_direction
+    design_direction_fanout -> minimal_native_direction
+    calm_accountability_direction -> design_direction_join
+    hard_wake_direction -> design_direction_join
+    gamified_streak_direction -> design_direction_join
+    minimal_native_direction -> design_direction_join
+    design_direction_join -> design_cross_critique
+    design_cross_critique -> design_tournament_consensus [condition="outcome=succeeded"]
+    design_cross_critique -> design_direction_fanout [label="Retry Directions"]
+    design_tournament_consensus -> design_tournament_gate [condition="outcome=succeeded"]
+    design_tournament_consensus -> design_direction_fanout [label="Retry Tournament"]
+    design_tournament_gate -> screen_ux_spec [condition="outcome=succeeded"]
+    design_tournament_gate -> design_direction_fanout [label="Weak Design"]
+    screen_ux_spec -> implementation_plan_gate [condition="outcome=succeeded"]
+    screen_ux_spec -> screen_ux_spec [label="Spec Fix"]
+    implementation_plan_gate -> implement_visual_system [condition="outcome=succeeded"]
+    implementation_plan_gate -> screen_ux_spec [label="Mapping Fix"]
+
+    implement_visual_system -> verify_visual_system [condition="outcome=succeeded"]
+    implement_visual_system -> implement_visual_system [label="Retry Visual System"]
+    verify_visual_system -> gate_visual_system [condition="outcome=succeeded"]
+    verify_visual_system -> implement_visual_system [label="Fix Visual System"]
+    gate_visual_system -> implement_screen_flows [condition="outcome=succeeded"]
+    gate_visual_system -> implement_visual_system [label="Fix Visual System"]
+
+    implement_screen_flows -> verify_screen_flows [condition="outcome=succeeded"]
+    implement_screen_flows -> implement_screen_flows [label="Retry Screen Flows"]
+    verify_screen_flows -> gate_screen_flows [condition="outcome=succeeded"]
+    verify_screen_flows -> implement_screen_flows [label="Fix Screen Flows"]
+    gate_screen_flows -> screenshot_evidence_review [condition="outcome=succeeded"]
+    gate_screen_flows -> implement_screen_flows [label="Fix Screen Flows"]
+    screenshot_evidence_review -> screenshot_evidence_gate [condition="outcome=succeeded"]
+    screenshot_evidence_review -> implement_screen_flows [label="Screenshot Review Fix"]
+    screenshot_evidence_gate -> appium_exploratory_gate [condition="outcome=succeeded"]
+    screenshot_evidence_gate -> implement_screen_flows [label="Screenshot Fix"]
+    appium_exploratory_gate -> ios_quality_gate [condition="outcome=succeeded"]
+    appium_exploratory_gate -> implement_screen_flows [label="Appium Fix"]
+    ios_quality_gate -> prompt_context_budget_gate [condition="outcome=succeeded"]
+    ios_quality_gate -> implement_screen_flows [label="CI Fix"]
+    prompt_context_budget_gate -> final_review_fanout [condition="outcome=succeeded"]
+    prompt_context_budget_gate -> screen_ux_spec [label="Compact Context"]
+
+    final_review_fanout -> ux_quality_review
+    final_review_fanout -> product_fidelity_review
+    final_review_fanout -> ios_architecture_review
+    final_review_fanout -> accessibility_review
+    final_review_fanout -> security_privacy_review
+    final_review_fanout -> release_readiness_review
+    ux_quality_review -> final_review_join
+    product_fidelity_review -> final_review_join
+    ios_architecture_review -> final_review_join
+    accessibility_review -> final_review_join
+    security_privacy_review -> final_review_join
+    release_readiness_review -> final_review_join
+    final_review_join -> ux_final_review_gate
+    ux_final_review_gate -> final_consensus [condition="outcome=succeeded"]
+    ux_final_review_gate -> implement_screen_flows [label="UX Fix"]
+    final_consensus -> publish_handoff [condition="outcome=succeeded"]
+    final_consensus -> final_review_fanout [label="Review Fix"]
+    publish_handoff -> postmortem_learning_capture [condition="outcome=succeeded"]
+    publish_handoff -> final_consensus [label="Handoff Fix"]
+    postmortem_learning_capture -> postmortem_gate [condition="outcome=succeeded"]
+    postmortem_learning_capture -> postmortem_learning_capture [label="Retry Postmortem"]
+    postmortem_gate -> exit [condition="outcome=succeeded"]
+    postmortem_gate -> postmortem_learning_capture [label="Complete Postmortem"]
+}

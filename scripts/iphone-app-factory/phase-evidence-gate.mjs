@@ -1,10 +1,16 @@
 #!/usr/bin/env node
-import { existsSync, readFileSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 
 const phase = process.argv[2];
-const appDir = process.argv[3] || "apps/generated-iphone-app";
-const root = ".workflow/iphone-app-factory";
+const appDir = process.argv[3] && !process.argv[3].startsWith("--")
+  ? process.argv[3]
+  : process.env.APP_DIR || process.env.UX_APP_DIR || "apps/generated-iphone-app";
+const uxStudioPhases = new Set(["visual-system", "screen-flows"]);
+const root = uxStudioPhases.has(phase)
+  ? ".workflow/iphone-app-ux-studio"
+  : ".workflow/iphone-app-factory";
 const evidence = `${root}/evidence/${phase}.md`;
+const reportDir = `${root}/evidence`;
 const failures = [];
 
 if (!phase) failures.push("missing phase");
@@ -22,7 +28,7 @@ if (!hasKnownDeferred && /VERDICT:\s*REJECTED|\bFAIL(ED|URE)?\b/i.test(text)) {
   failures.push(`${evidence} contains failing verdict`);
 }
 
-if (!hasKnownDeferred && !/Verifier notes/i.test(text)) {
+if (!/Verifier notes/i.test(text)) {
   failures.push(`${evidence} missing Verifier notes`);
 }
 
@@ -41,14 +47,16 @@ if (
 
 const verifierIndex = text.search(/Verifier notes/i);
 if (
-  !hasKnownDeferred &&
   verifierIndex >= 0 &&
-  /rejected|failed|not acceptable|do not advance|retry/i.test(text.slice(verifierIndex))
+  /rejected|failed|not acceptable|do not advance|retry|needs another implementation pass|another implementation pass|not ready|cannot advance|pending independent verifier/i.test(
+    text.slice(verifierIndex)
+  )
 ) {
   failures.push(`${evidence} verifier notes reject phase`);
 }
 
 const report = { ok: failures.length === 0, phase, appDir, failures };
+mkdirSync(reportDir, { recursive: true });
 writeFileSync(`${root}/evidence/${phase}-gate.json`, `${JSON.stringify(report, null, 2)}\n`);
 if (!report.ok) {
   console.error(JSON.stringify(report, null, 2));

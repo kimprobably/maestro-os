@@ -4,6 +4,8 @@ This workflow turns a validated app opportunity into a Swift iOS app built on to
 
 The workflow is intentionally conservative. Fabro owns the SDLC, but iOS build and UI execution require a macOS lane. Daytona can run research, specification, architecture, code review, and repository editing. Xcode, iOS Simulator, Appium XCUITest, signing, archive, and release string audits must run on macOS or through GitHub Actions macOS runners.
 
+For existing-app UI iteration, use the [iPhone App UX Studio Workflow](IPHONE-APP-UX-STUDIO-WORKFLOW.md) instead of this build-from-opportunity workflow.
+
 ## Overnight Target
 
 The default target is a TestFlight-ready handoff, not a live App Store submission.
