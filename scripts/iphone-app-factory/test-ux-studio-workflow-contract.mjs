@@ -81,6 +81,7 @@ const requiredScriptFiles = [
   "scripts/iphone-app-factory/ux-studio-preflight.mjs",
   "scripts/iphone-app-factory/checkout-existing-app.mjs",
   "scripts/iphone-app-factory/run-codex-prompt.mjs",
+  "scripts/iphone-app-factory/ensure-mobbin-research-artifact.mjs",
   "scripts/iphone-app-factory/design-corpus.mjs",
   "scripts/iphone-app-factory/reference-pack-gate.mjs",
   "scripts/iphone-app-factory/ios-screenshot-manifest-gate.mjs",
@@ -150,13 +151,22 @@ test("UX studio workflow scripts do not interpolate raw Fabro inputs", () => {
   assert.doesNotMatch(graph, /{{\s*inputs\./);
 });
 
+test("UX studio prompt stages route through CLI agents to avoid OpenRouter credit ceilings", () => {
+  const graph = readRequiredFile(workflowPath);
+  assert.match(graph, /\*\s+\{\s*backend:\s*cli;\s*provider:\s*openai;\s*model:\s*gpt-5\.3-codex-spark;/);
+  assert.match(graph, /\.ux-research\s+\{\s*backend:\s*cli;\s*provider:\s*openai;/);
+  assert.match(graph, /\.design\s+\{\s*backend:\s*cli;\s*provider:\s*openai;/);
+  assert.match(graph, /\.review\s+\{\s*backend:\s*cli;\s*provider:\s*openai;/);
+  assert.doesNotMatch(graph, /provider:\s*openrouter/);
+});
+
 test("UX studio implementation stages use CLI file-writing agents", () => {
   const graph = readRequiredFile(workflowPath);
   assert.match(graph, /run-codex-prompt\.mjs --prompt prompts\/iphone-app-factory\/ux-baseline-screenshot-capture\.md/);
   assert.match(graph, /run-codex-prompt\.mjs --prompt prompts\/iphone-app-factory\/ux-mobbin-mcp-research\.md/);
+  assert.match(graph, /ensure-mobbin-research-artifact\.mjs/);
   assert.match(graph, /run-codex-prompt\.mjs --prompt prompts\/iphone-app-factory\/ux-implement-visual-system\.md/);
   assert.match(graph, /run-codex-prompt\.mjs --prompt prompts\/iphone-app-factory\/ux-implement-screen-flows\.md/);
-  assert.doesNotMatch(graph, /provider:\s*openai/);
   assert.doesNotMatch(graph, /provider:\s*anthropic;\s*model:\s*claude-sonnet/);
 });
 

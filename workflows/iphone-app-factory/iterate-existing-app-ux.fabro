@@ -9,13 +9,13 @@ digraph IterateExistingAppUX {
         retry_target="design_tournament_consensus",
         fallback_retry_target="implement_screen_flows",
         model_stylesheet="
-            *                  { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: low; }
-            .ux-research       { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: high; }
-            .design            { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: high; }
-            .critique          { provider: openrouter; model: google/gemini-3.1-pro-preview; reasoning_effort: high; }
-            .review            { provider: openrouter; model: google/gemini-3.1-pro-preview; reasoning_effort: high; }
-            .verify            { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: medium; }
-            .security          { provider: openrouter; model: google/gemini-3.1-pro-preview; reasoning_effort: high; }
+            *                  { backend: cli; provider: openai; model: gpt-5.3-codex-spark; reasoning_effort: low; }
+            .ux-research       { backend: cli; provider: openai; model: gpt-5.3-codex-spark; reasoning_effort: medium; }
+            .design            { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }
+            .critique          { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }
+            .review            { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }
+            .verify            { backend: cli; provider: openai; model: gpt-5.3-codex-spark; reasoning_effort: medium; }
+            .security          { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }
         "
     ]
     rankdir=LR
@@ -83,7 +83,7 @@ digraph IterateExistingAppUX {
         shape=parallelogram,
         goal_gate=true,
         retry_target="mobbin_mcp_research",
-        script="node scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/ux-mobbin-mcp-research.md --stage mobbin-mcp-research --out .workflow/iphone-app-ux-studio/codex/mobbin-mcp-research.json"
+        script="node scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/ux-mobbin-mcp-research.md --stage mobbin-mcp-research --out .workflow/iphone-app-ux-studio/codex/mobbin-mcp-research.json && node scripts/iphone-app-factory/ensure-mobbin-research-artifact.mjs"
     ]
     pageflows_research [label="Pageflows Research", class="ux-research", prompt="@../../prompts/iphone-app-factory/ux-pageflows-research.md"]
     apple_hig_research [label="Apple HIG Research", class="ux-research", prompt="@../../prompts/iphone-app-factory/ux-apple-hig-research.md"]

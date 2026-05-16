@@ -35,6 +35,7 @@ Use these exact headings:
 ## Required Synthesis
 
 - Synthesize current app weaknesses, competitor patterns, App Store pain, Mobbin/Page Flows patterns, Apple HIG constraints, behavioral UX constraints, top screens, visual principles, and anti-patterns.
+- If `.workflow/iphone-app-ux-studio/research/mobbin-mcp-research.md` is missing but the Mobbin/Codex stage completed, first materialize a source-limited fallback Mobbin research artifact with the required Mobbin headings. Do not keep searching for missing Codex branch files.
 - For WakeTask-like alarm apps, explicitly evaluate:
   - calm setup mode
   - urgent wake mode
@@ -82,3 +83,14 @@ Write strict JSON with at least these keys:
 ```
 
 The JSON must include at least 12 total references, at least 4 competitor flow references, at least 4 Mobbin or Page Flows references when Mobbin MCP is enabled, at least 5 screen types, `what_to_adapt` and `what_not_to_copy` on every reference and observation, and `private_only=true` on every raw asset.
+
+For the deterministic gate, Mobbin/Page Flows references must be machine-detectable. At least four references must include `source`, `source_type`, `provider`, `url`, or `tags` containing either `mobbin`, `pageflows`, or `page flows`. If Mobbin is unavailable, use Page Flows or PageFlows-style fallback references and label the limitation in `evidence_summary`; do not hide them behind a generic `pattern_library` source.
+
+Before finishing, validate the JSON mentally against these gate predicates:
+
+- `references.length >= 12`
+- at least four references have `category` or `source_type` containing `competitor_flow`
+- at least four references have `source`, `source_type`, `provider`, `url`, or `tags` containing `mobbin`, `pageflows`, or `page flows`
+- `screen_types.length >= 5`
+- every reference and observation has non-empty `what_to_adapt` and `what_not_to_copy`
+- every raw asset has `"private_only": true`
