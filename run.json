@@ -1,0 +1,2544 @@
+{
+  "title": "Iterate on an existing iPhone app UX with private design research, adversarial design options, ho...",
+  "spec": {
+    "run_id": "01KRSCNCSGZMN8WY3F9QTWBG8P",
+    "settings": {
+      "project": {
+        "name": "maestro-os",
+        "description": null,
+        "metadata": {}
+      },
+      "workflow": {
+        "name": null,
+        "description": null,
+        "graph": "workflow.fabro",
+        "metadata": {}
+      },
+      "run": {
+        "goal": {
+          "type": "inline",
+          "value": "Iterate on an existing iPhone app UX with private design research, adversarial design options, hosted iOS validation, and postmortem learning capture"
+        },
+        "working_dir": null,
+        "metadata": {
+          "topic": "task-alarm-clock",
+          "app": "waketask",
+          "factory": "iphone-app-ux-studio",
+          "control_plane": "railway"
+        },
+        "inputs": {
+          "app_dir": "apps/waketask-ios",
+          "design_goal": "Improve WakeTask first-run, alarm setup, wake challenge, and history/streak UX using competitor evidence, stored screenshots, adversarial design directions, and hosted iOS validation",
+          "repo_url": "https://github.com/kimprobably/waketask-ios.git",
+          "target_audience": "heavy sleepers and professionals who need an alarm they cannot dismiss without meaningful wake-up engagement",
+          "design_corpus_write_mode": "private",
+          "ios_validation_mode": "github",
+          "fabro_server": "https://fabro-maestro-production.up.railway.app/api/v1",
+          "app_domain": "task_alarm",
+          "run_branch": "ux-studio/waketask-20260516-175632",
+          "bundle_id": "com.keen.waketask",
+          "max_competitors": "12",
+          "app_name": "WakeTask",
+          "selected_direction_mode": "automatic",
+          "use_design_corpus": "true",
+          "use_mobbin_mcp": "true",
+          "base_branch": "main",
+          "allow_macos_deferred": "false"
+        },
+        "model": {
+          "provider": "openrouter",
+          "name": "anthropic/claude-haiku-4-5",
+          "fallbacks": [],
+          "controls": {
+            "reasoning_effort": null,
+            "speed": null
+          }
+        },
+        "git": {
+          "author": null
+        },
+        "prepare": {
+          "commands": [],
+          "timeout_ms": 300000
+        },
+        "execution": {
+          "mode": "normal",
+          "approval": "prompt"
+        },
+        "checkpoint": {
+          "exclude_globs": []
+        },
+        "clone": {
+          "enabled": true
+        },
+        "run_branch": {
+          "enabled": true,
+          "push": true
+        },
+        "meta_branch": {
+          "enabled": true,
+          "push": true
+        },
+        "sandbox": {
+          "provider": "daytona",
+          "preserve": false,
+          "stop_on_terminal": true,
+          "devcontainer": false,
+          "env": {
+            "DAYTONA_API_KEY": "{{ env.DAYTONA_API_KEY }}",
+            "UX_TARGET_AUDIENCE": "heavy sleepers and professionals who need an alarm they cannot dismiss without meaningful wake-up engagement",
+            "CLAUDE_CODE_CREDENTIALS_JSON_BASE64": "{{ env.CLAUDE_CODE_CREDENTIALS_JSON_BASE64 }}",
+            "GH_TOKEN": "{{ env.GH_TOKEN }}",
+            "UX_RUN_ID": "ux-studio/waketask-20260516-175632",
+            "PROMPTFOO_DISABLE_TELEMETRY": "1",
+            "UX_APP_DOMAIN": "task_alarm",
+            "UX_SCREEN_TYPE": "task_alarm",
+            "LINEAR_API_URL": "{{ env.LINEAR_API_URL }}",
+            "UX_REPO_URL": "https://github.com/kimprobably/waketask-ios.git",
+            "LINEAR_API_KEY": "{{ env.LINEAR_API_KEY }}",
+            "APIFY_TIKTOK_ACTOR": "clockworks/tiktok-scraper",
+            "UX_USE_MOBBIN_MCP": "true",
+            "DAYTONA_API_URL": "{{ env.DAYTONA_API_URL }}",
+            "APIFY_TOKEN": "{{ env.APIFY_TOKEN }}",
+            "APIFY_INSTAGRAM_ACTOR": "apify/instagram-scraper",
+            "UX_APP_DIR": "apps/waketask-ios",
+            "FABRO_SERVER": "https://fabro-maestro-production.up.railway.app/api/v1",
+            "OPENAI_API_KEY": "{{ env.OPENAI_API_KEY }}",
+            "FABRO_DEV_TOKEN": "{{ env.FABRO_DEV_TOKEN }}",
+            "FABRO_SLACK_CHANNEL_ID": "{{ env.FABRO_SLACK_CHANNEL_ID }}",
+            "UX_IOS_VALIDATION_MODE": "github",
+            "CODEX_MCP_CREDENTIALS_JSON_BASE64": "{{ env.CODEX_MCP_CREDENTIALS_JSON_BASE64 }}",
+            "UX_BASE_BRANCH": "main",
+            "FABRO_SLACK_BOT_TOKEN": "{{ env.FABRO_SLACK_BOT_TOKEN }}",
+            "UX_ALLOW_MACOS_DEFERRED": "false",
+            "OPENROUTER_API_KEY": "{{ env.OPENROUTER_API_KEY }}",
+            "CODEX_AUTH_JSON_BASE64": "{{ env.CODEX_AUTH_JSON_BASE64 }}",
+            "CLAUDE_CODE_OAUTH_TOKEN": "{{ env.CLAUDE_CODE_OAUTH_TOKEN }}",
+            "APP_DIR": "apps/waketask-ios",
+            "GITHUB_TOKEN": "{{ env.GITHUB_TOKEN }}",
+            "APIFY_APPSTORE_ACTOR": "crawlerbros/appstore-scraper",
+            "UX_RUN_BRANCH": "ux-studio/waketask-20260516-175632"
+          },
+          "docker": {
+            "image": "buildpack-deps:noble",
+            "network_mode": null,
+            "memory_limit": 4000000000,
+            "cpu_quota": 200000,
+            "env_vars": {}
+          },
+          "daytona": {
+            "auto_stop_interval": 30,
+            "labels": {
+              "purpose": "code-factory",
+              "project": "maestro-os"
+            },
+            "snapshot": {
+              "name": "maestro-code-factory-v8",
+              "cpu": 2,
+              "memory_gb": 4,
+              "disk_gb": 10,
+              "dockerfile": {
+                "type": "inline",
+                "value": "FROM ubuntu:24.04\n\nENV DEBIAN_FRONTEND=noninteractive\nENV BUN_INSTALL=/root/.bun\nENV PATH=\"/root/.fabro/bin:/root/.bun/bin:/root/.local/bin:/root/.qlty/bin:${PATH}\"\nWORKDIR /home/daytona\n\nRUN apt-get update && apt-get install -y --no-install-recommends bash ca-certificates curl gh git jq openssh-client python3 python3-pip pipx ripgrep shellcheck sqlite3 unzip xz-utils && rm -rf /var/lib/apt/lists/*\n\nRUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash - && apt-get update && apt-get install -y --no-install-recommends nodejs && npm install -g @anthropic-ai/claude-code@2.1.141 @openai/codex promptfoo && npm cache clean --force && rm -rf /var/lib/apt/lists/*\n\nRUN curl -fsSL https://bun.sh/install | bash -s \"bun-v1.2.22\" && ln -sf /root/.bun/bin/bun /usr/local/bin/bun\n\nRUN pipx install spec-kitty-cli==3.1.8 && curl -fsSL https://qlty.sh | sh && ln -sf /root/.qlty/bin/qlty /usr/local/bin/qlty\n\nRUN set -eux; target=\"x86_64-unknown-linux-gnu\"; asset=\"fabro-${target}.tar.gz\"; url=\"$(curl -fsSL https://api.github.com/repos/fabro-sh/fabro/releases/latest | jq -r --arg asset \"$asset\" '.assets[] | select(.name == $asset) | .browser_download_url')\"; test -n \"$url\"; curl -fsSL \"$url\" -o /tmp/fabro.tar.gz; tar -xzf /tmp/fabro.tar.gz -C /tmp; install -m 0755 \"/tmp/fabro-${target}/fabro\" /usr/local/bin/fabro; rm -rf /tmp/fabro.tar.gz \"/tmp/fabro-${target}\"; fabro --version\n\nCMD [\"/bin/bash\"]\n"
+              }
+            },
+            "network": "allow_all"
+          }
+        },
+        "notifications": {},
+        "interviews": {
+          "provider": null,
+          "slack": null
+        },
+        "agent": {
+          "permissions": "full",
+          "mcps": {}
+        },
+        "hooks": [],
+        "scm": {
+          "provider": null,
+          "owner": null,
+          "repository": null,
+          "github": null
+        },
+        "pull_request": null,
+        "artifacts": {
+          "include": [
+            ".workflow/iphone-app-ux-studio/**",
+            ".workflow/iphone-app-factory/**",
+            "reports/ios/**",
+            ".github/workflows/**"
+          ]
+        },
+        "integrations": {
+          "github": {
+            "permissions": {
+              "issues": "write",
+              "metadata": "read",
+              "pull_requests": "write",
+              "actions": "read",
+              "contents": "write"
+            }
+          }
+        }
+      }
+    },
+    "graph": {
+      "name": "IterateExistingAppUX",
+      "nodes": {
+        "baseline_screenshot_capture": {
+          "id": "baseline_screenshot_capture",
+          "attrs": {
+            "retry_target": {
+              "String": "existing_app_intake"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "shape": {
+              "String": "parallelogram"
+            },
+            "label": {
+              "String": "Baseline Screenshot Capture"
+            },
+            "model": {
+              "String": "anthropic/claude-haiku-4-5"
+            },
+            "timeout": {
+              "Duration": {
+                "secs": 3600,
+                "nanos": 0
+              }
+            },
+            "provider": {
+              "String": "openrouter"
+            },
+            "script": {
+              "String": "node scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/ux-baseline-screenshot-capture.md --stage baseline-screenshot-capture --out .workflow/iphone-app-ux-studio/codex/baseline-screenshot-capture.json"
+            },
+            "goal_gate": {
+              "Boolean": true
+            }
+          }
+        },
+        "pageflows_research": {
+          "id": "pageflows_research",
+          "attrs": {
+            "prompt": {
+              "String": "# UX Page Flows Research\n\nResearch Page Flows or comparable public flow references and write the artifact to `.workflow/iphone-app-ux-studio/research/pageflows-research.md`.\n\n## Source Policy\n\n- Use Page Flows when available through permitted access, then public product videos, App Store previews, public websites, and public support docs as fallback.\n- Do not output secrets, credentials, tokens, cookies, private keys, session values, or environment variable values.\n- Do not clone proprietary screens, exact layouts, UI copy, brand identity, screenshots, or assets.\n- Raw flow captures are private-only evidence unless the source explicitly permits reuse.\n\n## Required Headings\n\nUse these exact headings:\n\n1. `# Page Flows Research`\n2. `## Source Policy`\n3. `## Source List`\n4. `## Flow References`\n5. `## Screen Type Coverage`\n6. `## Transition And State Patterns`\n7. `## what_to_adapt`\n8. `## what_not_to_copy`\n9. `## Raw Asset Privacy`\n\n## Required Content\n\n- Include product, source URL or source description, flow name, screen types, observed transitions, empty/error states, `what_to_adapt`, and `what_not_to_copy` for each reference.\n- Prefer references that clarify multi-screen behavior rather than static visual style.\n- Mark every captured raw asset as `private_only=true` in the notes so downstream synthesis can preserve that flag.\n"
+            },
+            "label": {
+              "String": "Pageflows Research"
+            },
+            "class": {
+              "String": "ux-research"
+            },
+            "provider": {
+              "String": "openrouter"
+            },
+            "reasoning_effort": {
+              "String": "high"
+            },
+            "model": {
+              "String": "anthropic/claude-haiku-4-5"
+            }
+          },
+          "classes": [
+            "ux-research"
+          ]
+        },
+        "ux_final_review_gate": {
+          "id": "ux_final_review_gate",
+          "attrs": {
+            "provider": {
+              "String": "openrouter"
+            },
+            "model": {
+              "String": "anthropic/claude-haiku-4-5"
+            },
+            "label": {
+              "String": "UX Final Review Gate"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "shape": {
+              "String": "parallelogram"
+            },
+            "goal_gate": {
+              "Boolean": true
+            },
+            "script": {
+              "String": "node scripts/iphone-app-factory/ux-final-review-gate.mjs"
+            },
+            "retry_target": {
+              "String": "implement_screen_flows"
+            }
+          }
+        },
+        "release_readiness_review": {
+          "id": "release_readiness_review",
+          "attrs": {
+            "class": {
+              "String": "review"
+            },
+            "provider": {
+              "String": "openrouter"
+            },
+            "label": {
+              "String": "Release Readiness Review"
+            },
+            "reasoning_effort": {
+              "String": "high"
+            },
+            "model": {
+              "String": "google/gemini-3.1-pro-preview"
+            },
+            "prompt": {
+              "String": "# Release Readiness Review\n\nReview release readiness evidence:\n\n- iOS CI report\n- App Store hardening report\n- App Store metadata/review notes\n- TestFlight readiness\n- signing/credential blockers\n\nWrite `.workflow/iphone-app-factory/reviews/release-readiness.md`.\n\nReject if the app claims App Store readiness without macOS/Xcode evidence.\n\nEnd with exactly one verdict line:\n\n`VERDICT: APPROVED`\n\nor\n\n`VERDICT: REJECTED`\n"
+            }
+          },
+          "classes": [
+            "review"
+          ]
+        },
+        "start": {
+          "id": "start",
+          "attrs": {
+            "shape": {
+              "String": "Mdiamond"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "provider": {
+              "String": "openrouter"
+            },
+            "label": {
+              "String": "Start"
+            },
+            "model": {
+              "String": "anthropic/claude-haiku-4-5"
+            }
+          }
+        },
+        "ios_quality_gate": {
+          "id": "ios_quality_gate",
+          "attrs": {
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "goal_gate": {
+              "Boolean": true
+            },
+            "retry_target": {
+              "String": "implement_screen_flows"
+            },
+            "shape": {
+              "String": "parallelogram"
+            },
+            "timeout": {
+              "Duration": {
+                "secs": 3600,
+                "nanos": 0
+              }
+            },
+            "script": {
+              "String": "node scripts/iphone-app-factory/ios-ci-gate.mjs"
+            },
+            "label": {
+              "String": "iOS Quality Gate"
+            },
+            "provider": {
+              "String": "openrouter"
+            },
+            "model": {
+              "String": "anthropic/claude-haiku-4-5"
+            }
+          }
+        },
+        "verify_screen_flows": {
+          "id": "verify_screen_flows",
+          "attrs": {
+            "prompt": {
+              "String": "# Verify UX Studio Phase\n\nIndependently verify the current UX Studio implementation phase for `apps/waketask-ios`.\n\nRead:\n\n- `.workflow/iphone-app-ux-studio/implementation-plan.md`\n- `.workflow/iphone-app-ux-studio/design/screen-spec.md`\n- `.workflow/iphone-app-ux-studio/design/screen-spec.json`\n- `.workflow/iphone-app-ux-studio/evidence/visual-system.md` when verifying `visual-system`\n- `.workflow/iphone-app-ux-studio/evidence/screen-flows.md` when verifying `screen-flows`\n- changed app source, tests, screenshot manifests, Appium identifiers, and relevant review notes\n\nUse the current Fabro stage label or the immediately preceding implementation stage to identify the phase. If that is ambiguous, inspect pending verifier notes and update only one evidence file:\n\n- `visual-system`: `.workflow/iphone-app-ux-studio/evidence/visual-system.md`\n- `screen-flows`: `.workflow/iphone-app-ux-studio/evidence/screen-flows.md`\n\n## Verify\n\nCheck that:\n\n- the phase stayed inside its scope and did not rebuild auth, payments, entitlements, networking, storage, localization infrastructure, bundle ID, release configuration, or unrelated app behavior\n- the evidence lists files changed, commands run, acceptance criteria, risks, and phase-specific notes\n- implementation claims are visible in code, tests, previews, screenshots, Appium output, or other concrete artifacts\n- `visual-system` has app-specific SwiftUI tokens/components, Dynamic Type behavior, VoiceOver support, and state coverage rather than generic styling\n- `screen-flows` implements the selected direction across required screen ids or clearly documents absent screens without hiding gaps\n- Appium identifiers remain stable or are intentionally changed with replacement identifiers documented\n- screenshot states are captured or explicitly identified as still pending for the retry target\n- Mobbin, Pageflows, competitor screenshots, competitor copy, brand identity, and proprietary interaction sequences are treated as abstract references only and are not copied\n- no secrets, credentials, tokens, cookies, private keys, signed URLs, customer data, or environment values appear in evidence or logs\n\n## Required Update\n\nUpdate the same evidence file by replacing the pending verifier line under `## Verifier notes`.\n\nIf acceptable, write a concise verifier note that avoids the gate rejection phrases and includes concrete evidence, for example:\n\n`- Accepted by independent verifier: reviewed files, commands, and screenshots; phase scope is acceptable to advance.`\n\nIf not acceptable, write a concise rejection note that includes the exact retry target, for example:\n\n`- Rejected by independent verifier: retry visual-system because Dynamic Type evidence is missing.`\n\nDo not self-approve implementation work you performed in the same stage. If you made edits, leave `- Pending independent verifier.` and explain the edits outside the evidence file.\n\n## Output Rules\n\n- Preserve the evidence headings and existing useful evidence.\n- Do not delete risks; refine them if needed.\n- Do not print secrets or environment values. If a source contains secret material, write only: `secret material omitted`."
+            },
+            "provider": {
+              "String": "openrouter"
+            },
+            "model": {
+              "String": "anthropic/claude-haiku-4-5"
+            },
+            "class": {
+              "String": "verify"
+            },
+            "reasoning_effort": {
+              "String": "medium"
+            },
+            "label": {
+              "String": "Verify Screen Flows"
+            },
+            "goal_gate": {
+              "Boolean": true
+            },
+            "retry_target": {
+              "String": "implement_screen_flows"
+            }
+          },
+          "classes": [
+            "verify"
+          ]
+        },
+        "ux_quality_review": {
+          "id": "ux_quality_review",
+          "attrs": {
+            "prompt": {
+              "String": "# UX Quality Review\n\nReview the implemented UX Studio changes in `apps/waketask-ios`.\n\nRead:\n\n- `.workflow/iphone-app-ux-studio/implementation-plan.md`\n- `.workflow/iphone-app-ux-studio/design/screen-spec.md`\n- `.workflow/iphone-app-ux-studio/design/screen-spec.json`\n- `.workflow/iphone-app-ux-studio/evidence/visual-system.md`\n- `.workflow/iphone-app-ux-studio/evidence/screen-flows.md`\n- `.workflow/iphone-app-ux-studio/reviews/screenshot-evidence.md` if present\n- current app source, tests, screenshot manifest, screenshots, Appium report, and any UX review notes\n\nIndependently judge whether the implementation matches the selected direction, preserves existing behavior, and meets iPhone UX quality expectations.\n\n## Required Output\n\nWrite:\n\n`.workflow/iphone-app-ux-studio/reviews/ux-quality.md`\n\n## Required Headings\n\nUse these headings exactly:\n\n- `# UX Quality Review`\n- `## Source List`\n- `## Findings`\n- `## Screen Coverage`\n- `## Visual System Quality`\n- `## Behavior Preservation`\n- `## Accessibility And Dynamic Type`\n- `## Screenshot Evidence`\n- `## No-Clone Review`\n- `## Required Fixes`\n- `## Verdict`\n\n## Reject If\n\nReject the implementation if any of these are true:\n\n- the UI is mostly generic `List` or `Form` boilerplate without a justified native iOS intent tied to the screen spec\n- the active task or wake state is too calm, low contrast, or visually indistinct from setup/create/edit states\n- setup mode is chaotic, overloaded, or visually louder than the active task state\n- completion/accountability is missing, hidden, reduced to a disposable toast, or not tied to user progress\n- screenshot evidence is missing, incomplete, blank, nearly blank, or does not include required before/after states where available\n- Mobbin, Pageflows, competitor flows, screenshots, assets, copy, brand identity, visual compositions, or proprietary interaction sequences were copied rather than abstracted\n- text clips, truncates unexpectedly, overlaps, becomes unreadable, or controls overlap/collide at supported Dynamic Type sizes or common iPhone widths\n- tappable controls lack discoverable labels or stable Appium identifiers where automation needs them\n- auth, payment, entitlement, networking, storage, localization infrastructure, bundle ID, or release configuration was rebuilt without an explicit later ADR\n- dark mode, light mode, reduced motion, VoiceOver, one-handed reach, or contrast is materially worse than before\n- evidence claims work that is not visible in code, screenshots, tests, or Appium output\n\n## Review Expectations\n\n- Prefer concrete findings with file paths, screen ids, screenshot paths, and test names.\n- If rejecting, list exact required fixes and the retry target phase: `visual-system` or `screen-flows`.\n- If approving, mention residual risks or follow-up checks, but do not add conditions after approval.\n- Do not output secrets, credentials, tokens, cookies, private keys, signed URLs, customer data, or environment values. If a source contains secrets or private account information, write only: `secret material omitted`.\n\nEnd `.workflow/iphone-app-ux-studio/reviews/ux-quality.md` with exactly one of these verdict lines:\n\n`VERDICT: APPROVED`\n\nor\n\n`VERDICT: REJECTED`"
+            },
+            "provider": {
+              "String": "openrouter"
+            },
+            "label": {
+              "String": "UX Quality Review"
+            },
+            "class": {
+              "String": "review"
+            },
+            "model": {
+              "String": "google/gemini-3.1-pro-preview"
+            },
+            "reasoning_effort": {
+              "String": "high"
+            }
+          },
+          "classes": [
+            "review"
+          ]
+        },
+        "behavioral_ux_research": {
+          "id": "behavioral_ux_research",
+          "attrs": {
+            "model": {
+              "String": "anthropic/claude-haiku-4-5"
+            },
+            "label": {
+              "String": "Behavioral UX Research"
+            },
+            "provider": {
+              "String": "openrouter"
+            },
+            "reasoning_effort": {
+              "String": "high"
+            },
+            "class": {
+              "String": "ux-research"
+            },
+            "prompt": {
+              "String": "# UX Behavioral Research\n\nResearch behavioral UX constraints for the product category and write the artifact to `.workflow/iphone-app-ux-studio/research/behavioral-ux-research.md`.\n\n## Source Policy\n\n- Use credible public sources, platform guidance, peer-reviewed or institution-backed material when available, and clearly labeled product evidence.\n- Do not present medical, legal, financial, or psychological claims beyond the evidence.\n- Do not output secrets, credentials, tokens, cookies, private keys, session values, or environment variable values.\n- Do not clone proprietary screens, exact layouts, UI copy, brand identity, screenshots, or assets.\n\n## Required Headings\n\nUse these exact headings:\n\n1. `# Behavioral UX Research`\n2. `## Source Policy`\n3. `## Source List`\n4. `## User Motivation Constraints`\n5. `## Friction And Commitment Patterns`\n6. `## Reward And Accountability Patterns`\n7. `## Risk And Harm Avoidance`\n8. `## Screen Type Implications`\n9. `## what_to_adapt`\n10. `## what_not_to_copy`\n\n## Required Content\n\n- Tie each behavioral claim to a source or mark it as an inference.\n- Identify constraints around motivation, habit formation, urgency, anxiety, avoidance, reward timing, and accountability.\n- For alarm or WakeTask-like apps, distinguish calm setup behavior from urgent wake behavior and reward/accountability behavior.\n- Under `## what_to_adapt`, describe behavior principles to apply.\n- Under `## what_not_to_copy`, describe manipulative, coercive, unsafe, or unsupported patterns to avoid.\n"
+            }
+          },
+          "classes": [
+            "ux-research"
+          ]
+        },
+        "gate_visual_system": {
+          "id": "gate_visual_system",
+          "attrs": {
+            "label": {
+              "String": "Visual System Gate"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "shape": {
+              "String": "parallelogram"
+            },
+            "retry_target": {
+              "String": "implement_visual_system"
+            },
+            "goal_gate": {
+              "Boolean": true
+            },
+            "script": {
+              "String": "node scripts/iphone-app-factory/phase-evidence-gate.mjs visual-system"
+            },
+            "provider": {
+              "String": "openrouter"
+            },
+            "model": {
+              "String": "anthropic/claude-haiku-4-5"
+            }
+          }
+        },
+        "remote_environment_preflight": {
+          "id": "remote_environment_preflight",
+          "attrs": {
+            "script": {
+              "String": "node scripts/iphone-app-factory/ux-studio-preflight.mjs --server https://fabro-maestro-production.up.railway.app/api/v1 --expected-control-plane railway"
+            },
+            "label": {
+              "String": "Remote Railway/Daytona Preflight"
+            },
+            "retry_target": {
+              "String": "remote_environment_preflight"
+            },
+            "provider": {
+              "String": "openrouter"
+            },
+            "model": {
+              "String": "anthropic/claude-haiku-4-5"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "shape": {
+              "String": "parallelogram"
+            },
+            "goal_gate": {
+              "Boolean": true
+            }
+          }
+        },
+        "minimal_native_direction": {
+          "id": "minimal_native_direction",
+          "attrs": {
+            "reasoning_effort": {
+              "String": "high"
+            },
+            "label": {
+              "String": "Minimal Native Direction"
+            },
+            "provider": {
+              "String": "openrouter"
+            },
+            "model": {
+              "String": "anthropic/claude-haiku-4-5"
+            },
+            "class": {
+              "String": "design"
+            },
+            "prompt": {
+              "String": "# UX Design Direction Candidate\n\nYou are one branch in the UX Studio design direction tournament. The same prompt is run by multiple agents with one of these direction labels:\n\n- `calm_accountability_direction`\n- `hard_wake_direction`\n- `gamified_streak_direction`\n- `minimal_native_direction`\n\nUse the assigned direction label from your run context. Do not invent a fifth direction and do not collapse directions together.\n\nRead all available context:\n\n- `.workflow/iphone-app-ux-studio/preflight.json`\n- `.workflow/iphone-app-ux-studio/research/reference-gap-analysis.json`\n- `.workflow/iphone-app-ux-studio/research/competitor-flows.md`\n- `.workflow/iphone-app-ux-studio/research/app-store-review-mining.md`\n- `.workflow/iphone-app-ux-studio/research/mobbin-mcp-research.md`\n- `.workflow/iphone-app-ux-studio/research/pageflows-research.md`\n- `.workflow/iphone-app-ux-studio/research/apple-hig-research.md`\n- `.workflow/iphone-app-ux-studio/research/behavioral-ux-research.md`\n- `.workflow/iphone-app-ux-studio/research/design-opportunity-synthesis.md`\n- any retrieved reference pack artifacts in `.workflow/iphone-app-ux-studio/design/`\n\nDesign a distinct iPhone UX direction for a wake/task app. Treat competitor and Mobbin/Pageflows material as pattern evidence only. Adapt principles, not assets, screenshots, branding, copy, or proprietary compositions.\n\n## Required Output\n\nWrite your candidate to:\n\n`.workflow/iphone-app-ux-studio/design/directions/<direction_label>.md`\n\nThe Markdown must include these headings exactly:\n\n- `# Design Direction: <direction_label>`\n- `## Target Emotion`\n- `## Visual Principles`\n- `## Colors And Tokens`\n- `## Typography`\n- `## Motion`\n- `## Screen-By-Screen Implications`\n- `## Monetization Implications`\n- `## Accessibility Risks`\n- `## Implementation Risks`\n- `## Source List`\n- `## What To Adapt`\n- `## What Not To Copy`\n- `## No Secret Output`\n\n## Direction Requirements\n\nYour candidate must define:\n\n- target emotion: the feeling this direction should create in the first 10 seconds, in the wake state, and after task completion\n- visual principles: layout density, contrast model, component shape language, information hierarchy, empty-state tone, and how this direction stays native to iOS\n- colors and tokens: semantic token names, light/dark mode behavior, accent strategy, destructive states, success states, disabled states, and high-contrast fallback\n- typography: Dynamic Type behavior, title/body/caption roles, numeric treatment, and minimum readable sizes\n- motion: transition principles, reduce-motion behavior, haptics, animation timing ranges, and wake-state restraint\n- screen-by-screen implications for onboarding, home, primary list, create/edit, active task, completion, history/streaks, profile/settings, and paywall/subscription\n- monetization implications: what premium promise this direction supports, what should remain free, and how to avoid coercive dark patterns\n- accessibility risks: VoiceOver, Dynamic Type, contrast, reduced motion, haptics-only feedback, cognitive load, and one-handed use\n- implementation risks: SwiftUI complexity, custom component risk, animation risk, App Store risk, localization risk, and scope tradeoffs\n- source list: every reference artifact or external source you used, with a short reason for relevance\n- what_to_adapt: abstracted patterns, heuristics, or interaction ideas safe to adapt\n- what_not_to_copy: specific visual layouts, assets, copy, brand systems, animations, or distinctive sequences that must not be cloned\n\n## No Secret Output\n\nDo not print, persist, summarize, or infer credentials, session tokens, private links, signed URLs, cookies, API keys, or user secrets. If a source contains secrets or private account information, write only: `secret material omitted`.\n\n## Quality Bar\n\nMake the direction opinionated enough that another agent can critique it adversarially. Avoid generic iOS advice. Every claim should connect to the app's wake-state use case, research evidence, or implementation constraints.\n"
+            }
+          },
+          "classes": [
+            "design"
+          ]
+        },
+        "final_review_fanout": {
+          "id": "final_review_fanout",
+          "attrs": {
+            "provider": {
+              "String": "openrouter"
+            },
+            "label": {
+              "String": "Final Review Fan-Out"
+            },
+            "model": {
+              "String": "anthropic/claude-haiku-4-5"
+            },
+            "shape": {
+              "String": "component"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "join_policy": {
+              "String": "wait_all"
+            },
+            "max_parallel": {
+              "Integer": 1
+            }
+          }
+        },
+        "final_consensus": {
+          "id": "final_consensus",
+          "attrs": {
+            "model": {
+              "String": "google/gemini-3.1-pro-preview"
+            },
+            "retry_target": {
+              "String": "final_review_fanout"
+            },
+            "goal_gate": {
+              "Boolean": true
+            },
+            "class": {
+              "String": "review"
+            },
+            "prompt": {
+              "String": "# UX Final Consensus\n\nMerge the UX Studio final review set into a release-handoff decision.\n\nDo not output secrets. If a source artifact contains credentials, tokens, cookies, private keys, signed URLs, customer data, or environment values, write `secret material omitted` and reject the consensus.\n\nRead:\n\n- `.workflow/iphone-app-ux-studio/reviews/ux-quality.md`\n- `.workflow/iphone-app-ux-studio/reviews/accessibility.md`\n- `.workflow/iphone-app-factory/reviews/product-fidelity.md`\n- `.workflow/iphone-app-factory/reviews/ios-architecture.md`\n- `.workflow/iphone-app-factory/reviews/security-privacy.md`\n- `.workflow/iphone-app-factory/reviews/release-readiness.md`\n- `.workflow/iphone-app-ux-studio/final-review-gate.json`\n- `.workflow/iphone-app-ux-studio/evidence/**`\n- `reports/ios/**`\n- changed app source, tests, CI output, Appium/XCUITest output, screenshot manifests, and handoff artifacts\n\n## Required Output\n\nWrite:\n\n`.workflow/iphone-app-ux-studio/reviews/final-consensus.md`\n\n## Required Headings\n\nUse these headings exactly:\n\n- `# UX Final Consensus`\n- `## Source List`\n- `## Review Agreement`\n- `## Blocking Issues`\n- `## Evidence Summary`\n- `## Release Handoff Notes`\n- `## Residual Risks`\n- `## Verdict`\n\n## Decision Rules\n\n- Reject if any required review artifact is missing, lacks a verdict, contains a blocking finding, or ends with `VERDICT: REJECTED`.\n- Reject if hosted macOS/GitHub Actions evidence is missing while `allow_macos_deferred=false`.\n- Reject if screenshot/Appium evidence is missing, blank, or not tied to changed screens.\n- Reject if the implementation copies Mobbin, Pageflows, competitor screenshots, assets, layouts, copy, brand identity, or proprietary interactions rather than abstracting principles.\n- Reject if secrets, credentials, tokens, cookies, private keys, signed URLs, customer data, or environment values appear in review artifacts or handoff artifacts.\n\nEnd `.workflow/iphone-app-ux-studio/reviews/final-consensus.md` with exactly one of these verdict lines:\n\n`VERDICT: APPROVED`\n\nor\n\n`VERDICT: REJECTED`\n"
+            },
+            "provider": {
+              "String": "openrouter"
+            },
+            "reasoning_effort": {
+              "String": "high"
+            },
+            "label": {
+              "String": "Final Consensus"
+            }
+          },
+          "classes": [
+            "review"
+          ]
+        },
+        "hard_wake_direction": {
+          "id": "hard_wake_direction",
+          "attrs": {
+            "prompt": {
+              "String": "# UX Design Direction Candidate\n\nYou are one branch in the UX Studio design direction tournament. The same prompt is run by multiple agents with one of these direction labels:\n\n- `calm_accountability_direction`\n- `hard_wake_direction`\n- `gamified_streak_direction`\n- `minimal_native_direction`\n\nUse the assigned direction label from your run context. Do not invent a fifth direction and do not collapse directions together.\n\nRead all available context:\n\n- `.workflow/iphone-app-ux-studio/preflight.json`\n- `.workflow/iphone-app-ux-studio/research/reference-gap-analysis.json`\n- `.workflow/iphone-app-ux-studio/research/competitor-flows.md`\n- `.workflow/iphone-app-ux-studio/research/app-store-review-mining.md`\n- `.workflow/iphone-app-ux-studio/research/mobbin-mcp-research.md`\n- `.workflow/iphone-app-ux-studio/research/pageflows-research.md`\n- `.workflow/iphone-app-ux-studio/research/apple-hig-research.md`\n- `.workflow/iphone-app-ux-studio/research/behavioral-ux-research.md`\n- `.workflow/iphone-app-ux-studio/research/design-opportunity-synthesis.md`\n- any retrieved reference pack artifacts in `.workflow/iphone-app-ux-studio/design/`\n\nDesign a distinct iPhone UX direction for a wake/task app. Treat competitor and Mobbin/Pageflows material as pattern evidence only. Adapt principles, not assets, screenshots, branding, copy, or proprietary compositions.\n\n## Required Output\n\nWrite your candidate to:\n\n`.workflow/iphone-app-ux-studio/design/directions/<direction_label>.md`\n\nThe Markdown must include these headings exactly:\n\n- `# Design Direction: <direction_label>`\n- `## Target Emotion`\n- `## Visual Principles`\n- `## Colors And Tokens`\n- `## Typography`\n- `## Motion`\n- `## Screen-By-Screen Implications`\n- `## Monetization Implications`\n- `## Accessibility Risks`\n- `## Implementation Risks`\n- `## Source List`\n- `## What To Adapt`\n- `## What Not To Copy`\n- `## No Secret Output`\n\n## Direction Requirements\n\nYour candidate must define:\n\n- target emotion: the feeling this direction should create in the first 10 seconds, in the wake state, and after task completion\n- visual principles: layout density, contrast model, component shape language, information hierarchy, empty-state tone, and how this direction stays native to iOS\n- colors and tokens: semantic token names, light/dark mode behavior, accent strategy, destructive states, success states, disabled states, and high-contrast fallback\n- typography: Dynamic Type behavior, title/body/caption roles, numeric treatment, and minimum readable sizes\n- motion: transition principles, reduce-motion behavior, haptics, animation timing ranges, and wake-state restraint\n- screen-by-screen implications for onboarding, home, primary list, create/edit, active task, completion, history/streaks, profile/settings, and paywall/subscription\n- monetization implications: what premium promise this direction supports, what should remain free, and how to avoid coercive dark patterns\n- accessibility risks: VoiceOver, Dynamic Type, contrast, reduced motion, haptics-only feedback, cognitive load, and one-handed use\n- implementation risks: SwiftUI complexity, custom component risk, animation risk, App Store risk, localization risk, and scope tradeoffs\n- source list: every reference artifact or external source you used, with a short reason for relevance\n- what_to_adapt: abstracted patterns, heuristics, or interaction ideas safe to adapt\n- what_not_to_copy: specific visual layouts, assets, copy, brand systems, animations, or distinctive sequences that must not be cloned\n\n## No Secret Output\n\nDo not print, persist, summarize, or infer credentials, session tokens, private links, signed URLs, cookies, API keys, or user secrets. If a source contains secrets or private account information, write only: `secret material omitted`.\n\n## Quality Bar\n\nMake the direction opinionated enough that another agent can critique it adversarially. Avoid generic iOS advice. Every claim should connect to the app's wake-state use case, research evidence, or implementation constraints.\n"
+            },
+            "model": {
+              "String": "anthropic/claude-haiku-4-5"
+            },
+            "reasoning_effort": {
+              "String": "high"
+            },
+            "label": {
+              "String": "Hard Wake Direction"
+            },
+            "provider": {
+              "String": "openrouter"
+            },
+            "class": {
+              "String": "design"
+            }
+          },
+          "classes": [
+            "design"
+          ]
+        },
+        "implement_visual_system": {
+          "id": "implement_visual_system",
+          "attrs": {
+            "timeout": {
+              "Duration": {
+                "secs": 3600,
+                "nanos": 0
+              }
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "retry_target": {
+              "String": "implement_visual_system"
+            },
+            "provider": {
+              "String": "openrouter"
+            },
+            "model": {
+              "String": "anthropic/claude-haiku-4-5"
+            },
+            "script": {
+              "String": "node scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/ux-implement-visual-system.md --stage visual-system --out .workflow/iphone-app-ux-studio/codex/visual-system.json"
+            },
+            "label": {
+              "String": "Implement Visual System"
+            },
+            "goal_gate": {
+              "Boolean": true
+            },
+            "shape": {
+              "String": "parallelogram"
+            }
+          }
+        },
+        "implementation_plan_gate": {
+          "id": "implementation_plan_gate",
+          "attrs": {
+            "model": {
+              "String": "google/gemini-3.1-pro-preview"
+            },
+            "goal_gate": {
+              "Boolean": true
+            },
+            "reasoning_effort": {
+              "String": "high"
+            },
+            "provider": {
+              "String": "openrouter"
+            },
+            "label": {
+              "String": "Implementation Plan Gate"
+            },
+            "class": {
+              "String": "review"
+            },
+            "retry_target": {
+              "String": "screen_ux_spec"
+            },
+            "prompt": {
+              "String": "# UX Implementation Plan\n\nCreate the implementation plan for applying the UX Studio screen specs to the existing iPhone app in `apps/waketask-ios`.\n\nRead:\n\n- `.workflow/iphone-app-ux-studio/design/screen-spec.md`\n- `.workflow/iphone-app-ux-studio/design/screen-spec.json`\n- `.workflow/iphone-app-ux-studio/design/tournament-consensus.md`\n- `.workflow/iphone-app-ux-studio/research/existing-app-intake.md`\n- the existing SwiftUI app source, tests, Appium identifiers, and current screenshot manifest\n\nMap the selected UX direction to exact files in the existing app repository. This is a planning task only. Do not edit app source.\n\n## Required Output\n\nWrite:\n\n`.workflow/iphone-app-ux-studio/implementation-plan.md`\n\n## Required Headings\n\nUse these headings exactly:\n\n- `# UX Implementation Plan`\n- `## Source List`\n- `## Existing App File Map`\n- `## Screen Spec To File Mapping`\n- `## Expected SwiftUI Components`\n- `## Tests To Update`\n- `## Screenshot States To Capture`\n- `## Appium Identifier Changes`\n- `## Phase Breakdown`\n- `## Acceptance Criteria`\n- `## Explicit Non-Goals`\n- `## Risks`\n- `## No Secret Output`\n\n## Required Content\n\nUnder `## Existing App File Map`, list every existing app file inspected and its role.\n\nUnder `## Screen Spec To File Mapping`, map every screen id from `screen-spec.json` to the exact Swift files, asset files, localization files, test files, and Appium identifiers that should change. Use the screen ids exactly: `onboarding`, `home`, `primary_list`, `create_edit`, `active_task`, `completion`, `history_streaks`, `profile_settings`, and `paywall_subscription`.\n\nUnder `## Expected SwiftUI Components`, list the reusable app-specific components expected from the implementation, including design token wrappers, theme colors, typography helpers, cards, rows, progress/status components, primary actions, empty/error/loading states, and accessibility wrappers.\n\nUnder `## Tests To Update`, list exact unit, UI, snapshot, Appium, or screenshot-manifest tests that should be updated or added. Include what each test proves.\n\nUnder `## Screenshot States To Capture`, list exact before/after screenshot states for every required screen, including empty, loading, error, success, active task, completion, paywall/subscription, Dynamic Type, dark mode, and any state named in `screen-spec.json`.\n\nUnder `## Appium Identifier Changes`, list existing identifiers to preserve, identifiers to add, and identifiers to rename. Explain how automation will still discover buttons, tabs, cells, navigation controls, paywall actions, and task actions.\n\nUnder `## Phase Breakdown`, divide work into:\n\n- `visual-system`\n- `screen-flows`\n- `ux-quality-review`\n\nKeep each phase scoped and testable.\n\nUnder `## Explicit Non-Goals`, include these non-goals verbatim:\n\n- No auth rebuild.\n- No payment rebuild.\n- No networking/storage rewrite.\n- No bundle ID changes.\n- No copied competitor assets.\n\nAlso add any additional non-goals needed to protect existing app behavior.\n\n## Constraints\n\n- Preserve existing auth, payment, entitlement, networking, storage, localization, bundle ID, and release configuration unless a later ADR explicitly approves a change.\n- Treat Mobbin, Pageflows, App Store reviews, competitor screenshots, and competitor flows as research references only. Abstract principles; do not copy assets, copy, screenshots, layouts, brand identity, or proprietary interaction sequences.\n- Do not output secrets, credentials, tokens, cookies, private keys, signed URLs, customer data, or environment values. If a source contains secrets or private account information, write only: `secret material omitted`."
+            }
+          },
+          "classes": [
+            "review"
+          ]
+        },
+        "appium_exploratory_gate": {
+          "id": "appium_exploratory_gate",
+          "attrs": {
+            "provider": {
+              "String": "openrouter"
+            },
+            "shape": {
+              "String": "parallelogram"
+            },
+            "retry_target": {
+              "String": "implement_screen_flows"
+            },
+            "label": {
+              "String": "Appium Exploratory Gate"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "model": {
+              "String": "anthropic/claude-haiku-4-5"
+            },
+            "script": {
+              "String": "node scripts/iphone-app-factory/appium-report-gate.mjs"
+            },
+            "goal_gate": {
+              "Boolean": true
+            }
+          }
+        },
+        "retrieve_existing_references": {
+          "id": "retrieve_existing_references",
+          "attrs": {
+            "label": {
+              "String": "Retrieve Existing References"
+            },
+            "goal_gate": {
+              "Boolean": true
+            },
+            "script": {
+              "String": "mkdir -p .workflow/iphone-app-ux-studio/research; node scripts/iphone-app-factory/design-corpus.mjs reference-pack --db .workflow/iphone-app-ux-studio/design-corpus.sqlite > .workflow/iphone-app-ux-studio/research/reference-pack.json"
+            },
+            "shape": {
+              "String": "parallelogram"
+            },
+            "retry_target": {
+              "String": "design_corpus_preflight"
+            },
+            "model": {
+              "String": "anthropic/claude-haiku-4-5"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "provider": {
+              "String": "openrouter"
+            }
+          }
+        },
+        "existing_app_intake": {
+          "id": "existing_app_intake",
+          "attrs": {
+            "prompt": {
+              "String": "# UX Existing App Intake\n\nRead the run context, existing app source, screenshots, current UX notes, and any ADRs available for this UX Studio run.\n\nWrite the primary artifact to `.workflow/iphone-app-ux-studio/research/existing-app-intake.md`.\n\nAlso write `.workflow/iphone-app-ux-studio/research/reference-gap-analysis.json` as strict JSON that lists missing or weak reference areas for downstream research.\n\n## Source Policy\n\n- Use only repository files, user-provided context, current app screenshots, simulator evidence, and committed ADRs.\n- Do not output secrets, credentials, tokens, cookies, private keys, session values, or environment variable values.\n- Do not run or request environment dump commands such as `env`, `printenv`, `set`, `export`, or `declare -x`.\n- Do not clone proprietary screens, screenshots, layouts, copy, brand identity, or assets.\n- This intake is for UX iteration only. Do not propose rebuilding auth, payments, storage, networking, localization, settings, or the design system unless a later ADR explicitly approves that scope.\n\n## Required Headings For `existing-app-intake.md`\n\nUse these exact headings:\n\n1. `# Existing App UX Intake`\n2. `## Source Policy`\n3. `## Source List`\n4. `## Current App Purpose`\n5. `## Current User Flow`\n6. `## Current Screens And States`\n7. `## Current UX Weaknesses`\n8. `## Protected Existing Systems`\n9. `## Reference Gaps`\n10. `## what_to_adapt`\n11. `## what_not_to_copy`\n12. `## Open Questions`\n\n## Required Content\n\n- List every source inspected under `## Source List`.\n- Identify current app weaknesses in navigation, hierarchy, copy, interaction states, accessibility, and emotional tone.\n- Mark protected existing systems clearly: auth, payments, storage, networking, localization, settings, and design system are out of scope until a later ADR approves changes.\n- Under `## what_to_adapt`, describe UX principles to preserve or strengthen.\n- Under `## what_not_to_copy`, describe current weaknesses and proprietary external patterns that must not be copied.\n\n## Required JSON Shape For `reference-gap-analysis.json`\n\n```json\n{\n  \"gaps\": [\n    {\n      \"area\": \"competitor_flows|app_store_pain|mobbin_or_pageflows|apple_hig|behavioral_ux|screen_type\",\n      \"why_it_matters\": \"...\",\n      \"needed_sources\": [\"...\"],\n      \"priority\": \"low|medium|high\"\n    }\n  ]\n}\n```\n"
+            },
+            "label": {
+              "String": "Existing App Intake"
+            },
+            "retry_target": {
+              "String": "existing_app_intake"
+            },
+            "class": {
+              "String": "ux-research"
+            },
+            "goal_gate": {
+              "Boolean": true
+            },
+            "provider": {
+              "String": "openrouter"
+            },
+            "reasoning_effort": {
+              "String": "high"
+            },
+            "model": {
+              "String": "anthropic/claude-haiku-4-5"
+            }
+          },
+          "classes": [
+            "ux-research"
+          ]
+        },
+        "security_privacy_review": {
+          "id": "security_privacy_review",
+          "attrs": {
+            "reasoning_effort": {
+              "String": "high"
+            },
+            "model": {
+              "String": "google/gemini-3.1-pro-preview"
+            },
+            "label": {
+              "String": "Security Privacy Review"
+            },
+            "prompt": {
+              "String": "# Security And Privacy Review\n\nReview the generated app, configs, CI, and release artifacts.\n\nWrite `.workflow/iphone-app-factory/reviews/security-privacy.md`.\n\nReject for hardcoded secrets, PII logging, weak privacy/legal docs, unsafe network handling, or missing secret scanning.\n\nEnd with exactly one verdict line:\n\n`VERDICT: APPROVED`\n\nor\n\n`VERDICT: REJECTED`\n"
+            },
+            "provider": {
+              "String": "openrouter"
+            },
+            "class": {
+              "String": "security"
+            }
+          },
+          "classes": [
+            "security"
+          ]
+        },
+        "ios_architecture_review": {
+          "id": "ios_architecture_review",
+          "attrs": {
+            "prompt": {
+              "String": "# iOS Architecture Review\n\nReview the generated app against `.workflow/iphone-app-factory/architecture.md`, the boilerplate docs, and Swift 6 expectations.\n\nWrite `.workflow/iphone-app-factory/reviews/ios-architecture.md`.\n\nReject for unnecessary platform rewrites, broken module boundaries, large files, concurrency issues, or weak CompositionRoot wiring.\n\nEnd with exactly one verdict line:\n\n`VERDICT: APPROVED`\n\nor\n\n`VERDICT: REJECTED`\n"
+            },
+            "label": {
+              "String": "iOS Architecture Review"
+            },
+            "model": {
+              "String": "google/gemini-3.1-pro-preview"
+            },
+            "reasoning_effort": {
+              "String": "high"
+            },
+            "class": {
+              "String": "review"
+            },
+            "provider": {
+              "String": "openrouter"
+            }
+          },
+          "classes": [
+            "review"
+          ]
+        },
+        "publish_handoff": {
+          "id": "publish_handoff",
+          "attrs": {
+            "label": {
+              "String": "Publish Handoff"
+            },
+            "provider": {
+              "String": "openrouter"
+            },
+            "shape": {
+              "String": "parallelogram"
+            },
+            "model": {
+              "String": "anthropic/claude-haiku-4-5"
+            },
+            "script": {
+              "String": "node scripts/iphone-app-factory/publish-handoff.mjs"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "retry_target": {
+              "String": "final_consensus"
+            },
+            "goal_gate": {
+              "Boolean": true
+            }
+          }
+        },
+        "screenshot_evidence_gate": {
+          "id": "screenshot_evidence_gate",
+          "attrs": {
+            "shape": {
+              "String": "parallelogram"
+            },
+            "script": {
+              "String": "node scripts/iphone-app-factory/ios-screenshot-manifest-gate.mjs --manifest reports/ios/screenshots/manifest.json --phase after --require-before-after true"
+            },
+            "goal_gate": {
+              "Boolean": true
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "label": {
+              "String": "Screenshot Evidence Gate"
+            },
+            "model": {
+              "String": "anthropic/claude-haiku-4-5"
+            },
+            "provider": {
+              "String": "openrouter"
+            },
+            "retry_target": {
+              "String": "implement_screen_flows"
+            }
+          }
+        },
+        "verify_visual_system": {
+          "id": "verify_visual_system",
+          "attrs": {
+            "reasoning_effort": {
+              "String": "medium"
+            },
+            "provider": {
+              "String": "openrouter"
+            },
+            "label": {
+              "String": "Verify Visual System"
+            },
+            "prompt": {
+              "String": "# Verify UX Studio Phase\n\nIndependently verify the current UX Studio implementation phase for `apps/waketask-ios`.\n\nRead:\n\n- `.workflow/iphone-app-ux-studio/implementation-plan.md`\n- `.workflow/iphone-app-ux-studio/design/screen-spec.md`\n- `.workflow/iphone-app-ux-studio/design/screen-spec.json`\n- `.workflow/iphone-app-ux-studio/evidence/visual-system.md` when verifying `visual-system`\n- `.workflow/iphone-app-ux-studio/evidence/screen-flows.md` when verifying `screen-flows`\n- changed app source, tests, screenshot manifests, Appium identifiers, and relevant review notes\n\nUse the current Fabro stage label or the immediately preceding implementation stage to identify the phase. If that is ambiguous, inspect pending verifier notes and update only one evidence file:\n\n- `visual-system`: `.workflow/iphone-app-ux-studio/evidence/visual-system.md`\n- `screen-flows`: `.workflow/iphone-app-ux-studio/evidence/screen-flows.md`\n\n## Verify\n\nCheck that:\n\n- the phase stayed inside its scope and did not rebuild auth, payments, entitlements, networking, storage, localization infrastructure, bundle ID, release configuration, or unrelated app behavior\n- the evidence lists files changed, commands run, acceptance criteria, risks, and phase-specific notes\n- implementation claims are visible in code, tests, previews, screenshots, Appium output, or other concrete artifacts\n- `visual-system` has app-specific SwiftUI tokens/components, Dynamic Type behavior, VoiceOver support, and state coverage rather than generic styling\n- `screen-flows` implements the selected direction across required screen ids or clearly documents absent screens without hiding gaps\n- Appium identifiers remain stable or are intentionally changed with replacement identifiers documented\n- screenshot states are captured or explicitly identified as still pending for the retry target\n- Mobbin, Pageflows, competitor screenshots, competitor copy, brand identity, and proprietary interaction sequences are treated as abstract references only and are not copied\n- no secrets, credentials, tokens, cookies, private keys, signed URLs, customer data, or environment values appear in evidence or logs\n\n## Required Update\n\nUpdate the same evidence file by replacing the pending verifier line under `## Verifier notes`.\n\nIf acceptable, write a concise verifier note that avoids the gate rejection phrases and includes concrete evidence, for example:\n\n`- Accepted by independent verifier: reviewed files, commands, and screenshots; phase scope is acceptable to advance.`\n\nIf not acceptable, write a concise rejection note that includes the exact retry target, for example:\n\n`- Rejected by independent verifier: retry visual-system because Dynamic Type evidence is missing.`\n\nDo not self-approve implementation work you performed in the same stage. If you made edits, leave `- Pending independent verifier.` and explain the edits outside the evidence file.\n\n## Output Rules\n\n- Preserve the evidence headings and existing useful evidence.\n- Do not delete risks; refine them if needed.\n- Do not print secrets or environment values. If a source contains secret material, write only: `secret material omitted`."
+            },
+            "goal_gate": {
+              "Boolean": true
+            },
+            "model": {
+              "String": "anthropic/claude-haiku-4-5"
+            },
+            "class": {
+              "String": "verify"
+            },
+            "retry_target": {
+              "String": "implement_visual_system"
+            }
+          },
+          "classes": [
+            "verify"
+          ]
+        },
+        "reference_pack_gate": {
+          "id": "reference_pack_gate",
+          "attrs": {
+            "shape": {
+              "String": "parallelogram"
+            },
+            "label": {
+              "String": "Reference Pack Gate"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "script": {
+              "String": "node scripts/iphone-app-factory/reference-pack-gate.mjs"
+            },
+            "model": {
+              "String": "anthropic/claude-haiku-4-5"
+            },
+            "provider": {
+              "String": "openrouter"
+            },
+            "goal_gate": {
+              "Boolean": true
+            },
+            "retry_target": {
+              "String": "research_fanout"
+            }
+          }
+        },
+        "accessibility_review": {
+          "id": "accessibility_review",
+          "attrs": {
+            "prompt": {
+              "String": "# UX Accessibility Review\n\nReview the UX Studio implementation in `apps/waketask-ios` for accessibility, Dynamic Type, contrast, motion, VoiceOver, target sizes, and automation discoverability.\n\nDo not output secrets. If a source artifact contains credentials, tokens, cookies, private keys, signed URLs, customer data, or environment values, write `secret material omitted` and reject the review.\n\nRead:\n\n- `.workflow/iphone-app-ux-studio/implementation-plan.md`\n- `.workflow/iphone-app-ux-studio/design/screen-spec.md`\n- `.workflow/iphone-app-ux-studio/design/screen-spec.json`\n- `.workflow/iphone-app-ux-studio/evidence/visual-system.md`\n- `.workflow/iphone-app-ux-studio/evidence/screen-flows.md`\n- `reports/ios/screenshots/manifest.json`\n- Appium/XCUITest reports, screenshot evidence, changed SwiftUI files, previews, and tests\n\n## Required Output\n\nWrite:\n\n`.workflow/iphone-app-ux-studio/reviews/accessibility.md`\n\n## Required Headings\n\nUse these headings exactly:\n\n- `# UX Accessibility Review`\n- `## Source List`\n- `## Findings`\n- `## Dynamic Type`\n- `## VoiceOver`\n- `## Contrast And Motion`\n- `## Hit Targets And Reach`\n- `## Automation Identifiers`\n- `## Required Fixes`\n- `## Verdict`\n\n## Reject If\n\nReject if any of these are true:\n\n- text clips, overlaps, truncates unexpectedly, or becomes unreadable at supported Dynamic Type sizes\n- VoiceOver labels, hints, traits, or focus order are missing for primary actions, active task controls, paywall actions, navigation controls, task rows, or state banners\n- color contrast is materially worse in light mode, dark mode, active task state, completion, loading, error, or disabled states\n- reduced motion is ignored for nonessential animation\n- tappable targets are too small or hard to reach on common iPhone widths\n- Appium identifiers are missing or unstable for controls automation must discover\n- screenshot evidence is missing for accessibility-relevant states\n- auth, payment, networking, storage, localization infrastructure, bundle ID, or release configuration was rebuilt without an explicit later ADR\n- Mobbin, Pageflows, competitor screenshots, layouts, copy, brand identity, assets, or proprietary interactions were copied rather than abstracted\n- secrets, credentials, tokens, cookies, private keys, signed URLs, customer data, or environment values appear in evidence or screenshots\n\nEnd `.workflow/iphone-app-ux-studio/reviews/accessibility.md` with exactly one of these verdict lines:\n\n`VERDICT: APPROVED`\n\nor\n\n`VERDICT: REJECTED`"
+            },
+            "class": {
+              "String": "review"
+            },
+            "label": {
+              "String": "Accessibility Review"
+            },
+            "provider": {
+              "String": "openrouter"
+            },
+            "reasoning_effort": {
+              "String": "high"
+            },
+            "model": {
+              "String": "google/gemini-3.1-pro-preview"
+            }
+          },
+          "classes": [
+            "review"
+          ]
+        },
+        "postmortem_learning_capture": {
+          "id": "postmortem_learning_capture",
+          "attrs": {
+            "goal_gate": {
+              "Boolean": true
+            },
+            "retry_target": {
+              "String": "postmortem_learning_capture"
+            },
+            "class": {
+              "String": "review"
+            },
+            "prompt": {
+              "String": "# UX Postmortem Learning Capture\n\nClose the UX Studio run with a concise, evidence-backed postmortem at `.workflow/iphone-app-ux-studio/postmortem.md`.\n\n## Inputs To Inspect\n\nInspect the current Fabro run before writing conclusions:\n\n- Fabro run events from the available Fabro MCP tools or CLI, including retries, failed nodes, reviewer decisions, gate output, and manual steering.\n- `.workflow/iphone-app-ux-studio/preflight.json`\n- `.workflow/iphone-app-ux-studio/research/**`\n- `.workflow/iphone-app-ux-studio/design/**`\n- `.workflow/iphone-app-ux-studio/implementation-plan.md`\n- `.workflow/iphone-app-ux-studio/evidence/**`\n- screenshot manifests, Appium/XCUITest reports, hosted macOS CI output, review notes, final consensus, and handoff artifacts.\n- changed source files, tests, workflow config, prompt files, and scripts relevant to the UX iteration.\n\nDo not rely on chat memory when a run event or artifact can answer the question.\n\n## Failure Classification\n\nClassify each meaningful issue into one or more of these buckets:\n\n- control-plane or Railway routing\n- Daytona sandbox, network, or bootstrap\n- credentials, MCP, or private reference access\n- research evidence quality\n- Mobbin/Page Flows/private corpus policy\n- design synthesis or originality\n- implementation scope control\n- SwiftUI visual system or screen-flow execution\n- screenshot/Appium evidence\n- hosted macOS CI\n- review fanout or consensus quality\n- prompt context budget or prompt clarity\n- Hermes/operator ledger, run babysitting, or handoff\n\nFor each failure, capture the artifact or event that proves it. If evidence is absent, say that evidence is absent instead of guessing.\n\n## Required Postmortem Sections\n\nWrite these exact headings:\n\n```markdown\n# UX Studio Postmortem\n\n## Run Summary\n## What Worked\n## What Failed\n## Where Agents Needed Steering\n## Gate Effectiveness\n## Prompt Improvements\n## Workflow Improvements\n## Design Corpus Additions\n## Next-Run Recommendations\n```\n\nEach section should be short and concrete. Prefer bullets that include the relevant artifact path, gate name, run event, or CI check. Mark inference explicitly when the evidence is indirect.\n\n## Learning Capture\n\nIdentify reusable learnings that should change future UX Studio runs. Split them into:\n\n- prompt improvements: clearer instructions, missing artifact requirements, anti-cloning constraints, verifier rubrics, or context-budget changes.\n- workflow improvements: new gates, retries, fanout joins, preflight checks, artifact publication, CI checks, or handoff requirements.\n- design corpus additions: reusable observations from research or run evidence that help future apps without copying competitor screens.\n\nWhen the existing Hermes/Fabro ledger CLI is available, append a compact postmortem event:\n\n```bash\nnode scripts/fabro/run-ledger.mjs append-event \\\n  --run-id <run-id> \\\n  --current-status postmortem \\\n  --next-action \"<next operator action>\" \\\n  --payload-json <redacted-postmortem-summary-json>\n```\n\nIf the generalized operator ledger is the better target and its CLI is available, record the same learning as a Fabro-run subject:\n\n```bash\nnode scripts/operator-ledger/operator-ledger.mjs append-event \\\n  --subject-type fabro-run \\\n  --subject-key <run-id> \\\n  --event-type ux_postmortem_learning \\\n  --payload-json <redacted-learning-json>\n```\n\nWhen a learning is useful for future design work and the design corpus CLI is available, add a derived observation. Do this only for abstract reusable principles, not raw competitor assets or copied layouts:\n\n```bash\nnode scripts/iphone-app-factory/design-corpus.mjs add-observation \\\n  --source-id <existing-or-postmortem-source-id> \\\n  --app-domain <domain> \\\n  --screen-type <screen-type> \\\n  --observation-type postmortem_learning \\\n  --summary \"<evidence-backed observation>\" \\\n  --what-to-adapt \"<reusable principle>\" \\\n  --what-not-to-copy \"<protected or harmful pattern to avoid>\" \\\n  --tags postmortem,ux-studio\n```\n\nIf a CLI, database, or source id is unavailable, do not fabricate a write. Note the skipped update and the reason in `## Design Corpus Additions` or `## Next-Run Recommendations`.\n\n## Output Rules\n\n- Do not print secrets, credentials, tokens, cookies, private keys, signed URLs, customer data, environment variable values, or raw authorization headers.\n- If source material contains secret material, write only `secret material omitted`.\n- Do not paste raw Mobbin, Page Flows, or competitor screenshots into public app artifacts.\n- Treat raw reference assets as private-only. Capture abstract observations, not copied screens, copy, visual identity, or proprietary interaction sequences.\n- Preserve existing useful postmortem content if rerunning; update it instead of deleting evidence.\n"
+            },
+            "provider": {
+              "String": "openrouter"
+            },
+            "label": {
+              "String": "Postmortem Learning Capture"
+            },
+            "model": {
+              "String": "google/gemini-3.1-pro-preview"
+            },
+            "reasoning_effort": {
+              "String": "high"
+            }
+          },
+          "classes": [
+            "review"
+          ]
+        },
+        "competitor_flow_research": {
+          "id": "competitor_flow_research",
+          "attrs": {
+            "class": {
+              "String": "ux-research"
+            },
+            "provider": {
+              "String": "openrouter"
+            },
+            "label": {
+              "String": "Competitor Flow Research"
+            },
+            "prompt": {
+              "String": "# UX Competitor Flow Research\n\nResearch competitor iPhone app flows relevant to this UX Studio run and write the artifact to `.workflow/iphone-app-ux-studio/research/competitor-flows.md`.\n\n## Source Policy\n\n- Use public App Store listings, public websites, public product pages, public screenshots, public videos, and user-provided reference material.\n- Do not output secrets, credentials, tokens, cookies, private keys, session values, or environment variable values.\n- Do not clone proprietary screens, exact layouts, UI copy, brand identity, screenshots, or assets.\n- Treat competitor screens as reference evidence for principles only.\n\n## Required Headings\n\nUse these exact headings:\n\n1. `# Competitor Flow Research`\n2. `## Source Policy`\n3. `## Source List`\n4. `## Competitor Set`\n5. `## Flow Patterns`\n6. `## Screen Type Coverage`\n7. `## UX Strengths`\n8. `## UX Weaknesses`\n9. `## what_to_adapt`\n10. `## what_not_to_copy`\n11. `## Reference Entries`\n\n## Required Content\n\n- Include at least four competitor flow references when available.\n- For each competitor reference, include app name, source URL or source description, flow name, screen types, evidence summary, `what_to_adapt`, and `what_not_to_copy`.\n- Cover setup, primary action, error or blocked state, retention, and settings/accountability flows when relevant.\n- Keep source quality explicit: label sources as direct, public listing, public video, review-derived, or inferred.\n"
+            },
+            "reasoning_effort": {
+              "String": "high"
+            },
+            "model": {
+              "String": "anthropic/claude-haiku-4-5"
+            }
+          },
+          "classes": [
+            "ux-research"
+          ]
+        },
+        "gamified_streak_direction": {
+          "id": "gamified_streak_direction",
+          "attrs": {
+            "prompt": {
+              "String": "# UX Design Direction Candidate\n\nYou are one branch in the UX Studio design direction tournament. The same prompt is run by multiple agents with one of these direction labels:\n\n- `calm_accountability_direction`\n- `hard_wake_direction`\n- `gamified_streak_direction`\n- `minimal_native_direction`\n\nUse the assigned direction label from your run context. Do not invent a fifth direction and do not collapse directions together.\n\nRead all available context:\n\n- `.workflow/iphone-app-ux-studio/preflight.json`\n- `.workflow/iphone-app-ux-studio/research/reference-gap-analysis.json`\n- `.workflow/iphone-app-ux-studio/research/competitor-flows.md`\n- `.workflow/iphone-app-ux-studio/research/app-store-review-mining.md`\n- `.workflow/iphone-app-ux-studio/research/mobbin-mcp-research.md`\n- `.workflow/iphone-app-ux-studio/research/pageflows-research.md`\n- `.workflow/iphone-app-ux-studio/research/apple-hig-research.md`\n- `.workflow/iphone-app-ux-studio/research/behavioral-ux-research.md`\n- `.workflow/iphone-app-ux-studio/research/design-opportunity-synthesis.md`\n- any retrieved reference pack artifacts in `.workflow/iphone-app-ux-studio/design/`\n\nDesign a distinct iPhone UX direction for a wake/task app. Treat competitor and Mobbin/Pageflows material as pattern evidence only. Adapt principles, not assets, screenshots, branding, copy, or proprietary compositions.\n\n## Required Output\n\nWrite your candidate to:\n\n`.workflow/iphone-app-ux-studio/design/directions/<direction_label>.md`\n\nThe Markdown must include these headings exactly:\n\n- `# Design Direction: <direction_label>`\n- `## Target Emotion`\n- `## Visual Principles`\n- `## Colors And Tokens`\n- `## Typography`\n- `## Motion`\n- `## Screen-By-Screen Implications`\n- `## Monetization Implications`\n- `## Accessibility Risks`\n- `## Implementation Risks`\n- `## Source List`\n- `## What To Adapt`\n- `## What Not To Copy`\n- `## No Secret Output`\n\n## Direction Requirements\n\nYour candidate must define:\n\n- target emotion: the feeling this direction should create in the first 10 seconds, in the wake state, and after task completion\n- visual principles: layout density, contrast model, component shape language, information hierarchy, empty-state tone, and how this direction stays native to iOS\n- colors and tokens: semantic token names, light/dark mode behavior, accent strategy, destructive states, success states, disabled states, and high-contrast fallback\n- typography: Dynamic Type behavior, title/body/caption roles, numeric treatment, and minimum readable sizes\n- motion: transition principles, reduce-motion behavior, haptics, animation timing ranges, and wake-state restraint\n- screen-by-screen implications for onboarding, home, primary list, create/edit, active task, completion, history/streaks, profile/settings, and paywall/subscription\n- monetization implications: what premium promise this direction supports, what should remain free, and how to avoid coercive dark patterns\n- accessibility risks: VoiceOver, Dynamic Type, contrast, reduced motion, haptics-only feedback, cognitive load, and one-handed use\n- implementation risks: SwiftUI complexity, custom component risk, animation risk, App Store risk, localization risk, and scope tradeoffs\n- source list: every reference artifact or external source you used, with a short reason for relevance\n- what_to_adapt: abstracted patterns, heuristics, or interaction ideas safe to adapt\n- what_not_to_copy: specific visual layouts, assets, copy, brand systems, animations, or distinctive sequences that must not be cloned\n\n## No Secret Output\n\nDo not print, persist, summarize, or infer credentials, session tokens, private links, signed URLs, cookies, API keys, or user secrets. If a source contains secrets or private account information, write only: `secret material omitted`.\n\n## Quality Bar\n\nMake the direction opinionated enough that another agent can critique it adversarially. Avoid generic iOS advice. Every claim should connect to the app's wake-state use case, research evidence, or implementation constraints.\n"
+            },
+            "label": {
+              "String": "Gamified Streak Direction"
+            },
+            "reasoning_effort": {
+              "String": "high"
+            },
+            "provider": {
+              "String": "openrouter"
+            },
+            "class": {
+              "String": "design"
+            },
+            "model": {
+              "String": "anthropic/claude-haiku-4-5"
+            }
+          },
+          "classes": [
+            "design"
+          ]
+        },
+        "screen_ux_spec": {
+          "id": "screen_ux_spec",
+          "attrs": {
+            "reasoning_effort": {
+              "String": "high"
+            },
+            "provider": {
+              "String": "openrouter"
+            },
+            "retry_target": {
+              "String": "design_tournament_consensus"
+            },
+            "prompt": {
+              "String": "# UX Screen Spec\n\nRead:\n\n- `.workflow/iphone-app-ux-studio/design/tournament-consensus.md`\n- `.workflow/iphone-app-ux-studio/design/tournament-consensus.json`\n- `.workflow/iphone-app-ux-studio/design/tournament-gate.json`\n- all winning direction source material referenced by the tournament consensus\n\nConvert the winning design direction into implementation-ready iPhone screen specs. Preserve the winning direction's target emotion, visual principles, tokens, accessibility commitments, monetization stance, and no-clone boundaries.\n\n## Required Outputs\n\nWrite:\n\n- `.workflow/iphone-app-ux-studio/design/screen-spec.md`\n- `.workflow/iphone-app-ux-studio/design/screen-spec.json`\n\nThe Markdown is for implementation planning. The JSON is for downstream checks and screenshot review. Do not include Markdown fences in the JSON file.\n\n## Required Screens\n\nCreate a spec for each screen:\n\n- onboarding\n- home\n- primary list\n- create/edit\n- active task\n- completion\n- history/streaks\n- profile/settings\n- paywall/subscription\n\n## Per-Screen Requirements\n\nEvery screen must include:\n\n- purpose: the job this screen performs for the user\n- hierarchy: ordered regions and the information priority from top to bottom\n- primary action: the one action the screen optimizes for\n- secondary actions: supporting actions and where they live\n- empty state: what appears before user data exists\n- loading state: what appears while data or entitlement state is loading\n- error state: what appears when a save, sync, purchase, permission, or network operation fails\n- copy direction: tone, example labels, avoided phrases, and localization constraints\n- accessibility requirements: VoiceOver labels, focus order, Dynamic Type behavior, contrast, reduced motion, haptic alternatives, target sizes, and one-handed reach\n- screenshot acceptance criteria: concrete visual checks a reviewer can apply to simulator screenshots\n\n## Markdown Structure\n\n`screen-spec.md` must include these headings exactly:\n\n- `# UX Screen Spec`\n- `## Winning Direction Summary`\n- `## Global Visual System`\n- `## Global Accessibility Requirements`\n- `## Screens`\n- `## Screenshot Acceptance Checklist`\n- `## No-Clone Statement`\n- `## No Secret Output`\n\nUnder `## Screens`, use one `###` subsection per required screen.\n\n## JSON Schema\n\n`screen-spec.json` must use this structure:\n\n```json\n{\n  \"winning_direction\": \"selected_direction_label\",\n  \"global_visual_system\": {\n    \"target_emotion\": \"Short summary.\",\n    \"tokens\": [\"semantic token names\"],\n    \"typography\": \"Dynamic Type and hierarchy summary.\",\n    \"motion\": \"Motion and reduced-motion summary.\"\n  },\n  \"screens\": [\n    {\n      \"id\": \"onboarding\",\n      \"purpose\": \"The screen job.\",\n      \"hierarchy\": [\"Top priority\", \"Second priority\"],\n      \"primary_action\": \"Primary action label and behavior.\",\n      \"secondary_actions\": [\"Secondary action and placement\"],\n      \"states\": {\n        \"empty\": \"Empty state behavior.\",\n        \"loading\": \"Loading state behavior.\",\n        \"error\": \"Error state behavior.\"\n      },\n      \"copy_direction\": \"Tone, sample labels, avoided phrases, localization constraints.\",\n      \"accessibility_requirements\": [\"Requirement\"],\n      \"screenshot_acceptance_criteria\": [\"Concrete screenshot check\"]\n    }\n  ],\n  \"no_clone_statement\": \"The screen specs adapt abstract patterns only and do not copy another app's assets, copy, brand, visual composition, screenshots, or proprietary interaction sequences.\"\n}\n```\n\nUse the screen ids exactly: `onboarding`, `home`, `primary_list`, `create_edit`, `active_task`, `completion`, `history_streaks`, `profile_settings`, and `paywall_subscription`.\n\n## Screenshot Acceptance Criteria Guidance\n\nAcceptance criteria must be visible and testable from screenshots. Include checks for:\n\n- the primary action is visible without scrolling on the intended screen\n- text does not truncate at common Dynamic Type sizes unless explicitly allowed\n- core status is understandable in dark mode and light mode\n- no element depends on color alone\n- loading and error states preserve layout stability\n- paywall/subscription clearly separates free and premium value without dark patterns\n- screens do not visually clone any named competitor or reference source\n\n## No Secret Output\n\nDo not print, persist, summarize, or infer credentials, session tokens, private links, signed URLs, cookies, API keys, or user secrets. If a source contains secrets or private account information, write only: `secret material omitted`.\n"
+            },
+            "goal_gate": {
+              "Boolean": true
+            },
+            "label": {
+              "String": "Screen UX Spec"
+            },
+            "class": {
+              "String": "design"
+            },
+            "model": {
+              "String": "anthropic/claude-haiku-4-5"
+            }
+          },
+          "classes": [
+            "design"
+          ]
+        },
+        "apple_hig_research": {
+          "id": "apple_hig_research",
+          "attrs": {
+            "reasoning_effort": {
+              "String": "high"
+            },
+            "model": {
+              "String": "anthropic/claude-haiku-4-5"
+            },
+            "provider": {
+              "String": "openrouter"
+            },
+            "label": {
+              "String": "Apple HIG Research"
+            },
+            "prompt": {
+              "String": "# UX Apple HIG Research\n\nResearch Apple Human Interface Guidelines and relevant Apple developer guidance for this app type, then write the artifact to `.workflow/iphone-app-ux-studio/research/apple-hig-research.md`.\n\n## Source Policy\n\n- Use official Apple Human Interface Guidelines and official Apple developer documentation as primary sources.\n- Use secondary sources only to locate the relevant Apple page, not as authority.\n- Do not output secrets, credentials, tokens, cookies, private keys, session values, or environment variable values.\n- Do not clone proprietary third-party screens, exact layouts, UI copy, brand identity, screenshots, or assets.\n\n## Required Headings\n\nUse these exact headings:\n\n1. `# Apple HIG Research`\n2. `## Source Policy`\n3. `## Source List`\n4. `## Applicable HIG Constraints`\n5. `## Interaction And Motion Guidance`\n6. `## Accessibility Guidance`\n7. `## Notification And Interruption Guidance`\n8. `## Screen Type Implications`\n9. `## what_to_adapt`\n10. `## what_not_to_copy`\n\n## Required Content\n\n- Include direct Apple source links or exact Apple source names under `## Source List`.\n- Translate each HIG constraint into an implication for the current app screens.\n- Under `## what_to_adapt`, identify Apple-native principles to apply in SwiftUI.\n- Under `## what_not_to_copy`, identify patterns that would violate platform expectations, accessibility, privacy, or interruption norms.\n"
+            },
+            "class": {
+              "String": "ux-research"
+            }
+          },
+          "classes": [
+            "ux-research"
+          ]
+        },
+        "checkout_existing_app": {
+          "id": "checkout_existing_app",
+          "attrs": {
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "model": {
+              "String": "anthropic/claude-haiku-4-5"
+            },
+            "goal_gate": {
+              "Boolean": true
+            },
+            "script": {
+              "String": "node scripts/iphone-app-factory/checkout-existing-app.mjs"
+            },
+            "provider": {
+              "String": "openrouter"
+            },
+            "shape": {
+              "String": "parallelogram"
+            },
+            "label": {
+              "String": "Checkout Existing App"
+            },
+            "retry_target": {
+              "String": "checkout_existing_app"
+            }
+          }
+        },
+        "design_direction_join": {
+          "id": "design_direction_join",
+          "attrs": {
+            "shape": {
+              "String": "tripleoctagon"
+            },
+            "label": {
+              "String": "Design Direction Join"
+            },
+            "model": {
+              "String": "anthropic/claude-haiku-4-5"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "join_policy": {
+              "String": "wait_all"
+            },
+            "provider": {
+              "String": "openrouter"
+            }
+          }
+        },
+        "design_direction_fanout": {
+          "id": "design_direction_fanout",
+          "attrs": {
+            "shape": {
+              "String": "component"
+            },
+            "max_parallel": {
+              "Integer": 1
+            },
+            "model": {
+              "String": "anthropic/claude-haiku-4-5"
+            },
+            "provider": {
+              "String": "openrouter"
+            },
+            "join_policy": {
+              "String": "wait_all"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "label": {
+              "String": "Design Direction Fan-Out"
+            }
+          }
+        },
+        "screenshot_evidence_review": {
+          "id": "screenshot_evidence_review",
+          "attrs": {
+            "goal_gate": {
+              "Boolean": true
+            },
+            "label": {
+              "String": "Screenshot Evidence Review"
+            },
+            "prompt": {
+              "String": "# UX Screenshot Evidence Review\n\nReview the screenshot evidence in `reports/ios/screenshots/manifest.json` and the referenced before/after screenshots.\n\nRequired screen keys:\n\n- `onboarding`\n- `home`\n- `primary_list`\n- `create_edit`\n- `active_task`\n- `completion`\n- `history_streaks`\n- `profile_settings`\n- `paywall_subscription`\n\nCompare every redesigned screen against its `before` and `after` entries. The manifest should use:\n\n```json\n{\n  \"screens\": [\n    {\n      \"screen_key\": \"home\",\n      \"phase\": \"after\",\n      \"image_path\": \"reports/ios/screenshots/after/home.png\",\n      \"width\": 1179,\n      \"height\": 2556,\n      \"blank_score\": 0.05,\n      \"text_clipping_risk\": false,\n      \"redesigned\": true\n    }\n  ]\n}\n```\n\nReject the evidence if:\n\n- Any required screen key is missing from the after phase.\n- A redesigned screen does not have both before and after screenshots.\n- Any screenshot is blank or nearly blank.\n- Any manifest entry has a missing image path, zero width, or zero height.\n- `blank_score` is high enough to indicate an empty or unusable capture.\n- `text_clipping_risk` is true.\n- Text is clipped, truncated, cropped, hidden, or too small to read.\n- Controls overlap, collide with text, cover important content, or are unreachable.\n- Required states are missing, including empty/loading/error/success states where the screen naturally needs them.\n- The `active_task` screen is not visually distinct from setup, create, or edit screens.\n- The after screenshots fail to show the intended UX change clearly.\n- Screenshots, manifest fields, logs, or notes expose secrets, tokens, credentials, payment details, private user data, or production customer data.\n\nWrite `.workflow/iphone-app-ux-studio/reviews/screenshot-evidence.md`.\n\nInclude a short finding list with the exact `screen_key`, phase, and image path for every rejection.\n\nEnd with exactly one verdict line:\n\n`VERDICT: APPROVED`\n\nor\n\n`VERDICT: REJECTED`\n"
+            },
+            "model": {
+              "String": "google/gemini-3.1-pro-preview"
+            },
+            "provider": {
+              "String": "openrouter"
+            },
+            "class": {
+              "String": "review"
+            },
+            "retry_target": {
+              "String": "implement_screen_flows"
+            },
+            "reasoning_effort": {
+              "String": "high"
+            }
+          },
+          "classes": [
+            "review"
+          ]
+        },
+        "product_fidelity_review": {
+          "id": "product_fidelity_review",
+          "attrs": {
+            "provider": {
+              "String": "openrouter"
+            },
+            "model": {
+              "String": "google/gemini-3.1-pro-preview"
+            },
+            "prompt": {
+              "String": "# Product Fidelity Review\n\nReview the generated app against `.workflow/iphone-app-factory/spec.md` and research synthesis.\n\nWrite `.workflow/iphone-app-factory/reviews/product-fidelity.md`.\n\nReject if the app is generic, template-like, or misses the core researched user pain.\n\nEnd with exactly one verdict line:\n\n`VERDICT: APPROVED`\n\nor\n\n`VERDICT: REJECTED`\n"
+            },
+            "label": {
+              "String": "Product Fidelity Review"
+            },
+            "class": {
+              "String": "review"
+            },
+            "reasoning_effort": {
+              "String": "high"
+            }
+          },
+          "classes": [
+            "review"
+          ]
+        },
+        "exit": {
+          "id": "exit",
+          "attrs": {
+            "provider": {
+              "String": "openrouter"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "shape": {
+              "String": "Msquare"
+            },
+            "label": {
+              "String": "Exit"
+            },
+            "model": {
+              "String": "anthropic/claude-haiku-4-5"
+            }
+          }
+        },
+        "research_join": {
+          "id": "research_join",
+          "attrs": {
+            "shape": {
+              "String": "tripleoctagon"
+            },
+            "provider": {
+              "String": "openrouter"
+            },
+            "label": {
+              "String": "Research Join"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "model": {
+              "String": "anthropic/claude-haiku-4-5"
+            },
+            "join_policy": {
+              "String": "wait_all"
+            }
+          }
+        },
+        "design_opportunity_synthesis": {
+          "id": "design_opportunity_synthesis",
+          "attrs": {
+            "retry_target": {
+              "String": "research_fanout"
+            },
+            "class": {
+              "String": "ux-research"
+            },
+            "model": {
+              "String": "anthropic/claude-haiku-4-5"
+            },
+            "prompt": {
+              "String": "# UX Design Opportunity Synthesis\n\nSynthesize the UX Studio research into a design opportunity artifact at `.workflow/iphone-app-ux-studio/research/design-opportunity-synthesis.md`.\n\nAlso write `.workflow/iphone-app-ux-studio/research/reference-pack.json` as strict JSON for the deterministic reference pack gate.\n\n## Source Policy\n\n- Use only the research artifacts in `.workflow/iphone-app-ux-studio/research`, current app evidence, and explicitly listed public sources.\n- Read these exact upstream artifacts when present: `.workflow/iphone-app-ux-studio/research/existing-app-intake.md`, `.workflow/iphone-app-ux-studio/research/reference-gap-analysis.json`, `.workflow/iphone-app-ux-studio/research/competitor-flows.md`, `.workflow/iphone-app-ux-studio/research/app-store-review-mining.md`, `.workflow/iphone-app-ux-studio/research/mobbin-mcp-research.md`, `.workflow/iphone-app-ux-studio/research/pageflows-research.md`, `.workflow/iphone-app-ux-studio/research/apple-hig-research.md`, and `.workflow/iphone-app-ux-studio/research/behavioral-ux-research.md`.\n- Do not output secrets, credentials, tokens, cookies, private keys, session values, or environment variable values.\n- Do not clone proprietary screens, exact layouts, UI copy, brand identity, screenshots, or assets.\n- Treat raw Mobbin, Page Flows, competitor, and screenshot assets as private-only reference evidence.\n\n## Required Headings For `design-opportunity-synthesis.md`\n\nUse these exact headings:\n\n1. `# Design Opportunity Synthesis`\n2. `## Source Policy`\n3. `## Source List`\n4. `## Current App Weaknesses`\n5. `## Competitor Patterns`\n6. `## App Store Pain`\n7. `## Mobbin And Page Flows Patterns`\n8. `## Apple HIG Constraints`\n9. `## Behavioral UX Constraints`\n10. `## Top Screens`\n11. `## Visual Principles`\n12. `## Anti-Patterns`\n13. `## what_to_adapt`\n14. `## what_not_to_copy`\n15. `## Reference Pack Summary`\n\n## Required Synthesis\n\n- Synthesize current app weaknesses, competitor patterns, App Store pain, Mobbin/Page Flows patterns, Apple HIG constraints, behavioral UX constraints, top screens, visual principles, and anti-patterns.\n- For WakeTask-like alarm apps, explicitly evaluate:\n  - calm setup mode\n  - urgent wake mode\n  - reward/accountability mode\n- Include source-backed observations only. Mark inference when the source is indirect.\n- Under `## what_to_adapt`, describe reusable principles and interaction ideas.\n- Under `## what_not_to_copy`, describe proprietary visuals, exact screen structures, copy, brand identity, and harmful UX patterns to avoid.\n\n## Required `reference-pack.json` Shape\n\nWrite strict JSON with at least these keys:\n\n```json\n{\n  \"references\": [\n    {\n      \"id\": \"...\",\n      \"title\": \"...\",\n      \"source\": \"competitor|app_store|mobbin|pageflows|apple_hig|behavioral_research|synthesis\",\n      \"category\": \"competitor_flow|review_mining|pattern_library|platform_guidance|behavioral_ux|opportunity\",\n      \"screen_type\": \"...\",\n      \"source_url\": \"...\",\n      \"evidence_summary\": \"...\",\n      \"what_to_adapt\": \"...\",\n      \"what_not_to_copy\": \"...\"\n    }\n  ],\n  \"observations\": [\n    {\n      \"id\": \"...\",\n      \"evidence\": [\"...\"],\n      \"what_to_adapt\": \"...\",\n      \"what_not_to_copy\": \"...\"\n    }\n  ],\n  \"screen_types\": [\"...\"],\n  \"raw_assets\": [\n    {\n      \"path\": \"...\",\n      \"source\": \"...\",\n      \"private_only\": true\n    }\n  ]\n}\n```\n\nThe JSON must include at least 12 total references, at least 4 competitor flow references, at least 4 Mobbin or Page Flows references when Mobbin MCP is enabled, at least 5 screen types, `what_to_adapt` and `what_not_to_copy` on every reference and observation, and `private_only=true` on every raw asset.\n"
+            },
+            "reasoning_effort": {
+              "String": "high"
+            },
+            "provider": {
+              "String": "openrouter"
+            },
+            "goal_gate": {
+              "Boolean": true
+            },
+            "label": {
+              "String": "Design Opportunity Synthesis"
+            }
+          },
+          "classes": [
+            "ux-research"
+          ]
+        },
+        "calm_accountability_direction": {
+          "id": "calm_accountability_direction",
+          "attrs": {
+            "prompt": {
+              "String": "# UX Design Direction Candidate\n\nYou are one branch in the UX Studio design direction tournament. The same prompt is run by multiple agents with one of these direction labels:\n\n- `calm_accountability_direction`\n- `hard_wake_direction`\n- `gamified_streak_direction`\n- `minimal_native_direction`\n\nUse the assigned direction label from your run context. Do not invent a fifth direction and do not collapse directions together.\n\nRead all available context:\n\n- `.workflow/iphone-app-ux-studio/preflight.json`\n- `.workflow/iphone-app-ux-studio/research/reference-gap-analysis.json`\n- `.workflow/iphone-app-ux-studio/research/competitor-flows.md`\n- `.workflow/iphone-app-ux-studio/research/app-store-review-mining.md`\n- `.workflow/iphone-app-ux-studio/research/mobbin-mcp-research.md`\n- `.workflow/iphone-app-ux-studio/research/pageflows-research.md`\n- `.workflow/iphone-app-ux-studio/research/apple-hig-research.md`\n- `.workflow/iphone-app-ux-studio/research/behavioral-ux-research.md`\n- `.workflow/iphone-app-ux-studio/research/design-opportunity-synthesis.md`\n- any retrieved reference pack artifacts in `.workflow/iphone-app-ux-studio/design/`\n\nDesign a distinct iPhone UX direction for a wake/task app. Treat competitor and Mobbin/Pageflows material as pattern evidence only. Adapt principles, not assets, screenshots, branding, copy, or proprietary compositions.\n\n## Required Output\n\nWrite your candidate to:\n\n`.workflow/iphone-app-ux-studio/design/directions/<direction_label>.md`\n\nThe Markdown must include these headings exactly:\n\n- `# Design Direction: <direction_label>`\n- `## Target Emotion`\n- `## Visual Principles`\n- `## Colors And Tokens`\n- `## Typography`\n- `## Motion`\n- `## Screen-By-Screen Implications`\n- `## Monetization Implications`\n- `## Accessibility Risks`\n- `## Implementation Risks`\n- `## Source List`\n- `## What To Adapt`\n- `## What Not To Copy`\n- `## No Secret Output`\n\n## Direction Requirements\n\nYour candidate must define:\n\n- target emotion: the feeling this direction should create in the first 10 seconds, in the wake state, and after task completion\n- visual principles: layout density, contrast model, component shape language, information hierarchy, empty-state tone, and how this direction stays native to iOS\n- colors and tokens: semantic token names, light/dark mode behavior, accent strategy, destructive states, success states, disabled states, and high-contrast fallback\n- typography: Dynamic Type behavior, title/body/caption roles, numeric treatment, and minimum readable sizes\n- motion: transition principles, reduce-motion behavior, haptics, animation timing ranges, and wake-state restraint\n- screen-by-screen implications for onboarding, home, primary list, create/edit, active task, completion, history/streaks, profile/settings, and paywall/subscription\n- monetization implications: what premium promise this direction supports, what should remain free, and how to avoid coercive dark patterns\n- accessibility risks: VoiceOver, Dynamic Type, contrast, reduced motion, haptics-only feedback, cognitive load, and one-handed use\n- implementation risks: SwiftUI complexity, custom component risk, animation risk, App Store risk, localization risk, and scope tradeoffs\n- source list: every reference artifact or external source you used, with a short reason for relevance\n- what_to_adapt: abstracted patterns, heuristics, or interaction ideas safe to adapt\n- what_not_to_copy: specific visual layouts, assets, copy, brand systems, animations, or distinctive sequences that must not be cloned\n\n## No Secret Output\n\nDo not print, persist, summarize, or infer credentials, session tokens, private links, signed URLs, cookies, API keys, or user secrets. If a source contains secrets or private account information, write only: `secret material omitted`.\n\n## Quality Bar\n\nMake the direction opinionated enough that another agent can critique it adversarially. Avoid generic iOS advice. Every claim should connect to the app's wake-state use case, research evidence, or implementation constraints.\n"
+            },
+            "provider": {
+              "String": "openrouter"
+            },
+            "reasoning_effort": {
+              "String": "high"
+            },
+            "model": {
+              "String": "anthropic/claude-haiku-4-5"
+            },
+            "class": {
+              "String": "design"
+            },
+            "label": {
+              "String": "Calm Accountability Direction"
+            }
+          },
+          "classes": [
+            "design"
+          ]
+        },
+        "implement_screen_flows": {
+          "id": "implement_screen_flows",
+          "attrs": {
+            "timeout": {
+              "Duration": {
+                "secs": 3600,
+                "nanos": 0
+              }
+            },
+            "label": {
+              "String": "Implement Screen Flows"
+            },
+            "provider": {
+              "String": "openrouter"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "shape": {
+              "String": "parallelogram"
+            },
+            "goal_gate": {
+              "Boolean": true
+            },
+            "script": {
+              "String": "node scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/ux-implement-screen-flows.md --stage screen-flows --out .workflow/iphone-app-ux-studio/codex/screen-flows.json"
+            },
+            "retry_target": {
+              "String": "implement_screen_flows"
+            },
+            "model": {
+              "String": "anthropic/claude-haiku-4-5"
+            }
+          }
+        },
+        "design_tournament_gate": {
+          "id": "design_tournament_gate",
+          "attrs": {
+            "model": {
+              "String": "anthropic/claude-haiku-4-5"
+            },
+            "shape": {
+              "String": "parallelogram"
+            },
+            "label": {
+              "String": "Design Tournament Gate"
+            },
+            "script": {
+              "String": "node scripts/iphone-app-factory/design-tournament-gate.mjs"
+            },
+            "goal_gate": {
+              "Boolean": true
+            },
+            "retry_target": {
+              "String": "design_direction_fanout"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "provider": {
+              "String": "openrouter"
+            }
+          }
+        },
+        "mobbin_mcp_research": {
+          "id": "mobbin_mcp_research",
+          "attrs": {
+            "shape": {
+              "String": "parallelogram"
+            },
+            "retry_target": {
+              "String": "mobbin_mcp_research"
+            },
+            "script": {
+              "String": "node scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/ux-mobbin-mcp-research.md --stage mobbin-mcp-research --out .workflow/iphone-app-ux-studio/codex/mobbin-mcp-research.json"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "model": {
+              "String": "anthropic/claude-haiku-4-5"
+            },
+            "provider": {
+              "String": "openrouter"
+            },
+            "goal_gate": {
+              "Boolean": true
+            },
+            "label": {
+              "String": "Mobbin MCP Research"
+            }
+          }
+        },
+        "design_corpus_preflight": {
+          "id": "design_corpus_preflight",
+          "attrs": {
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "retry_target": {
+              "String": "design_corpus_preflight"
+            },
+            "script": {
+              "String": "node scripts/iphone-app-factory/design-corpus.mjs init --db .workflow/iphone-app-ux-studio/design-corpus.sqlite"
+            },
+            "model": {
+              "String": "anthropic/claude-haiku-4-5"
+            },
+            "provider": {
+              "String": "openrouter"
+            },
+            "shape": {
+              "String": "parallelogram"
+            },
+            "goal_gate": {
+              "Boolean": true
+            },
+            "label": {
+              "String": "Design Corpus Preflight"
+            }
+          }
+        },
+        "app_store_review_mining": {
+          "id": "app_store_review_mining",
+          "attrs": {
+            "reasoning_effort": {
+              "String": "high"
+            },
+            "prompt": {
+              "String": "# UX App Store Review Mining\n\nMine public App Store reviews for the target product category and write the artifact to `.workflow/iphone-app-ux-studio/research/app-store-review-mining.md`.\n\n## Source Policy\n\n- Use public App Store reviews, public App Store listing metadata, and publicly accessible review summaries.\n- Do not output secrets, credentials, tokens, cookies, private keys, session values, or environment variable values.\n- Do not run or request environment dump commands such as `env`, `printenv`, `set`, `export`, or `declare -x`.\n- Do not clone proprietary screens, exact layouts, UI copy, brand identity, screenshots, or assets.\n- Do not include private user data beyond public review text already visible in the App Store source. Summarize sensitive personal details instead of repeating them.\n\n## Required Headings\n\nUse these exact headings:\n\n1. `# App Store Review Mining`\n2. `## Source Policy`\n3. `## Source List`\n4. `## Apps And Review Sources`\n5. `## Complaint Themes`\n6. `## Praise Themes`\n7. `## Feature Requests`\n8. `## Retention And Churn Signals`\n9. `## Screen Type Implications`\n10. `## what_to_adapt`\n11. `## what_not_to_copy`\n12. `## Reference Entries`\n\n## Required Content\n\n- Include each app name, country or storefront if known, source URL or source description, review date range when available, and evidence quality.\n- Extract pain themes, praise themes, unmet expectations, repeated feature requests, and trust or safety concerns.\n- For every reference entry, include app name, review theme, affected screen type, evidence summary, `what_to_adapt`, and `what_not_to_copy`.\n- Use short review excerpts only when needed for evidence. Prefer paraphrase and theme summaries.\n- Do not use review mining to clone competitor copy, screens, brand identity, or proprietary flows.\n"
+            },
+            "model": {
+              "String": "anthropic/claude-haiku-4-5"
+            },
+            "class": {
+              "String": "ux-research"
+            },
+            "provider": {
+              "String": "openrouter"
+            },
+            "label": {
+              "String": "App Store Review Mining"
+            }
+          },
+          "classes": [
+            "ux-research"
+          ]
+        },
+        "design_cross_critique": {
+          "id": "design_cross_critique",
+          "attrs": {
+            "goal_gate": {
+              "Boolean": true
+            },
+            "reasoning_effort": {
+              "String": "high"
+            },
+            "prompt": {
+              "String": "# UX Design Cross Critique\n\nRead all design direction candidates in:\n\n`.workflow/iphone-app-ux-studio/design/directions/`\n\nCritique the candidates as an adversarial panel. Each role must evaluate every direction and call out tradeoffs that the consensus agent can score.\n\n## Required Output\n\nWrite:\n\n`.workflow/iphone-app-ux-studio/design/cross-critique.md`\n\nUse these headings exactly:\n\n- `# Design Cross Critique`\n- `## Direction Coverage`\n- `## Half-Asleep Usability Critic`\n- `## Premium iOS Critic`\n- `## Conversion Critic`\n- `## Accessibility Critic`\n- `## Anti-Clone Critic`\n- `## Implementation Risk Critic`\n- `## Scorecard Inputs`\n- `## Consensus Recommendations`\n- `## No Secret Output`\n\n## Critic Roles\n\nHalf-asleep usability critic:\n\n- Test whether the direction works for a user who is tired, impatient, and using the phone one-handed.\n- Reject cleverness that slows recognition, task start, task completion, or recovery from mistakes.\n- Flag small targets, dense decisions, excessive reading, ambiguous status, and motion that creates friction.\n\nPremium iOS critic:\n\n- Evaluate native iOS quality, fit with Apple Human Interface Guidelines, SwiftUI feasibility, polish, and restraint.\n- Flag web-like navigation, custom controls that fight platform expectations, weak typography, weak dark mode, and visual noise.\n\nConversion critic:\n\n- Evaluate whether the direction creates a credible premium promise without dark patterns.\n- Flag paywall confusion, low perceived value, coercive streak mechanics, missing trust cues, and weak upgrade moments.\n\nAccessibility critic:\n\n- Evaluate VoiceOver, Dynamic Type, contrast, reduced motion, haptics alternatives, cognitive load, error recovery, and localization.\n- Flag any direction that depends on color, motion, tiny type, sound, haptics, or speed as the only carrier of meaning.\n\nAnti-clone critic:\n\n- Identify any candidate that too closely follows a competitor, Mobbin/Pageflows example, Apple sample, or recognizable product.\n- Separate safe pattern adaptation from unsafe copying of layouts, copy, assets, brand systems, screenshots, animation sequences, or proprietary flows.\n\nImplementation risk critic:\n\n- Evaluate SwiftUI scope, custom design system work, animation complexity, data dependencies, screenshot testability, and release risk.\n- Flag ideas that would force broad boilerplate rewrites or distract from the core wake/task workflow.\n\n## Scorecard Inputs\n\nFor each direction, provide notes that can support scores for:\n\n- `differentiation`\n- `native_ios_quality`\n- `wake_state_usability`\n- `conversion_potential`\n- `accessibility`\n- `implementation_risk`\n- `visual_distinctiveness`\n\nDo not select a final winner unless a role has a clear role-specific recommendation. The tournament consensus agent owns final selection.\n\n## No Secret Output\n\nDo not print, persist, summarize, or infer credentials, session tokens, private links, signed URLs, cookies, API keys, or user secrets. If a source contains secrets or private account information, write only: `secret material omitted`.\n"
+            },
+            "retry_target": {
+              "String": "design_direction_fanout"
+            },
+            "provider": {
+              "String": "openrouter"
+            },
+            "model": {
+              "String": "google/gemini-3.1-pro-preview"
+            },
+            "class": {
+              "String": "critique"
+            },
+            "label": {
+              "String": "Design Cross Critique"
+            }
+          },
+          "classes": [
+            "critique"
+          ]
+        },
+        "gate_screen_flows": {
+          "id": "gate_screen_flows",
+          "attrs": {
+            "retry_target": {
+              "String": "implement_screen_flows"
+            },
+            "goal_gate": {
+              "Boolean": true
+            },
+            "shape": {
+              "String": "parallelogram"
+            },
+            "label": {
+              "String": "Screen Flows Gate"
+            },
+            "provider": {
+              "String": "openrouter"
+            },
+            "script": {
+              "String": "node scripts/iphone-app-factory/phase-evidence-gate.mjs screen-flows"
+            },
+            "model": {
+              "String": "anthropic/claude-haiku-4-5"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            }
+          }
+        },
+        "final_review_join": {
+          "id": "final_review_join",
+          "attrs": {
+            "model": {
+              "String": "anthropic/claude-haiku-4-5"
+            },
+            "shape": {
+              "String": "tripleoctagon"
+            },
+            "provider": {
+              "String": "openrouter"
+            },
+            "label": {
+              "String": "Final Review Join"
+            },
+            "join_policy": {
+              "String": "wait_all"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            }
+          }
+        },
+        "postmortem_gate": {
+          "id": "postmortem_gate",
+          "attrs": {
+            "goal_gate": {
+              "Boolean": true
+            },
+            "retry_target": {
+              "String": "postmortem_learning_capture"
+            },
+            "label": {
+              "String": "Postmortem Gate"
+            },
+            "model": {
+              "String": "anthropic/claude-haiku-4-5"
+            },
+            "provider": {
+              "String": "openrouter"
+            },
+            "shape": {
+              "String": "parallelogram"
+            },
+            "script": {
+              "String": "node scripts/iphone-app-factory/ux-postmortem-gate.mjs"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            }
+          }
+        },
+        "design_tournament_consensus": {
+          "id": "design_tournament_consensus",
+          "attrs": {
+            "provider": {
+              "String": "openrouter"
+            },
+            "goal_gate": {
+              "Boolean": true
+            },
+            "prompt": {
+              "String": "# UX Design Tournament Consensus\n\nRead:\n\n- `.workflow/iphone-app-ux-studio/design/directions/calm_accountability_direction.md`\n- `.workflow/iphone-app-ux-studio/design/directions/hard_wake_direction.md`\n- `.workflow/iphone-app-ux-studio/design/directions/gamified_streak_direction.md`\n- `.workflow/iphone-app-ux-studio/design/directions/minimal_native_direction.md`\n- `.workflow/iphone-app-ux-studio/design/cross-critique.md`\n- `.workflow/iphone-app-ux-studio/research/reference-gap-analysis.json`\n- `.workflow/iphone-app-ux-studio/research/competitor-flows.md`\n- `.workflow/iphone-app-ux-studio/research/app-store-review-mining.md`\n- `.workflow/iphone-app-ux-studio/research/design-opportunity-synthesis.md`\n- all available research and reference artifacts in `.workflow/iphone-app-ux-studio/research/` and `.workflow/iphone-app-ux-studio/design/`\n\nRun an adversarial design tournament. Consider at least three directions and prefer the direction that is most differentiated, native to iOS, usable in a wake state, convertible without dark patterns, accessible, feasible, and visually distinct without cloning another product.\n\n## Required Outputs\n\nWrite both files:\n\n- `.workflow/iphone-app-ux-studio/design/tournament-consensus.md`\n- `.workflow/iphone-app-ux-studio/design/tournament-consensus.json`\n\nThe JSON output is gate-enforced by `scripts/iphone-app-factory/design-tournament-gate.mjs`. It must be valid JSON with no Markdown fences.\n\n## Markdown Structure\n\n`tournament-consensus.md` must include these headings exactly:\n\n- `# Design Tournament Consensus`\n- `## Directions Considered`\n- `## Scorecard`\n- `## Winner`\n- `## Rejected Directions`\n- `## Screen-Level Implications`\n- `## Monetization Implications`\n- `## Accessibility Commitments`\n- `## Implementation Risks`\n- `## No-Clone Statement`\n- `## Source List`\n- `## No Secret Output`\n\n## JSON Schema\n\n`tournament-consensus.json` must use this structure:\n\n```json\n{\n  \"directions\": [\n    {\n      \"label\": \"calm_accountability_direction\",\n      \"scores\": {\n        \"differentiation\": 1,\n        \"native_ios_quality\": 1,\n        \"wake_state_usability\": 1,\n        \"conversion_potential\": 1,\n        \"accessibility\": 1,\n        \"implementation_risk\": 1,\n        \"visual_distinctiveness\": 1\n      },\n      \"score_rationale\": {\n        \"differentiation\": \"Short evidence-backed rationale.\",\n        \"native_ios_quality\": \"Short evidence-backed rationale.\",\n        \"wake_state_usability\": \"Short evidence-backed rationale.\",\n        \"conversion_potential\": \"Short evidence-backed rationale.\",\n        \"accessibility\": \"Short evidence-backed rationale.\",\n        \"implementation_risk\": \"Short evidence-backed rationale.\",\n        \"visual_distinctiveness\": \"Short evidence-backed rationale.\"\n      },\n      \"selected\": false,\n      \"rejection_reason\": \"Required for every non-selected direction.\",\n      \"screen_level_implications\": {\n        \"onboarding\": \"Screen-level design consequence.\",\n        \"home\": \"Screen-level design consequence.\",\n        \"primary_list\": \"Screen-level design consequence.\",\n        \"create_edit\": \"Screen-level design consequence.\",\n        \"active_task\": \"Screen-level design consequence.\",\n        \"completion\": \"Screen-level design consequence.\",\n        \"history_streaks\": \"Screen-level design consequence.\",\n        \"profile_settings\": \"Screen-level design consequence.\",\n        \"paywall_subscription\": \"Screen-level design consequence.\"\n      }\n    }\n  ],\n  \"winner\": {\n    \"label\": \"selected_direction_label\",\n    \"rationale\": \"Why this direction wins after adversarial critique.\",\n    \"screen_level_implications\": {\n      \"onboarding\": \"Selected direction implication.\",\n      \"home\": \"Selected direction implication.\",\n      \"primary_list\": \"Selected direction implication.\",\n      \"create_edit\": \"Selected direction implication.\",\n      \"active_task\": \"Selected direction implication.\",\n      \"completion\": \"Selected direction implication.\",\n      \"history_streaks\": \"Selected direction implication.\",\n      \"profile_settings\": \"Selected direction implication.\",\n      \"paywall_subscription\": \"Selected direction implication.\"\n    }\n  },\n  \"no_clone_statement\": \"Explicit statement that the winning UX adapts abstract patterns only and does not copy another app's assets, copy, branding, visual composition, screenshots, or proprietary interaction sequences.\",\n  \"source_list\": [\n    {\n      \"source\": \"Artifact or external source name.\",\n      \"used_for\": \"What evidence it contributed.\"\n    }\n  ]\n}\n```\n\nScores must be finite numbers from 1 to 5, where 5 is strongest. For `implementation_risk`, 5 means low implementation risk and 1 means high implementation risk.\n\n## Hard Requirements\n\n- Include at least three directions in `directions`.\n- Include all seven score keys for every direction: `differentiation`, `native_ios_quality`, `wake_state_usability`, `conversion_potential`, `accessibility`, `implementation_risk`, and `visual_distinctiveness`.\n- Select exactly one winner and mark only that direction with `\"selected\": true`.\n- Every rejected direction must include a concrete `rejection_reason`.\n- The winner must include screen-level implications for onboarding, home, primary list, create/edit, active task, completion, history/streaks, profile/settings, and paywall/subscription.\n- Include a direct `no_clone_statement` in the JSON and Markdown.\n- Do not leak credentials, cookies, signed URLs, private account details, API keys, or secrets. If a source contains secrets or private account information, write only: `secret material omitted`.\n"
+            },
+            "label": {
+              "String": "Design Tournament Consensus"
+            },
+            "class": {
+              "String": "critique"
+            },
+            "model": {
+              "String": "google/gemini-3.1-pro-preview"
+            },
+            "retry_target": {
+              "String": "design_direction_fanout"
+            },
+            "reasoning_effort": {
+              "String": "high"
+            }
+          },
+          "classes": [
+            "critique"
+          ]
+        },
+        "reference_gap_analysis": {
+          "id": "reference_gap_analysis",
+          "attrs": {
+            "goal_gate": {
+              "Boolean": true
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "retry_target": {
+              "String": "retrieve_existing_references"
+            },
+            "label": {
+              "String": "Reference Gap Analysis"
+            },
+            "shape": {
+              "String": "parallelogram"
+            },
+            "script": {
+              "String": "mkdir -p .workflow/iphone-app-ux-studio/research; node -e \"const fs=require('fs'); const path='.workflow/iphone-app-ux-studio/research/reference-pack.json'; const pack=fs.existsSync(path)?JSON.parse(fs.readFileSync(path,'utf8')):{}; const refs=pack.references||pack.reference_pack?.references||[]; const report={ok:true,total_references:refs.length,needs_live_research:refs.length<12,missing:['competitor_flow_research','app_store_review_mining','mobbin_mcp_research','pageflows_research','apple_hig_research','behavioral_ux_research'],railway_fabro_required:true}; fs.writeFileSync('.workflow/iphone-app-ux-studio/research/reference-gap-analysis.json', JSON.stringify(report,null,2)+'\\n'); console.log(JSON.stringify(report));\""
+            },
+            "model": {
+              "String": "anthropic/claude-haiku-4-5"
+            },
+            "provider": {
+              "String": "openrouter"
+            }
+          }
+        },
+        "prompt_context_budget_gate": {
+          "id": "prompt_context_budget_gate",
+          "attrs": {
+            "shape": {
+              "String": "parallelogram"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "label": {
+              "String": "UX Prompt Context Budget Gate"
+            },
+            "retry_target": {
+              "String": "screen_ux_spec"
+            },
+            "provider": {
+              "String": "openrouter"
+            },
+            "model": {
+              "String": "anthropic/claude-haiku-4-5"
+            },
+            "script": {
+              "String": "node scripts/iphone-app-factory/prompt-context-budget-gate.mjs --root .workflow/iphone-app-ux-studio --out .workflow/iphone-app-ux-studio/prompt-context-budget.json"
+            },
+            "goal_gate": {
+              "Boolean": true
+            }
+          }
+        },
+        "research_fanout": {
+          "id": "research_fanout",
+          "attrs": {
+            "join_policy": {
+              "String": "wait_all"
+            },
+            "max_parallel": {
+              "Integer": 1
+            },
+            "label": {
+              "String": "Research Fan-Out"
+            },
+            "provider": {
+              "String": "openrouter"
+            },
+            "model": {
+              "String": "anthropic/claude-haiku-4-5"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "shape": {
+              "String": "component"
+            }
+          }
+        }
+      },
+      "edges": [
+        {
+          "from": "start",
+          "to": "remote_environment_preflight",
+          "attrs": {}
+        },
+        {
+          "from": "remote_environment_preflight",
+          "to": "checkout_existing_app",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "remote_environment_preflight",
+          "to": "remote_environment_preflight",
+          "attrs": {
+            "label": {
+              "String": "Retry Railway Preflight"
+            }
+          }
+        },
+        {
+          "from": "checkout_existing_app",
+          "to": "existing_app_intake",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "checkout_existing_app",
+          "to": "remote_environment_preflight",
+          "attrs": {
+            "label": {
+              "String": "Fix Checkout"
+            }
+          }
+        },
+        {
+          "from": "existing_app_intake",
+          "to": "baseline_screenshot_capture",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "existing_app_intake",
+          "to": "existing_app_intake",
+          "attrs": {
+            "label": {
+              "String": "Retry Intake"
+            }
+          }
+        },
+        {
+          "from": "baseline_screenshot_capture",
+          "to": "design_corpus_preflight",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "baseline_screenshot_capture",
+          "to": "existing_app_intake",
+          "attrs": {
+            "label": {
+              "String": "Retry Baseline"
+            }
+          }
+        },
+        {
+          "from": "design_corpus_preflight",
+          "to": "retrieve_existing_references",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "design_corpus_preflight",
+          "to": "remote_environment_preflight",
+          "attrs": {
+            "label": {
+              "String": "Fix Environment"
+            }
+          }
+        },
+        {
+          "from": "retrieve_existing_references",
+          "to": "reference_gap_analysis",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "retrieve_existing_references",
+          "to": "design_corpus_preflight",
+          "attrs": {
+            "label": {
+              "String": "Retry Corpus"
+            }
+          }
+        },
+        {
+          "from": "reference_gap_analysis",
+          "to": "research_fanout",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "reference_gap_analysis",
+          "to": "retrieve_existing_references",
+          "attrs": {
+            "label": {
+              "String": "Retry Corpus"
+            }
+          }
+        },
+        {
+          "from": "research_fanout",
+          "to": "competitor_flow_research",
+          "attrs": {}
+        },
+        {
+          "from": "research_fanout",
+          "to": "app_store_review_mining",
+          "attrs": {}
+        },
+        {
+          "from": "research_fanout",
+          "to": "mobbin_mcp_research",
+          "attrs": {}
+        },
+        {
+          "from": "research_fanout",
+          "to": "pageflows_research",
+          "attrs": {}
+        },
+        {
+          "from": "research_fanout",
+          "to": "apple_hig_research",
+          "attrs": {}
+        },
+        {
+          "from": "research_fanout",
+          "to": "behavioral_ux_research",
+          "attrs": {}
+        },
+        {
+          "from": "competitor_flow_research",
+          "to": "research_join",
+          "attrs": {}
+        },
+        {
+          "from": "app_store_review_mining",
+          "to": "research_join",
+          "attrs": {}
+        },
+        {
+          "from": "mobbin_mcp_research",
+          "to": "research_join",
+          "attrs": {}
+        },
+        {
+          "from": "pageflows_research",
+          "to": "research_join",
+          "attrs": {}
+        },
+        {
+          "from": "apple_hig_research",
+          "to": "research_join",
+          "attrs": {}
+        },
+        {
+          "from": "behavioral_ux_research",
+          "to": "research_join",
+          "attrs": {}
+        },
+        {
+          "from": "research_join",
+          "to": "design_opportunity_synthesis",
+          "attrs": {}
+        },
+        {
+          "from": "design_opportunity_synthesis",
+          "to": "reference_pack_gate",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "design_opportunity_synthesis",
+          "to": "research_fanout",
+          "attrs": {
+            "label": {
+              "String": "Research Fix"
+            }
+          }
+        },
+        {
+          "from": "reference_pack_gate",
+          "to": "design_direction_fanout",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "reference_pack_gate",
+          "to": "research_fanout",
+          "attrs": {
+            "label": {
+              "String": "Fill Reference Gaps"
+            }
+          }
+        },
+        {
+          "from": "design_direction_fanout",
+          "to": "calm_accountability_direction",
+          "attrs": {}
+        },
+        {
+          "from": "design_direction_fanout",
+          "to": "hard_wake_direction",
+          "attrs": {}
+        },
+        {
+          "from": "design_direction_fanout",
+          "to": "gamified_streak_direction",
+          "attrs": {}
+        },
+        {
+          "from": "design_direction_fanout",
+          "to": "minimal_native_direction",
+          "attrs": {}
+        },
+        {
+          "from": "calm_accountability_direction",
+          "to": "design_direction_join",
+          "attrs": {}
+        },
+        {
+          "from": "hard_wake_direction",
+          "to": "design_direction_join",
+          "attrs": {}
+        },
+        {
+          "from": "gamified_streak_direction",
+          "to": "design_direction_join",
+          "attrs": {}
+        },
+        {
+          "from": "minimal_native_direction",
+          "to": "design_direction_join",
+          "attrs": {}
+        },
+        {
+          "from": "design_direction_join",
+          "to": "design_cross_critique",
+          "attrs": {}
+        },
+        {
+          "from": "design_cross_critique",
+          "to": "design_tournament_consensus",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "design_cross_critique",
+          "to": "design_direction_fanout",
+          "attrs": {
+            "label": {
+              "String": "Retry Directions"
+            }
+          }
+        },
+        {
+          "from": "design_tournament_consensus",
+          "to": "design_tournament_gate",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "design_tournament_consensus",
+          "to": "design_direction_fanout",
+          "attrs": {
+            "label": {
+              "String": "Retry Tournament"
+            }
+          }
+        },
+        {
+          "from": "design_tournament_gate",
+          "to": "screen_ux_spec",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "design_tournament_gate",
+          "to": "design_direction_fanout",
+          "attrs": {
+            "label": {
+              "String": "Weak Design"
+            }
+          }
+        },
+        {
+          "from": "screen_ux_spec",
+          "to": "implementation_plan_gate",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "screen_ux_spec",
+          "to": "screen_ux_spec",
+          "attrs": {
+            "label": {
+              "String": "Spec Fix"
+            }
+          }
+        },
+        {
+          "from": "implementation_plan_gate",
+          "to": "implement_visual_system",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "implementation_plan_gate",
+          "to": "screen_ux_spec",
+          "attrs": {
+            "label": {
+              "String": "Mapping Fix"
+            }
+          }
+        },
+        {
+          "from": "implement_visual_system",
+          "to": "verify_visual_system",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "implement_visual_system",
+          "to": "implement_visual_system",
+          "attrs": {
+            "label": {
+              "String": "Retry Visual System"
+            }
+          }
+        },
+        {
+          "from": "verify_visual_system",
+          "to": "gate_visual_system",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "verify_visual_system",
+          "to": "implement_visual_system",
+          "attrs": {
+            "label": {
+              "String": "Fix Visual System"
+            }
+          }
+        },
+        {
+          "from": "gate_visual_system",
+          "to": "implement_screen_flows",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "gate_visual_system",
+          "to": "implement_visual_system",
+          "attrs": {
+            "label": {
+              "String": "Fix Visual System"
+            }
+          }
+        },
+        {
+          "from": "implement_screen_flows",
+          "to": "verify_screen_flows",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "implement_screen_flows",
+          "to": "implement_screen_flows",
+          "attrs": {
+            "label": {
+              "String": "Retry Screen Flows"
+            }
+          }
+        },
+        {
+          "from": "verify_screen_flows",
+          "to": "gate_screen_flows",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "verify_screen_flows",
+          "to": "implement_screen_flows",
+          "attrs": {
+            "label": {
+              "String": "Fix Screen Flows"
+            }
+          }
+        },
+        {
+          "from": "gate_screen_flows",
+          "to": "screenshot_evidence_review",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "gate_screen_flows",
+          "to": "implement_screen_flows",
+          "attrs": {
+            "label": {
+              "String": "Fix Screen Flows"
+            }
+          }
+        },
+        {
+          "from": "screenshot_evidence_review",
+          "to": "screenshot_evidence_gate",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "screenshot_evidence_review",
+          "to": "implement_screen_flows",
+          "attrs": {
+            "label": {
+              "String": "Screenshot Review Fix"
+            }
+          }
+        },
+        {
+          "from": "screenshot_evidence_gate",
+          "to": "appium_exploratory_gate",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "screenshot_evidence_gate",
+          "to": "implement_screen_flows",
+          "attrs": {
+            "label": {
+              "String": "Screenshot Fix"
+            }
+          }
+        },
+        {
+          "from": "appium_exploratory_gate",
+          "to": "ios_quality_gate",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "appium_exploratory_gate",
+          "to": "implement_screen_flows",
+          "attrs": {
+            "label": {
+              "String": "Appium Fix"
+            }
+          }
+        },
+        {
+          "from": "ios_quality_gate",
+          "to": "prompt_context_budget_gate",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "ios_quality_gate",
+          "to": "implement_screen_flows",
+          "attrs": {
+            "label": {
+              "String": "CI Fix"
+            }
+          }
+        },
+        {
+          "from": "prompt_context_budget_gate",
+          "to": "final_review_fanout",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "prompt_context_budget_gate",
+          "to": "screen_ux_spec",
+          "attrs": {
+            "label": {
+              "String": "Compact Context"
+            }
+          }
+        },
+        {
+          "from": "final_review_fanout",
+          "to": "ux_quality_review",
+          "attrs": {}
+        },
+        {
+          "from": "final_review_fanout",
+          "to": "product_fidelity_review",
+          "attrs": {}
+        },
+        {
+          "from": "final_review_fanout",
+          "to": "ios_architecture_review",
+          "attrs": {}
+        },
+        {
+          "from": "final_review_fanout",
+          "to": "accessibility_review",
+          "attrs": {}
+        },
+        {
+          "from": "final_review_fanout",
+          "to": "security_privacy_review",
+          "attrs": {}
+        },
+        {
+          "from": "final_review_fanout",
+          "to": "release_readiness_review",
+          "attrs": {}
+        },
+        {
+          "from": "ux_quality_review",
+          "to": "final_review_join",
+          "attrs": {}
+        },
+        {
+          "from": "product_fidelity_review",
+          "to": "final_review_join",
+          "attrs": {}
+        },
+        {
+          "from": "ios_architecture_review",
+          "to": "final_review_join",
+          "attrs": {}
+        },
+        {
+          "from": "accessibility_review",
+          "to": "final_review_join",
+          "attrs": {}
+        },
+        {
+          "from": "security_privacy_review",
+          "to": "final_review_join",
+          "attrs": {}
+        },
+        {
+          "from": "release_readiness_review",
+          "to": "final_review_join",
+          "attrs": {}
+        },
+        {
+          "from": "final_review_join",
+          "to": "ux_final_review_gate",
+          "attrs": {}
+        },
+        {
+          "from": "ux_final_review_gate",
+          "to": "final_consensus",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "ux_final_review_gate",
+          "to": "implement_screen_flows",
+          "attrs": {
+            "label": {
+              "String": "UX Fix"
+            }
+          }
+        },
+        {
+          "from": "final_consensus",
+          "to": "publish_handoff",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "final_consensus",
+          "to": "final_review_fanout",
+          "attrs": {
+            "label": {
+              "String": "Review Fix"
+            }
+          }
+        },
+        {
+          "from": "publish_handoff",
+          "to": "postmortem_learning_capture",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "publish_handoff",
+          "to": "final_consensus",
+          "attrs": {
+            "label": {
+              "String": "Handoff Fix"
+            }
+          }
+        },
+        {
+          "from": "postmortem_learning_capture",
+          "to": "postmortem_gate",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "postmortem_learning_capture",
+          "to": "postmortem_learning_capture",
+          "attrs": {
+            "label": {
+              "String": "Retry Postmortem"
+            }
+          }
+        },
+        {
+          "from": "postmortem_gate",
+          "to": "exit",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "postmortem_gate",
+          "to": "postmortem_learning_capture",
+          "attrs": {
+            "label": {
+              "String": "Complete Postmortem"
+            }
+          }
+        }
+      ],
+      "attrs": {
+        "retry_target": {
+          "String": "design_tournament_consensus"
+        },
+        "model_stylesheet": {
+          "String": "\n            *                  { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: low; }\n            .ux-research       { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: high; }\n            .design            { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: high; }\n            .critique          { provider: openrouter; model: google/gemini-3.1-pro-preview; reasoning_effort: high; }\n            .review            { provider: openrouter; model: google/gemini-3.1-pro-preview; reasoning_effort: high; }\n            .verify            { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: medium; }\n            .security          { provider: openrouter; model: google/gemini-3.1-pro-preview; reasoning_effort: high; }\n        "
+        },
+        "persona": {
+          "String": "iphone-app-ux-studio"
+        },
+        "outputs": {
+          "String": "existing_app_intake,reference_pack,design_tournament,screen_spec,ux_implementation_evidence,screenshot_manifest,appium_report,ios_quality_report,ux_handoff,postmortem"
+        },
+        "default_max_retries": {
+          "Integer": 2
+        },
+        "inputs": {
+          "String": "repo_url,base_branch,run_branch,app_name,bundle_id,app_dir,app_domain,target_audience,design_goal,max_competitors,use_mobbin_mcp,use_design_corpus,design_corpus_write_mode,selected_direction_mode,ios_validation_mode,allow_macos_deferred,fabro_server"
+        },
+        "goal": {
+          "String": "Iterate on an existing iPhone app UX with private design research, adversarial design options, hosted iOS validation, and postmortem learning capture"
+        },
+        "fallback_retry_target": {
+          "String": "implement_screen_flows"
+        },
+        "secret_policy": {
+          "String": "never print environment variables or credential values; credential checks must be presence-only true/false checks; do not run environment dump commands; Mobbin and competitor screenshots are private research references only."
+        },
+        "rankdir": {
+          "String": "LR"
+        }
+      }
+    },
+    "graph_source": "digraph IterateExistingAppUX {\n    graph [\n        goal=\"Iterate on an existing iPhone app UX with private design research, adversarial design directions, hosted iOS validation, and postmortem learning capture\",\n        persona=\"iphone-app-ux-studio\",\n        secret_policy=\"never print environment variables or credential values; credential checks must be presence-only true/false checks; do not run environment dump commands; Mobbin and competitor screenshots are private research references only.\",\n        inputs=\"repo_url,base_branch,run_branch,app_name,bundle_id,app_dir,app_domain,target_audience,design_goal,max_competitors,use_mobbin_mcp,use_design_corpus,design_corpus_write_mode,selected_direction_mode,ios_validation_mode,allow_macos_deferred,fabro_server\",\n        outputs=\"existing_app_intake,reference_pack,design_tournament,screen_spec,ux_implementation_evidence,screenshot_manifest,appium_report,ios_quality_report,ux_handoff,postmortem\",\n        default_max_retries=2,\n        retry_target=\"design_tournament_consensus\",\n        fallback_retry_target=\"implement_screen_flows\",\n        model_stylesheet=\"\n            *                  { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: low; }\n            .ux-research       { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: high; }\n            .design            { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: high; }\n            .critique          { provider: openrouter; model: google/gemini-3.1-pro-preview; reasoning_effort: high; }\n            .review            { provider: openrouter; model: google/gemini-3.1-pro-preview; reasoning_effort: high; }\n            .verify            { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: medium; }\n            .security          { provider: openrouter; model: google/gemini-3.1-pro-preview; reasoning_effort: high; }\n        \"\n    ]\n    rankdir=LR\n\n    start [shape=Mdiamond, label=\"Start\"]\n    exit  [shape=Msquare, label=\"Exit\"]\n\n    remote_environment_preflight [\n        label=\"Remote Railway/Daytona Preflight\",\n        shape=parallelogram,\n        goal_gate=true,\n        retry_target=\"remote_environment_preflight\",\n        script=\"node scripts/iphone-app-factory/ux-studio-preflight.mjs --server https://fabro-maestro-production.up.railway.app/api/v1 --expected-control-plane railway\"\n    ]\n    checkout_existing_app [\n        label=\"Checkout Existing App\",\n        shape=parallelogram,\n        goal_gate=true,\n        retry_target=\"checkout_existing_app\",\n        script=\"node scripts/iphone-app-factory/checkout-existing-app.mjs\"\n    ]\n\n    existing_app_intake [\n        label=\"Existing App Intake\",\n        class=\"ux-research\",\n        goal_gate=true,\n        retry_target=\"existing_app_intake\",\n        prompt=\"@../../prompts/iphone-app-factory/ux-existing-app-intake.md\"\n    ]\n    baseline_screenshot_capture [\n        label=\"Baseline Screenshot Capture\",\n        shape=parallelogram,\n        goal_gate=true,\n        retry_target=\"existing_app_intake\",\n        timeout=\"3600s\",\n        script=\"node scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/ux-baseline-screenshot-capture.md --stage baseline-screenshot-capture --out .workflow/iphone-app-ux-studio/codex/baseline-screenshot-capture.json\"\n    ]\n    design_corpus_preflight [\n        label=\"Design Corpus Preflight\",\n        shape=parallelogram,\n        goal_gate=true,\n        retry_target=\"design_corpus_preflight\",\n        script=\"node scripts/iphone-app-factory/design-corpus.mjs init --db .workflow/iphone-app-ux-studio/design-corpus.sqlite\"\n    ]\n    retrieve_existing_references [\n        label=\"Retrieve Existing References\",\n        shape=parallelogram,\n        goal_gate=true,\n        retry_target=\"design_corpus_preflight\",\n        script=\"mkdir -p .workflow/iphone-app-ux-studio/research; node scripts/iphone-app-factory/design-corpus.mjs reference-pack --db .workflow/iphone-app-ux-studio/design-corpus.sqlite > .workflow/iphone-app-ux-studio/research/reference-pack.json\"\n    ]\n    reference_gap_analysis [\n        label=\"Reference Gap Analysis\",\n        shape=parallelogram,\n        goal_gate=true,\n        retry_target=\"retrieve_existing_references\",\n        script=\"mkdir -p .workflow/iphone-app-ux-studio/research; node -e \\\"const fs=require('fs'); const path='.workflow/iphone-app-ux-studio/research/reference-pack.json'; const pack=fs.existsSync(path)?JSON.parse(fs.readFileSync(path,'utf8')):{}; const refs=pack.references||pack.reference_pack?.references||[]; const report={ok:true,total_references:refs.length,needs_live_research:refs.length<12,missing:['competitor_flow_research','app_store_review_mining','mobbin_mcp_research','pageflows_research','apple_hig_research','behavioral_ux_research'],railway_fabro_required:true}; fs.writeFileSync('.workflow/iphone-app-ux-studio/research/reference-gap-analysis.json', JSON.stringify(report,null,2)+'\\\\n'); console.log(JSON.stringify(report));\\\"\"\n    ]\n\n    research_fanout [label=\"Research Fan-Out\", shape=component, join_policy=\"wait_all\", max_parallel=1]\n    competitor_flow_research [label=\"Competitor Flow Research\", class=\"ux-research\", prompt=\"@../../prompts/iphone-app-factory/ux-competitor-flow-research.md\"]\n    app_store_review_mining [label=\"App Store Review Mining\", class=\"ux-research\", prompt=\"@../../prompts/iphone-app-factory/ux-app-store-review-mining.md\"]\n    mobbin_mcp_research [\n        label=\"Mobbin MCP Research\",\n        shape=parallelogram,\n        goal_gate=true,\n        retry_target=\"mobbin_mcp_research\",\n        script=\"node scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/ux-mobbin-mcp-research.md --stage mobbin-mcp-research --out .workflow/iphone-app-ux-studio/codex/mobbin-mcp-research.json\"\n    ]\n    pageflows_research [label=\"Pageflows Research\", class=\"ux-research\", prompt=\"@../../prompts/iphone-app-factory/ux-pageflows-research.md\"]\n    apple_hig_research [label=\"Apple HIG Research\", class=\"ux-research\", prompt=\"@../../prompts/iphone-app-factory/ux-apple-hig-research.md\"]\n    behavioral_ux_research [label=\"Behavioral UX Research\", class=\"ux-research\", prompt=\"@../../prompts/iphone-app-factory/ux-behavioral-research.md\"]\n    research_join [label=\"Research Join\", shape=tripleoctagon, join_policy=\"wait_all\"]\n    design_opportunity_synthesis [\n        label=\"Design Opportunity Synthesis\",\n        class=\"ux-research\",\n        goal_gate=true,\n        retry_target=\"research_fanout\",\n        prompt=\"@../../prompts/iphone-app-factory/ux-design-opportunity-synthesis.md\"\n    ]\n    reference_pack_gate [\n        label=\"Reference Pack Gate\",\n        shape=parallelogram,\n        goal_gate=true,\n        retry_target=\"research_fanout\",\n        script=\"node scripts/iphone-app-factory/reference-pack-gate.mjs\"\n    ]\n\n    design_direction_fanout [label=\"Design Direction Fan-Out\", shape=component, join_policy=\"wait_all\", max_parallel=1]\n    calm_accountability_direction [label=\"Calm Accountability Direction\", class=\"design\", prompt=\"@../../prompts/iphone-app-factory/ux-design-direction-candidate.md\"]\n    hard_wake_direction [label=\"Hard Wake Direction\", class=\"design\", prompt=\"@../../prompts/iphone-app-factory/ux-design-direction-candidate.md\"]\n    gamified_streak_direction [label=\"Gamified Streak Direction\", class=\"design\", prompt=\"@../../prompts/iphone-app-factory/ux-design-direction-candidate.md\"]\n    minimal_native_direction [label=\"Minimal Native Direction\", class=\"design\", prompt=\"@../../prompts/iphone-app-factory/ux-design-direction-candidate.md\"]\n    design_direction_join [label=\"Design Direction Join\", shape=tripleoctagon, join_policy=\"wait_all\"]\n    design_cross_critique [\n        label=\"Design Cross Critique\",\n        class=\"critique\",\n        goal_gate=true,\n        retry_target=\"design_direction_fanout\",\n        prompt=\"@../../prompts/iphone-app-factory/ux-design-cross-critique.md\"\n    ]\n    design_tournament_consensus [\n        label=\"Design Tournament Consensus\",\n        class=\"critique\",\n        goal_gate=true,\n        retry_target=\"design_direction_fanout\",\n        prompt=\"@../../prompts/iphone-app-factory/ux-design-tournament-consensus.md\"\n    ]\n    design_tournament_gate [\n        label=\"Design Tournament Gate\",\n        shape=parallelogram,\n        goal_gate=true,\n        retry_target=\"design_direction_fanout\",\n        script=\"node scripts/iphone-app-factory/design-tournament-gate.mjs\"\n    ]\n    screen_ux_spec [\n        label=\"Screen UX Spec\",\n        class=\"design\",\n        goal_gate=true,\n        retry_target=\"design_tournament_consensus\",\n        prompt=\"@../../prompts/iphone-app-factory/ux-screen-spec.md\"\n    ]\n    implementation_plan_gate [\n        label=\"Implementation Plan Gate\",\n        class=\"review\",\n        goal_gate=true,\n        retry_target=\"screen_ux_spec\",\n        prompt=\"@../../prompts/iphone-app-factory/ux-implementation-plan.md\"\n    ]\n\n    implement_visual_system [\n        label=\"Implement Visual System\",\n        shape=parallelogram,\n        goal_gate=true,\n        retry_target=\"implement_visual_system\",\n        timeout=\"3600s\",\n        script=\"node scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/ux-implement-visual-system.md --stage visual-system --out .workflow/iphone-app-ux-studio/codex/visual-system.json\"\n    ]\n    verify_visual_system [label=\"Verify Visual System\", class=\"verify\", goal_gate=true, retry_target=\"implement_visual_system\", prompt=\"@../../prompts/iphone-app-factory/ux-verify-phase.md\"]\n    gate_visual_system [label=\"Visual System Gate\", shape=parallelogram, goal_gate=true, retry_target=\"implement_visual_system\", script=\"node scripts/iphone-app-factory/phase-evidence-gate.mjs visual-system\"]\n\n    implement_screen_flows [\n        label=\"Implement Screen Flows\",\n        shape=parallelogram,\n        goal_gate=true,\n        retry_target=\"implement_screen_flows\",\n        timeout=\"3600s\",\n        script=\"node scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/ux-implement-screen-flows.md --stage screen-flows --out .workflow/iphone-app-ux-studio/codex/screen-flows.json\"\n    ]\n    verify_screen_flows [label=\"Verify Screen Flows\", class=\"verify\", goal_gate=true, retry_target=\"implement_screen_flows\", prompt=\"@../../prompts/iphone-app-factory/ux-verify-phase.md\"]\n    gate_screen_flows [label=\"Screen Flows Gate\", shape=parallelogram, goal_gate=true, retry_target=\"implement_screen_flows\", script=\"node scripts/iphone-app-factory/phase-evidence-gate.mjs screen-flows\"]\n\n    screenshot_evidence_review [\n        label=\"Screenshot Evidence Review\",\n        class=\"review\",\n        goal_gate=true,\n        retry_target=\"implement_screen_flows\",\n        prompt=\"@../../prompts/iphone-app-factory/ux-screenshot-evidence-review.md\"\n    ]\n    screenshot_evidence_gate [\n        label=\"Screenshot Evidence Gate\",\n        shape=parallelogram,\n        goal_gate=true,\n        retry_target=\"implement_screen_flows\",\n        script=\"node scripts/iphone-app-factory/ios-screenshot-manifest-gate.mjs --manifest reports/ios/screenshots/manifest.json --phase after --require-before-after true\"\n    ]\n    appium_exploratory_gate [\n        label=\"Appium Exploratory Gate\",\n        shape=parallelogram,\n        goal_gate=true,\n        retry_target=\"implement_screen_flows\",\n        script=\"node scripts/iphone-app-factory/appium-report-gate.mjs\"\n    ]\n    ios_quality_gate [\n        label=\"iOS Quality Gate\",\n        shape=parallelogram,\n        goal_gate=true,\n        retry_target=\"implement_screen_flows\",\n        timeout=\"3600s\",\n        script=\"node scripts/iphone-app-factory/ios-ci-gate.mjs\"\n    ]\n    prompt_context_budget_gate [\n        label=\"UX Prompt Context Budget Gate\",\n        shape=parallelogram,\n        goal_gate=true,\n        retry_target=\"screen_ux_spec\",\n        script=\"node scripts/iphone-app-factory/prompt-context-budget-gate.mjs --root .workflow/iphone-app-ux-studio --out .workflow/iphone-app-ux-studio/prompt-context-budget.json\"\n    ]\n\n    final_review_fanout [label=\"Final Review Fan-Out\", shape=component, join_policy=\"wait_all\", max_parallel=1]\n    ux_quality_review [label=\"UX Quality Review\", class=\"review\", prompt=\"@../../prompts/iphone-app-factory/ux-review-ux-quality.md\"]\n    product_fidelity_review [label=\"Product Fidelity Review\", class=\"review\", prompt=\"@../../prompts/iphone-app-factory/review-product-fidelity.md\"]\n    ios_architecture_review [label=\"iOS Architecture Review\", class=\"review\", prompt=\"@../../prompts/iphone-app-factory/review-ios-architecture.md\"]\n    accessibility_review [label=\"Accessibility Review\", class=\"review\", prompt=\"@../../prompts/iphone-app-factory/ux-review-accessibility.md\"]\n    security_privacy_review [label=\"Security Privacy Review\", class=\"security\", prompt=\"@../../prompts/iphone-app-factory/review-security-privacy.md\"]\n    release_readiness_review [label=\"Release Readiness Review\", class=\"review\", prompt=\"@../../prompts/iphone-app-factory/review-release-readiness.md\"]\n    final_review_join [label=\"Final Review Join\", shape=tripleoctagon, join_policy=\"wait_all\"]\n    ux_final_review_gate [\n        label=\"UX Final Review Gate\",\n        shape=parallelogram,\n        goal_gate=true,\n        retry_target=\"implement_screen_flows\",\n        script=\"node scripts/iphone-app-factory/ux-final-review-gate.mjs\"\n    ]\n    final_consensus [\n        label=\"Final Consensus\",\n        class=\"review\",\n        goal_gate=true,\n        retry_target=\"final_review_fanout\",\n        prompt=\"@../../prompts/iphone-app-factory/ux-final-consensus.md\"\n    ]\n    publish_handoff [\n        label=\"Publish Handoff\",\n        shape=parallelogram,\n        goal_gate=true,\n        retry_target=\"final_consensus\",\n        script=\"node scripts/iphone-app-factory/publish-handoff.mjs\"\n    ]\n    postmortem_learning_capture [\n        label=\"Postmortem Learning Capture\",\n        class=\"review\",\n        goal_gate=true,\n        retry_target=\"postmortem_learning_capture\",\n        prompt=\"@../../prompts/iphone-app-factory/ux-postmortem-learning-capture.md\"\n    ]\n    postmortem_gate [\n        label=\"Postmortem Gate\",\n        shape=parallelogram,\n        goal_gate=true,\n        retry_target=\"postmortem_learning_capture\",\n        script=\"node scripts/iphone-app-factory/ux-postmortem-gate.mjs\"\n    ]\n\n    start -> remote_environment_preflight\n    remote_environment_preflight -> checkout_existing_app [condition=\"outcome=succeeded\"]\n    remote_environment_preflight -> remote_environment_preflight [label=\"Retry Railway Preflight\"]\n    checkout_existing_app -> existing_app_intake [condition=\"outcome=succeeded\"]\n    checkout_existing_app -> remote_environment_preflight [label=\"Fix Checkout\"]\n\n    existing_app_intake -> baseline_screenshot_capture [condition=\"outcome=succeeded\"]\n    existing_app_intake -> existing_app_intake [label=\"Retry Intake\"]\n    baseline_screenshot_capture -> design_corpus_preflight [condition=\"outcome=succeeded\"]\n    baseline_screenshot_capture -> existing_app_intake [label=\"Retry Baseline\"]\n    design_corpus_preflight -> retrieve_existing_references [condition=\"outcome=succeeded\"]\n    design_corpus_preflight -> remote_environment_preflight [label=\"Fix Environment\"]\n    retrieve_existing_references -> reference_gap_analysis [condition=\"outcome=succeeded\"]\n    retrieve_existing_references -> design_corpus_preflight [label=\"Retry Corpus\"]\n    reference_gap_analysis -> research_fanout [condition=\"outcome=succeeded\"]\n    reference_gap_analysis -> retrieve_existing_references [label=\"Retry Corpus\"]\n\n    research_fanout -> competitor_flow_research\n    research_fanout -> app_store_review_mining\n    research_fanout -> mobbin_mcp_research\n    research_fanout -> pageflows_research\n    research_fanout -> apple_hig_research\n    research_fanout -> behavioral_ux_research\n    competitor_flow_research -> research_join\n    app_store_review_mining -> research_join\n    mobbin_mcp_research -> research_join\n    pageflows_research -> research_join\n    apple_hig_research -> research_join\n    behavioral_ux_research -> research_join\n    research_join -> design_opportunity_synthesis\n    design_opportunity_synthesis -> reference_pack_gate [condition=\"outcome=succeeded\"]\n    design_opportunity_synthesis -> research_fanout [label=\"Research Fix\"]\n    reference_pack_gate -> design_direction_fanout [condition=\"outcome=succeeded\"]\n    reference_pack_gate -> research_fanout [label=\"Fill Reference Gaps\"]\n\n    design_direction_fanout -> calm_accountability_direction\n    design_direction_fanout -> hard_wake_direction\n    design_direction_fanout -> gamified_streak_direction\n    design_direction_fanout -> minimal_native_direction\n    calm_accountability_direction -> design_direction_join\n    hard_wake_direction -> design_direction_join\n    gamified_streak_direction -> design_direction_join\n    minimal_native_direction -> design_direction_join\n    design_direction_join -> design_cross_critique\n    design_cross_critique -> design_tournament_consensus [condition=\"outcome=succeeded\"]\n    design_cross_critique -> design_direction_fanout [label=\"Retry Directions\"]\n    design_tournament_consensus -> design_tournament_gate [condition=\"outcome=succeeded\"]\n    design_tournament_consensus -> design_direction_fanout [label=\"Retry Tournament\"]\n    design_tournament_gate -> screen_ux_spec [condition=\"outcome=succeeded\"]\n    design_tournament_gate -> design_direction_fanout [label=\"Weak Design\"]\n    screen_ux_spec -> implementation_plan_gate [condition=\"outcome=succeeded\"]\n    screen_ux_spec -> screen_ux_spec [label=\"Spec Fix\"]\n    implementation_plan_gate -> implement_visual_system [condition=\"outcome=succeeded\"]\n    implementation_plan_gate -> screen_ux_spec [label=\"Mapping Fix\"]\n\n    implement_visual_system -> verify_visual_system [condition=\"outcome=succeeded\"]\n    implement_visual_system -> implement_visual_system [label=\"Retry Visual System\"]\n    verify_visual_system -> gate_visual_system [condition=\"outcome=succeeded\"]\n    verify_visual_system -> implement_visual_system [label=\"Fix Visual System\"]\n    gate_visual_system -> implement_screen_flows [condition=\"outcome=succeeded\"]\n    gate_visual_system -> implement_visual_system [label=\"Fix Visual System\"]\n\n    implement_screen_flows -> verify_screen_flows [condition=\"outcome=succeeded\"]\n    implement_screen_flows -> implement_screen_flows [label=\"Retry Screen Flows\"]\n    verify_screen_flows -> gate_screen_flows [condition=\"outcome=succeeded\"]\n    verify_screen_flows -> implement_screen_flows [label=\"Fix Screen Flows\"]\n    gate_screen_flows -> screenshot_evidence_review [condition=\"outcome=succeeded\"]\n    gate_screen_flows -> implement_screen_flows [label=\"Fix Screen Flows\"]\n    screenshot_evidence_review -> screenshot_evidence_gate [condition=\"outcome=succeeded\"]\n    screenshot_evidence_review -> implement_screen_flows [label=\"Screenshot Review Fix\"]\n    screenshot_evidence_gate -> appium_exploratory_gate [condition=\"outcome=succeeded\"]\n    screenshot_evidence_gate -> implement_screen_flows [label=\"Screenshot Fix\"]\n    appium_exploratory_gate -> ios_quality_gate [condition=\"outcome=succeeded\"]\n    appium_exploratory_gate -> implement_screen_flows [label=\"Appium Fix\"]\n    ios_quality_gate -> prompt_context_budget_gate [condition=\"outcome=succeeded\"]\n    ios_quality_gate -> implement_screen_flows [label=\"CI Fix\"]\n    prompt_context_budget_gate -> final_review_fanout [condition=\"outcome=succeeded\"]\n    prompt_context_budget_gate -> screen_ux_spec [label=\"Compact Context\"]\n\n    final_review_fanout -> ux_quality_review\n    final_review_fanout -> product_fidelity_review\n    final_review_fanout -> ios_architecture_review\n    final_review_fanout -> accessibility_review\n    final_review_fanout -> security_privacy_review\n    final_review_fanout -> release_readiness_review\n    ux_quality_review -> final_review_join\n    product_fidelity_review -> final_review_join\n    ios_architecture_review -> final_review_join\n    accessibility_review -> final_review_join\n    security_privacy_review -> final_review_join\n    release_readiness_review -> final_review_join\n    final_review_join -> ux_final_review_gate\n    ux_final_review_gate -> final_consensus [condition=\"outcome=succeeded\"]\n    ux_final_review_gate -> implement_screen_flows [label=\"UX Fix\"]\n    final_consensus -> publish_handoff [condition=\"outcome=succeeded\"]\n    final_consensus -> final_review_fanout [label=\"Review Fix\"]\n    publish_handoff -> postmortem_learning_capture [condition=\"outcome=succeeded\"]\n    publish_handoff -> final_consensus [label=\"Handoff Fix\"]\n    postmortem_learning_capture -> postmortem_gate [condition=\"outcome=succeeded\"]\n    postmortem_learning_capture -> postmortem_learning_capture [label=\"Retry Postmortem\"]\n    postmortem_gate -> exit [condition=\"outcome=succeeded\"]\n    postmortem_gate -> postmortem_learning_capture [label=\"Complete Postmortem\"]\n}\n",
+    "workflow_slug": "iterate-existing-app-ux",
+    "source_directory": "/Users/timlife/Documents/claude code/maestro-os",
+    "labels": {
+      "factory": "iphone-app-ux-studio",
+      "topic": "task-alarm-clock",
+      "app": "waketask",
+      "control_plane": "railway"
+    },
+    "provenance": {
+      "server": {
+        "version": "0.232.0-nightly.0"
+      },
+      "client": {
+        "user_agent": "fabro-cli/0.232.0-nightly.0",
+        "name": "fabro-cli",
+        "version": "0.232.0-nightly.0"
+      },
+      "subject": {
+        "kind": "user",
+        "identity": {
+          "issuer": "fabro:dev",
+          "subject": "dev"
+        },
+        "login": "dev",
+        "auth_method": "dev_token"
+      }
+    },
+    "manifest_blob": "bf0681edf6592d1a237dfefaf1f7cacfb45fc2f42c2beb1714d221c70c2116cd",
+    "definition_blob": "822fc1fb44c900b56662d68defe78116d9721e6cd4082cc3243353ee657996af",
+    "git": {
+      "origin_url": "https://github.com/kimprobably/maestro-os",
+      "branch": "spike/fabro-code-factory-v5",
+      "sha": "c37cfa1cf792ff7a90cbf49e7073206f349b0389",
+      "dirty": "dirty",
+      "push_outcome": {
+        "type": "not_attempted"
+      }
+    }
+  },
+  "web_url": "https://fabro-maestro-production.up.railway.app/runs/01KRSCNCSGZMN8WY3F9QTWBG8P",
+  "start": null,
+  "status": {
+    "kind": "starting"
+  },
+  "status_updated_at": "2026-05-16T21:56:45.593479898Z",
+  "last_event_at": "2026-05-16T21:56:46.765313685Z",
+  "pending_control": null,
+  "checkpoints": [],
+  "conclusion": null,
+  "sandbox": {
+    "provider": "daytona",
+    "image": "buildpack-deps:noble",
+    "snapshot": "maestro-code-factory-v8",
+    "runtime": {
+      "id": "fabro-01KRSCNCSGZMN8WY3F9QTWBG8P",
+      "working_directory": "/home/daytona/workspace",
+      "repo_cloned": true,
+      "clone_origin_url": "https://github.com/kimprobably/maestro-os",
+      "clone_branch": "spike/fabro-code-factory-v5"
+    }
+  },
+  "pull_request": null,
+  "superseded_by": null,
+  "pending_interviews": {},
+  "stages": {}
+}
