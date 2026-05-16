@@ -9,7 +9,7 @@ const RAILWAY_API_URL = `${RAILWAY_WEB_URL}/api/v1`;
 const REPORT_PATH = ".workflow/iphone-app-ux-studio/preflight.json";
 const MOBBIN_MCP_URL = "https://api.mobbin.com/mcp";
 
-const REQUIRED_TOOLS = ["node", "npm", "gh", "fabro", "codex", "claude", "promptfoo", "qlty"];
+const REQUIRED_TOOLS = ["node", "npm", "gh", "fabro", "codex", "claude", "promptfoo", "qlty", "sqlite3"];
 const NETWORK_TARGETS = [
   { url: "https://api.github.com/rate_limit", required: true },
   { url: "https://apps.apple.com/", required: false },
