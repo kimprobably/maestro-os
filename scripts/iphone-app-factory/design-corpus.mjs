@@ -43,6 +43,10 @@ function paths() {
   };
 }
 
+function hasExplicitArg(name) {
+  return process.argv.includes(name);
+}
+
 function sqliteAvailable() {
   return spawnSync("sqlite3", ["--version"], { encoding: "utf8" }).status === 0;
 }
@@ -142,7 +146,7 @@ function sqliteJson(dbPath, sql) {
 }
 
 function ensureSqlite(storage = paths()) {
-  if (process.env.DESIGN_CORPUS_DATABASE_URL) {
+  if (process.env.DESIGN_CORPUS_DATABASE_URL && !hasExplicitArg("--db")) {
     throw new Error("DESIGN_CORPUS_DATABASE_URL is set, but Postgres/Neon support is not enabled yet. Unset it or use --db for local SQLite.");
   }
   if (!sqliteAvailable()) {

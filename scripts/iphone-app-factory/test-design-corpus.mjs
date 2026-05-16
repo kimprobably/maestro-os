@@ -321,14 +321,28 @@ test("design-corpus stores Mobbin reference metadata while raw assets remain dis
   });
 });
 
-test("design-corpus fails clearly when DESIGN_CORPUS_DATABASE_URL is present", () => {
+test("design-corpus fails clearly when DESIGN_CORPUS_DATABASE_URL is present without explicit SQLite db", () => {
+  const result = runCorpus(["init"], {
+    DESIGN_CORPUS_DATABASE_URL: "postgres://user:secret@example.com/db",
+  });
+  assert.notEqual(result.status, 0);
+  assert.match(result.stderr, /Postgres\/Neon support is not enabled yet/);
+  assert.doesNotMatch(result.stderr, /secret/);
+});
+
+test("design-corpus explicit SQLite db overrides unsupported DESIGN_CORPUS_DATABASE_URL", (t) => {
+  if (!sqliteAvailable()) return t.skip("sqlite3 CLI is not available");
+
   withTempDb((db) => {
     const result = runCorpus(["init", "--db", db], {
       DESIGN_CORPUS_DATABASE_URL: "postgres://user:secret@example.com/db",
     });
-    assert.notEqual(result.status, 0);
-    assert.match(result.stderr, /Postgres\/Neon support is not enabled yet/);
-    assert.doesNotMatch(result.stderr, /secret/);
+    assert.equal(result.status, 0, result.stderr);
+    const report = JSON.parse(result.stdout);
+    assert.equal(report.ok, true);
+    assert.equal(report.storage, "sqlite");
+    assert.equal(report.path, db);
+    assert.doesNotMatch(result.stdout, /secret/);
   });
 });
 
