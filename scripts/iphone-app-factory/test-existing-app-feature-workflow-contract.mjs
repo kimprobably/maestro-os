@@ -73,6 +73,12 @@ test("feature workflow stages use deterministic gates", () => {
   assert.match(implementation, /empty-action-gate\.mjs/);
 });
 
+test("feature workflow preflight is feature-specific and does not require UX Studio auth", () => {
+  const preflight = read("workflows/iphone-app-factory/feature-workflow-preflight-stage.fabro");
+  assert.doesNotMatch(preflight, /ux-studio-preflight\.mjs/);
+  assert.match(preflight, /feature-workflow-preflight\.mjs/);
+});
+
 test("feature run configs target Railway and Daytona network access", () => {
   for (const configPath of [daytonaConfig, waketaskConfig]) {
     const config = read(configPath);
