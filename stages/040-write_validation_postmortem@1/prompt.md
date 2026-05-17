@@ -5,8 +5,11 @@ Goal: Create staged WakeTask product-iteration workflows, then run the UX Studio
 - **workflow_definition_preflight**: succeeded
 - **product_spec_child**: succeeded
 - **ux_iteration_child**: succeeded
+- **validation_postmortem_child**: failed
 
 ## Context
+- failure_class: deterministic
+- failure_signature: validation_postmortem_child|deterministic|child engine error: engine error: deterministic failure cycle detected: signature validate_postmortem_contract|deterministic|script failed with exit code: <n> repeated <n> times (limit <n>)
 - parallel.branch_count: 4
 - parallel.fan_in.best_id: calm_accountability_direction
 - parallel.fan_in.best_outcome: succeeded
