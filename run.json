@@ -877,13 +877,13 @@
   },
   "web_url": "https://fabro-maestro-production.up.railway.app/runs/01KRVBV7H2N2T6GKECMFR3V3JV",
   "start": {
-    "start_time": "2026-05-17T16:21:05.487404948Z"
+    "start_time": "2026-05-17T16:22:23.314637867Z"
   },
   "status": {
     "kind": "running"
   },
   "status_updated_at": "2026-05-17T16:21:00.009364095Z",
-  "last_event_at": "2026-05-17T16:22:19.024232100Z",
+  "last_event_at": "2026-05-17T16:27:10.189585127Z",
   "pending_control": null,
   "checkpoints": [
     {
@@ -1367,14 +1367,854 @@
       "diff": {}
     },
     {
-      "seq": 0,
+      "seq": 73,
       "checkpoint": {
-        "timestamp": "2026-05-17T16:22:19.105576771Z",
+        "timestamp": "2026-05-17T16:22:21.781956688Z",
         "current_node": "context_intake_child",
         "completed_nodes": [
           "start",
           "feature_workflow_preflight",
           "context_intake_child"
+        ],
+        "node_retries": {},
+        "context_values": {
+          "last_response": "[Simulated] Response for stage: emit_contract",
+          "graph.default_max_retries": "2",
+          "thread.feature_workflow_preflight.current_node": "context_intake_child",
+          "thread.start.current_node": "feature_workflow_preflight",
+          "internal.run_id": "01KRVBV7H2N2T6GKECMFR3V3JV",
+          "response.emit_contract": "[Simulated] Response for stage: emit_contract",
+          "internal.retry_count.feature_workflow_preflight": 0,
+          "graph.goal": "Implement WakeTask's task-based alarm feature pack through the reusable existing-app feature workflow",
+          "graph.retry_target": "feature_spec_child",
+          "graph.model_stylesheet": "\n            *       { backend: cli; provider: openai; model: gpt-5.3-codex-spark; reasoning_effort: low; }\n            .spec   { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            .build  { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            .review { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n        ",
+          "graph.inputs": "repo_url,base_branch,run_branch,app_name,bundle_id,app_dir,app_domain,target_audience,feature_goal,required_capabilities,context_paths,max_competitors,use_mobbin_mcp,use_design_corpus,ios_validation_mode,allow_macos_deferred,fabro_server",
+          "graph.outputs": "context_pack,research_pack,existing_app_audit,feature_spec,implementation_plan,implementation_evidence,validation_report,publish_handoff,postmortem",
+          "graph.rankdir": "LR",
+          "graph.artifact_root": ".workflow/existing-app-feature",
+          "outcome": "succeeded",
+          "internal.node_visit_count": 1,
+          "internal.retry_count.start": 0,
+          "graph.secret_policy": "no secrets; credential checks are presence-only; do not print environment variables or credential values",
+          "graph.persona": "existing-iphone-app-feature-orchestrator",
+          "internal.retry_count.context_intake_child": 0,
+          "internal.work_dir": "/home/daytona/workspace/maestro-os",
+          "failure_signature": "",
+          "internal.thread_id": "feature_workflow_preflight",
+          "internal.fidelity": "compact",
+          "failure_class": "",
+          "last_stage": "emit_contract",
+          "current_node": "context_intake_child"
+        },
+        "node_outcomes": {
+          "context_intake_child": {
+            "status": "succeeded",
+            "notes": "Child completed at cycle 37",
+            "usage": null
+          },
+          "start": {
+            "status": "succeeded",
+            "usage": null
+          },
+          "feature_workflow_preflight": {
+            "status": "succeeded",
+            "context_updates": {
+              "response.emit_contract": "[Simulated] Response for stage: emit_contract",
+              "last_stage": "emit_contract",
+              "last_response": "[Simulated] Response for stage: emit_contract"
+            },
+            "notes": "Child completed at cycle 2",
+            "usage": null
+          }
+        },
+        "next_node_id": "research_audit_fanout",
+        "git_commit_sha": "947e5449ec995cfa33dec52f587a1ab2c7936e1e",
+        "node_visits": {
+          "feature_workflow_preflight": 1,
+          "start": 1,
+          "context_intake_child": 1
+        }
+      },
+      "diff": {
+        "summary": {
+          "files_changed": 0,
+          "additions": 0,
+          "deletions": 0
+        }
+      }
+    },
+    {
+      "seq": 94,
+      "checkpoint": {
+        "timestamp": "2026-05-17T16:22:23.314849827Z",
+        "current_node": "start",
+        "completed_nodes": [
+          "start"
+        ],
+        "node_retries": {},
+        "context_values": {
+          "internal.work_dir": "/home/daytona/workspace/maestro-os/.fabro/scratch/01KRVBV7H2N2T6GKECMFR3V3JV/parallel/research_audit_fanout/existing_app_audit_child",
+          "graph.artifact_root": ".workflow/existing-app-feature",
+          "internal.retry_count.context_intake_child": 0,
+          "graph.model_stylesheet": "* { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }",
+          "graph.retry_target": "feature_spec_child",
+          "current_node": "start",
+          "internal.parallel_branch_id": "research_audit_fanout@1:1",
+          "internal.retry_count.start": 0,
+          "graph.inputs": "repo_url,base_branch,run_branch,app_dir,app_name,bundle_id",
+          "outcome": "succeeded",
+          "thread.start.current_node": "feature_workflow_preflight",
+          "internal.node_visit_count": 1,
+          "response.emit_contract": "[Simulated] Response for stage: emit_contract",
+          "last_stage": "emit_contract",
+          "internal.retry_count.feature_workflow_preflight": 0,
+          "internal.fidelity": "compact",
+          "graph.outputs": "contract.artifact,contract.gate,contract.next_action,contract.failure_classification,existing_app_audit",
+          "graph.secret_policy": "no secrets; do not print environment variables or credential values",
+          "thread.context_intake_child.current_node": "research_audit_fanout",
+          "failure_class": "",
+          "last_response": "[Simulated] Response for stage: emit_contract",
+          "graph.goal": "Audit the current existing app implementation before feature changes",
+          "internal.thread_id": null,
+          "internal.run_id": "01KRVBV7H2N2T6GKECMFR3V3JV",
+          "internal.parallel_group_id": "research_audit_fanout@1",
+          "thread.feature_workflow_preflight.current_node": "context_intake_child",
+          "graph.default_max_retries": "2",
+          "internal.parent_preamble": "Goal: Implement WakeTask's task-based alarm feature pack through the reusable existing-app feature workflow\n\n## Completed stages\n- **feature_workflow_preflight**: succeeded\n- **context_intake_child**: succeeded\n",
+          "graph.rankdir": "LR",
+          "failure_signature": "",
+          "graph.persona": "existing-app-feature-auditor"
+        },
+        "node_outcomes": {
+          "start": {
+            "status": "succeeded",
+            "usage": null
+          }
+        },
+        "next_node_id": "checkout_existing_app",
+        "node_visits": {
+          "start": 1
+        }
+      },
+      "diff": {}
+    },
+    {
+      "seq": 95,
+      "checkpoint": {
+        "timestamp": "2026-05-17T16:22:23.314878417Z",
+        "current_node": "start",
+        "completed_nodes": [
+          "start"
+        ],
+        "node_retries": {},
+        "context_values": {
+          "internal.thread_id": null,
+          "last_stage": "emit_contract",
+          "thread.context_intake_child.current_node": "research_audit_fanout",
+          "internal.retry_count.feature_workflow_preflight": 0,
+          "current_node": "start",
+          "failure_class": "",
+          "graph.model_stylesheet": "* { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }",
+          "failure_signature": "",
+          "graph.artifact_root": ".workflow/existing-app-feature",
+          "internal.retry_count.start": 0,
+          "internal.fidelity": "compact",
+          "graph.rankdir": "LR",
+          "internal.run_id": "01KRVBV7H2N2T6GKECMFR3V3JV",
+          "thread.start.current_node": "feature_workflow_preflight",
+          "response.emit_contract": "[Simulated] Response for stage: emit_contract",
+          "internal.parallel_branch_id": "research_audit_fanout@1:0",
+          "outcome": "succeeded",
+          "internal.retry_count.context_intake_child": 0,
+          "graph.retry_target": "feature_spec_child",
+          "internal.parallel_group_id": "research_audit_fanout@1",
+          "thread.feature_workflow_preflight.current_node": "context_intake_child",
+          "graph.inputs": "app_name,app_domain,target_audience,feature_goal,max_competitors,use_mobbin_mcp,use_design_corpus,context_paths",
+          "graph.default_max_retries": "2",
+          "graph.outputs": "contract.artifact,contract.gate,contract.next_action,contract.failure_classification,research_pack",
+          "internal.node_visit_count": 1,
+          "graph.goal": "Research feature opportunities and UI/product references for an existing-app feature iteration",
+          "last_response": "[Simulated] Response for stage: emit_contract",
+          "graph.secret_policy": "no secrets; do not print environment variables or credential values",
+          "internal.work_dir": "/home/daytona/workspace/maestro-os/.fabro/scratch/01KRVBV7H2N2T6GKECMFR3V3JV/parallel/research_audit_fanout/research_child",
+          "internal.parent_preamble": "Goal: Implement WakeTask's task-based alarm feature pack through the reusable existing-app feature workflow\n\n## Completed stages\n- **feature_workflow_preflight**: succeeded\n- **context_intake_child**: succeeded\n",
+          "graph.persona": "existing-app-feature-research"
+        },
+        "node_outcomes": {
+          "start": {
+            "status": "succeeded",
+            "usage": null
+          }
+        },
+        "next_node_id": "research_fanout",
+        "node_visits": {
+          "start": 1
+        }
+      },
+      "diff": {}
+    },
+    {
+      "seq": 111,
+      "checkpoint": {
+        "timestamp": "2026-05-17T16:22:26.624846483Z",
+        "current_node": "checkout_existing_app",
+        "completed_nodes": [
+          "start",
+          "checkout_existing_app"
+        ],
+        "node_retries": {},
+        "context_values": {
+          "internal.retry_count.start": 0,
+          "internal.parallel_group_id": "research_audit_fanout@1",
+          "current_node": "checkout_existing_app",
+          "graph.outputs": "contract.artifact,contract.gate,contract.next_action,contract.failure_classification,existing_app_audit",
+          "graph.inputs": "repo_url,base_branch,run_branch,app_dir,app_name,bundle_id",
+          "internal.retry_count.context_intake_child": 0,
+          "internal.parallel_branch_id": "research_audit_fanout@1:1",
+          "outcome": "succeeded",
+          "command.output": "blob://sha256/23d7145c549953931f4ae9d618152b28706e2d11b1e104552bd60e560d23761f",
+          "internal.thread_id": "start",
+          "graph.model_stylesheet": "* { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }",
+          "graph.secret_policy": "no secrets; do not print environment variables or credential values",
+          "internal.run_id": "01KRVBV7H2N2T6GKECMFR3V3JV",
+          "graph.default_max_retries": "2",
+          "graph.retry_target": "feature_spec_child",
+          "thread.start.current_node": "checkout_existing_app",
+          "graph.artifact_root": ".workflow/existing-app-feature",
+          "internal.node_visit_count": 1,
+          "thread.feature_workflow_preflight.current_node": "context_intake_child",
+          "internal.work_dir": "/home/daytona/workspace/maestro-os/.fabro/scratch/01KRVBV7H2N2T6GKECMFR3V3JV/parallel/research_audit_fanout/existing_app_audit_child",
+          "internal.retry_count.feature_workflow_preflight": 0,
+          "internal.retry_count.checkout_existing_app": 0,
+          "internal.parent_preamble": "Goal: Implement WakeTask's task-based alarm feature pack through the reusable existing-app feature workflow\n\n## Completed stages\n- **feature_workflow_preflight**: succeeded\n- **context_intake_child**: succeeded\n",
+          "last_stage": "emit_contract",
+          "internal.fidelity": "compact",
+          "graph.persona": "existing-app-feature-auditor",
+          "failure_class": "",
+          "graph.rankdir": "LR",
+          "response.emit_contract": "[Simulated] Response for stage: emit_contract",
+          "graph.goal": "Audit the current existing app implementation before feature changes",
+          "last_response": "[Simulated] Response for stage: emit_contract",
+          "thread.context_intake_child.current_node": "research_audit_fanout",
+          "failure_signature": ""
+        },
+        "node_outcomes": {
+          "start": {
+            "status": "succeeded",
+            "usage": null
+          },
+          "checkout_existing_app": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/23d7145c549953931f4ae9d618152b28706e2d11b1e104552bd60e560d23761f"
+            },
+            "notes": "Script completed: node scripts/iphone-app-factory/checkout-existing-app.mjs",
+            "usage": null
+          }
+        },
+        "next_node_id": "write_existing_app_audit",
+        "node_visits": {
+          "checkout_existing_app": 1,
+          "start": 1
+        }
+      },
+      "diff": {}
+    },
+    {
+      "seq": 123,
+      "checkpoint": {
+        "timestamp": "2026-05-17T16:25:00.422654606Z",
+        "current_node": "write_existing_app_audit",
+        "completed_nodes": [
+          "start",
+          "checkout_existing_app",
+          "write_existing_app_audit"
+        ],
+        "node_retries": {},
+        "context_values": {
+          "graph.goal": "Audit the current existing app implementation before feature changes",
+          "current_node": "write_existing_app_audit",
+          "graph.outputs": "contract.artifact,contract.gate,contract.next_action,contract.failure_classification,existing_app_audit",
+          "internal.thread_id": "checkout_existing_app",
+          "graph.default_max_retries": "2",
+          "internal.parent_preamble": "Goal: Implement WakeTask's task-based alarm feature pack through the reusable existing-app feature workflow\n\n## Completed stages\n- **feature_workflow_preflight**: succeeded\n- **context_intake_child**: succeeded\n",
+          "last_stage": "emit_contract",
+          "internal.retry_count.write_existing_app_audit": 0,
+          "thread.context_intake_child.current_node": "research_audit_fanout",
+          "graph.secret_policy": "no secrets; do not print environment variables or credential values",
+          "graph.retry_target": "feature_spec_child",
+          "internal.work_dir": "/home/daytona/workspace/maestro-os/.fabro/scratch/01KRVBV7H2N2T6GKECMFR3V3JV/parallel/research_audit_fanout/existing_app_audit_child",
+          "internal.fidelity": "compact",
+          "response.emit_contract": "[Simulated] Response for stage: emit_contract",
+          "failure_signature": "",
+          "failure_class": "",
+          "graph.persona": "existing-app-feature-auditor",
+          "internal.retry_count.context_intake_child": 0,
+          "internal.retry_count.start": 0,
+          "graph.rankdir": "LR",
+          "internal.run_id": "01KRVBV7H2N2T6GKECMFR3V3JV",
+          "command.output": "blob://sha256/733a9ca9c2bde692b699a30f0ac12c95a078a05af14c77d231d8754a1fe549aa",
+          "internal.retry_count.checkout_existing_app": 0,
+          "thread.feature_workflow_preflight.current_node": "context_intake_child",
+          "graph.artifact_root": ".workflow/existing-app-feature",
+          "graph.inputs": "repo_url,base_branch,run_branch,app_dir,app_name,bundle_id",
+          "outcome": "succeeded",
+          "internal.parallel_group_id": "research_audit_fanout@1",
+          "last_response": "[Simulated] Response for stage: emit_contract",
+          "graph.model_stylesheet": "* { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }",
+          "internal.retry_count.feature_workflow_preflight": 0,
+          "internal.parallel_branch_id": "research_audit_fanout@1:1",
+          "thread.start.current_node": "checkout_existing_app",
+          "internal.node_visit_count": 1,
+          "thread.checkout_existing_app.current_node": "write_existing_app_audit"
+        },
+        "node_outcomes": {
+          "start": {
+            "status": "succeeded",
+            "usage": null
+          },
+          "write_existing_app_audit": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/733a9ca9c2bde692b699a30f0ac12c95a078a05af14c77d231d8754a1fe549aa"
+            },
+            "notes": "Script completed: node scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/feature-existing-app-audit.md --stage feature-existing-app-audit --out .workflow/existing-app-feature/codex/feature-existing-app-audit.json",
+            "usage": null
+          },
+          "checkout_existing_app": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/23d7145c549953931f4ae9d618152b28706e2d11b1e104552bd60e560d23761f"
+            },
+            "notes": "Script completed: node scripts/iphone-app-factory/checkout-existing-app.mjs",
+            "usage": null
+          }
+        },
+        "next_node_id": "validate_existing_app_audit",
+        "node_visits": {
+          "write_existing_app_audit": 1,
+          "checkout_existing_app": 1,
+          "start": 1
+        }
+      },
+      "diff": {}
+    },
+    {
+      "seq": 129,
+      "checkpoint": {
+        "timestamp": "2026-05-17T16:25:02.143779130Z",
+        "current_node": "validate_existing_app_audit",
+        "completed_nodes": [
+          "start",
+          "checkout_existing_app",
+          "write_existing_app_audit",
+          "validate_existing_app_audit"
+        ],
+        "node_retries": {},
+        "context_values": {
+          "graph.model_stylesheet": "* { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }",
+          "graph.artifact_root": ".workflow/existing-app-feature",
+          "graph.secret_policy": "no secrets; do not print environment variables or credential values",
+          "internal.parallel_branch_id": "research_audit_fanout@1:1",
+          "thread.start.current_node": "checkout_existing_app",
+          "failure_class": "",
+          "internal.parallel_group_id": "research_audit_fanout@1",
+          "internal.run_id": "01KRVBV7H2N2T6GKECMFR3V3JV",
+          "internal.retry_count.write_existing_app_audit": 0,
+          "internal.work_dir": "/home/daytona/workspace/maestro-os/.fabro/scratch/01KRVBV7H2N2T6GKECMFR3V3JV/parallel/research_audit_fanout/existing_app_audit_child",
+          "graph.outputs": "contract.artifact,contract.gate,contract.next_action,contract.failure_classification,existing_app_audit",
+          "thread.feature_workflow_preflight.current_node": "context_intake_child",
+          "thread.checkout_existing_app.current_node": "write_existing_app_audit",
+          "command.output": "blob://sha256/5b090f6579182e9c6c53361af2060302ed000b7bd6f0bd23c43c1ca45215c683",
+          "internal.retry_count.feature_workflow_preflight": 0,
+          "internal.thread_id": "write_existing_app_audit",
+          "last_stage": "emit_contract",
+          "response.emit_contract": "[Simulated] Response for stage: emit_contract",
+          "graph.goal": "Audit the current existing app implementation before feature changes",
+          "graph.rankdir": "LR",
+          "internal.retry_count.context_intake_child": 0,
+          "graph.retry_target": "feature_spec_child",
+          "graph.default_max_retries": "2",
+          "last_response": "[Simulated] Response for stage: emit_contract",
+          "thread.write_existing_app_audit.current_node": "validate_existing_app_audit",
+          "internal.retry_count.checkout_existing_app": 0,
+          "internal.retry_count.start": 0,
+          "internal.parent_preamble": "Goal: Implement WakeTask's task-based alarm feature pack through the reusable existing-app feature workflow\n\n## Completed stages\n- **feature_workflow_preflight**: succeeded\n- **context_intake_child**: succeeded\n",
+          "internal.retry_count.validate_existing_app_audit": 0,
+          "thread.context_intake_child.current_node": "research_audit_fanout",
+          "failure_signature": "",
+          "current_node": "validate_existing_app_audit",
+          "outcome": "succeeded",
+          "graph.persona": "existing-app-feature-auditor",
+          "graph.inputs": "repo_url,base_branch,run_branch,app_dir,app_name,bundle_id",
+          "internal.fidelity": "compact",
+          "internal.node_visit_count": 1
+        },
+        "node_outcomes": {
+          "validate_existing_app_audit": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/5b090f6579182e9c6c53361af2060302ed000b7bd6f0bd23c43c1ca45215c683"
+            },
+            "notes": "Script completed: node scripts/iphone-app-factory/existing-app-audit-gate.mjs",
+            "usage": null
+          },
+          "checkout_existing_app": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/23d7145c549953931f4ae9d618152b28706e2d11b1e104552bd60e560d23761f"
+            },
+            "notes": "Script completed: node scripts/iphone-app-factory/checkout-existing-app.mjs",
+            "usage": null
+          },
+          "write_existing_app_audit": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/733a9ca9c2bde692b699a30f0ac12c95a078a05af14c77d231d8754a1fe549aa"
+            },
+            "notes": "Script completed: node scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/feature-existing-app-audit.md --stage feature-existing-app-audit --out .workflow/existing-app-feature/codex/feature-existing-app-audit.json",
+            "usage": null
+          },
+          "start": {
+            "status": "succeeded",
+            "usage": null
+          }
+        },
+        "next_node_id": "exit",
+        "node_visits": {
+          "checkout_existing_app": 1,
+          "validate_existing_app_audit": 1,
+          "start": 1,
+          "write_existing_app_audit": 1
+        }
+      },
+      "diff": {}
+    },
+    {
+      "seq": 139,
+      "checkpoint": {
+        "timestamp": "2026-05-17T16:25:16.197996563Z",
+        "current_node": "research_fanout",
+        "completed_nodes": [
+          "start",
+          "research_fanout"
+        ],
+        "node_retries": {},
+        "context_values": {
+          "graph.default_max_retries": "2",
+          "internal.retry_count.feature_workflow_preflight": 0,
+          "internal.run_id": "01KRVBV7H2N2T6GKECMFR3V3JV",
+          "graph.secret_policy": "no secrets; do not print environment variables or credential values",
+          "response.emit_contract": "[Simulated] Response for stage: emit_contract",
+          "internal.parallel_group_id": "research_audit_fanout@1",
+          "internal.parallel_branch_id": "research_audit_fanout@1:0",
+          "last_response": "[Simulated] Response for stage: emit_contract",
+          "graph.inputs": "app_name,app_domain,target_audience,feature_goal,max_competitors,use_mobbin_mcp,use_design_corpus,context_paths",
+          "graph.retry_target": "feature_spec_child",
+          "graph.rankdir": "LR",
+          "internal.retry_count.research_fanout": 0,
+          "last_stage": "emit_contract",
+          "graph.goal": "Research feature opportunities and UI/product references for an existing-app feature iteration",
+          "internal.fidelity": "compact",
+          "parallel.branch_count": 4,
+          "thread.start.current_node": "research_fanout",
+          "internal.node_visit_count": 1,
+          "internal.retry_count.start": 0,
+          "current_node": "research_fanout",
+          "graph.outputs": "contract.artifact,contract.gate,contract.next_action,contract.failure_classification,research_pack",
+          "internal.parent_preamble": "Goal: Implement WakeTask's task-based alarm feature pack through the reusable existing-app feature workflow\n\n## Completed stages\n- **feature_workflow_preflight**: succeeded\n- **context_intake_child**: succeeded\n",
+          "graph.artifact_root": ".workflow/existing-app-feature",
+          "thread.context_intake_child.current_node": "research_audit_fanout",
+          "failure_class": "",
+          "graph.model_stylesheet": "* { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }",
+          "internal.thread_id": "start",
+          "parallel.results": [
+            {
+              "id": "trend_context_research",
+              "status": "succeeded"
+            },
+            {
+              "id": "competitor_ui_research",
+              "status": "succeeded"
+            },
+            {
+              "id": "app_store_research",
+              "status": "succeeded"
+            },
+            {
+              "id": "behavioral_research",
+              "status": "succeeded"
+            }
+          ],
+          "internal.retry_count.context_intake_child": 0,
+          "internal.work_dir": "/home/daytona/workspace/maestro-os/.fabro/scratch/01KRVBV7H2N2T6GKECMFR3V3JV/parallel/research_audit_fanout/research_child",
+          "thread.feature_workflow_preflight.current_node": "context_intake_child",
+          "failure_signature": "",
+          "graph.persona": "existing-app-feature-research",
+          "outcome": "succeeded"
+        },
+        "node_outcomes": {
+          "research_fanout": {
+            "status": "succeeded",
+            "jump_to_node": "research_join",
+            "notes": "Parallel node dispatched 4 branches (4 succeeded, 0 failed)",
+            "usage": null
+          },
+          "start": {
+            "status": "succeeded",
+            "usage": null
+          }
+        },
+        "next_node_id": "research_join",
+        "node_visits": {
+          "research_fanout": 1,
+          "start": 1
+        }
+      },
+      "diff": {}
+    },
+    {
+      "seq": 143,
+      "checkpoint": {
+        "timestamp": "2026-05-17T16:25:16.198257197Z",
+        "current_node": "research_join",
+        "completed_nodes": [
+          "start",
+          "research_fanout",
+          "research_join"
+        ],
+        "node_retries": {},
+        "context_values": {
+          "thread.feature_workflow_preflight.current_node": "context_intake_child",
+          "graph.default_max_retries": "2",
+          "graph.secret_policy": "no secrets; do not print environment variables or credential values",
+          "internal.parent_preamble": "Goal: Implement WakeTask's task-based alarm feature pack through the reusable existing-app feature workflow\n\n## Completed stages\n- **feature_workflow_preflight**: succeeded\n- **context_intake_child**: succeeded\n",
+          "internal.retry_count.research_join": 0,
+          "graph.artifact_root": ".workflow/existing-app-feature",
+          "internal.retry_count.research_fanout": 0,
+          "current_node": "research_join",
+          "internal.retry_count.start": 0,
+          "internal.work_dir": "/home/daytona/workspace/maestro-os/.fabro/scratch/01KRVBV7H2N2T6GKECMFR3V3JV/parallel/research_audit_fanout/research_child",
+          "internal.node_visit_count": 1,
+          "thread.start.current_node": "research_fanout",
+          "graph.model_stylesheet": "* { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }",
+          "parallel.fan_in.best_id": "app_store_research",
+          "parallel.fan_in.best_outcome": "succeeded",
+          "last_response": "[Simulated] Response for stage: emit_contract",
+          "response.emit_contract": "[Simulated] Response for stage: emit_contract",
+          "thread.context_intake_child.current_node": "research_audit_fanout",
+          "graph.persona": "existing-app-feature-research",
+          "graph.inputs": "app_name,app_domain,target_audience,feature_goal,max_competitors,use_mobbin_mcp,use_design_corpus,context_paths",
+          "internal.run_id": "01KRVBV7H2N2T6GKECMFR3V3JV",
+          "internal.retry_count.context_intake_child": 0,
+          "outcome": "succeeded",
+          "graph.goal": "Research feature opportunities and UI/product references for an existing-app feature iteration",
+          "last_stage": "emit_contract",
+          "graph.outputs": "contract.artifact,contract.gate,contract.next_action,contract.failure_classification,research_pack",
+          "failure_class": "",
+          "internal.retry_count.feature_workflow_preflight": 0,
+          "parallel.branch_count": 4,
+          "thread.research_fanout.current_node": "research_join",
+          "failure_signature": "",
+          "internal.parallel_branch_id": "research_audit_fanout@1:0",
+          "graph.rankdir": "LR",
+          "parallel.results": [
+            {
+              "id": "trend_context_research",
+              "status": "succeeded"
+            },
+            {
+              "id": "competitor_ui_research",
+              "status": "succeeded"
+            },
+            {
+              "id": "app_store_research",
+              "status": "succeeded"
+            },
+            {
+              "id": "behavioral_research",
+              "status": "succeeded"
+            }
+          ],
+          "internal.thread_id": "research_fanout",
+          "internal.parallel_group_id": "research_audit_fanout@1",
+          "graph.retry_target": "feature_spec_child",
+          "internal.fidelity": "compact"
+        },
+        "node_outcomes": {
+          "research_fanout": {
+            "status": "succeeded",
+            "jump_to_node": "research_join",
+            "notes": "Parallel node dispatched 4 branches (4 succeeded, 0 failed)",
+            "usage": null
+          },
+          "research_join": {
+            "status": "succeeded",
+            "context_updates": {
+              "parallel.fan_in.best_outcome": "succeeded",
+              "parallel.fan_in.best_id": "app_store_research"
+            },
+            "notes": "Selected best candidate: app_store_research",
+            "usage": null
+          },
+          "start": {
+            "status": "succeeded",
+            "usage": null
+          }
+        },
+        "next_node_id": "synthesize_research",
+        "node_visits": {
+          "start": 1,
+          "research_join": 1,
+          "research_fanout": 1
+        }
+      },
+      "diff": {}
+    },
+    {
+      "seq": 149,
+      "checkpoint": {
+        "timestamp": "2026-05-17T16:27:07.185601872Z",
+        "current_node": "synthesize_research",
+        "completed_nodes": [
+          "start",
+          "research_fanout",
+          "research_join",
+          "synthesize_research"
+        ],
+        "node_retries": {},
+        "context_values": {
+          "thread.start.current_node": "research_fanout",
+          "internal.retry_count.research_join": 0,
+          "thread.feature_workflow_preflight.current_node": "context_intake_child",
+          "thread.research_fanout.current_node": "research_join",
+          "internal.parent_preamble": "Goal: Implement WakeTask's task-based alarm feature pack through the reusable existing-app feature workflow\n\n## Completed stages\n- **feature_workflow_preflight**: succeeded\n- **context_intake_child**: succeeded\n",
+          "failure_signature": "",
+          "graph.inputs": "app_name,app_domain,target_audience,feature_goal,max_competitors,use_mobbin_mcp,use_design_corpus,context_paths",
+          "graph.secret_policy": "no secrets; do not print environment variables or credential values",
+          "last_stage": "emit_contract",
+          "thread.research_join.current_node": "synthesize_research",
+          "graph.artifact_root": ".workflow/existing-app-feature",
+          "internal.run_id": "01KRVBV7H2N2T6GKECMFR3V3JV",
+          "internal.work_dir": "/home/daytona/workspace/maestro-os/.fabro/scratch/01KRVBV7H2N2T6GKECMFR3V3JV/parallel/research_audit_fanout/research_child",
+          "parallel.fan_in.best_outcome": "succeeded",
+          "parallel.fan_in.best_id": "app_store_research",
+          "thread.context_intake_child.current_node": "research_audit_fanout",
+          "internal.retry_count.feature_workflow_preflight": 0,
+          "graph.outputs": "contract.artifact,contract.gate,contract.next_action,contract.failure_classification,research_pack",
+          "failure_class": "",
+          "command.output": "blob://sha256/935c95f6bc71108fb7c925099383481fd5876cdac3f5cbccd65d44a364fd1fd3",
+          "parallel.results": [
+            {
+              "id": "trend_context_research",
+              "status": "succeeded"
+            },
+            {
+              "id": "competitor_ui_research",
+              "status": "succeeded"
+            },
+            {
+              "id": "app_store_research",
+              "status": "succeeded"
+            },
+            {
+              "id": "behavioral_research",
+              "status": "succeeded"
+            }
+          ],
+          "internal.retry_count.research_fanout": 0,
+          "internal.retry_count.start": 0,
+          "internal.node_visit_count": 1,
+          "last_response": "[Simulated] Response for stage: emit_contract",
+          "graph.goal": "Research feature opportunities and UI/product references for an existing-app feature iteration",
+          "graph.rankdir": "LR",
+          "internal.parallel_group_id": "research_audit_fanout@1",
+          "graph.persona": "existing-app-feature-research",
+          "internal.fidelity": "compact",
+          "internal.retry_count.context_intake_child": 0,
+          "graph.default_max_retries": "2",
+          "internal.thread_id": "research_join",
+          "graph.model_stylesheet": "* { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }",
+          "current_node": "synthesize_research",
+          "graph.retry_target": "feature_spec_child",
+          "outcome": "succeeded",
+          "internal.retry_count.synthesize_research": 0,
+          "parallel.branch_count": 4,
+          "internal.parallel_branch_id": "research_audit_fanout@1:0",
+          "response.emit_contract": "[Simulated] Response for stage: emit_contract"
+        },
+        "node_outcomes": {
+          "research_fanout": {
+            "status": "succeeded",
+            "jump_to_node": "research_join",
+            "notes": "Parallel node dispatched 4 branches (4 succeeded, 0 failed)",
+            "usage": null
+          },
+          "start": {
+            "status": "succeeded",
+            "usage": null
+          },
+          "synthesize_research": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/935c95f6bc71108fb7c925099383481fd5876cdac3f5cbccd65d44a364fd1fd3"
+            },
+            "notes": "Script completed: node scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/feature-research-synthesis.md --stage feature-research-synthesis --out .workflow/existing-app-feature/codex/feature-research-synthesis.json",
+            "usage": null
+          },
+          "research_join": {
+            "status": "succeeded",
+            "context_updates": {
+              "parallel.fan_in.best_outcome": "succeeded",
+              "parallel.fan_in.best_id": "app_store_research"
+            },
+            "notes": "Selected best candidate: app_store_research",
+            "usage": null
+          }
+        },
+        "next_node_id": "validate_research_pack",
+        "node_visits": {
+          "research_join": 1,
+          "synthesize_research": 1,
+          "start": 1,
+          "research_fanout": 1
+        }
+      },
+      "diff": {}
+    },
+    {
+      "seq": 155,
+      "checkpoint": {
+        "timestamp": "2026-05-17T16:27:09.181739397Z",
+        "current_node": "validate_research_pack",
+        "completed_nodes": [
+          "start",
+          "research_fanout",
+          "research_join",
+          "synthesize_research",
+          "validate_research_pack"
+        ],
+        "node_retries": {},
+        "context_values": {
+          "internal.parent_preamble": "Goal: Implement WakeTask's task-based alarm feature pack through the reusable existing-app feature workflow\n\n## Completed stages\n- **feature_workflow_preflight**: succeeded\n- **context_intake_child**: succeeded\n",
+          "internal.retry_count.context_intake_child": 0,
+          "internal.parallel_branch_id": "research_audit_fanout@1:0",
+          "internal.fidelity": "compact",
+          "internal.retry_count.start": 0,
+          "internal.retry_count.validate_research_pack": 0,
+          "internal.run_id": "01KRVBV7H2N2T6GKECMFR3V3JV",
+          "internal.thread_id": "synthesize_research",
+          "last_response": "[Simulated] Response for stage: emit_contract",
+          "internal.retry_count.synthesize_research": 0,
+          "parallel.results": [
+            {
+              "id": "trend_context_research",
+              "status": "succeeded"
+            },
+            {
+              "id": "competitor_ui_research",
+              "status": "succeeded"
+            },
+            {
+              "id": "app_store_research",
+              "status": "succeeded"
+            },
+            {
+              "id": "behavioral_research",
+              "status": "succeeded"
+            }
+          ],
+          "thread.research_join.current_node": "synthesize_research",
+          "graph.outputs": "contract.artifact,contract.gate,contract.next_action,contract.failure_classification,research_pack",
+          "internal.work_dir": "/home/daytona/workspace/maestro-os/.fabro/scratch/01KRVBV7H2N2T6GKECMFR3V3JV/parallel/research_audit_fanout/research_child",
+          "last_stage": "emit_contract",
+          "thread.synthesize_research.current_node": "validate_research_pack",
+          "failure_class": "",
+          "failure_signature": "",
+          "current_node": "validate_research_pack",
+          "graph.artifact_root": ".workflow/existing-app-feature",
+          "graph.goal": "Research feature opportunities and UI/product references for an existing-app feature iteration",
+          "graph.retry_target": "feature_spec_child",
+          "internal.retry_count.feature_workflow_preflight": 0,
+          "internal.retry_count.research_fanout": 0,
+          "graph.rankdir": "LR",
+          "outcome": "succeeded",
+          "command.output": "blob://sha256/1b0c9c79dcc9e66fa90a4c2f6a41b3a57234ae0922cfedb55afcdc13bba1e4aa",
+          "graph.persona": "existing-app-feature-research",
+          "internal.retry_count.research_join": 0,
+          "parallel.fan_in.best_id": "app_store_research",
+          "response.emit_contract": "[Simulated] Response for stage: emit_contract",
+          "thread.research_fanout.current_node": "research_join",
+          "internal.parallel_group_id": "research_audit_fanout@1",
+          "graph.secret_policy": "no secrets; do not print environment variables or credential values",
+          "parallel.fan_in.best_outcome": "succeeded",
+          "thread.context_intake_child.current_node": "research_audit_fanout",
+          "thread.feature_workflow_preflight.current_node": "context_intake_child",
+          "graph.model_stylesheet": "* { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }",
+          "thread.start.current_node": "research_fanout",
+          "parallel.branch_count": 4,
+          "graph.inputs": "app_name,app_domain,target_audience,feature_goal,max_competitors,use_mobbin_mcp,use_design_corpus,context_paths",
+          "graph.default_max_retries": "2",
+          "internal.node_visit_count": 1
+        },
+        "node_outcomes": {
+          "research_join": {
+            "status": "succeeded",
+            "context_updates": {
+              "parallel.fan_in.best_outcome": "succeeded",
+              "parallel.fan_in.best_id": "app_store_research"
+            },
+            "notes": "Selected best candidate: app_store_research",
+            "usage": null
+          },
+          "research_fanout": {
+            "status": "succeeded",
+            "jump_to_node": "research_join",
+            "notes": "Parallel node dispatched 4 branches (4 succeeded, 0 failed)",
+            "usage": null
+          },
+          "start": {
+            "status": "succeeded",
+            "usage": null
+          },
+          "synthesize_research": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/935c95f6bc71108fb7c925099383481fd5876cdac3f5cbccd65d44a364fd1fd3"
+            },
+            "notes": "Script completed: node scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/feature-research-synthesis.md --stage feature-research-synthesis --out .workflow/existing-app-feature/codex/feature-research-synthesis.json",
+            "usage": null
+          },
+          "validate_research_pack": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/1b0c9c79dcc9e66fa90a4c2f6a41b3a57234ae0922cfedb55afcdc13bba1e4aa"
+            },
+            "notes": "Script completed: node scripts/iphone-app-factory/feature-research-gate.mjs",
+            "usage": null
+          }
+        },
+        "next_node_id": "exit",
+        "node_visits": {
+          "research_join": 1,
+          "start": 1,
+          "validate_research_pack": 1,
+          "research_fanout": 1,
+          "synthesize_research": 1
+        }
+      },
+      "diff": {}
+    },
+    {
+      "seq": 0,
+      "checkpoint": {
+        "timestamp": "2026-05-17T16:27:10.270627916Z",
+        "current_node": "research_audit_fanout",
+        "completed_nodes": [
+          "start",
+          "feature_workflow_preflight",
+          "context_intake_child",
+          "research_audit_fanout"
         ],
         "node_retries": {},
         "context_values": {
@@ -1385,11 +2225,24 @@
           "failure_class": "",
           "last_stage": "emit_contract",
           "outcome": "succeeded",
+          "internal.retry_count.research_audit_fanout": 0,
           "internal.fidelity": "compact",
           "graph.secret_policy": "no secrets; credential checks are presence-only; do not print environment variables or credential values",
           "graph.artifact_root": ".workflow/existing-app-feature",
           "response.emit_contract": "[Simulated] Response for stage: emit_contract",
           "internal.retry_count.feature_workflow_preflight": 0,
+          "parallel.results": [
+            {
+              "id": "research_child",
+              "status": "succeeded",
+              "head_sha": "bc021ca4e65bada69182b306fa2da86411ee1039"
+            },
+            {
+              "id": "existing_app_audit_child",
+              "status": "succeeded",
+              "head_sha": "cabfa6791365f29df2cfee019a65e3e47ba43242"
+            }
+          ],
           "internal.retry_count.context_intake_child": 0,
           "graph.model_stylesheet": "\n            *       { backend: cli; provider: openai; model: gpt-5.3-codex-spark; reasoning_effort: low; }\n            .spec   { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            .build  { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            .review { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n        ",
           "internal.retry_count.start": 0,
@@ -1399,11 +2252,13 @@
           "thread.start.current_node": "feature_workflow_preflight",
           "thread.feature_workflow_preflight.current_node": "context_intake_child",
           "graph.default_max_retries": "2",
-          "internal.thread_id": "feature_workflow_preflight",
+          "parallel.branch_count": 2,
+          "internal.thread_id": "context_intake_child",
           "graph.inputs": "repo_url,base_branch,run_branch,app_name,bundle_id,app_dir,app_domain,target_audience,feature_goal,required_capabilities,context_paths,max_competitors,use_mobbin_mcp,use_design_corpus,ios_validation_mode,allow_macos_deferred,fabro_server",
-          "current_node": "context_intake_child",
+          "current_node": "research_audit_fanout",
           "graph.persona": "existing-iphone-app-feature-orchestrator",
           "internal.run_id": "01KRVBV7H2N2T6GKECMFR3V3JV",
+          "thread.context_intake_child.current_node": "research_audit_fanout",
           "graph.rankdir": "LR"
         },
         "node_outcomes": {
@@ -1425,13 +2280,20 @@
           "start": {
             "status": "succeeded",
             "usage": null
+          },
+          "research_audit_fanout": {
+            "status": "succeeded",
+            "jump_to_node": "context_intake_child",
+            "notes": "Parallel node dispatched 2 branches (2 succeeded, 0 failed)",
+            "usage": null
           }
         },
-        "next_node_id": "research_audit_fanout",
+        "next_node_id": "context_intake_child",
         "node_visits": {
           "feature_workflow_preflight": 1,
-          "start": 1,
-          "context_intake_child": 1
+          "research_audit_fanout": 1,
+          "context_intake_child": 1,
+          "start": 1
         }
       },
       "diff": {}
@@ -1458,6 +2320,110 @@
   "superseded_by": null,
   "pending_interviews": {},
   "stages": {
+    "research_fanout@1": {
+      "first_event_seq": 98,
+      "prompt": null,
+      "response": null,
+      "completion": {
+        "outcome": "succeeded",
+        "notes": "Parallel node dispatched 4 branches (4 succeeded, 0 failed)",
+        "failure_reason": null,
+        "timestamp": "2026-05-17T16:25:16.197829821Z"
+      },
+      "provider_used": null,
+      "diff": null,
+      "script_invocation": {
+        "script": "node scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/ux-app-store-review-mining.md --stage feature-app-store-research --out .workflow/existing-app-feature/codex/feature-app-store-research.json",
+        "command": "exec 2>&1\nnode scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/ux-app-store-review-mining.md --stage feature-app-store-research --out .workflow/existing-app-feature/codex/feature-app-store-research.json",
+        "language": "shell",
+        "timeout_ms": 3600000
+      },
+      "script_timing": {
+        "output": "blob://sha256/719d3dd049ee539e88df985809acb947f92ebaedbac6eb01c51b8021d95d192a",
+        "exit_code": 0,
+        "duration_ms": 172880,
+        "termination": "exited",
+        "output_bytes": 4990,
+        "live_streaming": true
+      },
+      "parallel_results": [
+        {
+          "id": "trend_context_research",
+          "status": "succeeded"
+        },
+        {
+          "id": "competitor_ui_research",
+          "status": "succeeded"
+        },
+        {
+          "id": "app_store_research",
+          "status": "succeeded"
+        },
+        {
+          "id": "behavioral_research",
+          "status": "succeeded"
+        }
+      ],
+      "output": null,
+      "output_bytes": 4990,
+      "live_streaming": true,
+      "termination": "exited",
+      "started_at": "2026-05-17T16:22:23.314963606Z",
+      "handler": "parallel",
+      "duration_ms": 172882,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "total_tokens": 0,
+        "reasoning_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "state": "succeeded"
+    },
+    "validate_existing_app_audit@1": {
+      "first_event_seq": 124,
+      "prompt": null,
+      "response": null,
+      "completion": {
+        "outcome": "succeeded",
+        "notes": "Script completed: node scripts/iphone-app-factory/existing-app-audit-gate.mjs",
+        "failure_reason": null,
+        "timestamp": "2026-05-17T16:25:02.143569728Z"
+      },
+      "provider_used": null,
+      "diff": null,
+      "script_invocation": {
+        "script": "node scripts/iphone-app-factory/existing-app-audit-gate.mjs",
+        "command": "exec 2>&1\nnode scripts/iphone-app-factory/existing-app-audit-gate.mjs",
+        "language": "shell"
+      },
+      "script_timing": {
+        "output": "blob://sha256/5b090f6579182e9c6c53361af2060302ed000b7bd6f0bd23c43c1ca45215c683",
+        "exit_code": 0,
+        "duration_ms": 1717,
+        "termination": "exited",
+        "output_bytes": 246,
+        "live_streaming": true
+      },
+      "parallel_results": null,
+      "output": null,
+      "output_bytes": 246,
+      "live_streaming": true,
+      "termination": "exited",
+      "started_at": "2026-05-17T16:25:00.422859324Z",
+      "handler": "command",
+      "duration_ms": 1720,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "total_tokens": 0,
+        "reasoning_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "state": "succeeded"
+    },
     "validate_feature_workflow@1": {
       "first_event_seq": 27,
       "prompt": null,
@@ -1501,6 +2467,233 @@
       },
       "state": "succeeded"
     },
+    "validate_context_pack@1": {
+      "first_event_seq": 61,
+      "prompt": null,
+      "response": null,
+      "completion": {
+        "outcome": "succeeded",
+        "notes": "Script completed: node scripts/iphone-app-factory/feature-context-gate.mjs",
+        "failure_reason": null,
+        "timestamp": "2026-05-17T16:22:19.024008577Z"
+      },
+      "provider_used": null,
+      "diff": null,
+      "script_invocation": {
+        "script": "node scripts/iphone-app-factory/feature-context-gate.mjs",
+        "command": "exec 2>&1\nnode scripts/iphone-app-factory/feature-context-gate.mjs",
+        "language": "shell"
+      },
+      "script_timing": {
+        "output": "blob://sha256/cff594dd57b557aadea5e71a7341bbf7111b97ce6fb4a37046318f2153b5f9b9",
+        "exit_code": 0,
+        "duration_ms": 1722,
+        "termination": "exited",
+        "output_bytes": 202,
+        "live_streaming": true
+      },
+      "parallel_results": null,
+      "output": null,
+      "output_bytes": 202,
+      "live_streaming": true,
+      "termination": "exited",
+      "started_at": "2026-05-17T16:22:17.299076007Z",
+      "handler": "command",
+      "duration_ms": 1724,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "total_tokens": 0,
+        "reasoning_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "state": "succeeded"
+    },
+    "synthesize_research@1": {
+      "first_event_seq": 144,
+      "prompt": null,
+      "response": null,
+      "completion": {
+        "outcome": "succeeded",
+        "notes": "Script completed: node scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/feature-research-synthesis.md --stage feature-research-synthesis --out .workflow/existing-app-feature/codex/feature-research-synthesis.json",
+        "failure_reason": null,
+        "timestamp": "2026-05-17T16:27:07.185366682Z"
+      },
+      "provider_used": null,
+      "diff": null,
+      "script_invocation": {
+        "script": "node scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/feature-research-synthesis.md --stage feature-research-synthesis --out .workflow/existing-app-feature/codex/feature-research-synthesis.json",
+        "command": "exec 2>&1\nnode scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/feature-research-synthesis.md --stage feature-research-synthesis --out .workflow/existing-app-feature/codex/feature-research-synthesis.json",
+        "language": "shell",
+        "timeout_ms": 3600000
+      },
+      "script_timing": {
+        "output": "blob://sha256/935c95f6bc71108fb7c925099383481fd5876cdac3f5cbccd65d44a364fd1fd3",
+        "exit_code": 0,
+        "duration_ms": 110985,
+        "termination": "exited",
+        "output_bytes": 5141,
+        "live_streaming": true
+      },
+      "parallel_results": null,
+      "output": null,
+      "output_bytes": 5141,
+      "live_streaming": true,
+      "termination": "exited",
+      "started_at": "2026-05-17T16:25:16.198332032Z",
+      "handler": "command",
+      "duration_ms": 110986,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "total_tokens": 0,
+        "reasoning_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "state": "succeeded"
+    },
+    "write_existing_app_audit@1": {
+      "first_event_seq": 112,
+      "prompt": null,
+      "response": null,
+      "completion": {
+        "outcome": "succeeded",
+        "notes": "Script completed: node scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/feature-existing-app-audit.md --stage feature-existing-app-audit --out .workflow/existing-app-feature/codex/feature-existing-app-audit.json",
+        "failure_reason": null,
+        "timestamp": "2026-05-17T16:25:00.422416718Z"
+      },
+      "provider_used": null,
+      "diff": null,
+      "script_invocation": {
+        "script": "node scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/feature-existing-app-audit.md --stage feature-existing-app-audit --out .workflow/existing-app-feature/codex/feature-existing-app-audit.json",
+        "command": "exec 2>&1\nnode scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/feature-existing-app-audit.md --stage feature-existing-app-audit --out .workflow/existing-app-feature/codex/feature-existing-app-audit.json",
+        "language": "shell",
+        "timeout_ms": 3600000
+      },
+      "script_timing": {
+        "output": "blob://sha256/733a9ca9c2bde692b699a30f0ac12c95a078a05af14c77d231d8754a1fe549aa",
+        "exit_code": 0,
+        "duration_ms": 153795,
+        "termination": "exited",
+        "output_bytes": 5073,
+        "live_streaming": true
+      },
+      "parallel_results": null,
+      "output": null,
+      "output_bytes": 5073,
+      "live_streaming": true,
+      "termination": "exited",
+      "started_at": "2026-05-17T16:22:26.624974728Z",
+      "handler": "command",
+      "duration_ms": 153797,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "total_tokens": 0,
+        "reasoning_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "state": "succeeded"
+    },
+    "research_audit_fanout@1": {
+      "first_event_seq": 76,
+      "prompt": null,
+      "response": null,
+      "completion": null,
+      "provider_used": null,
+      "diff": null,
+      "script_invocation": null,
+      "script_timing": null,
+      "parallel_results": [
+        {
+          "id": "research_child",
+          "status": "succeeded",
+          "head_sha": "bc021ca4e65bada69182b306fa2da86411ee1039"
+        },
+        {
+          "id": "existing_app_audit_child",
+          "status": "succeeded",
+          "head_sha": "cabfa6791365f29df2cfee019a65e3e47ba43242"
+        }
+      ],
+      "output": null,
+      "started_at": "2026-05-17T16:22:21.782132304Z",
+      "handler": "parallel",
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "total_tokens": 0,
+        "reasoning_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "state": "running"
+    },
+    "emit_contract@1": {
+      "first_event_seq": 33,
+      "prompt": null,
+      "response": null,
+      "completion": {
+        "outcome": "succeeded",
+        "notes": "Stage completed: emit_contract",
+        "failure_reason": null,
+        "timestamp": "2026-05-17T16:21:02.586849546Z"
+      },
+      "provider_used": {
+        "mode": "agent",
+        "provider": "openai",
+        "model": "gpt-5.3-codex-spark"
+      },
+      "diff": null,
+      "script_invocation": null,
+      "script_timing": null,
+      "parallel_results": null,
+      "output": null,
+      "started_at": "2026-05-17T16:21:02.509349936Z",
+      "handler": "agent",
+      "duration_ms": 77,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "total_tokens": 0,
+        "reasoning_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "state": "succeeded"
+    },
+    "start@1": {
+      "first_event_seq": 16,
+      "prompt": null,
+      "response": null,
+      "completion": {
+        "outcome": "succeeded",
+        "notes": null,
+        "failure_reason": null,
+        "timestamp": "2026-05-17T16:22:23.314798943Z"
+      },
+      "provider_used": null,
+      "diff": null,
+      "script_invocation": null,
+      "script_timing": null,
+      "parallel_results": null,
+      "output": null,
+      "started_at": "2026-05-17T16:22:23.314726596Z",
+      "handler": "start",
+      "duration_ms": 0,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "total_tokens": 0,
+        "reasoning_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "state": "succeeded"
+    },
     "exit@1": {
       "first_event_seq": 39,
       "prompt": null,
@@ -1509,7 +2702,7 @@
         "outcome": "succeeded",
         "notes": null,
         "failure_reason": null,
-        "timestamp": "2026-05-17T16:22:19.024232100Z"
+        "timestamp": "2026-05-17T16:27:09.181825393Z"
       },
       "provider_used": null,
       "diff": null,
@@ -1517,7 +2710,7 @@
       "script_timing": null,
       "parallel_results": null,
       "output": null,
-      "started_at": "2026-05-17T16:22:19.024222598Z",
+      "started_at": "2026-05-17T16:27:09.181816261Z",
       "handler": "exit",
       "duration_ms": 0,
       "usage": {
@@ -1574,49 +2767,6 @@
       },
       "state": "succeeded"
     },
-    "validate_context_pack@1": {
-      "first_event_seq": 61,
-      "prompt": null,
-      "response": null,
-      "completion": {
-        "outcome": "succeeded",
-        "notes": "Script completed: node scripts/iphone-app-factory/feature-context-gate.mjs",
-        "failure_reason": null,
-        "timestamp": "2026-05-17T16:22:19.024008577Z"
-      },
-      "provider_used": null,
-      "diff": null,
-      "script_invocation": {
-        "script": "node scripts/iphone-app-factory/feature-context-gate.mjs",
-        "command": "exec 2>&1\nnode scripts/iphone-app-factory/feature-context-gate.mjs",
-        "language": "shell"
-      },
-      "script_timing": {
-        "output": "blob://sha256/cff594dd57b557aadea5e71a7341bbf7111b97ce6fb4a37046318f2153b5f9b9",
-        "exit_code": 0,
-        "duration_ms": 1722,
-        "termination": "exited",
-        "output_bytes": 202,
-        "live_streaming": true
-      },
-      "parallel_results": null,
-      "output": null,
-      "output_bytes": 202,
-      "live_streaming": true,
-      "termination": "exited",
-      "started_at": "2026-05-17T16:22:17.299076007Z",
-      "handler": "command",
-      "duration_ms": 1724,
-      "usage": {
-        "input_tokens": 0,
-        "output_tokens": 0,
-        "total_tokens": 0,
-        "reasoning_tokens": 0,
-        "cache_read_tokens": 0,
-        "cache_write_tokens": 0
-      },
-      "state": "succeeded"
-    },
     "feature_workflow_preflight@1": {
       "first_event_seq": 20,
       "prompt": null,
@@ -1646,29 +2796,39 @@
       },
       "state": "succeeded"
     },
-    "emit_contract@1": {
-      "first_event_seq": 33,
+    "validate_research_pack@1": {
+      "first_event_seq": 150,
       "prompt": null,
       "response": null,
       "completion": {
         "outcome": "succeeded",
-        "notes": "Stage completed: emit_contract",
+        "notes": "Script completed: node scripts/iphone-app-factory/feature-research-gate.mjs",
         "failure_reason": null,
-        "timestamp": "2026-05-17T16:21:02.586849546Z"
+        "timestamp": "2026-05-17T16:27:09.181489154Z"
       },
-      "provider_used": {
-        "mode": "agent",
-        "provider": "openai",
-        "model": "gpt-5.3-codex-spark"
-      },
+      "provider_used": null,
       "diff": null,
-      "script_invocation": null,
-      "script_timing": null,
+      "script_invocation": {
+        "script": "node scripts/iphone-app-factory/feature-research-gate.mjs",
+        "command": "exec 2>&1\nnode scripts/iphone-app-factory/feature-research-gate.mjs",
+        "language": "shell"
+      },
+      "script_timing": {
+        "output": "blob://sha256/1b0c9c79dcc9e66fa90a4c2f6a41b3a57234ae0922cfedb55afcdc13bba1e4aa",
+        "exit_code": 0,
+        "duration_ms": 1992,
+        "termination": "exited",
+        "output_bytes": 217,
+        "live_streaming": true
+      },
       "parallel_results": null,
       "output": null,
-      "started_at": "2026-05-17T16:21:02.509349936Z",
-      "handler": "agent",
-      "duration_ms": 77,
+      "output_bytes": 217,
+      "live_streaming": true,
+      "termination": "exited",
+      "started_at": "2026-05-17T16:27:07.185809254Z",
+      "handler": "command",
+      "duration_ms": 1995,
       "usage": {
         "input_tokens": 0,
         "output_tokens": 0,
@@ -1683,7 +2843,12 @@
       "first_event_seq": 48,
       "prompt": null,
       "response": null,
-      "completion": null,
+      "completion": {
+        "outcome": "succeeded",
+        "notes": "Child completed at cycle 37",
+        "failure_reason": null,
+        "timestamp": "2026-05-17T16:22:19.105465440Z"
+      },
       "provider_used": null,
       "diff": null,
       "script_invocation": null,
@@ -1692,6 +2857,7 @@
       "output": null,
       "started_at": "2026-05-17T16:21:05.482896237Z",
       "handler": "stack.manager_loop",
+      "duration_ms": 73541,
       "usage": {
         "input_tokens": 0,
         "output_tokens": 0,
@@ -1700,17 +2866,17 @@
         "cache_read_tokens": 0,
         "cache_write_tokens": 0
       },
-      "state": "running"
+      "state": "succeeded"
     },
-    "start@1": {
-      "first_event_seq": 16,
+    "research_join@1": {
+      "first_event_seq": 140,
       "prompt": null,
       "response": null,
       "completion": {
         "outcome": "succeeded",
-        "notes": null,
+        "notes": "Selected best candidate: app_store_research",
         "failure_reason": null,
-        "timestamp": "2026-05-17T16:21:05.487576912Z"
+        "timestamp": "2026-05-17T16:25:16.198191768Z"
       },
       "provider_used": null,
       "diff": null,
@@ -1718,9 +2884,52 @@
       "script_timing": null,
       "parallel_results": null,
       "output": null,
-      "started_at": "2026-05-17T16:21:05.487489885Z",
-      "handler": "start",
+      "started_at": "2026-05-17T16:25:16.198114706Z",
+      "handler": "parallel.fan_in",
       "duration_ms": 0,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "total_tokens": 0,
+        "reasoning_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "state": "succeeded"
+    },
+    "checkout_existing_app@1": {
+      "first_event_seq": 96,
+      "prompt": null,
+      "response": null,
+      "completion": {
+        "outcome": "succeeded",
+        "notes": "Script completed: node scripts/iphone-app-factory/checkout-existing-app.mjs",
+        "failure_reason": null,
+        "timestamp": "2026-05-17T16:22:26.624615854Z"
+      },
+      "provider_used": null,
+      "diff": null,
+      "script_invocation": {
+        "script": "node scripts/iphone-app-factory/checkout-existing-app.mjs",
+        "command": "exec 2>&1\nnode scripts/iphone-app-factory/checkout-existing-app.mjs",
+        "language": "shell"
+      },
+      "script_timing": {
+        "output": "blob://sha256/23d7145c549953931f4ae9d618152b28706e2d11b1e104552bd60e560d23761f",
+        "exit_code": 0,
+        "duration_ms": 3306,
+        "termination": "exited",
+        "output_bytes": 293,
+        "live_streaming": true
+      },
+      "parallel_results": null,
+      "output": null,
+      "output_bytes": 293,
+      "live_streaming": true,
+      "termination": "exited",
+      "started_at": "2026-05-17T16:22:23.314923954Z",
+      "handler": "command",
+      "duration_ms": 3309,
       "usage": {
         "input_tokens": 0,
         "output_tokens": 0,
