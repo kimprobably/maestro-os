@@ -78,3 +78,32 @@ test("appium gate accepts validated fallback with raw log artifact", () => {
     assert.equal(result.status, 0, result.stderr);
   });
 });
+
+test("appium gate defers missing local report when hosted iOS runtime evidence is explicit", () => {
+  withTempDir((dir) => {
+    const evidenceDir = join(dir, ".workflow/iphone-app-ux-studio/evidence");
+    mkdirSync(evidenceDir, { recursive: true });
+    writeFileSync(join(evidenceDir, "screen-flows.md"), [
+      "# Screen Flows Evidence",
+      "## Risks",
+      "- Daytona worker cannot produce iOS simulator screenshots in this environment.",
+      "- Appium runtime checks require hosted macOS/iOS execution.",
+      "",
+    ].join("\n"));
+
+    const result = runGate(dir);
+    assert.equal(result.status, 0, result.stderr);
+    const report = JSON.parse(result.stdout);
+    assert.equal(report.status, "deferred_to_hosted_ios");
+    assert.deepEqual(report.failures, []);
+    assert.match(report.deferredFailures.join("\n"), /missing Appium exploratory report/);
+  });
+});
+
+test("appium gate rejects missing report without hosted runtime evidence", () => {
+  withTempDir((dir) => {
+    const result = runGate(dir);
+    assert.notEqual(result.status, 0);
+    assert.match(result.stderr, /missing Appium exploratory report/);
+  });
+});

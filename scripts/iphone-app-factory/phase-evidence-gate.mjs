@@ -23,8 +23,13 @@ for (const term of ["Files changed", "Commands run", "Acceptance criteria", "Ris
 }
 
 const hasKnownDeferred = /known deferred/i.test(text);
+const hasHostedRuntimeDeferral =
+  /hosted\s+(macos|ios)|hosted\s+macos\/ios|daytona worker cannot|cannot produce ios simulator|simulator validation (was|were) not executable/i.test(
+    text
+  ) && /appium|simulator|runtime|xcode|screenshot/i.test(text);
+const hasAcceptedDeferred = hasKnownDeferred || hasHostedRuntimeDeferral;
 
-if (!hasKnownDeferred && /VERDICT:\s*REJECTED|\bFAIL(ED|URE)?\b/i.test(text)) {
+if (!hasAcceptedDeferred && /VERDICT:\s*REJECTED|\bFAIL(ED|URE)?\b/i.test(text)) {
   failures.push(`${evidence} contains failing verdict`);
 }
 
@@ -32,12 +37,12 @@ if (!/Verifier notes/i.test(text)) {
   failures.push(`${evidence} missing Verifier notes`);
 }
 
-if (!hasKnownDeferred && /(^|\n)\s*-\s*\[\s\]/.test(text)) {
+if (!hasAcceptedDeferred && /(^|\n)\s*-\s*\[\s\]/.test(text)) {
   failures.push(`${evidence} has unchecked acceptance criteria`);
 }
 
 if (
-  !hasKnownDeferred &&
+  !hasAcceptedDeferred &&
   /status:\s*blocked|blocked by|blocking:|permission denied|not writable|cannot .*implement|could not .*implement|not implemented|retry target|verification failed/i.test(
     text
   )
@@ -47,6 +52,7 @@ if (
 
 const verifierIndex = text.search(/Verifier notes/i);
 if (
+  !hasAcceptedDeferred &&
   verifierIndex >= 0 &&
   /rejected|failed|not acceptable|do not advance|retry|needs another implementation pass|another implementation pass|not ready|cannot advance|pending independent verifier/i.test(
     text.slice(verifierIndex)

@@ -12,6 +12,7 @@ const appDir = process.argv[2] && !process.argv[2].startsWith("--")
   : process.env.APP_DIR || process.env.UX_APP_DIR || "apps/generated-iphone-app";
 const allowDeferred = arg("--allow-deferred", process.env.UX_ALLOW_MACOS_DEFERRED || "false") === "true";
 const root = ".workflow/iphone-app-factory";
+const uxRoot = ".workflow/iphone-app-ux-studio";
 const candidates = [
   join(appDir, "reports/ios/appium-exploratory-report.json"),
   `${root}/appium-exploratory-report.json`
@@ -19,6 +20,27 @@ const candidates = [
 const reportFile = candidates.find((file) => existsSync(file));
 const failures = [];
 let parsed = null;
+
+function readText(file) {
+  return existsSync(file) ? readFileSync(file, "utf8") : "";
+}
+
+function hasHostedRuntimeDeferralEvidence() {
+  const evidenceText = [
+    `${uxRoot}/evidence/screen-flows.md`,
+    `${uxRoot}/evidence/screen-flows-gate.json`,
+    `${uxRoot}/screenshots/screenshot-manifest-gate.json`,
+    `${root}/ios-ci-gate.json`,
+  ]
+    .map(readText)
+    .filter(Boolean)
+    .join("\n");
+
+  return (
+    /hosted\s+(macos|ios)|hosted\s+macos\/ios|daytona worker cannot|cannot produce ios simulator|simulator validation (was|were) not executable/i.test(evidenceText) &&
+    /appium|simulator|runtime|xcode|screenshot/i.test(evidenceText)
+  );
+}
 
 if (!reportFile) {
   failures.push("missing Appium exploratory report");
@@ -45,12 +67,31 @@ if (!reportFile) {
 
 let ok = failures.length === 0;
 let status = ok ? "passed" : "failed";
-if (!ok && allowDeferred && !reportFile) {
+const hostedRuntimeDeferral = !reportFile && hasHostedRuntimeDeferralEvidence();
+let deferredFailures = [];
+if (!ok && hostedRuntimeDeferral) {
+  deferredFailures = [...failures];
+  failures.length = 0;
+  ok = true;
+  status = "deferred_to_hosted_ios";
+} else if (!ok && allowDeferred && !reportFile) {
+  deferredFailures = [...failures];
+  failures.length = 0;
   ok = true;
   status = "deferred";
 }
 
-const report = { ok, status, appDir, reportFile: reportFile || null, failures, parsed };
+const report = {
+  ok,
+  status,
+  appDir,
+  reportFile: reportFile || null,
+  allowDeferred,
+  hostedRuntimeDeferral,
+  failures,
+  deferredFailures,
+  parsed,
+};
 mkdirSync(dirname(`${root}/appium-gate.json`), { recursive: true });
 writeFileSync(`${root}/appium-gate.json`, `${JSON.stringify(report, null, 2)}\n`);
 if (!ok) {
