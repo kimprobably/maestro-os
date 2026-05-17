@@ -10,6 +10,12 @@ The v0 store is SQLite:
 
 Do not commit raw connection CSVs, raw audience lists, emails, private exports, or the SQLite database.
 
+The generated full private source artifact is:
+
+`/data/.hermes/profiles/joni/state/linkedin-feed/selected-sources.all.json`
+
+This file is generated from SQLite for runtime use by Joni. It should not be committed. The small `docs/operator/linkedin/joni-sources.json` file is only for manual source lists and being empty is not a watchlist gap when the SQLite store exists.
+
 ## Import
 
 Import an approved LinkedIn connection/source CSV into the private registry:

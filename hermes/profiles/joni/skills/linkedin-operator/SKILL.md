@@ -31,11 +31,21 @@ Not allowed without explicit approval:
 2. Check HarvestAPI credential presence through `scripts/hermes/joni-linkedin-capture.mjs validate`, not by reading raw shell env. The script loads the Hermes profile `.env` and reports presence-only.
 3. Select a daily cohort from the SQLite watchlist: top follower tier, known active sources, and a rotating sample.
 4. Capture authorized signals through the daily Fabro workflow: founder/operator posts, target creator posts, competitor positioning, comments/questions, and visible performance deltas.
-5. Do not treat an empty `docs/operator/linkedin/joni-sources.json` as a blocker when the SQLite watchlist exists; that JSON file is for small approved manual source lists.
+5. Do not treat an empty `docs/operator/linkedin/joni-sources.json` as a blocker when the SQLite watchlist exists; that JSON file is for small approved manual source lists and should not be reported as a source gap.
 6. Review deterministic `feed-candidates.md` before interpreting patterns. Do not use AI to invent feed activity.
 7. Append compact notes to `docs/operator/linkedin/JONI-LINKEDIN-LEDGER.md`. Preserve URL, author/page, date, observed pattern, and why it matters.
 8. Draft or update the post queue so the week has 5 candidate posts.
 9. Report: drafted count, source gaps, notable patterns, next action.
+
+## Full Watchlist
+
+The full private watchlist runtime artifact lives at:
+
+`/data/.hermes/profiles/joni/state/linkedin-feed/selected-sources.all.json`
+
+It is generated from the SQLite watchlist and currently represents the approved 2k+ source set. Use it when Tim asks for the whole watchlist, full network coverage, or a broader scan. Do not commit this file or paste the full source list into Slack.
+
+For normal daily monitoring, prefer the daily cohort path to control HarvestAPI cost and latency. For one-off broader scans, validate the full artifact first and then capture in bounded chunks.
 
 ## Weekly Loop
 
@@ -62,4 +72,5 @@ Do not produce generic motivational posts. Maestro posts should sound specific, 
 - `docs/operator/linkedin/JONI-LINKEDIN-LEDGER.md`: source captures, draft queue, publishing plan, performance notes, and open credential/source gaps.
 - `docs/operator/linkedin/joni-sources.json`: approved small/manual HarvestAPI source list; not required for the private SQLite watchlist path.
 - `docs/operator/linkedin/JONI-FEED-WATCHLIST.md`: private watchlist operating rules and artifacts.
+- `/data/.hermes/profiles/joni/state/linkedin-feed/selected-sources.all.json`: full private generated source artifact from the SQLite watchlist.
 - `workflows/hermes/joni-linkedin-daily.fabro`: deterministic capture plus bounded AI pattern review.

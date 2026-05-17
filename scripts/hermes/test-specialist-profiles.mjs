@@ -51,6 +51,7 @@ test("joni has a LinkedIn operator skill with safe capture and no-publish bounda
   assert.match(skill, /weekly performance/);
   assert.match(skill, /SQLite watchlist first/);
   assert.match(skill, /not treat an empty `docs\/operator\/linkedin\/joni-sources\.json` as a blocker/);
+  assert.match(skill, /selected-sources\.all\.json/);
 
   const ledger = await readFile(
     path.join(repoRoot, "docs/operator/linkedin/JONI-LINKEDIN-LEDGER.md"),
@@ -60,6 +61,13 @@ test("joni has a LinkedIn operator skill with safe capture and no-publish bounda
   assert.match(ledger, /HARVEST_API_KEY/);
   assert.match(ledger, /Daily ingestion is deterministic/);
   assert.match(ledger, /Publishing, commenting, DMs, connection requests/);
+
+  const watchlistDoc = await readFile(
+    path.join(repoRoot, "docs/operator/linkedin/JONI-FEED-WATCHLIST.md"),
+    "utf8",
+  );
+  assert.match(watchlistDoc, /selected-sources\.all\.json/);
+  assert.match(watchlistDoc, /being empty is not a watchlist gap/);
 });
 
 test("Railway gateway can run Joni as a dedicated specialist Slack profile", async () => {
