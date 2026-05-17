@@ -13,6 +13,7 @@ const childWorkflows = [
   "workflows/iphone-app-factory/waketask-validation-postmortem-stage.fabro",
 ];
 const productSpecWriter = "scripts/iphone-app-factory/write-waketask-product-spec.mjs";
+const validationPostmortemWriter = "scripts/iphone-app-factory/write-waketask-validation-postmortem.mjs";
 
 function readRequiredFile(path) {
   assert.ok(existsSync(path), `Expected ${path} to exist`);
@@ -57,6 +58,15 @@ test("WakeTask product spec stage uses a deterministic artifact writer", () => {
   assert.match(graph, /write-waketask-product-spec\.mjs/);
   assert.match(graph, /product-spec\.md/);
   assert.match(graph, /product-spec\.json/);
+});
+
+test("WakeTask validation postmortem stage uses a deterministic artifact writer", () => {
+  readRequiredFile(validationPostmortemWriter);
+  const graph = readRequiredFile("workflows/iphone-app-factory/waketask-validation-postmortem-stage.fabro");
+  assert.match(graph, /shape=parallelogram/);
+  assert.match(graph, /write-waketask-validation-postmortem\.mjs/);
+  assert.match(graph, /validation-postmortem\.md/);
+  assert.match(graph, /validation-postmortem\.json/);
 });
 
 test("WakeTask parent run config targets Railway Fabro and the parent graph", () => {

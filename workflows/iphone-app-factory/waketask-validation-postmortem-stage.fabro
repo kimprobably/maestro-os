@@ -17,9 +17,9 @@ digraph WakeTaskValidationPostmortemStage {
 
     write_validation_postmortem [
         label="Write Validation Postmortem",
-        class="review",
+        shape=parallelogram,
         retry_target="write_validation_postmortem",
-        prompt="Inspect available artifacts from `.workflow/iphone-app-ux-studio/**`, `.workflow/waketask-product-iteration/**`, `reports/ios/**`, and Fabro run context. Write `.workflow/waketask-product-iteration/validation-postmortem.md` and `.workflow/waketask-product-iteration/validation-postmortem.json`. Classify blockers as infra, prompt/context, quality gate, git/metadata, app build/test, or product-spec issue. Required Markdown sections: Source List, What Worked, What Failed, Manual Versus Fabro Executed, Workflow Changes Needed, Product Backlog, Next Operator Action, No Secrets. If evidence is absent, say evidence is absent and identify the retry target. End your response with JSON only containing context_updates for contract.artifact, contract.gate, contract.next_action, contract.failure_classification, and waketask.postmortem."
+        script="node scripts/iphone-app-factory/write-waketask-validation-postmortem.mjs"
     ]
 
     validate_postmortem_contract [
