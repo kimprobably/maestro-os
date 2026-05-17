@@ -1,0 +1,79 @@
+digraph CreateHermesAgent {
+    graph [
+        goal="Bootstrap a new Maestro Hermes agent profile with registry, memory, skills/docs, verification, and optional Slack bot setup pack",
+        persona="quincy",
+        inputs="agent_name,agent_role,agent_owns,agent_current_focus,agent_slack_bot,agent_reporting_channel",
+        outputs="agent_profile,agent_registry_entry,agent_slack_manifest,agent_bootstrap_handoff",
+        default_max_retries=1,
+        retry_target="materialize_agent_artifacts",
+        fallback_retry_target="verify_agent_artifacts",
+        model_stylesheet="
+            *       { provider: openai; model: gpt-5.4-mini; reasoning_effort: low; }
+            .coding { provider: openai; model: gpt-5.4-mini; reasoning_effort: medium; }
+            .review { provider: gemini; model: gemini-3.1-pro-preview; reasoning_effort: medium; }
+        "
+    ]
+    rankdir=LR
+
+    start [shape=Mdiamond, label="Start"]
+    exit  [shape=Msquare, label="Exit"]
+
+    validate_agent_request [
+        label="Validate Agent Request",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="validate_agent_request",
+        script="node scripts/hermes/bootstrap-agent.mjs validate --name \"{{ inputs.agent_name|default('Nina') }}\" --role \"{{ inputs.agent_role|default('Research specialist') }}\" --owns \"{{ inputs.agent_owns|default('market research,source review') }}\" --current-focus \"{{ inputs.agent_current_focus|default('Build durable research judgment for Maestro.') }}\" --slack-bot \"{{ inputs.agent_slack_bot|default('false') }}\" --reporting-channel \"{{ inputs.agent_reporting_channel|default('') }}\""
+    ]
+
+    write_agent_plan [
+        label="Write Agent Bootstrap Plan",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="validate_agent_request",
+        script="node scripts/hermes/bootstrap-agent.mjs plan --name \"{{ inputs.agent_name|default('Nina') }}\" --role \"{{ inputs.agent_role|default('Research specialist') }}\" --owns \"{{ inputs.agent_owns|default('market research,source review') }}\" --current-focus \"{{ inputs.agent_current_focus|default('Build durable research judgment for Maestro.') }}\" --slack-bot \"{{ inputs.agent_slack_bot|default('false') }}\" --reporting-channel \"{{ inputs.agent_reporting_channel|default('') }}\""
+    ]
+
+    materialize_agent_artifacts [
+        label="Materialize Agent Artifacts",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="materialize_agent_artifacts",
+        script="node scripts/hermes/bootstrap-agent.mjs materialize --name \"{{ inputs.agent_name|default('Nina') }}\" --role \"{{ inputs.agent_role|default('Research specialist') }}\" --owns \"{{ inputs.agent_owns|default('market research,source review') }}\" --current-focus \"{{ inputs.agent_current_focus|default('Build durable research judgment for Maestro.') }}\" --slack-bot \"{{ inputs.agent_slack_bot|default('false') }}\" --reporting-channel \"{{ inputs.agent_reporting_channel|default('') }}\""
+    ]
+
+    verify_agent_artifacts [
+        label="Verify Agent Artifacts",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="materialize_agent_artifacts",
+        script="node scripts/hermes/bootstrap-agent.mjs verify --name \"{{ inputs.agent_name|default('Nina') }}\" --role \"{{ inputs.agent_role|default('Research specialist') }}\" --owns \"{{ inputs.agent_owns|default('market research,source review') }}\" --current-focus \"{{ inputs.agent_current_focus|default('Build durable research judgment for Maestro.') }}\" --slack-bot \"{{ inputs.agent_slack_bot|default('false') }}\" --reporting-channel \"{{ inputs.agent_reporting_channel|default('') }}\" && node --test scripts/hermes/test-agent-registry.mjs scripts/hermes/test-specialist-profiles.mjs"
+    ]
+
+    slack_bot_install_approval [
+        label="Slack Bot Install Approval",
+        shape=hexagon
+    ]
+
+    write_handoff [
+        label="Write Agent Handoff",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="verify_agent_artifacts",
+        script="node scripts/hermes/bootstrap-agent.mjs handoff --name \"{{ inputs.agent_name|default('Nina') }}\" --role \"{{ inputs.agent_role|default('Research specialist') }}\" --owns \"{{ inputs.agent_owns|default('market research,source review') }}\" --current-focus \"{{ inputs.agent_current_focus|default('Build durable research judgment for Maestro.') }}\" --slack-bot \"{{ inputs.agent_slack_bot|default('false') }}\" --reporting-channel \"{{ inputs.agent_reporting_channel|default('') }}\""
+    ]
+
+    start -> validate_agent_request
+    validate_agent_request -> write_agent_plan [condition="outcome=succeeded"]
+    validate_agent_request -> validate_agent_request [label="Fix Request", loop_restart=true, max_visits=2]
+    write_agent_plan -> materialize_agent_artifacts [condition="outcome=succeeded"]
+    write_agent_plan -> validate_agent_request [label="Repair Plan Input", loop_restart=true]
+    materialize_agent_artifacts -> verify_agent_artifacts [condition="outcome=succeeded"]
+    materialize_agent_artifacts -> materialize_agent_artifacts [label="Repair Artifacts", loop_restart=true, max_visits=2]
+    verify_agent_artifacts -> slack_bot_install_approval [condition="outcome=succeeded"]
+    verify_agent_artifacts -> materialize_agent_artifacts [label="Repair Verification", loop_restart=true]
+    slack_bot_install_approval -> write_handoff [label="[A] Approve Slack setup pack / continue"]
+    slack_bot_install_approval -> write_handoff [label="[S] Skip separate Slack bot"]
+    write_handoff -> exit [condition="outcome=succeeded"]
+    write_handoff -> materialize_agent_artifacts [label="Repair"]
+}

@@ -1,0 +1,595 @@
+{
+  "title": "Bootstrap Joni as the Maestro LinkedIn content and performance specialist",
+  "spec": {
+    "run_id": "01KRSME0V6PZSC31X1AJDQWAZH",
+    "settings": {
+      "project": {
+        "name": "maestro-os",
+        "description": null,
+        "metadata": {}
+      },
+      "workflow": {
+        "name": null,
+        "description": null,
+        "graph": "workflow.fabro",
+        "metadata": {}
+      },
+      "run": {
+        "goal": {
+          "type": "inline",
+          "value": "Bootstrap Joni as the Maestro LinkedIn content and performance specialist"
+        },
+        "working_dir": null,
+        "metadata": {
+          "agent": "joni",
+          "purpose": "agent-bootstrap"
+        },
+        "inputs": {
+          "agent_name": "Joni",
+          "agent_role": "LinkedIn content and performance specialist",
+          "agent_current_focus": "Build a reliable LinkedIn operating loop: capture authorized content signals daily, draft five Maestro posts per week, monitor performance, and report what is working without publishing without approval.",
+          "agent_slack_bot": false,
+          "agent_owns": "authorized LinkedIn content capture,Maestro LinkedIn post calendar,draft creation,performance monitoring,weekly insight reports",
+          "agent_reporting_channel": "#maestro"
+        },
+        "model": {
+          "provider": "openrouter",
+          "name": "anthropic/claude-haiku-4-5",
+          "fallbacks": [],
+          "controls": {
+            "reasoning_effort": null,
+            "speed": null
+          }
+        },
+        "git": {
+          "author": null
+        },
+        "prepare": {
+          "commands": [],
+          "timeout_ms": 300000
+        },
+        "execution": {
+          "mode": "normal",
+          "approval": "auto"
+        },
+        "checkpoint": {
+          "exclude_globs": []
+        },
+        "clone": {
+          "enabled": true
+        },
+        "run_branch": {
+          "enabled": true,
+          "push": true
+        },
+        "meta_branch": {
+          "enabled": true,
+          "push": true
+        },
+        "sandbox": {
+          "provider": "daytona",
+          "preserve": false,
+          "stop_on_terminal": true,
+          "devcontainer": false,
+          "env": {
+            "PROMPTFOO_DISABLE_TELEMETRY": "1",
+            "FABRO_SERVER": "{{ env.FABRO_SERVER }}",
+            "LINEAR_API_KEY": "{{ env.LINEAR_API_KEY }}",
+            "FABRO_SLACK_CHANNEL_ID": "{{ env.FABRO_SLACK_CHANNEL_ID }}",
+            "APIFY_APPSTORE_ACTOR": "crawlerbros/appstore-scraper",
+            "APIFY_TIKTOK_ACTOR": "clockworks/tiktok-scraper",
+            "LINEAR_API_URL": "{{ env.LINEAR_API_URL }}",
+            "OPENAI_API_KEY": "{{ env.OPENAI_API_KEY }}",
+            "FABRO_DEV_TOKEN": "{{ env.FABRO_DEV_TOKEN }}",
+            "CODEX_AUTH_JSON_BASE64": "{{ env.CODEX_AUTH_JSON_BASE64 }}",
+            "DAYTONA_API_URL": "{{ env.DAYTONA_API_URL }}",
+            "DAYTONA_API_KEY": "{{ env.DAYTONA_API_KEY }}",
+            "APIFY_TOKEN": "{{ env.APIFY_TOKEN }}",
+            "FABRO_SLACK_BOT_TOKEN": "{{ env.FABRO_SLACK_BOT_TOKEN }}",
+            "CLAUDE_CODE_CREDENTIALS_JSON_BASE64": "{{ env.CLAUDE_CODE_CREDENTIALS_JSON_BASE64 }}",
+            "CLAUDE_CODE_OAUTH_TOKEN": "{{ env.CLAUDE_CODE_OAUTH_TOKEN }}",
+            "OPENROUTER_API_KEY": "{{ env.OPENROUTER_API_KEY }}",
+            "APIFY_INSTAGRAM_ACTOR": "apify/instagram-scraper"
+          },
+          "docker": {
+            "image": "buildpack-deps:noble",
+            "network_mode": null,
+            "memory_limit": 4000000000,
+            "cpu_quota": 200000,
+            "env_vars": {}
+          },
+          "daytona": {
+            "auto_stop_interval": 30,
+            "labels": {
+              "project": "maestro-os",
+              "purpose": "code-factory"
+            },
+            "snapshot": {
+              "name": "maestro-code-factory-v8",
+              "cpu": 2,
+              "memory_gb": 4,
+              "disk_gb": 10,
+              "dockerfile": {
+                "type": "inline",
+                "value": "FROM ubuntu:24.04\n\nENV DEBIAN_FRONTEND=noninteractive\nENV BUN_INSTALL=/root/.bun\nENV PATH=\"/root/.fabro/bin:/root/.bun/bin:/root/.local/bin:/root/.qlty/bin:${PATH}\"\nWORKDIR /home/daytona\n\nRUN apt-get update && apt-get install -y --no-install-recommends bash ca-certificates curl gh git jq openssh-client python3 python3-pip pipx ripgrep shellcheck sqlite3 unzip xz-utils && rm -rf /var/lib/apt/lists/*\n\nRUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash - && apt-get update && apt-get install -y --no-install-recommends nodejs && npm install -g @anthropic-ai/claude-code@2.1.141 @openai/codex promptfoo && npm cache clean --force && rm -rf /var/lib/apt/lists/*\n\nRUN curl -fsSL https://bun.sh/install | bash -s \"bun-v1.2.22\" && ln -sf /root/.bun/bin/bun /usr/local/bin/bun\n\nRUN pipx install spec-kitty-cli==3.1.8 && curl -fsSL https://qlty.sh | sh && ln -sf /root/.qlty/bin/qlty /usr/local/bin/qlty\n\nRUN set -eux; target=\"x86_64-unknown-linux-gnu\"; asset=\"fabro-${target}.tar.gz\"; url=\"$(curl -fsSL https://api.github.com/repos/fabro-sh/fabro/releases/latest | jq -r --arg asset \"$asset\" '.assets[] | select(.name == $asset) | .browser_download_url')\"; test -n \"$url\"; curl -fsSL \"$url\" -o /tmp/fabro.tar.gz; tar -xzf /tmp/fabro.tar.gz -C /tmp; install -m 0755 \"/tmp/fabro-${target}/fabro\" /usr/local/bin/fabro; rm -rf /tmp/fabro.tar.gz \"/tmp/fabro-${target}\"; fabro --version\n\nCMD [\"/bin/bash\"]\n"
+              }
+            },
+            "network": "allow_all"
+          }
+        },
+        "notifications": {},
+        "interviews": {
+          "provider": null,
+          "slack": null
+        },
+        "agent": {
+          "permissions": "full",
+          "mcps": {}
+        },
+        "hooks": [],
+        "scm": {
+          "provider": null,
+          "owner": null,
+          "repository": null,
+          "github": null
+        },
+        "pull_request": null,
+        "artifacts": {
+          "include": [
+            ".workflow/hermes-agent-bootstrap/**",
+            "hermes/profiles/**",
+            "hermes/agents/**",
+            "hermes/scripts/install-worker-profiles.sh",
+            "docs/operator/agent-slack/**"
+          ]
+        },
+        "integrations": {
+          "github": {
+            "permissions": {
+              "actions": "read",
+              "issues": "write",
+              "contents": "write",
+              "pull_requests": "write",
+              "metadata": "read"
+            }
+          }
+        }
+      }
+    },
+    "graph": {
+      "name": "CreateHermesAgent",
+      "nodes": {
+        "write_handoff": {
+          "id": "write_handoff",
+          "attrs": {
+            "model": {
+              "String": "gpt-5.4-mini"
+            },
+            "provider": {
+              "String": "openai"
+            },
+            "script": {
+              "String": "node scripts/hermes/bootstrap-agent.mjs handoff --name \"Joni\" --role \"LinkedIn content and performance specialist\" --owns \"authorized LinkedIn content capture,Maestro LinkedIn post calendar,draft creation,performance monitoring,weekly insight reports\" --current-focus \"Build a reliable LinkedIn operating loop: capture authorized content signals daily, draft five Maestro posts per week, monitor performance, and report what is working without publishing without approval.\" --slack-bot \"false\" --reporting-channel \"#maestro\""
+            },
+            "retry_target": {
+              "String": "verify_agent_artifacts"
+            },
+            "goal_gate": {
+              "Boolean": true
+            },
+            "shape": {
+              "String": "parallelogram"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "label": {
+              "String": "Write Agent Handoff"
+            }
+          }
+        },
+        "materialize_agent_artifacts": {
+          "id": "materialize_agent_artifacts",
+          "attrs": {
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "goal_gate": {
+              "Boolean": true
+            },
+            "shape": {
+              "String": "parallelogram"
+            },
+            "retry_target": {
+              "String": "materialize_agent_artifacts"
+            },
+            "model": {
+              "String": "gpt-5.4-mini"
+            },
+            "label": {
+              "String": "Materialize Agent Artifacts"
+            },
+            "provider": {
+              "String": "openai"
+            },
+            "script": {
+              "String": "node scripts/hermes/bootstrap-agent.mjs materialize --name \"Joni\" --role \"LinkedIn content and performance specialist\" --owns \"authorized LinkedIn content capture,Maestro LinkedIn post calendar,draft creation,performance monitoring,weekly insight reports\" --current-focus \"Build a reliable LinkedIn operating loop: capture authorized content signals daily, draft five Maestro posts per week, monitor performance, and report what is working without publishing without approval.\" --slack-bot \"false\" --reporting-channel \"#maestro\""
+            }
+          }
+        },
+        "verify_agent_artifacts": {
+          "id": "verify_agent_artifacts",
+          "attrs": {
+            "shape": {
+              "String": "parallelogram"
+            },
+            "model": {
+              "String": "gpt-5.4-mini"
+            },
+            "label": {
+              "String": "Verify Agent Artifacts"
+            },
+            "script": {
+              "String": "node scripts/hermes/bootstrap-agent.mjs verify --name \"Joni\" --role \"LinkedIn content and performance specialist\" --owns \"authorized LinkedIn content capture,Maestro LinkedIn post calendar,draft creation,performance monitoring,weekly insight reports\" --current-focus \"Build a reliable LinkedIn operating loop: capture authorized content signals daily, draft five Maestro posts per week, monitor performance, and report what is working without publishing without approval.\" --slack-bot \"false\" --reporting-channel \"#maestro\" && node --test scripts/hermes/test-agent-registry.mjs scripts/hermes/test-specialist-profiles.mjs"
+            },
+            "provider": {
+              "String": "openai"
+            },
+            "retry_target": {
+              "String": "materialize_agent_artifacts"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "goal_gate": {
+              "Boolean": true
+            }
+          }
+        },
+        "exit": {
+          "id": "exit",
+          "attrs": {
+            "label": {
+              "String": "Exit"
+            },
+            "provider": {
+              "String": "openai"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "model": {
+              "String": "gpt-5.4-mini"
+            },
+            "shape": {
+              "String": "Msquare"
+            }
+          }
+        },
+        "write_agent_plan": {
+          "id": "write_agent_plan",
+          "attrs": {
+            "retry_target": {
+              "String": "validate_agent_request"
+            },
+            "shape": {
+              "String": "parallelogram"
+            },
+            "script": {
+              "String": "node scripts/hermes/bootstrap-agent.mjs plan --name \"Joni\" --role \"LinkedIn content and performance specialist\" --owns \"authorized LinkedIn content capture,Maestro LinkedIn post calendar,draft creation,performance monitoring,weekly insight reports\" --current-focus \"Build a reliable LinkedIn operating loop: capture authorized content signals daily, draft five Maestro posts per week, monitor performance, and report what is working without publishing without approval.\" --slack-bot \"false\" --reporting-channel \"#maestro\""
+            },
+            "model": {
+              "String": "gpt-5.4-mini"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "provider": {
+              "String": "openai"
+            },
+            "goal_gate": {
+              "Boolean": true
+            },
+            "label": {
+              "String": "Write Agent Bootstrap Plan"
+            }
+          }
+        },
+        "slack_bot_install_approval": {
+          "id": "slack_bot_install_approval",
+          "attrs": {
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "label": {
+              "String": "Slack Bot Install Approval"
+            },
+            "provider": {
+              "String": "openai"
+            },
+            "shape": {
+              "String": "hexagon"
+            },
+            "model": {
+              "String": "gpt-5.4-mini"
+            }
+          }
+        },
+        "validate_agent_request": {
+          "id": "validate_agent_request",
+          "attrs": {
+            "label": {
+              "String": "Validate Agent Request"
+            },
+            "model": {
+              "String": "gpt-5.4-mini"
+            },
+            "provider": {
+              "String": "openai"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "goal_gate": {
+              "Boolean": true
+            },
+            "script": {
+              "String": "node scripts/hermes/bootstrap-agent.mjs validate --name \"Joni\" --role \"LinkedIn content and performance specialist\" --owns \"authorized LinkedIn content capture,Maestro LinkedIn post calendar,draft creation,performance monitoring,weekly insight reports\" --current-focus \"Build a reliable LinkedIn operating loop: capture authorized content signals daily, draft five Maestro posts per week, monitor performance, and report what is working without publishing without approval.\" --slack-bot \"false\" --reporting-channel \"#maestro\""
+            },
+            "shape": {
+              "String": "parallelogram"
+            },
+            "retry_target": {
+              "String": "validate_agent_request"
+            }
+          }
+        },
+        "start": {
+          "id": "start",
+          "attrs": {
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "shape": {
+              "String": "Mdiamond"
+            },
+            "model": {
+              "String": "gpt-5.4-mini"
+            },
+            "provider": {
+              "String": "openai"
+            },
+            "label": {
+              "String": "Start"
+            }
+          }
+        }
+      },
+      "edges": [
+        {
+          "from": "start",
+          "to": "validate_agent_request",
+          "attrs": {}
+        },
+        {
+          "from": "validate_agent_request",
+          "to": "write_agent_plan",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "validate_agent_request",
+          "to": "validate_agent_request",
+          "attrs": {
+            "label": {
+              "String": "Fix Request"
+            },
+            "loop_restart": {
+              "Boolean": true
+            },
+            "max_visits": {
+              "Integer": 2
+            }
+          }
+        },
+        {
+          "from": "write_agent_plan",
+          "to": "materialize_agent_artifacts",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "write_agent_plan",
+          "to": "validate_agent_request",
+          "attrs": {
+            "loop_restart": {
+              "Boolean": true
+            },
+            "label": {
+              "String": "Repair Plan Input"
+            }
+          }
+        },
+        {
+          "from": "materialize_agent_artifacts",
+          "to": "verify_agent_artifacts",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "materialize_agent_artifacts",
+          "to": "materialize_agent_artifacts",
+          "attrs": {
+            "label": {
+              "String": "Repair Artifacts"
+            },
+            "max_visits": {
+              "Integer": 2
+            },
+            "loop_restart": {
+              "Boolean": true
+            }
+          }
+        },
+        {
+          "from": "verify_agent_artifacts",
+          "to": "slack_bot_install_approval",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "verify_agent_artifacts",
+          "to": "materialize_agent_artifacts",
+          "attrs": {
+            "label": {
+              "String": "Repair Verification"
+            },
+            "loop_restart": {
+              "Boolean": true
+            }
+          }
+        },
+        {
+          "from": "slack_bot_install_approval",
+          "to": "write_handoff",
+          "attrs": {
+            "label": {
+              "String": "[A] Approve Slack setup pack / continue"
+            }
+          }
+        },
+        {
+          "from": "slack_bot_install_approval",
+          "to": "write_handoff",
+          "attrs": {
+            "label": {
+              "String": "[S] Skip separate Slack bot"
+            }
+          }
+        },
+        {
+          "from": "write_handoff",
+          "to": "exit",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "write_handoff",
+          "to": "materialize_agent_artifacts",
+          "attrs": {
+            "label": {
+              "String": "Repair"
+            }
+          }
+        }
+      ],
+      "attrs": {
+        "default_max_retries": {
+          "Integer": 1
+        },
+        "model_stylesheet": {
+          "String": "\n            *       { provider: openai; model: gpt-5.4-mini; reasoning_effort: low; }\n            .coding { provider: openai; model: gpt-5.4-mini; reasoning_effort: medium; }\n            .review { provider: gemini; model: gemini-3.1-pro-preview; reasoning_effort: medium; }\n        "
+        },
+        "outputs": {
+          "String": "agent_profile,agent_registry_entry,agent_slack_manifest,agent_bootstrap_handoff"
+        },
+        "rankdir": {
+          "String": "LR"
+        },
+        "inputs": {
+          "String": "agent_name,agent_role,agent_owns,agent_current_focus,agent_slack_bot,agent_reporting_channel"
+        },
+        "persona": {
+          "String": "quincy"
+        },
+        "fallback_retry_target": {
+          "String": "verify_agent_artifacts"
+        },
+        "retry_target": {
+          "String": "materialize_agent_artifacts"
+        },
+        "goal": {
+          "String": "Bootstrap Joni as the Maestro LinkedIn content and performance specialist"
+        }
+      }
+    },
+    "graph_source": "digraph CreateHermesAgent {\n    graph [\n        goal=\"Bootstrap a new Maestro Hermes agent profile with registry, memory, skills/docs, verification, and optional Slack bot setup pack\",\n        persona=\"quincy\",\n        inputs=\"agent_name,agent_role,agent_owns,agent_current_focus,agent_slack_bot,agent_reporting_channel\",\n        outputs=\"agent_profile,agent_registry_entry,agent_slack_manifest,agent_bootstrap_handoff\",\n        default_max_retries=1,\n        retry_target=\"materialize_agent_artifacts\",\n        fallback_retry_target=\"verify_agent_artifacts\",\n        model_stylesheet=\"\n            *       { provider: openai; model: gpt-5.4-mini; reasoning_effort: low; }\n            .coding { provider: openai; model: gpt-5.4-mini; reasoning_effort: medium; }\n            .review { provider: gemini; model: gemini-3.1-pro-preview; reasoning_effort: medium; }\n        \"\n    ]\n    rankdir=LR\n\n    start [shape=Mdiamond, label=\"Start\"]\n    exit  [shape=Msquare, label=\"Exit\"]\n\n    validate_agent_request [\n        label=\"Validate Agent Request\",\n        shape=parallelogram,\n        goal_gate=true,\n        retry_target=\"validate_agent_request\",\n        script=\"node scripts/hermes/bootstrap-agent.mjs validate --name \\\"{{ inputs.agent_name|default('Nina') }}\\\" --role \\\"{{ inputs.agent_role|default('Research specialist') }}\\\" --owns \\\"{{ inputs.agent_owns|default('market research,source review') }}\\\" --current-focus \\\"{{ inputs.agent_current_focus|default('Build durable research judgment for Maestro.') }}\\\" --slack-bot \\\"{{ inputs.agent_slack_bot|default('false') }}\\\" --reporting-channel \\\"{{ inputs.agent_reporting_channel|default('') }}\\\"\"\n    ]\n\n    write_agent_plan [\n        label=\"Write Agent Bootstrap Plan\",\n        shape=parallelogram,\n        goal_gate=true,\n        retry_target=\"validate_agent_request\",\n        script=\"node scripts/hermes/bootstrap-agent.mjs plan --name \\\"{{ inputs.agent_name|default('Nina') }}\\\" --role \\\"{{ inputs.agent_role|default('Research specialist') }}\\\" --owns \\\"{{ inputs.agent_owns|default('market research,source review') }}\\\" --current-focus \\\"{{ inputs.agent_current_focus|default('Build durable research judgment for Maestro.') }}\\\" --slack-bot \\\"{{ inputs.agent_slack_bot|default('false') }}\\\" --reporting-channel \\\"{{ inputs.agent_reporting_channel|default('') }}\\\"\"\n    ]\n\n    materialize_agent_artifacts [\n        label=\"Materialize Agent Artifacts\",\n        shape=parallelogram,\n        goal_gate=true,\n        retry_target=\"materialize_agent_artifacts\",\n        script=\"node scripts/hermes/bootstrap-agent.mjs materialize --name \\\"{{ inputs.agent_name|default('Nina') }}\\\" --role \\\"{{ inputs.agent_role|default('Research specialist') }}\\\" --owns \\\"{{ inputs.agent_owns|default('market research,source review') }}\\\" --current-focus \\\"{{ inputs.agent_current_focus|default('Build durable research judgment for Maestro.') }}\\\" --slack-bot \\\"{{ inputs.agent_slack_bot|default('false') }}\\\" --reporting-channel \\\"{{ inputs.agent_reporting_channel|default('') }}\\\"\"\n    ]\n\n    verify_agent_artifacts [\n        label=\"Verify Agent Artifacts\",\n        shape=parallelogram,\n        goal_gate=true,\n        retry_target=\"materialize_agent_artifacts\",\n        script=\"node scripts/hermes/bootstrap-agent.mjs verify --name \\\"{{ inputs.agent_name|default('Nina') }}\\\" --role \\\"{{ inputs.agent_role|default('Research specialist') }}\\\" --owns \\\"{{ inputs.agent_owns|default('market research,source review') }}\\\" --current-focus \\\"{{ inputs.agent_current_focus|default('Build durable research judgment for Maestro.') }}\\\" --slack-bot \\\"{{ inputs.agent_slack_bot|default('false') }}\\\" --reporting-channel \\\"{{ inputs.agent_reporting_channel|default('') }}\\\" && node --test scripts/hermes/test-agent-registry.mjs scripts/hermes/test-specialist-profiles.mjs\"\n    ]\n\n    slack_bot_install_approval [\n        label=\"Slack Bot Install Approval\",\n        shape=hexagon\n    ]\n\n    write_handoff [\n        label=\"Write Agent Handoff\",\n        shape=parallelogram,\n        goal_gate=true,\n        retry_target=\"verify_agent_artifacts\",\n        script=\"node scripts/hermes/bootstrap-agent.mjs handoff --name \\\"{{ inputs.agent_name|default('Nina') }}\\\" --role \\\"{{ inputs.agent_role|default('Research specialist') }}\\\" --owns \\\"{{ inputs.agent_owns|default('market research,source review') }}\\\" --current-focus \\\"{{ inputs.agent_current_focus|default('Build durable research judgment for Maestro.') }}\\\" --slack-bot \\\"{{ inputs.agent_slack_bot|default('false') }}\\\" --reporting-channel \\\"{{ inputs.agent_reporting_channel|default('') }}\\\"\"\n    ]\n\n    start -> validate_agent_request\n    validate_agent_request -> write_agent_plan [condition=\"outcome=succeeded\"]\n    validate_agent_request -> validate_agent_request [label=\"Fix Request\", loop_restart=true, max_visits=2]\n    write_agent_plan -> materialize_agent_artifacts [condition=\"outcome=succeeded\"]\n    write_agent_plan -> validate_agent_request [label=\"Repair Plan Input\", loop_restart=true]\n    materialize_agent_artifacts -> verify_agent_artifacts [condition=\"outcome=succeeded\"]\n    materialize_agent_artifacts -> materialize_agent_artifacts [label=\"Repair Artifacts\", loop_restart=true, max_visits=2]\n    verify_agent_artifacts -> slack_bot_install_approval [condition=\"outcome=succeeded\"]\n    verify_agent_artifacts -> materialize_agent_artifacts [label=\"Repair Verification\", loop_restart=true]\n    slack_bot_install_approval -> write_handoff [label=\"[A] Approve Slack setup pack / continue\"]\n    slack_bot_install_approval -> write_handoff [label=\"[S] Skip separate Slack bot\"]\n    write_handoff -> exit [condition=\"outcome=succeeded\"]\n    write_handoff -> materialize_agent_artifacts [label=\"Repair\"]\n}\n",
+    "workflow_slug": "create-agent",
+    "source_directory": "/Users/timlife/Documents/claude code/maestro-os",
+    "labels": {
+      "agent": "joni",
+      "purpose": "agent-bootstrap"
+    },
+    "provenance": {
+      "server": {
+        "version": "0.232.0-nightly.0"
+      },
+      "client": {
+        "user_agent": "fabro-cli/0.232.0-nightly.0",
+        "name": "fabro-cli",
+        "version": "0.232.0-nightly.0"
+      },
+      "subject": {
+        "kind": "user",
+        "identity": {
+          "issuer": "fabro:dev",
+          "subject": "dev"
+        },
+        "login": "dev",
+        "auth_method": "dev_token"
+      }
+    },
+    "manifest_blob": "b78a8c93bb3b64d716dbfeeea99d19a20681820c9a93d8b74aa826bd20a33bc1",
+    "definition_blob": "3927a42143642f1080379baf6e6a8f84a2417835a2d375661dedd2b563eddcf1",
+    "git": {
+      "origin_url": "https://github.com/kimprobably/maestro-os",
+      "branch": "spike/fabro-code-factory-v5",
+      "sha": "8ece5627cdc70a76c4885d6d20454b8296b7845b",
+      "dirty": "dirty",
+      "push_outcome": {
+        "type": "not_attempted"
+      }
+    }
+  },
+  "web_url": "https://fabro-maestro-production.up.railway.app/runs/01KRSME0V6PZSC31X1AJDQWAZH",
+  "start": null,
+  "status": {
+    "kind": "starting"
+  },
+  "status_updated_at": "2026-05-17T00:12:32.630975558Z",
+  "last_event_at": "2026-05-17T00:12:33.852615521Z",
+  "pending_control": null,
+  "checkpoints": [],
+  "conclusion": null,
+  "sandbox": {
+    "provider": "daytona",
+    "image": "buildpack-deps:noble",
+    "snapshot": "maestro-code-factory-v8",
+    "runtime": {
+      "id": "fabro-01KRSME0V6PZSC31X1AJDQWAZH",
+      "working_directory": "/home/daytona/workspace",
+      "repo_cloned": true,
+      "clone_origin_url": "https://github.com/kimprobably/maestro-os",
+      "clone_branch": "spike/fabro-code-factory-v5"
+    }
+  },
+  "pull_request": null,
+  "superseded_by": null,
+  "pending_interviews": {},
+  "stages": {}
+}
