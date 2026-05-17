@@ -1,0 +1,2839 @@
+{
+  "title": "Run the WakeTask existing-app UX Studio implementation workflow through Railway Fabro with durabl...",
+  "spec": {
+    "run_id": "01KRTHR85ETCAKAXF1AC3MZ2DX",
+    "settings": {
+      "project": {
+        "name": "maestro-os",
+        "description": null,
+        "metadata": {}
+      },
+      "workflow": {
+        "name": null,
+        "description": null,
+        "graph": "workflow.fabro",
+        "metadata": {}
+      },
+      "run": {
+        "goal": {
+          "type": "inline",
+          "value": "Run the WakeTask existing-app UX Studio implementation workflow through Railway Fabro with durable research, implementation evidence, hosted-runtime blocker capture, and postmortem learning."
+        },
+        "working_dir": null,
+        "metadata": {
+          "topic": "task-alarm-clock",
+          "control_plane": "railway",
+          "orchestration": "standalone-ux-child",
+          "app": "waketask",
+          "factory": "iphone-app-ux-studio"
+        },
+        "inputs": {
+          "repo_url": "https://github.com/kimprobably/waketask-ios.git",
+          "fabro_server": "https://fabro-maestro-production.up.railway.app/api/v1",
+          "use_design_corpus": "true",
+          "ios_validation_mode": "github",
+          "app_name": "WakeTask",
+          "use_mobbin_mcp": "true",
+          "bundle_id": "com.keen.waketask",
+          "app_domain": "task_alarm",
+          "allow_macos_deferred": "false",
+          "design_goal": "Make WakeTask a highly polished task-based alarm app with Apple Clock-like familiarity, obvious task selection, real wired dismiss missions, loud sounds, funny visual viral tasks, completion reward and share moments, and spec build eval loops.",
+          "run_branch": "ux-studio/waketask-product-iteration-20260517",
+          "selected_direction_mode": "automatic",
+          "target_audience": "heavy sleepers and professionals who need an alarm they cannot dismiss without meaningful wake-up engagement",
+          "design_corpus_write_mode": "private",
+          "app_dir": "apps/waketask-ios",
+          "base_branch": "main",
+          "max_competitors": "12"
+        },
+        "model": {
+          "provider": "openrouter",
+          "name": "anthropic/claude-haiku-4-5",
+          "fallbacks": [],
+          "controls": {
+            "reasoning_effort": null,
+            "speed": null
+          }
+        },
+        "git": {
+          "author": null
+        },
+        "prepare": {
+          "commands": [],
+          "timeout_ms": 300000
+        },
+        "execution": {
+          "mode": "normal",
+          "approval": "prompt"
+        },
+        "checkpoint": {
+          "exclude_globs": []
+        },
+        "clone": {
+          "enabled": true
+        },
+        "run_branch": {
+          "enabled": true,
+          "push": true
+        },
+        "meta_branch": {
+          "enabled": true,
+          "push": true
+        },
+        "sandbox": {
+          "provider": "daytona",
+          "preserve": false,
+          "stop_on_terminal": true,
+          "devcontainer": false,
+          "env": {
+            "FABRO_SLACK_BOT_TOKEN": "{{ env.FABRO_SLACK_BOT_TOKEN }}",
+            "APIFY_TIKTOK_ACTOR": "clockworks/tiktok-scraper",
+            "CLAUDE_CODE_OAUTH_TOKEN": "{{ env.CLAUDE_CODE_OAUTH_TOKEN }}",
+            "CLAUDE_CODE_CREDENTIALS_JSON_BASE64": "{{ env.CLAUDE_CODE_CREDENTIALS_JSON_BASE64 }}",
+            "CODEX_AUTH_JSON_BASE64": "{{ env.CODEX_AUTH_JSON_BASE64 }}",
+            "DAYTONA_API_KEY": "{{ env.DAYTONA_API_KEY }}",
+            "UX_IOS_VALIDATION_MODE": "github",
+            "APIFY_TOKEN": "{{ env.APIFY_TOKEN }}",
+            "UX_RUN_BRANCH": "ux-studio/waketask-product-iteration-20260517",
+            "LINEAR_API_KEY": "{{ env.LINEAR_API_KEY }}",
+            "FABRO_SERVER": "https://fabro-maestro-production.up.railway.app/api/v1",
+            "UX_SCREEN_TYPE": "task_alarm",
+            "FABRO_DEV_TOKEN": "{{ env.FABRO_DEV_TOKEN }}",
+            "PROMPTFOO_DISABLE_TELEMETRY": "1",
+            "UX_ALLOW_MACOS_DEFERRED": "false",
+            "DAYTONA_API_URL": "{{ env.DAYTONA_API_URL }}",
+            "APP_DIR": "apps/waketask-ios",
+            "UX_RUN_ID": "ux-studio/waketask-product-iteration-20260517",
+            "UX_APP_DOMAIN": "task_alarm",
+            "APIFY_INSTAGRAM_ACTOR": "apify/instagram-scraper",
+            "GH_TOKEN": "{{ env.GH_TOKEN }}",
+            "UX_TARGET_AUDIENCE": "heavy sleepers and professionals who need an alarm they cannot dismiss without meaningful wake-up engagement",
+            "UX_APP_DIR": "apps/waketask-ios",
+            "OPENROUTER_API_KEY": "{{ env.OPENROUTER_API_KEY }}",
+            "GITHUB_TOKEN": "{{ env.GITHUB_TOKEN }}",
+            "OPENAI_API_KEY": "{{ env.OPENAI_API_KEY }}",
+            "UX_USE_MOBBIN_MCP": "true",
+            "APIFY_APPSTORE_ACTOR": "crawlerbros/appstore-scraper",
+            "FABRO_SLACK_CHANNEL_ID": "{{ env.FABRO_SLACK_CHANNEL_ID }}",
+            "LINEAR_API_URL": "{{ env.LINEAR_API_URL }}",
+            "UX_BASE_BRANCH": "main",
+            "CODEX_MCP_CREDENTIALS_JSON_BASE64": "{{ env.CODEX_MCP_CREDENTIALS_JSON_BASE64 }}",
+            "UX_REPO_URL": "https://github.com/kimprobably/waketask-ios.git"
+          },
+          "docker": {
+            "image": "buildpack-deps:noble",
+            "network_mode": null,
+            "memory_limit": 4000000000,
+            "cpu_quota": 200000,
+            "env_vars": {}
+          },
+          "daytona": {
+            "auto_stop_interval": 30,
+            "labels": {
+              "purpose": "code-factory",
+              "project": "maestro-os"
+            },
+            "snapshot": {
+              "name": "maestro-code-factory-v8",
+              "cpu": 2,
+              "memory_gb": 4,
+              "disk_gb": 10,
+              "dockerfile": {
+                "type": "inline",
+                "value": "FROM ubuntu:24.04\n\nENV DEBIAN_FRONTEND=noninteractive\nENV BUN_INSTALL=/root/.bun\nENV PATH=\"/root/.fabro/bin:/root/.bun/bin:/root/.local/bin:/root/.qlty/bin:${PATH}\"\nWORKDIR /home/daytona\n\nRUN apt-get update && apt-get install -y --no-install-recommends bash ca-certificates curl gh git jq openssh-client python3 python3-pip pipx ripgrep shellcheck sqlite3 unzip xz-utils && rm -rf /var/lib/apt/lists/*\n\nRUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash - && apt-get update && apt-get install -y --no-install-recommends nodejs && npm install -g @anthropic-ai/claude-code@2.1.141 @openai/codex promptfoo && npm cache clean --force && rm -rf /var/lib/apt/lists/*\n\nRUN curl -fsSL https://bun.sh/install | bash -s \"bun-v1.2.22\" && ln -sf /root/.bun/bin/bun /usr/local/bin/bun\n\nRUN pipx install spec-kitty-cli==3.1.8 && curl -fsSL https://qlty.sh | sh && ln -sf /root/.qlty/bin/qlty /usr/local/bin/qlty\n\nRUN set -eux; target=\"x86_64-unknown-linux-gnu\"; asset=\"fabro-${target}.tar.gz\"; url=\"$(curl -fsSL https://api.github.com/repos/fabro-sh/fabro/releases/latest | jq -r --arg asset \"$asset\" '.assets[] | select(.name == $asset) | .browser_download_url')\"; test -n \"$url\"; curl -fsSL \"$url\" -o /tmp/fabro.tar.gz; tar -xzf /tmp/fabro.tar.gz -C /tmp; install -m 0755 \"/tmp/fabro-${target}/fabro\" /usr/local/bin/fabro; rm -rf /tmp/fabro.tar.gz \"/tmp/fabro-${target}\"; fabro --version\n\nCMD [\"/bin/bash\"]\n"
+              }
+            },
+            "network": "allow_all"
+          }
+        },
+        "notifications": {},
+        "interviews": {
+          "provider": null,
+          "slack": null
+        },
+        "agent": {
+          "permissions": "full",
+          "mcps": {}
+        },
+        "hooks": [],
+        "scm": {
+          "provider": null,
+          "owner": null,
+          "repository": null,
+          "github": null
+        },
+        "pull_request": null,
+        "artifacts": {
+          "include": [
+            ".workflow/iphone-app-ux-studio/**",
+            ".workflow/iphone-app-factory/**",
+            "reports/ios/**",
+            ".github/workflows/**"
+          ]
+        },
+        "integrations": {
+          "github": {
+            "permissions": {
+              "pull_requests": "write",
+              "metadata": "read",
+              "actions": "read",
+              "issues": "write",
+              "contents": "write"
+            }
+          }
+        }
+      }
+    },
+    "graph": {
+      "name": "IterateExistingAppUX",
+      "nodes": {
+        "research_join": {
+          "id": "research_join",
+          "attrs": {
+            "shape": {
+              "String": "tripleoctagon"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "model": {
+              "String": "gpt-5.3-codex-spark"
+            },
+            "join_policy": {
+              "String": "wait_all"
+            },
+            "backend": {
+              "String": "cli"
+            },
+            "provider": {
+              "String": "openai"
+            },
+            "label": {
+              "String": "Research Join"
+            }
+          }
+        },
+        "final_review_join": {
+          "id": "final_review_join",
+          "attrs": {
+            "shape": {
+              "String": "tripleoctagon"
+            },
+            "join_policy": {
+              "String": "wait_all"
+            },
+            "provider": {
+              "String": "openai"
+            },
+            "backend": {
+              "String": "cli"
+            },
+            "model": {
+              "String": "gpt-5.3-codex-spark"
+            },
+            "label": {
+              "String": "Final Review Join"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            }
+          }
+        },
+        "screenshot_evidence_gate": {
+          "id": "screenshot_evidence_gate",
+          "attrs": {
+            "model": {
+              "String": "gpt-5.3-codex-spark"
+            },
+            "retry_target": {
+              "String": "implement_screen_flows"
+            },
+            "goal_gate": {
+              "Boolean": true
+            },
+            "provider": {
+              "String": "openai"
+            },
+            "script": {
+              "String": "node scripts/iphone-app-factory/ios-screenshot-manifest-gate.mjs --manifest reports/ios/screenshots/manifest.json --phase after --require-before-after true"
+            },
+            "shape": {
+              "String": "parallelogram"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "label": {
+              "String": "Screenshot Evidence Gate"
+            },
+            "backend": {
+              "String": "cli"
+            }
+          }
+        },
+        "design_tournament_consensus": {
+          "id": "design_tournament_consensus",
+          "attrs": {
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "shape": {
+              "String": "parallelogram"
+            },
+            "retry_target": {
+              "String": "design_direction_fanout"
+            },
+            "script": {
+              "String": "node scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/ux-design-tournament-consensus.md --stage design-tournament-consensus --out .workflow/iphone-app-ux-studio/codex/design-tournament-consensus.json"
+            },
+            "provider": {
+              "String": "openai"
+            },
+            "model": {
+              "String": "gpt-5.3-codex-spark"
+            },
+            "backend": {
+              "String": "cli"
+            },
+            "goal_gate": {
+              "Boolean": true
+            },
+            "label": {
+              "String": "Design Tournament Consensus"
+            },
+            "timeout": {
+              "Duration": {
+                "secs": 3600,
+                "nanos": 0
+              }
+            }
+          }
+        },
+        "design_tournament_gate": {
+          "id": "design_tournament_gate",
+          "attrs": {
+            "provider": {
+              "String": "openai"
+            },
+            "goal_gate": {
+              "Boolean": true
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "backend": {
+              "String": "cli"
+            },
+            "label": {
+              "String": "Design Tournament Gate"
+            },
+            "model": {
+              "String": "gpt-5.3-codex-spark"
+            },
+            "retry_target": {
+              "String": "design_direction_fanout"
+            },
+            "shape": {
+              "String": "parallelogram"
+            },
+            "script": {
+              "String": "node scripts/iphone-app-factory/design-tournament-gate.mjs"
+            }
+          }
+        },
+        "design_corpus_preflight": {
+          "id": "design_corpus_preflight",
+          "attrs": {
+            "provider": {
+              "String": "openai"
+            },
+            "script": {
+              "String": "node scripts/iphone-app-factory/design-corpus.mjs init --db .workflow/iphone-app-ux-studio/design-corpus.sqlite"
+            },
+            "goal_gate": {
+              "Boolean": true
+            },
+            "backend": {
+              "String": "cli"
+            },
+            "model": {
+              "String": "gpt-5.3-codex-spark"
+            },
+            "retry_target": {
+              "String": "design_corpus_preflight"
+            },
+            "shape": {
+              "String": "parallelogram"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "label": {
+              "String": "Design Corpus Preflight"
+            }
+          }
+        },
+        "ux_quality_review": {
+          "id": "ux_quality_review",
+          "attrs": {
+            "label": {
+              "String": "UX Quality Review"
+            },
+            "model": {
+              "String": "gpt-5.3-codex-spark"
+            },
+            "script": {
+              "String": "node scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/ux-review-ux-quality.md --stage ux-quality-review --out .workflow/iphone-app-ux-studio/codex/ux-quality-review.json"
+            },
+            "backend": {
+              "String": "cli"
+            },
+            "provider": {
+              "String": "openai"
+            },
+            "timeout": {
+              "Duration": {
+                "secs": 3600,
+                "nanos": 0
+              }
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "shape": {
+              "String": "parallelogram"
+            }
+          }
+        },
+        "postmortem_gate": {
+          "id": "postmortem_gate",
+          "attrs": {
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "goal_gate": {
+              "Boolean": true
+            },
+            "shape": {
+              "String": "parallelogram"
+            },
+            "script": {
+              "String": "node scripts/iphone-app-factory/ux-postmortem-gate.mjs"
+            },
+            "retry_target": {
+              "String": "postmortem_learning_capture"
+            },
+            "backend": {
+              "String": "cli"
+            },
+            "provider": {
+              "String": "openai"
+            },
+            "model": {
+              "String": "gpt-5.3-codex-spark"
+            },
+            "label": {
+              "String": "Postmortem Gate"
+            }
+          }
+        },
+        "screenshot_evidence_review": {
+          "id": "screenshot_evidence_review",
+          "attrs": {
+            "goal_gate": {
+              "Boolean": true
+            },
+            "label": {
+              "String": "Screenshot Evidence Review"
+            },
+            "shape": {
+              "String": "parallelogram"
+            },
+            "model": {
+              "String": "gpt-5.3-codex-spark"
+            },
+            "retry_target": {
+              "String": "implement_screen_flows"
+            },
+            "script": {
+              "String": "node scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/ux-screenshot-evidence-review.md --stage screenshot-evidence-review --out .workflow/iphone-app-ux-studio/codex/screenshot-evidence-review.json"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "timeout": {
+              "Duration": {
+                "secs": 3600,
+                "nanos": 0
+              }
+            },
+            "provider": {
+              "String": "openai"
+            },
+            "backend": {
+              "String": "cli"
+            }
+          }
+        },
+        "publish_handoff": {
+          "id": "publish_handoff",
+          "attrs": {
+            "script": {
+              "String": "node scripts/iphone-app-factory/publish-handoff.mjs"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "backend": {
+              "String": "cli"
+            },
+            "shape": {
+              "String": "parallelogram"
+            },
+            "retry_target": {
+              "String": "final_consensus"
+            },
+            "label": {
+              "String": "Publish Handoff"
+            },
+            "goal_gate": {
+              "Boolean": true
+            },
+            "provider": {
+              "String": "openai"
+            },
+            "model": {
+              "String": "gpt-5.3-codex-spark"
+            }
+          }
+        },
+        "baseline_screenshot_capture": {
+          "id": "baseline_screenshot_capture",
+          "attrs": {
+            "label": {
+              "String": "Baseline Screenshot Capture"
+            },
+            "model": {
+              "String": "gpt-5.3-codex-spark"
+            },
+            "retry_target": {
+              "String": "existing_app_intake"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "provider": {
+              "String": "openai"
+            },
+            "backend": {
+              "String": "cli"
+            },
+            "shape": {
+              "String": "parallelogram"
+            },
+            "goal_gate": {
+              "Boolean": true
+            },
+            "script": {
+              "String": "node scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/ux-baseline-screenshot-capture.md --stage baseline-screenshot-capture --out .workflow/iphone-app-ux-studio/codex/baseline-screenshot-capture.json"
+            },
+            "timeout": {
+              "Duration": {
+                "secs": 3600,
+                "nanos": 0
+              }
+            }
+          }
+        },
+        "reference_pack_gate": {
+          "id": "reference_pack_gate",
+          "attrs": {
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "model": {
+              "String": "gpt-5.3-codex-spark"
+            },
+            "goal_gate": {
+              "Boolean": true
+            },
+            "shape": {
+              "String": "parallelogram"
+            },
+            "provider": {
+              "String": "openai"
+            },
+            "label": {
+              "String": "Reference Pack Gate"
+            },
+            "retry_target": {
+              "String": "research_fanout"
+            },
+            "backend": {
+              "String": "cli"
+            },
+            "script": {
+              "String": "node scripts/iphone-app-factory/reference-pack-gate.mjs"
+            }
+          }
+        },
+        "hard_wake_direction": {
+          "id": "hard_wake_direction",
+          "attrs": {
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "script": {
+              "String": "node scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/ux-design-direction-candidate.md --stage hard_wake_direction --out .workflow/iphone-app-ux-studio/codex/hard-wake-direction.json"
+            },
+            "model": {
+              "String": "gpt-5.3-codex-spark"
+            },
+            "shape": {
+              "String": "parallelogram"
+            },
+            "provider": {
+              "String": "openai"
+            },
+            "timeout": {
+              "Duration": {
+                "secs": 3600,
+                "nanos": 0
+              }
+            },
+            "backend": {
+              "String": "cli"
+            },
+            "label": {
+              "String": "Hard Wake Direction"
+            }
+          }
+        },
+        "final_review_fanout": {
+          "id": "final_review_fanout",
+          "attrs": {
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "provider": {
+              "String": "openai"
+            },
+            "join_policy": {
+              "String": "wait_all"
+            },
+            "max_parallel": {
+              "Integer": 6
+            },
+            "label": {
+              "String": "Final Review Fan-Out"
+            },
+            "model": {
+              "String": "gpt-5.3-codex-spark"
+            },
+            "shape": {
+              "String": "component"
+            },
+            "backend": {
+              "String": "cli"
+            }
+          }
+        },
+        "behavioral_ux_research": {
+          "id": "behavioral_ux_research",
+          "attrs": {
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "timeout": {
+              "Duration": {
+                "secs": 3600,
+                "nanos": 0
+              }
+            },
+            "model": {
+              "String": "gpt-5.3-codex-spark"
+            },
+            "backend": {
+              "String": "cli"
+            },
+            "script": {
+              "String": "node scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/ux-behavioral-research.md --stage behavioral-ux-research --out .workflow/iphone-app-ux-studio/codex/behavioral-ux-research.json"
+            },
+            "label": {
+              "String": "Behavioral UX Research"
+            },
+            "provider": {
+              "String": "openai"
+            },
+            "shape": {
+              "String": "parallelogram"
+            }
+          }
+        },
+        "implement_visual_system": {
+          "id": "implement_visual_system",
+          "attrs": {
+            "retry_target": {
+              "String": "implement_visual_system"
+            },
+            "provider": {
+              "String": "openai"
+            },
+            "backend": {
+              "String": "cli"
+            },
+            "label": {
+              "String": "Implement Visual System"
+            },
+            "model": {
+              "String": "gpt-5.3-codex-spark"
+            },
+            "shape": {
+              "String": "parallelogram"
+            },
+            "script": {
+              "String": "node scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/ux-implement-visual-system.md --stage visual-system --out .workflow/iphone-app-ux-studio/codex/visual-system.json"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "goal_gate": {
+              "Boolean": true
+            },
+            "timeout": {
+              "Duration": {
+                "secs": 3600,
+                "nanos": 0
+              }
+            }
+          }
+        },
+        "research_fanout": {
+          "id": "research_fanout",
+          "attrs": {
+            "provider": {
+              "String": "openai"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "backend": {
+              "String": "cli"
+            },
+            "max_parallel": {
+              "Integer": 6
+            },
+            "model": {
+              "String": "gpt-5.3-codex-spark"
+            },
+            "join_policy": {
+              "String": "wait_all"
+            },
+            "label": {
+              "String": "Research Fan-Out"
+            },
+            "shape": {
+              "String": "component"
+            }
+          }
+        },
+        "existing_app_intake": {
+          "id": "existing_app_intake",
+          "attrs": {
+            "model": {
+              "String": "gpt-5.3-codex-spark"
+            },
+            "shape": {
+              "String": "parallelogram"
+            },
+            "label": {
+              "String": "Existing App Intake"
+            },
+            "retry_target": {
+              "String": "existing_app_intake"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "backend": {
+              "String": "cli"
+            },
+            "provider": {
+              "String": "openai"
+            },
+            "goal_gate": {
+              "Boolean": true
+            },
+            "timeout": {
+              "Duration": {
+                "secs": 3600,
+                "nanos": 0
+              }
+            },
+            "script": {
+              "String": "node scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/ux-existing-app-intake.md --stage existing-app-intake --out .workflow/iphone-app-ux-studio/codex/existing-app-intake.json"
+            }
+          }
+        },
+        "postmortem_learning_capture": {
+          "id": "postmortem_learning_capture",
+          "attrs": {
+            "backend": {
+              "String": "cli"
+            },
+            "retry_target": {
+              "String": "postmortem_learning_capture"
+            },
+            "timeout": {
+              "Duration": {
+                "secs": 3600,
+                "nanos": 0
+              }
+            },
+            "model": {
+              "String": "gpt-5.3-codex-spark"
+            },
+            "label": {
+              "String": "Postmortem Learning Capture"
+            },
+            "script": {
+              "String": "node scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/ux-postmortem-learning-capture.md --stage postmortem-learning-capture --out .workflow/iphone-app-ux-studio/codex/postmortem-learning-capture.json"
+            },
+            "goal_gate": {
+              "Boolean": true
+            },
+            "provider": {
+              "String": "openai"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "shape": {
+              "String": "parallelogram"
+            }
+          }
+        },
+        "final_consensus": {
+          "id": "final_consensus",
+          "attrs": {
+            "timeout": {
+              "Duration": {
+                "secs": 3600,
+                "nanos": 0
+              }
+            },
+            "goal_gate": {
+              "Boolean": true
+            },
+            "model": {
+              "String": "gpt-5.3-codex-spark"
+            },
+            "provider": {
+              "String": "openai"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "shape": {
+              "String": "parallelogram"
+            },
+            "retry_target": {
+              "String": "final_review_fanout"
+            },
+            "label": {
+              "String": "Final Consensus"
+            },
+            "backend": {
+              "String": "cli"
+            },
+            "script": {
+              "String": "node scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/ux-final-consensus.md --stage final-consensus --out .workflow/iphone-app-ux-studio/codex/final-consensus.json"
+            }
+          }
+        },
+        "screen_ux_spec": {
+          "id": "screen_ux_spec",
+          "attrs": {
+            "retry_target": {
+              "String": "design_tournament_consensus"
+            },
+            "shape": {
+              "String": "parallelogram"
+            },
+            "script": {
+              "String": "node scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/ux-screen-spec.md --stage screen-ux-spec --out .workflow/iphone-app-ux-studio/codex/screen-ux-spec.json"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "label": {
+              "String": "Screen UX Spec"
+            },
+            "backend": {
+              "String": "cli"
+            },
+            "provider": {
+              "String": "openai"
+            },
+            "goal_gate": {
+              "Boolean": true
+            },
+            "model": {
+              "String": "gpt-5.3-codex-spark"
+            },
+            "timeout": {
+              "Duration": {
+                "secs": 3600,
+                "nanos": 0
+              }
+            }
+          }
+        },
+        "security_privacy_review": {
+          "id": "security_privacy_review",
+          "attrs": {
+            "script": {
+              "String": "node scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/review-security-privacy.md --stage security-privacy-review --out .workflow/iphone-app-ux-studio/codex/security-privacy-review.json"
+            },
+            "provider": {
+              "String": "openai"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "model": {
+              "String": "gpt-5.3-codex-spark"
+            },
+            "shape": {
+              "String": "parallelogram"
+            },
+            "backend": {
+              "String": "cli"
+            },
+            "label": {
+              "String": "Security Privacy Review"
+            },
+            "timeout": {
+              "Duration": {
+                "secs": 3600,
+                "nanos": 0
+              }
+            }
+          }
+        },
+        "gate_visual_system": {
+          "id": "gate_visual_system",
+          "attrs": {
+            "retry_target": {
+              "String": "implement_visual_system"
+            },
+            "script": {
+              "String": "node scripts/iphone-app-factory/phase-evidence-gate.mjs visual-system"
+            },
+            "model": {
+              "String": "gpt-5.3-codex-spark"
+            },
+            "goal_gate": {
+              "Boolean": true
+            },
+            "label": {
+              "String": "Visual System Gate"
+            },
+            "shape": {
+              "String": "parallelogram"
+            },
+            "backend": {
+              "String": "cli"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "provider": {
+              "String": "openai"
+            }
+          }
+        },
+        "design_cross_critique": {
+          "id": "design_cross_critique",
+          "attrs": {
+            "backend": {
+              "String": "cli"
+            },
+            "goal_gate": {
+              "Boolean": true
+            },
+            "script": {
+              "String": "node scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/ux-design-cross-critique.md --stage design-cross-critique --out .workflow/iphone-app-ux-studio/codex/design-cross-critique.json"
+            },
+            "retry_target": {
+              "String": "design_direction_fanout"
+            },
+            "shape": {
+              "String": "parallelogram"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "timeout": {
+              "Duration": {
+                "secs": 3600,
+                "nanos": 0
+              }
+            },
+            "model": {
+              "String": "gpt-5.3-codex-spark"
+            },
+            "label": {
+              "String": "Design Cross Critique"
+            },
+            "provider": {
+              "String": "openai"
+            }
+          }
+        },
+        "product_fidelity_review": {
+          "id": "product_fidelity_review",
+          "attrs": {
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "script": {
+              "String": "node scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/review-product-fidelity.md --stage product-fidelity-review --out .workflow/iphone-app-ux-studio/codex/product-fidelity-review.json"
+            },
+            "model": {
+              "String": "gpt-5.3-codex-spark"
+            },
+            "label": {
+              "String": "Product Fidelity Review"
+            },
+            "shape": {
+              "String": "parallelogram"
+            },
+            "provider": {
+              "String": "openai"
+            },
+            "timeout": {
+              "Duration": {
+                "secs": 3600,
+                "nanos": 0
+              }
+            },
+            "backend": {
+              "String": "cli"
+            }
+          }
+        },
+        "gate_screen_flows": {
+          "id": "gate_screen_flows",
+          "attrs": {
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "backend": {
+              "String": "cli"
+            },
+            "retry_target": {
+              "String": "implement_screen_flows"
+            },
+            "provider": {
+              "String": "openai"
+            },
+            "script": {
+              "String": "node scripts/iphone-app-factory/phase-evidence-gate.mjs screen-flows"
+            },
+            "model": {
+              "String": "gpt-5.3-codex-spark"
+            },
+            "shape": {
+              "String": "parallelogram"
+            },
+            "label": {
+              "String": "Screen Flows Gate"
+            },
+            "goal_gate": {
+              "Boolean": true
+            }
+          }
+        },
+        "checkout_existing_app": {
+          "id": "checkout_existing_app",
+          "attrs": {
+            "model": {
+              "String": "gpt-5.3-codex-spark"
+            },
+            "retry_target": {
+              "String": "checkout_existing_app"
+            },
+            "script": {
+              "String": "node scripts/iphone-app-factory/checkout-existing-app.mjs"
+            },
+            "shape": {
+              "String": "parallelogram"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "backend": {
+              "String": "cli"
+            },
+            "label": {
+              "String": "Checkout Existing App"
+            },
+            "provider": {
+              "String": "openai"
+            },
+            "goal_gate": {
+              "Boolean": true
+            }
+          }
+        },
+        "design_direction_fanout": {
+          "id": "design_direction_fanout",
+          "attrs": {
+            "provider": {
+              "String": "openai"
+            },
+            "join_policy": {
+              "String": "wait_all"
+            },
+            "shape": {
+              "String": "component"
+            },
+            "model": {
+              "String": "gpt-5.3-codex-spark"
+            },
+            "backend": {
+              "String": "cli"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "max_parallel": {
+              "Integer": 4
+            },
+            "label": {
+              "String": "Design Direction Fan-Out"
+            }
+          }
+        },
+        "implementation_plan_gate": {
+          "id": "implementation_plan_gate",
+          "attrs": {
+            "label": {
+              "String": "Implementation Plan Gate"
+            },
+            "backend": {
+              "String": "cli"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "shape": {
+              "String": "parallelogram"
+            },
+            "timeout": {
+              "Duration": {
+                "secs": 3600,
+                "nanos": 0
+              }
+            },
+            "provider": {
+              "String": "openai"
+            },
+            "retry_target": {
+              "String": "screen_ux_spec"
+            },
+            "goal_gate": {
+              "Boolean": true
+            },
+            "script": {
+              "String": "node scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/ux-implementation-plan.md --stage implementation-plan --out .workflow/iphone-app-ux-studio/codex/implementation-plan.json"
+            },
+            "model": {
+              "String": "gpt-5.3-codex-spark"
+            }
+          }
+        },
+        "ios_quality_gate": {
+          "id": "ios_quality_gate",
+          "attrs": {
+            "model": {
+              "String": "gpt-5.3-codex-spark"
+            },
+            "provider": {
+              "String": "openai"
+            },
+            "retry_target": {
+              "String": "implement_screen_flows"
+            },
+            "script": {
+              "String": "node scripts/iphone-app-factory/ios-ci-gate.mjs"
+            },
+            "label": {
+              "String": "iOS Quality Gate"
+            },
+            "goal_gate": {
+              "Boolean": true
+            },
+            "timeout": {
+              "Duration": {
+                "secs": 3600,
+                "nanos": 0
+              }
+            },
+            "backend": {
+              "String": "cli"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "shape": {
+              "String": "parallelogram"
+            }
+          }
+        },
+        "exit": {
+          "id": "exit",
+          "attrs": {
+            "label": {
+              "String": "Exit"
+            },
+            "backend": {
+              "String": "cli"
+            },
+            "model": {
+              "String": "gpt-5.3-codex-spark"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "provider": {
+              "String": "openai"
+            },
+            "shape": {
+              "String": "Msquare"
+            }
+          }
+        },
+        "ios_architecture_review": {
+          "id": "ios_architecture_review",
+          "attrs": {
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "script": {
+              "String": "node scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/review-ios-architecture.md --stage ios-architecture-review --out .workflow/iphone-app-ux-studio/codex/ios-architecture-review.json"
+            },
+            "label": {
+              "String": "iOS Architecture Review"
+            },
+            "provider": {
+              "String": "openai"
+            },
+            "model": {
+              "String": "gpt-5.3-codex-spark"
+            },
+            "shape": {
+              "String": "parallelogram"
+            },
+            "backend": {
+              "String": "cli"
+            },
+            "timeout": {
+              "Duration": {
+                "secs": 3600,
+                "nanos": 0
+              }
+            }
+          }
+        },
+        "start": {
+          "id": "start",
+          "attrs": {
+            "provider": {
+              "String": "openai"
+            },
+            "shape": {
+              "String": "Mdiamond"
+            },
+            "backend": {
+              "String": "cli"
+            },
+            "label": {
+              "String": "Start"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "model": {
+              "String": "gpt-5.3-codex-spark"
+            }
+          }
+        },
+        "implement_screen_flows": {
+          "id": "implement_screen_flows",
+          "attrs": {
+            "provider": {
+              "String": "openai"
+            },
+            "shape": {
+              "String": "parallelogram"
+            },
+            "goal_gate": {
+              "Boolean": true
+            },
+            "timeout": {
+              "Duration": {
+                "secs": 3600,
+                "nanos": 0
+              }
+            },
+            "backend": {
+              "String": "cli"
+            },
+            "retry_target": {
+              "String": "implement_screen_flows"
+            },
+            "label": {
+              "String": "Implement Screen Flows"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "script": {
+              "String": "node scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/ux-implement-screen-flows.md --stage screen-flows --out .workflow/iphone-app-ux-studio/codex/screen-flows.json"
+            },
+            "model": {
+              "String": "gpt-5.3-codex-spark"
+            }
+          }
+        },
+        "design_direction_join": {
+          "id": "design_direction_join",
+          "attrs": {
+            "shape": {
+              "String": "tripleoctagon"
+            },
+            "model": {
+              "String": "gpt-5.3-codex-spark"
+            },
+            "join_policy": {
+              "String": "wait_all"
+            },
+            "label": {
+              "String": "Design Direction Join"
+            },
+            "provider": {
+              "String": "openai"
+            },
+            "backend": {
+              "String": "cli"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            }
+          }
+        },
+        "reference_gap_analysis": {
+          "id": "reference_gap_analysis",
+          "attrs": {
+            "script": {
+              "String": "mkdir -p .workflow/iphone-app-ux-studio/research; node -e \"const fs=require('fs'); const path='.workflow/iphone-app-ux-studio/research/reference-pack.json'; const pack=fs.existsSync(path)?JSON.parse(fs.readFileSync(path,'utf8')):{}; const refs=pack.references||pack.reference_pack?.references||[]; const report={ok:true,total_references:refs.length,needs_live_research:refs.length<12,missing:['competitor_flow_research','app_store_review_mining','mobbin_mcp_research','pageflows_research','apple_hig_research','behavioral_ux_research'],railway_fabro_required:true}; fs.writeFileSync('.workflow/iphone-app-ux-studio/research/reference-gap-analysis.json', JSON.stringify(report,null,2)+'\\n'); console.log(JSON.stringify(report));\""
+            },
+            "backend": {
+              "String": "cli"
+            },
+            "retry_target": {
+              "String": "retrieve_existing_references"
+            },
+            "model": {
+              "String": "gpt-5.3-codex-spark"
+            },
+            "provider": {
+              "String": "openai"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "goal_gate": {
+              "Boolean": true
+            },
+            "shape": {
+              "String": "parallelogram"
+            },
+            "label": {
+              "String": "Reference Gap Analysis"
+            }
+          }
+        },
+        "minimal_native_direction": {
+          "id": "minimal_native_direction",
+          "attrs": {
+            "provider": {
+              "String": "openai"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "script": {
+              "String": "node scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/ux-design-direction-candidate.md --stage minimal_native_direction --out .workflow/iphone-app-ux-studio/codex/minimal-native-direction.json"
+            },
+            "timeout": {
+              "Duration": {
+                "secs": 3600,
+                "nanos": 0
+              }
+            },
+            "backend": {
+              "String": "cli"
+            },
+            "model": {
+              "String": "gpt-5.3-codex-spark"
+            },
+            "label": {
+              "String": "Minimal Native Direction"
+            },
+            "shape": {
+              "String": "parallelogram"
+            }
+          }
+        },
+        "design_opportunity_synthesis": {
+          "id": "design_opportunity_synthesis",
+          "attrs": {
+            "timeout": {
+              "Duration": {
+                "secs": 3600,
+                "nanos": 0
+              }
+            },
+            "model": {
+              "String": "gpt-5.3-codex-spark"
+            },
+            "label": {
+              "String": "Design Opportunity Synthesis"
+            },
+            "provider": {
+              "String": "openai"
+            },
+            "retry_target": {
+              "String": "research_fanout"
+            },
+            "script": {
+              "String": "node scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/ux-design-opportunity-synthesis.md --stage design-opportunity-synthesis --out .workflow/iphone-app-ux-studio/codex/design-opportunity-synthesis.json"
+            },
+            "goal_gate": {
+              "Boolean": true
+            },
+            "backend": {
+              "String": "cli"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "shape": {
+              "String": "parallelogram"
+            }
+          }
+        },
+        "mobbin_mcp_research": {
+          "id": "mobbin_mcp_research",
+          "attrs": {
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "backend": {
+              "String": "cli"
+            },
+            "goal_gate": {
+              "Boolean": true
+            },
+            "label": {
+              "String": "Mobbin MCP Research"
+            },
+            "model": {
+              "String": "gpt-5.3-codex-spark"
+            },
+            "script": {
+              "String": "node scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/ux-mobbin-mcp-research.md --stage mobbin-mcp-research --out .workflow/iphone-app-ux-studio/codex/mobbin-mcp-research.json && node scripts/iphone-app-factory/ensure-mobbin-research-artifact.mjs"
+            },
+            "shape": {
+              "String": "parallelogram"
+            },
+            "provider": {
+              "String": "openai"
+            },
+            "retry_target": {
+              "String": "mobbin_mcp_research"
+            }
+          }
+        },
+        "verify_visual_system": {
+          "id": "verify_visual_system",
+          "attrs": {
+            "label": {
+              "String": "Verify Visual System"
+            },
+            "goal_gate": {
+              "Boolean": true
+            },
+            "shape": {
+              "String": "parallelogram"
+            },
+            "model": {
+              "String": "gpt-5.3-codex-spark"
+            },
+            "backend": {
+              "String": "cli"
+            },
+            "retry_target": {
+              "String": "implement_visual_system"
+            },
+            "timeout": {
+              "Duration": {
+                "secs": 3600,
+                "nanos": 0
+              }
+            },
+            "provider": {
+              "String": "openai"
+            },
+            "script": {
+              "String": "node scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/ux-verify-phase.md --stage verify-visual-system --out .workflow/iphone-app-ux-studio/codex/verify-visual-system.json"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            }
+          }
+        },
+        "apple_hig_research": {
+          "id": "apple_hig_research",
+          "attrs": {
+            "backend": {
+              "String": "cli"
+            },
+            "model": {
+              "String": "gpt-5.3-codex-spark"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "timeout": {
+              "Duration": {
+                "secs": 3600,
+                "nanos": 0
+              }
+            },
+            "shape": {
+              "String": "parallelogram"
+            },
+            "script": {
+              "String": "node scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/ux-apple-hig-research.md --stage apple-hig-research --out .workflow/iphone-app-ux-studio/codex/apple-hig-research.json"
+            },
+            "provider": {
+              "String": "openai"
+            },
+            "label": {
+              "String": "Apple HIG Research"
+            }
+          }
+        },
+        "retrieve_existing_references": {
+          "id": "retrieve_existing_references",
+          "attrs": {
+            "shape": {
+              "String": "parallelogram"
+            },
+            "label": {
+              "String": "Retrieve Existing References"
+            },
+            "retry_target": {
+              "String": "design_corpus_preflight"
+            },
+            "goal_gate": {
+              "Boolean": true
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "provider": {
+              "String": "openai"
+            },
+            "script": {
+              "String": "mkdir -p .workflow/iphone-app-ux-studio/research; node scripts/iphone-app-factory/design-corpus.mjs reference-pack --db .workflow/iphone-app-ux-studio/design-corpus.sqlite > .workflow/iphone-app-ux-studio/research/reference-pack.json"
+            },
+            "backend": {
+              "String": "cli"
+            },
+            "model": {
+              "String": "gpt-5.3-codex-spark"
+            }
+          }
+        },
+        "competitor_flow_research": {
+          "id": "competitor_flow_research",
+          "attrs": {
+            "script": {
+              "String": "node scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/ux-competitor-flow-research.md --stage competitor-flow-research --out .workflow/iphone-app-ux-studio/codex/competitor-flow-research.json"
+            },
+            "shape": {
+              "String": "parallelogram"
+            },
+            "model": {
+              "String": "gpt-5.3-codex-spark"
+            },
+            "provider": {
+              "String": "openai"
+            },
+            "timeout": {
+              "Duration": {
+                "secs": 3600,
+                "nanos": 0
+              }
+            },
+            "label": {
+              "String": "Competitor Flow Research"
+            },
+            "backend": {
+              "String": "cli"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            }
+          }
+        },
+        "ios_runtime_evidence_preflight": {
+          "id": "ios_runtime_evidence_preflight",
+          "attrs": {
+            "model": {
+              "String": "gpt-5.3-codex-spark"
+            },
+            "goal_gate": {
+              "Boolean": true
+            },
+            "provider": {
+              "String": "openai"
+            },
+            "retry_target": {
+              "String": "postmortem_learning_capture"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "shape": {
+              "String": "parallelogram"
+            },
+            "script": {
+              "String": "node scripts/iphone-app-factory/ios-runtime-evidence-preflight.mjs --success-on-blocker --manifest reports/ios/screenshots/manifest.json"
+            },
+            "label": {
+              "String": "iOS Runtime Evidence Preflight"
+            },
+            "backend": {
+              "String": "cli"
+            }
+          }
+        },
+        "appium_exploratory_gate": {
+          "id": "appium_exploratory_gate",
+          "attrs": {
+            "goal_gate": {
+              "Boolean": true
+            },
+            "script": {
+              "String": "node scripts/iphone-app-factory/appium-report-gate.mjs"
+            },
+            "shape": {
+              "String": "parallelogram"
+            },
+            "backend": {
+              "String": "cli"
+            },
+            "label": {
+              "String": "Appium Exploratory Gate"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "provider": {
+              "String": "openai"
+            },
+            "model": {
+              "String": "gpt-5.3-codex-spark"
+            },
+            "retry_target": {
+              "String": "implement_screen_flows"
+            }
+          }
+        },
+        "verify_screen_flows": {
+          "id": "verify_screen_flows",
+          "attrs": {
+            "backend": {
+              "String": "cli"
+            },
+            "goal_gate": {
+              "Boolean": true
+            },
+            "script": {
+              "String": "node scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/ux-verify-phase.md --stage verify-screen-flows --out .workflow/iphone-app-ux-studio/codex/verify-screen-flows.json"
+            },
+            "retry_target": {
+              "String": "implement_screen_flows"
+            },
+            "model": {
+              "String": "gpt-5.3-codex-spark"
+            },
+            "provider": {
+              "String": "openai"
+            },
+            "shape": {
+              "String": "parallelogram"
+            },
+            "timeout": {
+              "Duration": {
+                "secs": 3600,
+                "nanos": 0
+              }
+            },
+            "label": {
+              "String": "Verify Screen Flows"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            }
+          }
+        },
+        "pageflows_research": {
+          "id": "pageflows_research",
+          "attrs": {
+            "script": {
+              "String": "node scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/ux-pageflows-research.md --stage pageflows-research --out .workflow/iphone-app-ux-studio/codex/pageflows-research.json"
+            },
+            "backend": {
+              "String": "cli"
+            },
+            "timeout": {
+              "Duration": {
+                "secs": 3600,
+                "nanos": 0
+              }
+            },
+            "provider": {
+              "String": "openai"
+            },
+            "model": {
+              "String": "gpt-5.3-codex-spark"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "shape": {
+              "String": "parallelogram"
+            },
+            "label": {
+              "String": "Pageflows Research"
+            }
+          }
+        },
+        "app_store_review_mining": {
+          "id": "app_store_review_mining",
+          "attrs": {
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "timeout": {
+              "Duration": {
+                "secs": 3600,
+                "nanos": 0
+              }
+            },
+            "backend": {
+              "String": "cli"
+            },
+            "label": {
+              "String": "App Store Review Mining"
+            },
+            "provider": {
+              "String": "openai"
+            },
+            "script": {
+              "String": "node scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/ux-app-store-review-mining.md --stage app-store-review-mining --out .workflow/iphone-app-ux-studio/codex/app-store-review-mining.json"
+            },
+            "shape": {
+              "String": "parallelogram"
+            },
+            "model": {
+              "String": "gpt-5.3-codex-spark"
+            }
+          }
+        },
+        "release_readiness_review": {
+          "id": "release_readiness_review",
+          "attrs": {
+            "model": {
+              "String": "gpt-5.3-codex-spark"
+            },
+            "backend": {
+              "String": "cli"
+            },
+            "timeout": {
+              "Duration": {
+                "secs": 3600,
+                "nanos": 0
+              }
+            },
+            "script": {
+              "String": "node scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/review-release-readiness.md --stage release-readiness-review --out .workflow/iphone-app-ux-studio/codex/release-readiness-review.json"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "provider": {
+              "String": "openai"
+            },
+            "shape": {
+              "String": "parallelogram"
+            },
+            "label": {
+              "String": "Release Readiness Review"
+            }
+          }
+        },
+        "accessibility_review": {
+          "id": "accessibility_review",
+          "attrs": {
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "script": {
+              "String": "node scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/ux-review-accessibility.md --stage accessibility-review --out .workflow/iphone-app-ux-studio/codex/accessibility-review.json"
+            },
+            "shape": {
+              "String": "parallelogram"
+            },
+            "provider": {
+              "String": "openai"
+            },
+            "model": {
+              "String": "gpt-5.3-codex-spark"
+            },
+            "label": {
+              "String": "Accessibility Review"
+            },
+            "timeout": {
+              "Duration": {
+                "secs": 3600,
+                "nanos": 0
+              }
+            },
+            "backend": {
+              "String": "cli"
+            }
+          }
+        },
+        "prompt_context_budget_gate": {
+          "id": "prompt_context_budget_gate",
+          "attrs": {
+            "retry_target": {
+              "String": "screen_ux_spec"
+            },
+            "shape": {
+              "String": "parallelogram"
+            },
+            "label": {
+              "String": "UX Prompt Context Budget Gate"
+            },
+            "script": {
+              "String": "node scripts/iphone-app-factory/prompt-context-budget-gate.mjs --root .workflow/iphone-app-ux-studio --out .workflow/iphone-app-ux-studio/prompt-context-budget.json"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "provider": {
+              "String": "openai"
+            },
+            "goal_gate": {
+              "Boolean": true
+            },
+            "backend": {
+              "String": "cli"
+            },
+            "model": {
+              "String": "gpt-5.3-codex-spark"
+            }
+          }
+        },
+        "gamified_streak_direction": {
+          "id": "gamified_streak_direction",
+          "attrs": {
+            "backend": {
+              "String": "cli"
+            },
+            "script": {
+              "String": "node scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/ux-design-direction-candidate.md --stage gamified_streak_direction --out .workflow/iphone-app-ux-studio/codex/gamified-streak-direction.json"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "model": {
+              "String": "gpt-5.3-codex-spark"
+            },
+            "label": {
+              "String": "Gamified Streak Direction"
+            },
+            "provider": {
+              "String": "openai"
+            },
+            "shape": {
+              "String": "parallelogram"
+            },
+            "timeout": {
+              "Duration": {
+                "secs": 3600,
+                "nanos": 0
+              }
+            }
+          }
+        },
+        "remote_environment_preflight": {
+          "id": "remote_environment_preflight",
+          "attrs": {
+            "model": {
+              "String": "gpt-5.3-codex-spark"
+            },
+            "provider": {
+              "String": "openai"
+            },
+            "retry_target": {
+              "String": "remote_environment_preflight"
+            },
+            "shape": {
+              "String": "parallelogram"
+            },
+            "script": {
+              "String": "node scripts/iphone-app-factory/ux-studio-preflight.mjs --server https://fabro-maestro-production.up.railway.app/api/v1 --expected-control-plane railway"
+            },
+            "label": {
+              "String": "Remote Railway/Daytona Preflight"
+            },
+            "goal_gate": {
+              "Boolean": true
+            },
+            "backend": {
+              "String": "cli"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            }
+          }
+        },
+        "ux_final_review_gate": {
+          "id": "ux_final_review_gate",
+          "attrs": {
+            "shape": {
+              "String": "parallelogram"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "provider": {
+              "String": "openai"
+            },
+            "label": {
+              "String": "UX Final Review Gate"
+            },
+            "backend": {
+              "String": "cli"
+            },
+            "goal_gate": {
+              "Boolean": true
+            },
+            "retry_target": {
+              "String": "implement_screen_flows"
+            },
+            "script": {
+              "String": "node scripts/iphone-app-factory/ux-final-review-gate.mjs"
+            },
+            "model": {
+              "String": "gpt-5.3-codex-spark"
+            }
+          }
+        },
+        "calm_accountability_direction": {
+          "id": "calm_accountability_direction",
+          "attrs": {
+            "shape": {
+              "String": "parallelogram"
+            },
+            "provider": {
+              "String": "openai"
+            },
+            "timeout": {
+              "Duration": {
+                "secs": 3600,
+                "nanos": 0
+              }
+            },
+            "script": {
+              "String": "node scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/ux-design-direction-candidate.md --stage calm_accountability_direction --out .workflow/iphone-app-ux-studio/codex/calm-accountability-direction.json"
+            },
+            "model": {
+              "String": "gpt-5.3-codex-spark"
+            },
+            "backend": {
+              "String": "cli"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "label": {
+              "String": "Calm Accountability Direction"
+            }
+          }
+        }
+      },
+      "edges": [
+        {
+          "from": "start",
+          "to": "remote_environment_preflight",
+          "attrs": {}
+        },
+        {
+          "from": "remote_environment_preflight",
+          "to": "checkout_existing_app",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "remote_environment_preflight",
+          "to": "remote_environment_preflight",
+          "attrs": {
+            "label": {
+              "String": "Retry Railway Preflight"
+            }
+          }
+        },
+        {
+          "from": "checkout_existing_app",
+          "to": "existing_app_intake",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "checkout_existing_app",
+          "to": "remote_environment_preflight",
+          "attrs": {
+            "label": {
+              "String": "Fix Checkout"
+            }
+          }
+        },
+        {
+          "from": "existing_app_intake",
+          "to": "baseline_screenshot_capture",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "existing_app_intake",
+          "to": "existing_app_intake",
+          "attrs": {
+            "label": {
+              "String": "Retry Intake"
+            }
+          }
+        },
+        {
+          "from": "baseline_screenshot_capture",
+          "to": "design_corpus_preflight",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "baseline_screenshot_capture",
+          "to": "existing_app_intake",
+          "attrs": {
+            "label": {
+              "String": "Retry Baseline"
+            }
+          }
+        },
+        {
+          "from": "design_corpus_preflight",
+          "to": "retrieve_existing_references",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "design_corpus_preflight",
+          "to": "remote_environment_preflight",
+          "attrs": {
+            "label": {
+              "String": "Fix Environment"
+            }
+          }
+        },
+        {
+          "from": "retrieve_existing_references",
+          "to": "reference_gap_analysis",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "retrieve_existing_references",
+          "to": "design_corpus_preflight",
+          "attrs": {
+            "label": {
+              "String": "Retry Corpus"
+            }
+          }
+        },
+        {
+          "from": "reference_gap_analysis",
+          "to": "research_fanout",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "reference_gap_analysis",
+          "to": "retrieve_existing_references",
+          "attrs": {
+            "label": {
+              "String": "Retry Corpus"
+            }
+          }
+        },
+        {
+          "from": "research_fanout",
+          "to": "competitor_flow_research",
+          "attrs": {}
+        },
+        {
+          "from": "research_fanout",
+          "to": "app_store_review_mining",
+          "attrs": {}
+        },
+        {
+          "from": "research_fanout",
+          "to": "mobbin_mcp_research",
+          "attrs": {}
+        },
+        {
+          "from": "research_fanout",
+          "to": "pageflows_research",
+          "attrs": {}
+        },
+        {
+          "from": "research_fanout",
+          "to": "apple_hig_research",
+          "attrs": {}
+        },
+        {
+          "from": "research_fanout",
+          "to": "behavioral_ux_research",
+          "attrs": {}
+        },
+        {
+          "from": "competitor_flow_research",
+          "to": "research_join",
+          "attrs": {}
+        },
+        {
+          "from": "app_store_review_mining",
+          "to": "research_join",
+          "attrs": {}
+        },
+        {
+          "from": "mobbin_mcp_research",
+          "to": "research_join",
+          "attrs": {}
+        },
+        {
+          "from": "pageflows_research",
+          "to": "research_join",
+          "attrs": {}
+        },
+        {
+          "from": "apple_hig_research",
+          "to": "research_join",
+          "attrs": {}
+        },
+        {
+          "from": "behavioral_ux_research",
+          "to": "research_join",
+          "attrs": {}
+        },
+        {
+          "from": "research_join",
+          "to": "design_opportunity_synthesis",
+          "attrs": {}
+        },
+        {
+          "from": "design_opportunity_synthesis",
+          "to": "reference_pack_gate",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "design_opportunity_synthesis",
+          "to": "research_fanout",
+          "attrs": {
+            "label": {
+              "String": "Research Fix"
+            }
+          }
+        },
+        {
+          "from": "reference_pack_gate",
+          "to": "design_direction_fanout",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "reference_pack_gate",
+          "to": "research_fanout",
+          "attrs": {
+            "label": {
+              "String": "Fill Reference Gaps"
+            }
+          }
+        },
+        {
+          "from": "design_direction_fanout",
+          "to": "calm_accountability_direction",
+          "attrs": {}
+        },
+        {
+          "from": "design_direction_fanout",
+          "to": "hard_wake_direction",
+          "attrs": {}
+        },
+        {
+          "from": "design_direction_fanout",
+          "to": "gamified_streak_direction",
+          "attrs": {}
+        },
+        {
+          "from": "design_direction_fanout",
+          "to": "minimal_native_direction",
+          "attrs": {}
+        },
+        {
+          "from": "calm_accountability_direction",
+          "to": "design_direction_join",
+          "attrs": {}
+        },
+        {
+          "from": "hard_wake_direction",
+          "to": "design_direction_join",
+          "attrs": {}
+        },
+        {
+          "from": "gamified_streak_direction",
+          "to": "design_direction_join",
+          "attrs": {}
+        },
+        {
+          "from": "minimal_native_direction",
+          "to": "design_direction_join",
+          "attrs": {}
+        },
+        {
+          "from": "design_direction_join",
+          "to": "design_cross_critique",
+          "attrs": {}
+        },
+        {
+          "from": "design_cross_critique",
+          "to": "design_tournament_consensus",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "design_cross_critique",
+          "to": "design_direction_fanout",
+          "attrs": {
+            "label": {
+              "String": "Retry Directions"
+            }
+          }
+        },
+        {
+          "from": "design_tournament_consensus",
+          "to": "design_tournament_gate",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "design_tournament_consensus",
+          "to": "design_direction_fanout",
+          "attrs": {
+            "label": {
+              "String": "Retry Tournament"
+            }
+          }
+        },
+        {
+          "from": "design_tournament_gate",
+          "to": "screen_ux_spec",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "design_tournament_gate",
+          "to": "design_direction_fanout",
+          "attrs": {
+            "label": {
+              "String": "Weak Design"
+            }
+          }
+        },
+        {
+          "from": "screen_ux_spec",
+          "to": "implementation_plan_gate",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "screen_ux_spec",
+          "to": "screen_ux_spec",
+          "attrs": {
+            "label": {
+              "String": "Spec Fix"
+            }
+          }
+        },
+        {
+          "from": "implementation_plan_gate",
+          "to": "implement_visual_system",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "implementation_plan_gate",
+          "to": "screen_ux_spec",
+          "attrs": {
+            "label": {
+              "String": "Mapping Fix"
+            }
+          }
+        },
+        {
+          "from": "implement_visual_system",
+          "to": "verify_visual_system",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "implement_visual_system",
+          "to": "implement_visual_system",
+          "attrs": {
+            "label": {
+              "String": "Retry Visual System"
+            }
+          }
+        },
+        {
+          "from": "verify_visual_system",
+          "to": "gate_visual_system",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "verify_visual_system",
+          "to": "implement_visual_system",
+          "attrs": {
+            "label": {
+              "String": "Fix Visual System"
+            }
+          }
+        },
+        {
+          "from": "gate_visual_system",
+          "to": "implement_screen_flows",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "gate_visual_system",
+          "to": "implement_visual_system",
+          "attrs": {
+            "label": {
+              "String": "Fix Visual System"
+            }
+          }
+        },
+        {
+          "from": "implement_screen_flows",
+          "to": "verify_screen_flows",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "implement_screen_flows",
+          "to": "implement_screen_flows",
+          "attrs": {
+            "label": {
+              "String": "Retry Screen Flows"
+            }
+          }
+        },
+        {
+          "from": "verify_screen_flows",
+          "to": "gate_screen_flows",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "verify_screen_flows",
+          "to": "implement_screen_flows",
+          "attrs": {
+            "label": {
+              "String": "Fix Screen Flows"
+            }
+          }
+        },
+        {
+          "from": "gate_screen_flows",
+          "to": "screenshot_evidence_review",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "gate_screen_flows",
+          "to": "implement_screen_flows",
+          "attrs": {
+            "label": {
+              "String": "Fix Screen Flows"
+            }
+          }
+        },
+        {
+          "from": "screenshot_evidence_review",
+          "to": "ios_runtime_evidence_preflight",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "screenshot_evidence_review",
+          "to": "implement_screen_flows",
+          "attrs": {
+            "label": {
+              "String": "Screenshot Review Fix"
+            }
+          }
+        },
+        {
+          "from": "ios_runtime_evidence_preflight",
+          "to": "postmortem_learning_capture",
+          "attrs": {
+            "label": {
+              "String": "iOS Runtime Blocker"
+            },
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "ios_runtime_evidence_preflight",
+          "to": "postmortem_learning_capture",
+          "attrs": {
+            "label": {
+              "String": "Unexpected iOS Preflight Failure"
+            }
+          }
+        },
+        {
+          "from": "screenshot_evidence_gate",
+          "to": "appium_exploratory_gate",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "screenshot_evidence_gate",
+          "to": "implement_screen_flows",
+          "attrs": {
+            "label": {
+              "String": "Screenshot Fix"
+            }
+          }
+        },
+        {
+          "from": "appium_exploratory_gate",
+          "to": "ios_quality_gate",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "appium_exploratory_gate",
+          "to": "implement_screen_flows",
+          "attrs": {
+            "label": {
+              "String": "Appium Fix"
+            }
+          }
+        },
+        {
+          "from": "ios_quality_gate",
+          "to": "prompt_context_budget_gate",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "ios_quality_gate",
+          "to": "implement_screen_flows",
+          "attrs": {
+            "label": {
+              "String": "CI Fix"
+            }
+          }
+        },
+        {
+          "from": "prompt_context_budget_gate",
+          "to": "final_review_fanout",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "prompt_context_budget_gate",
+          "to": "screen_ux_spec",
+          "attrs": {
+            "label": {
+              "String": "Compact Context"
+            }
+          }
+        },
+        {
+          "from": "final_review_fanout",
+          "to": "ux_quality_review",
+          "attrs": {}
+        },
+        {
+          "from": "final_review_fanout",
+          "to": "product_fidelity_review",
+          "attrs": {}
+        },
+        {
+          "from": "final_review_fanout",
+          "to": "ios_architecture_review",
+          "attrs": {}
+        },
+        {
+          "from": "final_review_fanout",
+          "to": "accessibility_review",
+          "attrs": {}
+        },
+        {
+          "from": "final_review_fanout",
+          "to": "security_privacy_review",
+          "attrs": {}
+        },
+        {
+          "from": "final_review_fanout",
+          "to": "release_readiness_review",
+          "attrs": {}
+        },
+        {
+          "from": "ux_quality_review",
+          "to": "final_review_join",
+          "attrs": {}
+        },
+        {
+          "from": "product_fidelity_review",
+          "to": "final_review_join",
+          "attrs": {}
+        },
+        {
+          "from": "ios_architecture_review",
+          "to": "final_review_join",
+          "attrs": {}
+        },
+        {
+          "from": "accessibility_review",
+          "to": "final_review_join",
+          "attrs": {}
+        },
+        {
+          "from": "security_privacy_review",
+          "to": "final_review_join",
+          "attrs": {}
+        },
+        {
+          "from": "release_readiness_review",
+          "to": "final_review_join",
+          "attrs": {}
+        },
+        {
+          "from": "final_review_join",
+          "to": "ux_final_review_gate",
+          "attrs": {}
+        },
+        {
+          "from": "ux_final_review_gate",
+          "to": "final_consensus",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "ux_final_review_gate",
+          "to": "implement_screen_flows",
+          "attrs": {
+            "label": {
+              "String": "UX Fix"
+            }
+          }
+        },
+        {
+          "from": "final_consensus",
+          "to": "publish_handoff",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "final_consensus",
+          "to": "final_review_fanout",
+          "attrs": {
+            "label": {
+              "String": "Review Fix"
+            }
+          }
+        },
+        {
+          "from": "publish_handoff",
+          "to": "postmortem_learning_capture",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "publish_handoff",
+          "to": "final_consensus",
+          "attrs": {
+            "label": {
+              "String": "Handoff Fix"
+            }
+          }
+        },
+        {
+          "from": "postmortem_learning_capture",
+          "to": "postmortem_gate",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "postmortem_learning_capture",
+          "to": "postmortem_learning_capture",
+          "attrs": {
+            "label": {
+              "String": "Retry Postmortem"
+            }
+          }
+        },
+        {
+          "from": "postmortem_gate",
+          "to": "exit",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "postmortem_gate",
+          "to": "postmortem_learning_capture",
+          "attrs": {
+            "label": {
+              "String": "Complete Postmortem"
+            }
+          }
+        }
+      ],
+      "attrs": {
+        "goal": {
+          "String": "Run the WakeTask existing-app UX Studio implementation workflow through Railway Fabro with durable research, implementation evidence, hosted-runtime blocker capture, and postmortem learning."
+        },
+        "rankdir": {
+          "String": "LR"
+        },
+        "default_max_retries": {
+          "Integer": 2
+        },
+        "retry_target": {
+          "String": "design_tournament_consensus"
+        },
+        "persona": {
+          "String": "iphone-app-ux-studio"
+        },
+        "outputs": {
+          "String": "existing_app_intake,reference_pack,design_tournament,screen_spec,ux_implementation_evidence,screenshot_manifest,appium_report,ios_quality_report,ux_handoff,postmortem"
+        },
+        "inputs": {
+          "String": "repo_url,base_branch,run_branch,app_name,bundle_id,app_dir,app_domain,target_audience,design_goal,max_competitors,use_mobbin_mcp,use_design_corpus,design_corpus_write_mode,selected_direction_mode,ios_validation_mode,allow_macos_deferred,fabro_server"
+        },
+        "model_stylesheet": {
+          "String": "\n            *                  { backend: cli; provider: openai; model: gpt-5.3-codex-spark; reasoning_effort: low; }\n            .ux-research       { backend: cli; provider: openai; model: gpt-5.3-codex-spark; reasoning_effort: medium; }\n            .design            { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            .critique          { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            .review            { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            .verify            { backend: cli; provider: openai; model: gpt-5.3-codex-spark; reasoning_effort: medium; }\n            .security          { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n        "
+        },
+        "fallback_retry_target": {
+          "String": "implement_screen_flows"
+        },
+        "secret_policy": {
+          "String": "never print environment variables or credential values; credential checks must be presence-only true/false checks; do not run environment dump commands; Mobbin and competitor screenshots are private research references only."
+        }
+      }
+    },
+    "graph_source": "digraph IterateExistingAppUX {\n    graph [\n        goal=\"Iterate on an existing iPhone app UX with private design research, adversarial design directions, hosted iOS validation, and postmortem learning capture\",\n        persona=\"iphone-app-ux-studio\",\n        secret_policy=\"never print environment variables or credential values; credential checks must be presence-only true/false checks; do not run environment dump commands; Mobbin and competitor screenshots are private research references only.\",\n        inputs=\"repo_url,base_branch,run_branch,app_name,bundle_id,app_dir,app_domain,target_audience,design_goal,max_competitors,use_mobbin_mcp,use_design_corpus,design_corpus_write_mode,selected_direction_mode,ios_validation_mode,allow_macos_deferred,fabro_server\",\n        outputs=\"existing_app_intake,reference_pack,design_tournament,screen_spec,ux_implementation_evidence,screenshot_manifest,appium_report,ios_quality_report,ux_handoff,postmortem\",\n        default_max_retries=2,\n        retry_target=\"design_tournament_consensus\",\n        fallback_retry_target=\"implement_screen_flows\",\n        model_stylesheet=\"\n            *                  { backend: cli; provider: openai; model: gpt-5.3-codex-spark; reasoning_effort: low; }\n            .ux-research       { backend: cli; provider: openai; model: gpt-5.3-codex-spark; reasoning_effort: medium; }\n            .design            { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            .critique          { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            .review            { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            .verify            { backend: cli; provider: openai; model: gpt-5.3-codex-spark; reasoning_effort: medium; }\n            .security          { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n        \"\n    ]\n    rankdir=LR\n\n    start [shape=Mdiamond, label=\"Start\"]\n    exit  [shape=Msquare, label=\"Exit\"]\n\n    remote_environment_preflight [\n        label=\"Remote Railway/Daytona Preflight\",\n        shape=parallelogram,\n        goal_gate=true,\n        retry_target=\"remote_environment_preflight\",\n        script=\"node scripts/iphone-app-factory/ux-studio-preflight.mjs --server https://fabro-maestro-production.up.railway.app/api/v1 --expected-control-plane railway\"\n    ]\n    checkout_existing_app [\n        label=\"Checkout Existing App\",\n        shape=parallelogram,\n        goal_gate=true,\n        retry_target=\"checkout_existing_app\",\n        script=\"node scripts/iphone-app-factory/checkout-existing-app.mjs\"\n    ]\n\n    existing_app_intake [\n        label=\"Existing App Intake\",\n        shape=parallelogram,\n        goal_gate=true,\n        retry_target=\"existing_app_intake\",\n        timeout=\"3600s\",\n        script=\"node scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/ux-existing-app-intake.md --stage existing-app-intake --out .workflow/iphone-app-ux-studio/codex/existing-app-intake.json\"\n    ]\n    baseline_screenshot_capture [\n        label=\"Baseline Screenshot Capture\",\n        shape=parallelogram,\n        goal_gate=true,\n        retry_target=\"existing_app_intake\",\n        timeout=\"3600s\",\n        script=\"node scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/ux-baseline-screenshot-capture.md --stage baseline-screenshot-capture --out .workflow/iphone-app-ux-studio/codex/baseline-screenshot-capture.json\"\n    ]\n    design_corpus_preflight [\n        label=\"Design Corpus Preflight\",\n        shape=parallelogram,\n        goal_gate=true,\n        retry_target=\"design_corpus_preflight\",\n        script=\"node scripts/iphone-app-factory/design-corpus.mjs init --db .workflow/iphone-app-ux-studio/design-corpus.sqlite\"\n    ]\n    retrieve_existing_references [\n        label=\"Retrieve Existing References\",\n        shape=parallelogram,\n        goal_gate=true,\n        retry_target=\"design_corpus_preflight\",\n        script=\"mkdir -p .workflow/iphone-app-ux-studio/research; node scripts/iphone-app-factory/design-corpus.mjs reference-pack --db .workflow/iphone-app-ux-studio/design-corpus.sqlite > .workflow/iphone-app-ux-studio/research/reference-pack.json\"\n    ]\n    reference_gap_analysis [\n        label=\"Reference Gap Analysis\",\n        shape=parallelogram,\n        goal_gate=true,\n        retry_target=\"retrieve_existing_references\",\n        script=\"mkdir -p .workflow/iphone-app-ux-studio/research; node -e \\\"const fs=require('fs'); const path='.workflow/iphone-app-ux-studio/research/reference-pack.json'; const pack=fs.existsSync(path)?JSON.parse(fs.readFileSync(path,'utf8')):{}; const refs=pack.references||pack.reference_pack?.references||[]; const report={ok:true,total_references:refs.length,needs_live_research:refs.length<12,missing:['competitor_flow_research','app_store_review_mining','mobbin_mcp_research','pageflows_research','apple_hig_research','behavioral_ux_research'],railway_fabro_required:true}; fs.writeFileSync('.workflow/iphone-app-ux-studio/research/reference-gap-analysis.json', JSON.stringify(report,null,2)+'\\\\n'); console.log(JSON.stringify(report));\\\"\"\n    ]\n\n    research_fanout [label=\"Research Fan-Out\", shape=component, join_policy=\"wait_all\", max_parallel=6]\n    competitor_flow_research [\n        label=\"Competitor Flow Research\",\n        shape=parallelogram,\n        timeout=\"3600s\",\n        script=\"node scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/ux-competitor-flow-research.md --stage competitor-flow-research --out .workflow/iphone-app-ux-studio/codex/competitor-flow-research.json\"\n    ]\n    app_store_review_mining [\n        label=\"App Store Review Mining\",\n        shape=parallelogram,\n        timeout=\"3600s\",\n        script=\"node scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/ux-app-store-review-mining.md --stage app-store-review-mining --out .workflow/iphone-app-ux-studio/codex/app-store-review-mining.json\"\n    ]\n    mobbin_mcp_research [\n        label=\"Mobbin MCP Research\",\n        shape=parallelogram,\n        goal_gate=true,\n        retry_target=\"mobbin_mcp_research\",\n        script=\"node scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/ux-mobbin-mcp-research.md --stage mobbin-mcp-research --out .workflow/iphone-app-ux-studio/codex/mobbin-mcp-research.json && node scripts/iphone-app-factory/ensure-mobbin-research-artifact.mjs\"\n    ]\n    pageflows_research [\n        label=\"Pageflows Research\",\n        shape=parallelogram,\n        timeout=\"3600s\",\n        script=\"node scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/ux-pageflows-research.md --stage pageflows-research --out .workflow/iphone-app-ux-studio/codex/pageflows-research.json\"\n    ]\n    apple_hig_research [\n        label=\"Apple HIG Research\",\n        shape=parallelogram,\n        timeout=\"3600s\",\n        script=\"node scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/ux-apple-hig-research.md --stage apple-hig-research --out .workflow/iphone-app-ux-studio/codex/apple-hig-research.json\"\n    ]\n    behavioral_ux_research [\n        label=\"Behavioral UX Research\",\n        shape=parallelogram,\n        timeout=\"3600s\",\n        script=\"node scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/ux-behavioral-research.md --stage behavioral-ux-research --out .workflow/iphone-app-ux-studio/codex/behavioral-ux-research.json\"\n    ]\n    research_join [label=\"Research Join\", shape=tripleoctagon, join_policy=\"wait_all\"]\n    design_opportunity_synthesis [\n        label=\"Design Opportunity Synthesis\",\n        shape=parallelogram,\n        goal_gate=true,\n        retry_target=\"research_fanout\",\n        timeout=\"3600s\",\n        script=\"node scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/ux-design-opportunity-synthesis.md --stage design-opportunity-synthesis --out .workflow/iphone-app-ux-studio/codex/design-opportunity-synthesis.json\"\n    ]\n    reference_pack_gate [\n        label=\"Reference Pack Gate\",\n        shape=parallelogram,\n        goal_gate=true,\n        retry_target=\"research_fanout\",\n        script=\"node scripts/iphone-app-factory/reference-pack-gate.mjs\"\n    ]\n\n    design_direction_fanout [label=\"Design Direction Fan-Out\", shape=component, join_policy=\"wait_all\", max_parallel=4]\n    calm_accountability_direction [\n        label=\"Calm Accountability Direction\",\n        shape=parallelogram,\n        timeout=\"3600s\",\n        script=\"node scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/ux-design-direction-candidate.md --stage calm_accountability_direction --out .workflow/iphone-app-ux-studio/codex/calm-accountability-direction.json\"\n    ]\n    hard_wake_direction [\n        label=\"Hard Wake Direction\",\n        shape=parallelogram,\n        timeout=\"3600s\",\n        script=\"node scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/ux-design-direction-candidate.md --stage hard_wake_direction --out .workflow/iphone-app-ux-studio/codex/hard-wake-direction.json\"\n    ]\n    gamified_streak_direction [\n        label=\"Gamified Streak Direction\",\n        shape=parallelogram,\n        timeout=\"3600s\",\n        script=\"node scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/ux-design-direction-candidate.md --stage gamified_streak_direction --out .workflow/iphone-app-ux-studio/codex/gamified-streak-direction.json\"\n    ]\n    minimal_native_direction [\n        label=\"Minimal Native Direction\",\n        shape=parallelogram,\n        timeout=\"3600s\",\n        script=\"node scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/ux-design-direction-candidate.md --stage minimal_native_direction --out .workflow/iphone-app-ux-studio/codex/minimal-native-direction.json\"\n    ]\n    design_direction_join [label=\"Design Direction Join\", shape=tripleoctagon, join_policy=\"wait_all\"]\n    design_cross_critique [\n        label=\"Design Cross Critique\",\n        shape=parallelogram,\n        goal_gate=true,\n        retry_target=\"design_direction_fanout\",\n        timeout=\"3600s\",\n        script=\"node scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/ux-design-cross-critique.md --stage design-cross-critique --out .workflow/iphone-app-ux-studio/codex/design-cross-critique.json\"\n    ]\n    design_tournament_consensus [\n        label=\"Design Tournament Consensus\",\n        shape=parallelogram,\n        goal_gate=true,\n        retry_target=\"design_direction_fanout\",\n        timeout=\"3600s\",\n        script=\"node scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/ux-design-tournament-consensus.md --stage design-tournament-consensus --out .workflow/iphone-app-ux-studio/codex/design-tournament-consensus.json\"\n    ]\n    design_tournament_gate [\n        label=\"Design Tournament Gate\",\n        shape=parallelogram,\n        goal_gate=true,\n        retry_target=\"design_direction_fanout\",\n        script=\"node scripts/iphone-app-factory/design-tournament-gate.mjs\"\n    ]\n    screen_ux_spec [\n        label=\"Screen UX Spec\",\n        shape=parallelogram,\n        goal_gate=true,\n        retry_target=\"design_tournament_consensus\",\n        timeout=\"3600s\",\n        script=\"node scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/ux-screen-spec.md --stage screen-ux-spec --out .workflow/iphone-app-ux-studio/codex/screen-ux-spec.json\"\n    ]\n    implementation_plan_gate [\n        label=\"Implementation Plan Gate\",\n        shape=parallelogram,\n        goal_gate=true,\n        retry_target=\"screen_ux_spec\",\n        timeout=\"3600s\",\n        script=\"node scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/ux-implementation-plan.md --stage implementation-plan --out .workflow/iphone-app-ux-studio/codex/implementation-plan.json\"\n    ]\n\n    implement_visual_system [\n        label=\"Implement Visual System\",\n        shape=parallelogram,\n        goal_gate=true,\n        retry_target=\"implement_visual_system\",\n        timeout=\"3600s\",\n        script=\"node scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/ux-implement-visual-system.md --stage visual-system --out .workflow/iphone-app-ux-studio/codex/visual-system.json\"\n    ]\n    verify_visual_system [\n        label=\"Verify Visual System\",\n        shape=parallelogram,\n        goal_gate=true,\n        retry_target=\"implement_visual_system\",\n        timeout=\"3600s\",\n        script=\"node scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/ux-verify-phase.md --stage verify-visual-system --out .workflow/iphone-app-ux-studio/codex/verify-visual-system.json\"\n    ]\n    gate_visual_system [label=\"Visual System Gate\", shape=parallelogram, goal_gate=true, retry_target=\"implement_visual_system\", script=\"node scripts/iphone-app-factory/phase-evidence-gate.mjs visual-system\"]\n\n    implement_screen_flows [\n        label=\"Implement Screen Flows\",\n        shape=parallelogram,\n        goal_gate=true,\n        retry_target=\"implement_screen_flows\",\n        timeout=\"3600s\",\n        script=\"node scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/ux-implement-screen-flows.md --stage screen-flows --out .workflow/iphone-app-ux-studio/codex/screen-flows.json\"\n    ]\n    verify_screen_flows [\n        label=\"Verify Screen Flows\",\n        shape=parallelogram,\n        goal_gate=true,\n        retry_target=\"implement_screen_flows\",\n        timeout=\"3600s\",\n        script=\"node scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/ux-verify-phase.md --stage verify-screen-flows --out .workflow/iphone-app-ux-studio/codex/verify-screen-flows.json\"\n    ]\n    gate_screen_flows [label=\"Screen Flows Gate\", shape=parallelogram, goal_gate=true, retry_target=\"implement_screen_flows\", script=\"node scripts/iphone-app-factory/phase-evidence-gate.mjs screen-flows\"]\n\n    screenshot_evidence_review [\n        label=\"Screenshot Evidence Review\",\n        shape=parallelogram,\n        goal_gate=true,\n        retry_target=\"implement_screen_flows\",\n        timeout=\"3600s\",\n        script=\"node scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/ux-screenshot-evidence-review.md --stage screenshot-evidence-review --out .workflow/iphone-app-ux-studio/codex/screenshot-evidence-review.json\"\n    ]\n    screenshot_evidence_gate [\n        label=\"Screenshot Evidence Gate\",\n        shape=parallelogram,\n        goal_gate=true,\n        retry_target=\"implement_screen_flows\",\n        script=\"node scripts/iphone-app-factory/ios-screenshot-manifest-gate.mjs --manifest reports/ios/screenshots/manifest.json --phase after --require-before-after true\"\n    ]\n    ios_runtime_evidence_preflight [\n        label=\"iOS Runtime Evidence Preflight\",\n        shape=parallelogram,\n        goal_gate=true,\n        retry_target=\"postmortem_learning_capture\",\n        script=\"node scripts/iphone-app-factory/ios-runtime-evidence-preflight.mjs --success-on-blocker --manifest reports/ios/screenshots/manifest.json\"\n    ]\n    appium_exploratory_gate [\n        label=\"Appium Exploratory Gate\",\n        shape=parallelogram,\n        goal_gate=true,\n        retry_target=\"implement_screen_flows\",\n        script=\"node scripts/iphone-app-factory/appium-report-gate.mjs\"\n    ]\n    ios_quality_gate [\n        label=\"iOS Quality Gate\",\n        shape=parallelogram,\n        goal_gate=true,\n        retry_target=\"implement_screen_flows\",\n        timeout=\"3600s\",\n        script=\"node scripts/iphone-app-factory/ios-ci-gate.mjs\"\n    ]\n    prompt_context_budget_gate [\n        label=\"UX Prompt Context Budget Gate\",\n        shape=parallelogram,\n        goal_gate=true,\n        retry_target=\"screen_ux_spec\",\n        script=\"node scripts/iphone-app-factory/prompt-context-budget-gate.mjs --root .workflow/iphone-app-ux-studio --out .workflow/iphone-app-ux-studio/prompt-context-budget.json\"\n    ]\n\n    final_review_fanout [label=\"Final Review Fan-Out\", shape=component, join_policy=\"wait_all\", max_parallel=6]\n    ux_quality_review [\n        label=\"UX Quality Review\",\n        shape=parallelogram,\n        timeout=\"3600s\",\n        script=\"node scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/ux-review-ux-quality.md --stage ux-quality-review --out .workflow/iphone-app-ux-studio/codex/ux-quality-review.json\"\n    ]\n    product_fidelity_review [\n        label=\"Product Fidelity Review\",\n        shape=parallelogram,\n        timeout=\"3600s\",\n        script=\"node scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/review-product-fidelity.md --stage product-fidelity-review --out .workflow/iphone-app-ux-studio/codex/product-fidelity-review.json\"\n    ]\n    ios_architecture_review [\n        label=\"iOS Architecture Review\",\n        shape=parallelogram,\n        timeout=\"3600s\",\n        script=\"node scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/review-ios-architecture.md --stage ios-architecture-review --out .workflow/iphone-app-ux-studio/codex/ios-architecture-review.json\"\n    ]\n    accessibility_review [\n        label=\"Accessibility Review\",\n        shape=parallelogram,\n        timeout=\"3600s\",\n        script=\"node scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/ux-review-accessibility.md --stage accessibility-review --out .workflow/iphone-app-ux-studio/codex/accessibility-review.json\"\n    ]\n    security_privacy_review [\n        label=\"Security Privacy Review\",\n        shape=parallelogram,\n        timeout=\"3600s\",\n        script=\"node scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/review-security-privacy.md --stage security-privacy-review --out .workflow/iphone-app-ux-studio/codex/security-privacy-review.json\"\n    ]\n    release_readiness_review [\n        label=\"Release Readiness Review\",\n        shape=parallelogram,\n        timeout=\"3600s\",\n        script=\"node scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/review-release-readiness.md --stage release-readiness-review --out .workflow/iphone-app-ux-studio/codex/release-readiness-review.json\"\n    ]\n    final_review_join [label=\"Final Review Join\", shape=tripleoctagon, join_policy=\"wait_all\"]\n    ux_final_review_gate [\n        label=\"UX Final Review Gate\",\n        shape=parallelogram,\n        goal_gate=true,\n        retry_target=\"implement_screen_flows\",\n        script=\"node scripts/iphone-app-factory/ux-final-review-gate.mjs\"\n    ]\n    final_consensus [\n        label=\"Final Consensus\",\n        shape=parallelogram,\n        goal_gate=true,\n        retry_target=\"final_review_fanout\",\n        timeout=\"3600s\",\n        script=\"node scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/ux-final-consensus.md --stage final-consensus --out .workflow/iphone-app-ux-studio/codex/final-consensus.json\"\n    ]\n    publish_handoff [\n        label=\"Publish Handoff\",\n        shape=parallelogram,\n        goal_gate=true,\n        retry_target=\"final_consensus\",\n        script=\"node scripts/iphone-app-factory/publish-handoff.mjs\"\n    ]\n    postmortem_learning_capture [\n        label=\"Postmortem Learning Capture\",\n        shape=parallelogram,\n        goal_gate=true,\n        retry_target=\"postmortem_learning_capture\",\n        timeout=\"3600s\",\n        script=\"node scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/ux-postmortem-learning-capture.md --stage postmortem-learning-capture --out .workflow/iphone-app-ux-studio/codex/postmortem-learning-capture.json\"\n    ]\n    postmortem_gate [\n        label=\"Postmortem Gate\",\n        shape=parallelogram,\n        goal_gate=true,\n        retry_target=\"postmortem_learning_capture\",\n        script=\"node scripts/iphone-app-factory/ux-postmortem-gate.mjs\"\n    ]\n\n    start -> remote_environment_preflight\n    remote_environment_preflight -> checkout_existing_app [condition=\"outcome=succeeded\"]\n    remote_environment_preflight -> remote_environment_preflight [label=\"Retry Railway Preflight\"]\n    checkout_existing_app -> existing_app_intake [condition=\"outcome=succeeded\"]\n    checkout_existing_app -> remote_environment_preflight [label=\"Fix Checkout\"]\n\n    existing_app_intake -> baseline_screenshot_capture [condition=\"outcome=succeeded\"]\n    existing_app_intake -> existing_app_intake [label=\"Retry Intake\"]\n    baseline_screenshot_capture -> design_corpus_preflight [condition=\"outcome=succeeded\"]\n    baseline_screenshot_capture -> existing_app_intake [label=\"Retry Baseline\"]\n    design_corpus_preflight -> retrieve_existing_references [condition=\"outcome=succeeded\"]\n    design_corpus_preflight -> remote_environment_preflight [label=\"Fix Environment\"]\n    retrieve_existing_references -> reference_gap_analysis [condition=\"outcome=succeeded\"]\n    retrieve_existing_references -> design_corpus_preflight [label=\"Retry Corpus\"]\n    reference_gap_analysis -> research_fanout [condition=\"outcome=succeeded\"]\n    reference_gap_analysis -> retrieve_existing_references [label=\"Retry Corpus\"]\n\n    research_fanout -> competitor_flow_research\n    research_fanout -> app_store_review_mining\n    research_fanout -> mobbin_mcp_research\n    research_fanout -> pageflows_research\n    research_fanout -> apple_hig_research\n    research_fanout -> behavioral_ux_research\n    competitor_flow_research -> research_join\n    app_store_review_mining -> research_join\n    mobbin_mcp_research -> research_join\n    pageflows_research -> research_join\n    apple_hig_research -> research_join\n    behavioral_ux_research -> research_join\n    research_join -> design_opportunity_synthesis\n    design_opportunity_synthesis -> reference_pack_gate [condition=\"outcome=succeeded\"]\n    design_opportunity_synthesis -> research_fanout [label=\"Research Fix\"]\n    reference_pack_gate -> design_direction_fanout [condition=\"outcome=succeeded\"]\n    reference_pack_gate -> research_fanout [label=\"Fill Reference Gaps\"]\n\n    design_direction_fanout -> calm_accountability_direction\n    design_direction_fanout -> hard_wake_direction\n    design_direction_fanout -> gamified_streak_direction\n    design_direction_fanout -> minimal_native_direction\n    calm_accountability_direction -> design_direction_join\n    hard_wake_direction -> design_direction_join\n    gamified_streak_direction -> design_direction_join\n    minimal_native_direction -> design_direction_join\n    design_direction_join -> design_cross_critique\n    design_cross_critique -> design_tournament_consensus [condition=\"outcome=succeeded\"]\n    design_cross_critique -> design_direction_fanout [label=\"Retry Directions\"]\n    design_tournament_consensus -> design_tournament_gate [condition=\"outcome=succeeded\"]\n    design_tournament_consensus -> design_direction_fanout [label=\"Retry Tournament\"]\n    design_tournament_gate -> screen_ux_spec [condition=\"outcome=succeeded\"]\n    design_tournament_gate -> design_direction_fanout [label=\"Weak Design\"]\n    screen_ux_spec -> implementation_plan_gate [condition=\"outcome=succeeded\"]\n    screen_ux_spec -> screen_ux_spec [label=\"Spec Fix\"]\n    implementation_plan_gate -> implement_visual_system [condition=\"outcome=succeeded\"]\n    implementation_plan_gate -> screen_ux_spec [label=\"Mapping Fix\"]\n\n    implement_visual_system -> verify_visual_system [condition=\"outcome=succeeded\"]\n    implement_visual_system -> implement_visual_system [label=\"Retry Visual System\"]\n    verify_visual_system -> gate_visual_system [condition=\"outcome=succeeded\"]\n    verify_visual_system -> implement_visual_system [label=\"Fix Visual System\"]\n    gate_visual_system -> implement_screen_flows [condition=\"outcome=succeeded\"]\n    gate_visual_system -> implement_visual_system [label=\"Fix Visual System\"]\n\n    implement_screen_flows -> verify_screen_flows [condition=\"outcome=succeeded\"]\n    implement_screen_flows -> implement_screen_flows [label=\"Retry Screen Flows\"]\n    verify_screen_flows -> gate_screen_flows [condition=\"outcome=succeeded\"]\n    verify_screen_flows -> implement_screen_flows [label=\"Fix Screen Flows\"]\n    gate_screen_flows -> screenshot_evidence_review [condition=\"outcome=succeeded\"]\n    gate_screen_flows -> implement_screen_flows [label=\"Fix Screen Flows\"]\n    screenshot_evidence_review -> ios_runtime_evidence_preflight [condition=\"outcome=succeeded\"]\n    screenshot_evidence_review -> implement_screen_flows [label=\"Screenshot Review Fix\"]\n    ios_runtime_evidence_preflight -> postmortem_learning_capture [condition=\"outcome=succeeded\", label=\"iOS Runtime Blocker\"]\n    ios_runtime_evidence_preflight -> postmortem_learning_capture [label=\"Unexpected iOS Preflight Failure\"]\n    screenshot_evidence_gate -> appium_exploratory_gate [condition=\"outcome=succeeded\"]\n    screenshot_evidence_gate -> implement_screen_flows [label=\"Screenshot Fix\"]\n    appium_exploratory_gate -> ios_quality_gate [condition=\"outcome=succeeded\"]\n    appium_exploratory_gate -> implement_screen_flows [label=\"Appium Fix\"]\n    ios_quality_gate -> prompt_context_budget_gate [condition=\"outcome=succeeded\"]\n    ios_quality_gate -> implement_screen_flows [label=\"CI Fix\"]\n    prompt_context_budget_gate -> final_review_fanout [condition=\"outcome=succeeded\"]\n    prompt_context_budget_gate -> screen_ux_spec [label=\"Compact Context\"]\n\n    final_review_fanout -> ux_quality_review\n    final_review_fanout -> product_fidelity_review\n    final_review_fanout -> ios_architecture_review\n    final_review_fanout -> accessibility_review\n    final_review_fanout -> security_privacy_review\n    final_review_fanout -> release_readiness_review\n    ux_quality_review -> final_review_join\n    product_fidelity_review -> final_review_join\n    ios_architecture_review -> final_review_join\n    accessibility_review -> final_review_join\n    security_privacy_review -> final_review_join\n    release_readiness_review -> final_review_join\n    final_review_join -> ux_final_review_gate\n    ux_final_review_gate -> final_consensus [condition=\"outcome=succeeded\"]\n    ux_final_review_gate -> implement_screen_flows [label=\"UX Fix\"]\n    final_consensus -> publish_handoff [condition=\"outcome=succeeded\"]\n    final_consensus -> final_review_fanout [label=\"Review Fix\"]\n    publish_handoff -> postmortem_learning_capture [condition=\"outcome=succeeded\"]\n    publish_handoff -> final_consensus [label=\"Handoff Fix\"]\n    postmortem_learning_capture -> postmortem_gate [condition=\"outcome=succeeded\"]\n    postmortem_learning_capture -> postmortem_learning_capture [label=\"Retry Postmortem\"]\n    postmortem_gate -> exit [condition=\"outcome=succeeded\"]\n    postmortem_gate -> postmortem_learning_capture [label=\"Complete Postmortem\"]\n}\n",
+    "workflow_slug": "iterate-existing-app-ux",
+    "source_directory": "/Users/timlife/Documents/claude code/maestro-os",
+    "labels": {
+      "topic": "task-alarm-clock",
+      "orchestration": "standalone-ux-child",
+      "factory": "iphone-app-ux-studio",
+      "control_plane": "railway",
+      "app": "waketask"
+    },
+    "provenance": {
+      "server": {
+        "version": "0.232.0-nightly.0"
+      },
+      "client": {
+        "user_agent": "fabro-cli/0.232.0-nightly.0",
+        "name": "fabro-cli",
+        "version": "0.232.0-nightly.0"
+      },
+      "subject": {
+        "kind": "user",
+        "identity": {
+          "issuer": "fabro:dev",
+          "subject": "dev"
+        },
+        "login": "dev",
+        "auth_method": "dev_token"
+      }
+    },
+    "manifest_blob": "00191a414cce0ce18d612516761c9106c2f22c9282f84af5ac113a2dda893fbb",
+    "definition_blob": "4ba75e0e0bd7413cd3f221b24f82a17ae51432f2e247c903d376020882aa0259",
+    "git": {
+      "origin_url": "https://github.com/kimprobably/maestro-os",
+      "branch": "spike/fabro-code-factory-v5",
+      "sha": "8411fdb84d102ccd916a7b3efcdde6cb133df53a",
+      "dirty": "dirty",
+      "push_outcome": {
+        "type": "not_attempted"
+      }
+    }
+  },
+  "web_url": "https://fabro-maestro-production.up.railway.app/runs/01KRTHR85ETCAKAXF1AC3MZ2DX",
+  "start": null,
+  "status": {
+    "kind": "starting"
+  },
+  "status_updated_at": "2026-05-17T08:44:56.493570517Z",
+  "last_event_at": "2026-05-17T08:44:57.894265297Z",
+  "pending_control": null,
+  "checkpoints": [],
+  "conclusion": null,
+  "sandbox": {
+    "provider": "daytona",
+    "image": "buildpack-deps:noble",
+    "snapshot": "maestro-code-factory-v8",
+    "runtime": {
+      "id": "fabro-01KRTHR85ETCAKAXF1AC3MZ2DX",
+      "working_directory": "/home/daytona/workspace",
+      "repo_cloned": true,
+      "clone_origin_url": "https://github.com/kimprobably/maestro-os",
+      "clone_branch": "spike/fabro-code-factory-v5"
+    }
+  },
+  "pull_request": null,
+  "superseded_by": null,
+  "pending_interviews": {},
+  "stages": {}
+}
