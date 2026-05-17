@@ -25,6 +25,7 @@ test("quincy profile is installed as a specialist worker", async () => {
   assert.match(installer, /copy_profile_skills/);
   assert.match(entrypoint, /install-worker-profiles\.sh/);
   assert.match(entrypoint, /render-honcho-config\.mjs/);
+  assert.match(entrypoint, /mobbin\["enabled"\] = bool\(enabled_env\)/);
   assert.equal(existsSync(soulPath), true);
 
   const soul = await readFile(soulPath, "utf8");

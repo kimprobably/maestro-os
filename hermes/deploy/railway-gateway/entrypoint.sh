@@ -484,8 +484,10 @@ mobbin["tools"] = tools
 tools["resources"] = False
 tools["prompts"] = False
 enabled_env = os.environ.get("MOBBIN_MCP_ENABLED", "false").strip().lower() in {"1", "true", "yes", "on"}
-token_file = Path(os.environ.get("HERMES_HOME", "/data/.hermes")) / "profiles" / "maestro-operator" / "mcp-tokens" / "mobbin.json"
-mobbin["enabled"] = bool(enabled_env or token_file.exists())
+# OAuth MCPs can block a headless Railway boot if cached tokens are stale or
+# incomplete. Keep Mobbin opt-in so Slack uptime does not depend on an
+# interactive OAuth refresh.
+mobbin["enabled"] = bool(enabled_env)
 
 stitch = mcp_servers.get("stitch")
 if not isinstance(stitch, dict):
