@@ -49,6 +49,8 @@ test("joni has a LinkedIn operator skill with safe capture and no-publish bounda
   assert.match(skill, /scraping private\/authenticated LinkedIn surfaces/);
   assert.match(skill, /JONI-LINKEDIN-LEDGER\.md/);
   assert.match(skill, /weekly performance/);
+  assert.match(skill, /SQLite watchlist first/);
+  assert.match(skill, /not treat an empty `docs\/operator\/linkedin\/joni-sources\.json` as a blocker/);
 
   const ledger = await readFile(
     path.join(repoRoot, "docs/operator/linkedin/JONI-LINKEDIN-LEDGER.md"),

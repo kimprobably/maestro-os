@@ -127,12 +127,38 @@ test("joni linkedin capture reports missing HarvestAPI key by name only", async 
   const result = spawnSync(
     process.execPath,
     [scriptPath, "validate", "--root", root, "--sources", sourcePath, "--mode", "live"],
-    { encoding: "utf8", env: { ...process.env, HARVEST_API_KEY: "" } },
+    { encoding: "utf8", env: { ...process.env, HARVEST_API_KEY: "", HERMES_HOME: path.join(root, ".empty-hermes") } },
   );
 
   assert.notEqual(result.status, 0);
   assert.match(result.stderr, /HARVEST_API_KEY/);
   assert.doesNotMatch(result.stdout + result.stderr, /secret|x-api-key|Bearer/i);
+});
+
+test("joni linkedin capture loads HarvestAPI key from Hermes profile env", async () => {
+  const root = await tempRoot();
+  const home = path.join(root, ".hermes");
+  const profileDir = path.join(home, "profiles/joni");
+  await mkdir(profileDir, { recursive: true });
+  await writeFile(path.join(profileDir, ".env"), "HARVEST_API_KEY=profile-secret-not-printed\n");
+  const sourcePath = path.join(root, "docs/operator/linkedin/joni-sources.json");
+  await writeFile(
+    sourcePath,
+    JSON.stringify({ version: 1, sources: [{ type: "search", name: "GTM", search: "gtm", enabled: true }] }),
+  );
+
+  const result = spawnSync(
+    process.execPath,
+    [scriptPath, "validate", "--root", root, "--sources", sourcePath, "--mode", "live"],
+    {
+      encoding: "utf8",
+      env: { ...process.env, HARVEST_API_KEY: "", HERMES_HOME: home, HERMES_PROFILE: "joni" },
+    },
+  );
+
+  assert.equal(result.status, 0, result.stderr);
+  assert.match(result.stdout, /"harvest_api_key_present":true/);
+  assert.doesNotMatch(result.stdout + result.stderr, /profile-secret-not-printed/);
 });
 
 test("joni linkedin daily workflow keeps capture deterministic and AI review downstream", async () => {

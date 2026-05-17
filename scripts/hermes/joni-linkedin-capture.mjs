@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import { createHash } from "node:crypto";
 import { mkdir, readFile, writeFile, appendFile } from "node:fs/promises";
-import { existsSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import path from "node:path";
 
 const HARVEST_BASE_URL = "https://api.harvest-api.com";
@@ -24,6 +24,33 @@ function repoRoot() {
 function rel(root, value) {
   const raw = String(value || "");
   return path.isAbsolute(raw) ? raw : path.join(root, raw);
+}
+
+function loadProfileEnv() {
+  const home = process.env.HERMES_HOME || path.join(process.env.HOME || "", ".hermes");
+  const profile = process.env.HERMES_PROFILE || "joni";
+  const candidates = [
+    path.join(home, "profiles", profile, ".env"),
+    path.join(home, ".env"),
+  ];
+  for (const file of candidates) {
+    if (!file || !existsSync(file)) continue;
+    const text = readFileSync(file, "utf8");
+    for (const line of text.split("\n")) {
+      const trimmed = line.trim();
+      if (!trimmed || trimmed.startsWith("#")) continue;
+      const idx = trimmed.indexOf("=");
+      if (idx <= 0) continue;
+      const key = trimmed.slice(0, idx).trim();
+      if (!/^[A-Z_][A-Z0-9_]*$/.test(key)) continue;
+      if (process.env[key]) continue;
+      let value = trimmed.slice(idx + 1).trim();
+      if ((value.startsWith('"') && value.endsWith('"')) || (value.startsWith("'") && value.endsWith("'"))) {
+        value = value.slice(1, -1);
+      }
+      process.env[key] = value;
+    }
+  }
 }
 
 async function readJson(file) {
@@ -337,6 +364,7 @@ async function main() {
   const sourcesPath = rel(root, argValue("--sources", "docs/operator/linkedin/joni-sources.json"));
   const outDir = rel(root, argValue("--out-dir", ".workflow/joni-linkedin/daily"));
   const mode = argValue("--mode", "live");
+  loadProfileEnv();
 
   try {
     if (command === "validate") {
