@@ -1,0 +1,42 @@
+digraph FeaturePublishPostmortemStage {
+    graph [
+        goal="Publish the feature branch and capture a reusable postmortem with workflow improvement backlog",
+        persona="existing-app-feature-publisher",
+        inputs="app_dir,run_branch,fabro_server",
+        outputs="contract.artifact,contract.gate,contract.next_action,contract.failure_classification,publish_handoff,postmortem",
+        secret_policy="no secrets; do not print environment variables or credential values",
+        model_stylesheet="* { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }"
+    ]
+    rankdir=LR
+
+    start [shape=Mdiamond, label="Start"]
+    exit  [shape=Msquare, label="Exit"]
+
+    publish_existing_app_branch [
+        label="Publish Existing App Branch",
+        shape=parallelogram,
+        retry_target="publish_existing_app_branch",
+        script="node scripts/iphone-app-factory/publish-existing-app-branch.mjs"
+    ]
+    write_postmortem [
+        label="Write Feature Postmortem",
+        shape=parallelogram,
+        retry_target="write_postmortem",
+        timeout="3600s",
+        script="node scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/feature-postmortem.md --stage feature-postmortem --out .workflow/existing-app-feature/codex/feature-postmortem.json"
+    ]
+    postmortem_gate [
+        label="Feature Postmortem Gate",
+        shape=parallelogram,
+        retry_target="write_postmortem",
+        script="node scripts/iphone-app-factory/feature-postmortem-gate.mjs"
+    ]
+
+    start -> publish_existing_app_branch
+    publish_existing_app_branch -> write_postmortem [condition="outcome=succeeded"]
+    publish_existing_app_branch -> publish_existing_app_branch [label="Retry Publish"]
+    write_postmortem -> postmortem_gate [condition="outcome=succeeded"]
+    write_postmortem -> write_postmortem [label="Rewrite Postmortem"]
+    postmortem_gate -> exit [condition="outcome=succeeded"]
+    postmortem_gate -> write_postmortem [label="Complete Postmortem"]
+}

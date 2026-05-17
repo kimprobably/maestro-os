@@ -230,6 +230,43 @@ for (const script of [
   requireFile(`scripts/iphone-app-factory/${script}`);
 }
 
+const featureWorkflow = "workflows/iphone-app-factory/iterate-existing-app-features.fabro";
+const featureGraph = requireFile(featureWorkflow);
+const featureDaytona = requireFile("workflows/iphone-app-factory/iterate-existing-app-features.daytona.toml");
+for (const token of [
+  "feature_workflow_preflight",
+  "context_intake_child",
+  "research_child",
+  "existing_app_audit_child",
+  "feature_spec_child",
+  "implementation_plan_child",
+  "implementation_child",
+  "validation_child",
+  "publish_postmortem_child",
+  "join_policy=\"wait_all\"",
+]) {
+  if (!featureGraph.includes(token)) failures.push(`feature workflow missing ${token}`);
+}
+for (const script of [
+  "feature-context-gate.mjs",
+  "feature-research-gate.mjs",
+  "existing-app-audit-gate.mjs",
+  "feature-spec-gate.mjs",
+  "feature-implementation-plan-gate.mjs",
+  "feature-implementation-coverage-gate.mjs",
+  "empty-action-gate.mjs",
+  "ci-trigger-gate.mjs",
+  "feature-postmortem-gate.mjs",
+]) {
+  requireFile(`scripts/iphone-app-factory/${script}`);
+}
+if (!/\[run\.sandbox\.daytona\](?:(?!\n\[)[\s\S])*\bnetwork\s*=\s*"allow_all"/.test(featureDaytona)) {
+  failures.push(`feature iteration Daytona config missing network = "allow_all" under [run.sandbox.daytona]`);
+}
+if (/WakeTask|waketask|mission_task_picker/.test(featureGraph)) {
+  failures.push("generic feature workflow must not hardcode WakeTask specifics");
+}
+
 if (failures.length) {
   console.error(JSON.stringify({ ok: false, failures }, null, 2));
   process.exit(1);

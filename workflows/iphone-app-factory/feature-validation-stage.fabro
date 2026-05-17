@@ -1,0 +1,62 @@
+digraph FeatureValidationStage {
+    graph [
+        goal="Validate the implemented existing-app feature with build, CI, screenshot, Appium, and product-fidelity evidence",
+        persona="existing-app-feature-validator",
+        inputs="app_dir,ios_validation_mode,allow_macos_deferred,required_capabilities",
+        outputs="contract.artifact,contract.gate,contract.next_action,contract.failure_classification,validation_report",
+        secret_policy="no secrets; do not print environment variables or credential values",
+        model_stylesheet="
+            *       { backend: cli; provider: openai; model: gpt-5.3-codex-spark; reasoning_effort: medium; }
+            .review { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }
+        "
+    ]
+    rankdir=LR
+
+    start [shape=Mdiamond, label="Start"]
+    exit  [shape=Msquare, label="Exit"]
+
+    ios_quality_gate [
+        label="iOS Quality Gate",
+        shape=parallelogram,
+        retry_target="ios_quality_gate",
+        timeout="3600s",
+        script="node scripts/iphone-app-factory/ios-ci-gate.mjs"
+    ]
+    ci_trigger_gate [
+        label="CI Trigger Evidence Gate",
+        shape=parallelogram,
+        retry_target="ios_quality_gate",
+        script="node scripts/iphone-app-factory/ci-trigger-gate.mjs"
+    ]
+    screenshot_evidence_gate [
+        label="Screenshot Evidence Gate",
+        shape=parallelogram,
+        retry_target="ios_quality_gate",
+        script="node scripts/iphone-app-factory/ios-screenshot-manifest-gate.mjs --manifest reports/ios/screenshots/manifest.json --phase after --require-before-after false"
+    ]
+    appium_exploratory_gate [
+        label="Appium Exploratory Gate",
+        shape=parallelogram,
+        retry_target="ios_quality_gate",
+        script="node scripts/iphone-app-factory/appium-report-gate.mjs"
+    ]
+    validation_review [
+        label="Validation Review",
+        shape=parallelogram,
+        retry_target="ios_quality_gate",
+        timeout="3600s",
+        script="node scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/feature-validation-review.md --stage feature-validation-review --out .workflow/existing-app-feature/codex/feature-validation-review.json"
+    ]
+
+    start -> ios_quality_gate
+    ios_quality_gate -> ci_trigger_gate [condition="outcome=succeeded"]
+    ios_quality_gate -> ios_quality_gate [label="Fix Build/CI"]
+    ci_trigger_gate -> screenshot_evidence_gate [condition="outcome=succeeded"]
+    ci_trigger_gate -> ios_quality_gate [label="Trigger CI"]
+    screenshot_evidence_gate -> appium_exploratory_gate [condition="outcome=succeeded"]
+    screenshot_evidence_gate -> ios_quality_gate [label="Capture Screenshots"]
+    appium_exploratory_gate -> validation_review [condition="outcome=succeeded"]
+    appium_exploratory_gate -> ios_quality_gate [label="Fix Appium Evidence"]
+    validation_review -> exit [condition="outcome=succeeded"]
+    validation_review -> ios_quality_gate [label="Fix Validation"]
+}

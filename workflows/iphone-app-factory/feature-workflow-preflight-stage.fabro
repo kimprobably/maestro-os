@@ -1,0 +1,32 @@
+digraph FeatureWorkflowPreflightStage {
+    graph [
+        goal="Validate reusable existing-app feature workflow contracts and Railway execution requirements",
+        persona="existing-app-feature-preflight",
+        inputs="fabro_server,use_mobbin_mcp,app_dir",
+        outputs="contract.artifact,contract.gate,contract.next_action,contract.failure_classification",
+        secret_policy="no secrets; do not print environment variables or credential values",
+        model_stylesheet="* { backend: cli; provider: openai; model: gpt-5.3-codex-spark; reasoning_effort: low; }"
+    ]
+    rankdir=LR
+
+    start [shape=Mdiamond, label="Start"]
+    exit  [shape=Msquare, label="Exit"]
+
+    validate_feature_workflow [
+        label="Validate Feature Workflow",
+        shape=parallelogram,
+        retry_target="validate_feature_workflow",
+        script="mkdir -p .workflow/existing-app-feature/preflight; { node --test scripts/iphone-app-factory/test-existing-app-feature-workflow-contract.mjs && node scripts/iphone-app-factory/ux-studio-preflight.mjs --server https://fabro-maestro-production.up.railway.app/api/v1 --expected-control-plane railway; } > .workflow/existing-app-feature/preflight/workflow-preflight.log 2>&1 && node -e \"const fs=require('fs'); const report={ok:true, artifact:'.workflow/existing-app-feature/preflight/workflow-preflight.json', log:'.workflow/existing-app-feature/preflight/workflow-preflight.log', gate:'feature-workflow-contract', next_action:'context-intake-child', failure_classification:'none'}; fs.writeFileSync(report.artifact, JSON.stringify(report,null,2)+'\\n');\""
+    ]
+
+    emit_contract [
+        label="Emit Contract",
+        shape=note,
+        prompt="Read `.workflow/existing-app-feature/preflight/workflow-preflight.json`. Respond with JSON only: {\"context_updates\":{\"contract.artifact\":\".workflow/existing-app-feature/preflight/workflow-preflight.json\",\"contract.gate\":\"feature-workflow-contract\",\"contract.next_action\":\"context-intake-child\",\"contract.failure_classification\":\"none\"}}"
+    ]
+
+    start -> validate_feature_workflow
+    validate_feature_workflow -> emit_contract [condition="outcome=succeeded"]
+    validate_feature_workflow -> validate_feature_workflow [label="Fix Workflow Contract"]
+    emit_contract -> exit
+}

@@ -1,0 +1,42 @@
+digraph FeatureExistingAppAuditStage {
+    graph [
+        goal="Audit the current existing app implementation before feature changes",
+        persona="existing-app-feature-auditor",
+        inputs="repo_url,base_branch,run_branch,app_dir,app_name,bundle_id",
+        outputs="contract.artifact,contract.gate,contract.next_action,contract.failure_classification,existing_app_audit",
+        secret_policy="no secrets; do not print environment variables or credential values",
+        model_stylesheet="* { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }"
+    ]
+    rankdir=LR
+
+    start [shape=Mdiamond, label="Start"]
+    exit  [shape=Msquare, label="Exit"]
+
+    checkout_existing_app [
+        label="Checkout Existing App",
+        shape=parallelogram,
+        retry_target="checkout_existing_app",
+        script="node scripts/iphone-app-factory/checkout-existing-app.mjs"
+    ]
+    write_existing_app_audit [
+        label="Write Existing App Audit",
+        shape=parallelogram,
+        retry_target="write_existing_app_audit",
+        timeout="3600s",
+        script="node scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/feature-existing-app-audit.md --stage feature-existing-app-audit --out .workflow/existing-app-feature/codex/feature-existing-app-audit.json"
+    ]
+    validate_existing_app_audit [
+        label="Validate Existing App Audit",
+        shape=parallelogram,
+        retry_target="write_existing_app_audit",
+        script="node scripts/iphone-app-factory/existing-app-audit-gate.mjs"
+    ]
+
+    start -> checkout_existing_app
+    checkout_existing_app -> write_existing_app_audit [condition="outcome=succeeded"]
+    checkout_existing_app -> checkout_existing_app [label="Fix Checkout"]
+    write_existing_app_audit -> validate_existing_app_audit [condition="outcome=succeeded"]
+    write_existing_app_audit -> write_existing_app_audit [label="Rewrite Audit"]
+    validate_existing_app_audit -> exit [condition="outcome=succeeded"]
+    validate_existing_app_audit -> write_existing_app_audit [label="Fix Audit Contract"]
+}
