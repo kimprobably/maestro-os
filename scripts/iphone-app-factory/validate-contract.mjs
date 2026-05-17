@@ -236,7 +236,6 @@ const featureDaytona = requireFile("workflows/iphone-app-factory/iterate-existin
 for (const token of [
   "feature_workflow_preflight",
   "context_intake_child",
-  "research_audit_fanout",
   "research_child",
   "existing_app_audit_child",
   "feature_spec_child",
@@ -244,16 +243,14 @@ for (const token of [
   "implementation_child",
   "validation_child",
   "publish_postmortem_child",
-  "join_policy=\"wait_all\"",
 ]) {
   if (!featureGraph.includes(token)) failures.push(`feature workflow missing ${token}`);
 }
 for (const [source, target] of [
   ["feature_workflow_preflight", "context_intake_child"],
-  ["context_intake_child", "research_audit_fanout"],
-  ["research_child", "research_audit_join"],
-  ["existing_app_audit_child", "research_audit_join"],
-  ["research_audit_join", "feature_spec_child"],
+  ["context_intake_child", "research_child"],
+  ["research_child", "existing_app_audit_child"],
+  ["existing_app_audit_child", "feature_spec_child"],
   ["feature_spec_child", "implementation_plan_child"],
   ["implementation_plan_child", "implementation_child"],
   ["implementation_child", "validation_child"],
@@ -272,7 +269,6 @@ for (const label of [
   "Fix Context",
   "Research Context Fix",
   "Audit Context Fix",
-  "Fix Research/Audit Inputs",
   "Fix Feature Spec",
   "Fix Mapping",
   "Fix Implementation",
