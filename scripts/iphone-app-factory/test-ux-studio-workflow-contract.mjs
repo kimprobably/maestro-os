@@ -37,6 +37,7 @@ const requiredWorkflowTokens = [
   "implement_screen_flows",
   "verify_screen_flows",
   "gate_screen_flows",
+  "publish_existing_app_branch",
   "screenshot_evidence_gate",
   "ios_runtime_evidence_preflight",
   "appium_exploratory_gate",
@@ -87,6 +88,7 @@ const requiredScriptFiles = [
   "scripts/iphone-app-factory/reference-pack-gate.mjs",
   "scripts/iphone-app-factory/ios-screenshot-manifest-gate.mjs",
   "scripts/iphone-app-factory/ios-runtime-evidence-preflight.mjs",
+  "scripts/iphone-app-factory/publish-existing-app-branch.mjs",
   "scripts/iphone-app-factory/design-tournament-gate.mjs",
   "scripts/iphone-app-factory/ux-postmortem-gate.mjs",
   "scripts/iphone-app-factory/ux-final-review-gate.mjs",
@@ -248,6 +250,17 @@ test("UX studio implementation retry prompts consume verifier feedback", () => {
       `Expected ${label} implementation prompt to clear stale verifier decisions after addressed retries`,
     );
   }
+
+  assert.match(
+    screenFlowsPrompt,
+    /Known deferred: hosted macOS\/iOS Appium simulator xcode screenshot validation remains pending/i,
+    "Expected screen-flow implementation prompt to encode the hosted iOS screenshot deferral contract",
+  );
+  assert.match(
+    screenFlowsPrompt,
+    /Avoid stale gate-trigger phrases/i,
+    "Expected screen-flow implementation prompt to avoid evidence text that trips the phase gate after completed retries",
+  );
 });
 
 test("UX studio verifier prompt resolves pending verifier notes before gates", () => {
@@ -278,6 +291,11 @@ test("UX studio verifier prompt resolves pending verifier notes before gates", (
     /Keep only the current decision under `## Verifier notes`/i,
     "Expected verifier prompt to avoid stale retry/rejection history under verifier notes",
   );
+  assert.match(
+    verifyPrompt,
+    /Do not reject solely because the Daytona worker cannot run iOS screenshot\/Appium capture/i,
+    "Expected verifier prompt to accept hosted iOS runtime deferrals when implementation evidence is otherwise concrete",
+  );
 });
 
 test("UX studio routes hosted iOS runtime blockers to postmortem without failed child outcomes", () => {
@@ -294,8 +312,14 @@ test("UX studio routes hosted iOS runtime blockers to postmortem without failed 
   );
   assert.match(
     graph,
-    /ios_runtime_evidence_preflight -> postmortem_learning_capture \[condition="outcome=succeeded", label="iOS Runtime Blocker"\]/,
+    /publish-existing-app-branch\.mjs/,
+    "Expected hosted iOS runtime blocker path to publish the nested existing-app branch before postmortem",
   );
+  assert.match(
+    graph,
+    /ios_runtime_evidence_preflight -> publish_existing_app_branch \[condition="outcome=succeeded", label="iOS Runtime Blocker"\]/,
+  );
+  assert.match(graph, /publish_existing_app_branch -> postmortem_learning_capture \[condition="outcome=succeeded"\]/);
   assert.match(
     graph,
     /ios_runtime_evidence_preflight -> postmortem_learning_capture \[label="Unexpected iOS Preflight Failure"\]/,

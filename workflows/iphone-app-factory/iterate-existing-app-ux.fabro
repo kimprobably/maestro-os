@@ -255,6 +255,13 @@ digraph IterateExistingAppUX {
         retry_target="postmortem_learning_capture",
         script="node scripts/iphone-app-factory/ios-runtime-evidence-preflight.mjs --success-on-blocker --manifest reports/ios/screenshots/manifest.json"
     ]
+    publish_existing_app_branch [
+        label="Publish Existing App Branch",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="publish_existing_app_branch",
+        script="node scripts/iphone-app-factory/publish-existing-app-branch.mjs"
+    ]
     appium_exploratory_gate [
         label="Appium Exploratory Gate",
         shape=parallelogram,
@@ -424,8 +431,10 @@ digraph IterateExistingAppUX {
     gate_screen_flows -> implement_screen_flows [label="Fix Screen Flows"]
     screenshot_evidence_review -> ios_runtime_evidence_preflight [condition="outcome=succeeded"]
     screenshot_evidence_review -> implement_screen_flows [label="Screenshot Review Fix"]
-    ios_runtime_evidence_preflight -> postmortem_learning_capture [condition="outcome=succeeded", label="iOS Runtime Blocker"]
+    ios_runtime_evidence_preflight -> publish_existing_app_branch [condition="outcome=succeeded", label="iOS Runtime Blocker"]
     ios_runtime_evidence_preflight -> postmortem_learning_capture [label="Unexpected iOS Preflight Failure"]
+    publish_existing_app_branch -> postmortem_learning_capture [condition="outcome=succeeded"]
+    publish_existing_app_branch -> publish_existing_app_branch [label="Retry App Branch Publish"]
     screenshot_evidence_gate -> appium_exploratory_gate [condition="outcome=succeeded"]
     screenshot_evidence_gate -> implement_screen_flows [label="Screenshot Fix"]
     appium_exploratory_gate -> ios_quality_gate [condition="outcome=succeeded"]

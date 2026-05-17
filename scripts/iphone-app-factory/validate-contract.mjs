@@ -141,6 +141,7 @@ for (const token of [
     "implement_screen_flows",
     "verify_screen_flows",
     "gate_screen_flows",
+    "publish_existing_app_branch",
     "screenshot_evidence_gate",
     "appium_exploratory_gate",
     "ios_quality_gate",
@@ -179,7 +180,10 @@ for (const prompt of [
     failures.push(`UX studio workflow must run Codex CLI for ${prompt}`);
   }
 }
-if (/provider:\s*openai/.test(uxGraph) || /provider:\s*anthropic;\s*model:\s*claude-sonnet/.test(uxGraph)) {
+if (!/\*\s+\{\s*backend:\s*cli;\s*provider:\s*openai;\s*model:\s*gpt-5\.3-codex-spark;/.test(uxGraph)) {
+  failures.push("UX studio workflow must route file-writing stages through CLI OpenAI agents");
+}
+if (/provider:\s*openrouter/.test(uxGraph) || /provider:\s*anthropic;\s*model:\s*claude-sonnet/.test(uxGraph)) {
   failures.push("UX studio workflow must not require non-configured Railway LLM providers for file-writing stages");
 }
 for (const prompt of [
@@ -211,9 +215,14 @@ for (const script of [
     "ux-studio-preflight.mjs",
     "checkout-existing-app.mjs",
     "run-codex-prompt.mjs",
+    "ensure-mobbin-research-artifact.mjs",
     "design-corpus.mjs",
     "reference-pack-gate.mjs",
     "ios-screenshot-manifest-gate.mjs",
+    "ios-runtime-evidence-preflight.mjs",
+    "appium-report-gate.mjs",
+    "ios-ci-gate.mjs",
+    "publish-existing-app-branch.mjs",
     "design-tournament-gate.mjs",
     "ux-postmortem-gate.mjs",
     "ux-final-review-gate.mjs",

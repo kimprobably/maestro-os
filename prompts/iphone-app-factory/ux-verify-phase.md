@@ -30,6 +30,8 @@ Check that:
 - Mobbin, Pageflows, competitor screenshots, competitor copy, brand identity, and proprietary interaction sequences are treated as abstract references only and are not copied
 - no secrets, credentials, tokens, cookies, private keys, signed URLs, customer data, or environment values appear in evidence or logs
 
+For `screen-flows`, hosted runtime evidence is allowed to remain deferred only when implementation evidence is otherwise concrete and the evidence contains a `Known deferred` item explicitly naming hosted macOS/iOS Appium simulator xcode screenshot validation. Do not reject solely because the Daytona worker cannot run iOS screenshot/Appium capture. Reject when code, identifiers, screen mappings, behavior preservation, or non-runtime evidence are incomplete.
+
 ## Required Update
 
 Update the same evidence file by replacing the current verifier decision under `## Verifier notes`.
