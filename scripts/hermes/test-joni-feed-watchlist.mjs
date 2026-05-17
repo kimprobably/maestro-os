@@ -145,8 +145,15 @@ test("joni capture preserves source ids so feed snapshots can be scored", async 
             content: "Founder-led GTM needs operating loops, not more prompts.",
             linkedinUrl: "https://www.linkedin.com/feed/update/urn:li:activity:new",
             author: { name: "High Signal", linkedinUrl: "https://www.linkedin.com/in/high-signal" },
-            postedAt: { date: "2026-05-17", timestamp: 1778976000000 },
+            postedAt: { date: "2026-05-17T12:00:00Z", timestamp: 1779019200000 },
             engagement: { likes: 140, comments: 35, shares: 7 },
+          }, {
+            id: "old-viral-post",
+            content: "Old viral post should not displace current feed signal.",
+            linkedinUrl: "https://www.linkedin.com/feed/update/urn:li:activity:old-viral",
+            author: { name: "High Signal", linkedinUrl: "https://www.linkedin.com/in/high-signal" },
+            postedAt: { date: "2025-05-17T12:00:00Z", timestamp: 1747483200000 },
+            engagement: { likes: 10000, comments: 1000, shares: 500 },
           }],
         },
       },
@@ -175,12 +182,28 @@ test("joni capture preserves source ids so feed snapshots can be scored", async 
 
   const record = runScript(["record-posts", "--db", db, "--posts", path.join(root, ".workflow/joni-linkedin/daily/posts.jsonl")]);
   assert.equal(record.status, 0, record.stderr);
-  const score = runScript(["score", "--db", db, "--out-dir", path.join(root, ".workflow/joni-linkedin/daily"), "--limit", "5"]);
+  const score = runScript([
+    "score",
+    "--db",
+    db,
+    "--out-dir",
+    path.join(root, ".workflow/joni-linkedin/daily"),
+    "--limit",
+    "5",
+    "--since-days",
+    "30",
+    "--now",
+    "2026-05-17T15:00:00Z",
+  ]);
   assert.equal(score.status, 0, score.stderr);
 
   const candidates = JSON.parse(await readFile(path.join(root, ".workflow/joni-linkedin/daily/feed-candidates.json"), "utf8"));
   assert.equal(candidates.candidates.length, 1);
   assert.equal(candidates.candidates[0].source_id, sourceId);
+  assert.equal(candidates.candidates[0].linkedin_url, "https://www.linkedin.com/feed/update/urn:li:activity:new");
+  assert.equal(candidates.since_days, 30);
   assert.ok(candidates.candidates[0].score > candidates.candidates[0].engagement.weighted_total);
-  assert.match(await readFile(path.join(root, ".workflow/joni-linkedin/daily/feed-candidates.md"), "utf8"), /High Signal/);
+  const markdown = await readFile(path.join(root, ".workflow/joni-linkedin/daily/feed-candidates.md"), "utf8");
+  assert.match(markdown, /High Signal/);
+  assert.doesNotMatch(markdown, /old viral/i);
 });

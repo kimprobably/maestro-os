@@ -426,6 +426,9 @@ async function score() {
   const db = argValue("--db", DEFAULT_DB);
   const outDir = argValue("--out-dir", ".workflow/joni-linkedin/daily");
   const limit = intArg("--limit", 25);
+  const sinceDays = intArg("--since-days", 30);
+  const now = parseTime(argValue("--now", "")) || Date.now();
+  const cutoff = sinceDays > 0 ? now - sinceDays * 24 * 60 * 60 * 1000 : null;
   await ensureDb(db);
   await mkdir(outDir, { recursive: true });
   const rows = queryJson(db, `
@@ -452,8 +455,11 @@ LEFT JOIN joni_sources s ON s.id = p.source_id
 GROUP BY p.id
 ORDER BY captured_at DESC;
 `);
-  const now = Date.now();
-  const candidates = rows.map((row) => {
+  const candidates = rows.filter((row) => {
+    if (!cutoff) return true;
+    const postedAt = parseTime(row.posted_at);
+    return postedAt !== null && postedAt >= cutoff;
+  }).map((row) => {
     const baseline = Number(row.csv_last_likes || 0) + Number(row.csv_last_comments || 0) * 4;
     const weightedTotal = Number(row.weighted_total || 0);
     const postedAt = parseTime(row.posted_at);
@@ -491,6 +497,8 @@ ORDER BY captured_at DESC;
 
   const payload = {
     generated_at: new Date().toISOString(),
+    since_days: sinceDays,
+    cutoff_at: cutoff ? new Date(cutoff).toISOString() : "",
     candidate_count: candidates.length,
     candidates,
   };
@@ -504,6 +512,7 @@ function markdownCandidates(payload) {
     "# Joni Feed Candidates",
     "",
     `Generated at: ${payload.generated_at}`,
+    payload.since_days > 0 ? `Recency window: last ${payload.since_days} days` : "Recency window: all captured posts",
     `Candidates: ${payload.candidate_count}`,
     "",
   ];

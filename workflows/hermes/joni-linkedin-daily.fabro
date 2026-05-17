@@ -71,7 +71,7 @@ digraph JoniLinkedInDaily {
         shape=parallelogram,
         goal_gate=true,
         retry_target="score_feed_candidates",
-        script="node scripts/hermes/joni-feed-watchlist.mjs score --db '{{ inputs.feed_db|default('/data/.hermes/profiles/joni/state/linkedin-feed/joni-linkedin-feed.sqlite') }}' --out-dir .workflow/joni-linkedin/daily --limit '{{ inputs.candidate_limit|default('25') }}'"
+        script="node scripts/hermes/joni-feed-watchlist.mjs score --db '{{ inputs.feed_db|default('/data/.hermes/profiles/joni/state/linkedin-feed/joni-linkedin-feed.sqlite') }}' --out-dir .workflow/joni-linkedin/daily --limit '{{ inputs.candidate_limit|default('25') }}' --since-days '{{ inputs.since_days|default('30') }}'"
     ]
 
     ai_pattern_review [
