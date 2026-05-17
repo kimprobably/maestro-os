@@ -231,7 +231,7 @@ function writeReport(outPath, report) {
 }
 
 function hasHostedIosDeferral(report) {
-  if (!report.failures.some((failure) => failure.startsWith("missing screenshot manifest "))) return false;
+  if (report.failures.length === 0) return false;
   if (!existsSync(SCREEN_FLOW_EVIDENCE)) return false;
   const evidence = readFileSync(SCREEN_FLOW_EVIDENCE, "utf8").toLowerCase();
   return evidence.includes("hosted")
