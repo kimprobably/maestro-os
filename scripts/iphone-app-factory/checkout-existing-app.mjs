@@ -70,6 +70,20 @@ function run(command, args, options = {}) {
   return (result.stdout || "").trim();
 }
 
+function runAllowFailure(command, args, options = {}) {
+  return spawnSync(command, args, {
+    cwd: options.cwd,
+    encoding: "utf8",
+    stdio: ["ignore", "pipe", "pipe"],
+    timeout: options.timeout || 120000,
+  });
+}
+
+function remoteBranchExists(repoUrl, authArgs, branch) {
+  const result = runAllowFailure("git", [...authArgs, "ls-remote", "--exit-code", "--heads", repoUrl, branch]);
+  return result.status === 0 && Boolean((result.stdout || "").trim());
+}
+
 const repoUrl = argValue("--repo-url", process.env.UX_REPO_URL || "");
 const baseBranch = argValue("--base-branch", process.env.UX_BASE_BRANCH || "main");
 const runBranch = argValue("--run-branch", process.env.UX_RUN_BRANCH || "ux-studio/manual");
@@ -84,10 +98,16 @@ if (!runBranch || /{{|}}/.test(runBranch)) failures.push("run_branch must be con
 
 let sha = null;
 let action = "none";
+let checkoutSource = "base_branch";
 try {
   if (failures.length === 0) {
     const authArgs = githubAuthArgs(repoUrl);
     const fullAppDir = resolve(appDir);
+    const hasRemoteRunBranch = remoteBranchExists(repoUrl, authArgs, runBranch);
+    const cloneBranch = hasRemoteRunBranch ? runBranch : baseBranch;
+    const checkoutRef = hasRemoteRunBranch ? `origin/${runBranch}` : `origin/${baseBranch}`;
+    checkoutSource = hasRemoteRunBranch ? "run_branch" : "base_branch";
+
     if (existsSync(appDir) && !existsSync(`${appDir}/.git`)) {
       const entries = readdirSync(appDir).filter((entry) => entry !== ".DS_Store");
       if (entries.length > 0) throw new Error("app_dir exists but is not a git checkout");
@@ -95,14 +115,19 @@ try {
 
     if (!existsSync(`${appDir}/.git`)) {
       mkdirSync(dirname(fullAppDir), { recursive: true });
-      run("git", [...authArgs, "clone", "--branch", baseBranch, "--depth", "1", repoUrl, appDir]);
+      run("git", [...authArgs, "clone", "--branch", cloneBranch, "--depth", "1", repoUrl, appDir]);
       action = "cloned";
     } else {
       run("git", [...authArgs, "fetch", "origin", baseBranch, "--depth", "1"], { cwd: appDir });
+      if (hasRemoteRunBranch) {
+        run("git", [...authArgs, "fetch", "origin", `refs/heads/${runBranch}:refs/remotes/origin/${runBranch}`, "--depth", "1"], {
+          cwd: appDir,
+        });
+      }
       action = "updated";
     }
 
-    run("git", ["checkout", "-B", runBranch, `origin/${baseBranch}`], { cwd: appDir });
+    run("git", ["checkout", "-B", runBranch, checkoutRef], { cwd: appDir });
     sha = run("git", ["rev-parse", "HEAD"], { cwd: appDir });
   }
 } catch (error) {
@@ -115,6 +140,7 @@ const report = {
   repo_url: redactUrl(repoUrl),
   base_branch: baseBranch,
   run_branch: runBranch,
+  checkout_source: checkoutSource,
   app_dir: appDir,
   sha,
   failures,

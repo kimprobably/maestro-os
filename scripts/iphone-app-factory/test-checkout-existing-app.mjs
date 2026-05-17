@@ -69,6 +69,37 @@ test("checkout-existing-app clones source repo into relative app_dir and creates
   });
 });
 
+test("checkout-existing-app resumes from existing remote run branch when present", () => {
+  withTempDir((dir) => {
+    const source = createFixtureRepo(dir);
+    run("git", ["checkout", "-b", "ux-studio/test"], source);
+    writeFileSync(join(source, "BRANCH.md"), "existing branch work\n");
+    run("git", ["add", "BRANCH.md"], source);
+    run("git", ["commit", "-m", "existing run branch"], source);
+    const branchSha = run("git", ["rev-parse", "HEAD"], source);
+    run("git", ["checkout", "main"], source);
+
+    const result = runCheckout(dir, [
+      "--repo-url",
+      source,
+      "--base-branch",
+      "main",
+      "--run-branch",
+      "ux-studio/test",
+      "--app-dir",
+      "apps/waketask-ios",
+    ]);
+
+    assert.equal(result.status, 0, result.stderr);
+    const report = JSON.parse(result.stdout);
+    assert.equal(report.ok, true);
+    assert.equal(report.checkout_source, "run_branch");
+    assert.equal(report.sha, branchSha);
+    assert.ok(existsSync(join(dir, "apps/waketask-ios/BRANCH.md")));
+    assert.equal(run("git", ["branch", "--show-current"], join(dir, "apps/waketask-ios")), "ux-studio/test");
+  });
+});
+
 test("checkout-existing-app rejects current directory app_dir", () => {
   withTempDir((dir) => {
     const result = runCheckout(dir, [
