@@ -11,9 +11,10 @@ Required human/admin steps:
 3. Enable Socket Mode.
 4. Create an app-level token with the `connections:write` scope.
 5. Install the app to the workspace.
-6. Create or clone a separate Railway service for the joni gateway.
-7. Store the Joni-specific bot token and app-level token in that service.
-8. Restrict allowed users and channels before making it live.
+6. Invite the bot to every Slack channel it should answer in, or grant the generated `channels:join` scope and let the operator join public channels by API.
+7. Create or clone a separate Railway service for the joni gateway.
+8. Store the Joni-specific bot token and app-level token in that service.
+9. Restrict allowed users and channels before making it live.
 
 Minimum Railway variables for the dedicated bot service:
 

@@ -178,8 +178,11 @@ function slackManifest(request) {
         bot: [
           "app_mentions:read",
           "channels:history",
+          "channels:join",
           "channels:read",
           "chat:write",
+          "groups:history",
+          "groups:read",
           "im:history",
           "im:read",
           "im:write",
@@ -192,6 +195,7 @@ function slackManifest(request) {
         bot_events: [
           "app_mention",
           "message.channels",
+          "message.groups",
           "message.im",
         ],
       },
@@ -223,9 +227,10 @@ Required human/admin steps:
 3. Enable Socket Mode.
 4. Create an app-level token with the \`connections:write\` scope.
 5. Install the app to the workspace.
-6. Create or clone a separate Railway service for the ${request.profile} gateway.
-7. Store the ${request.name}-specific bot token and app-level token in that service.
-8. Restrict allowed users and channels before making it live.
+6. Invite the bot to every Slack channel it should answer in, or grant the generated \`channels:join\` scope and let the operator join public channels by API.
+7. Create or clone a separate Railway service for the ${request.profile} gateway.
+8. Store the ${request.name}-specific bot token and app-level token in that service.
+9. Restrict allowed users and channels before making it live.
 
 Minimum Railway variables for the dedicated bot service:
 

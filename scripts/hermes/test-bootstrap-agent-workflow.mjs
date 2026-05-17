@@ -78,9 +78,12 @@ test("agent bootstrap materializes profile, registry, name pool, Slack manifest,
   );
   assert.equal(manifest.display_information.name, "Nina");
   assert.ok(manifest.oauth_config.scopes.bot.includes("app_mentions:read"));
+  assert.ok(manifest.oauth_config.scopes.bot.includes("channels:join"));
+  assert.ok(manifest.oauth_config.scopes.bot.includes("groups:read"));
   assert.deepEqual(manifest.settings.event_subscriptions.bot_events, [
     "app_mention",
     "message.channels",
+    "message.groups",
     "message.im",
   ]);
   assert.equal(JSON.stringify(manifest).includes("xox"), false);
@@ -153,9 +156,12 @@ test("agent bootstrap generates Slack pack for existing profile without rewritin
   );
   assert.equal(manifest.display_information.name, "Joni");
   assert.ok(manifest.oauth_config.scopes.bot.includes("app_mentions:read"));
+  assert.ok(manifest.oauth_config.scopes.bot.includes("channels:join"));
+  assert.ok(manifest.oauth_config.scopes.bot.includes("groups:read"));
   assert.deepEqual(manifest.settings.event_subscriptions.bot_events, [
     "app_mention",
     "message.channels",
+    "message.groups",
     "message.im",
   ]);
   assert.equal(JSON.stringify(manifest).includes("xox"), false);
