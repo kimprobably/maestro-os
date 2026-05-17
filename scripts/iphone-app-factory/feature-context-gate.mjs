@@ -48,7 +48,7 @@ const text = existsSync(markdownPath) ? readFileSync(markdownPath, "utf8") : "";
 for (const heading of ["# Feature Context Intake", "## Product Goal", "## Required Capabilities", "## Acceptance Criteria", "## Non-Goals", "## Source List", "## No Secrets"]) {
   if (!text.includes(heading)) failures.push(`${markdownPath} missing heading ${heading}`);
 }
-if (/sk-|xox[baprs]-|xapp-|Bearer\s+[A-Za-z0-9._~+/=-]{12,}|password\s*[:=]|token\s*[:=]/i.test(text)) {
+if (/\bsk[-_][A-Za-z0-9][A-Za-z0-9_-]{10,}|xox[baprs]-|xapp-|Bearer\s+[A-Za-z0-9._~+/=-]{12,}|password\s*[:=]|token\s*[:=]/i.test(text)) {
   failures.push(`${markdownPath} contains secret-looking material`);
 }
 
