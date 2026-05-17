@@ -826,13 +826,13 @@
   },
   "web_url": "https://fabro-maestro-production.up.railway.app/runs/01KRV7XXSKVNR9MAMNVDETCP6P",
   "start": {
-    "start_time": "2026-05-17T15:12:41.353566243Z"
+    "start_time": "2026-05-17T15:16:36.966120316Z"
   },
   "status": {
     "kind": "running"
   },
   "status_updated_at": "2026-05-17T15:12:35.180601496Z",
-  "last_event_at": "2026-05-17T15:16:33.456074877Z",
+  "last_event_at": "2026-05-17T15:19:45.385053916Z",
   "pending_control": null,
   "checkpoints": [
     {
@@ -1577,13 +1577,559 @@
       "diff": {}
     },
     {
-      "seq": 0,
+      "seq": 92,
       "checkpoint": {
-        "timestamp": "2026-05-17T15:16:33.539133792Z",
+        "timestamp": "2026-05-17T15:16:36.960171380Z",
         "current_node": "context_intake_child",
         "completed_nodes": [
           "start",
           "feature_workflow_preflight",
+          "context_intake_child"
+        ],
+        "node_retries": {},
+        "context_values": {
+          "internal.node_visit_count": 1,
+          "graph.model_stylesheet": "\n            *       { backend: cli; provider: openai; model: gpt-5.3-codex-spark; reasoning_effort: low; }\n            .spec   { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            .build  { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            .review { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n        ",
+          "internal.work_dir": "/home/daytona/workspace/maestro-os",
+          "graph.inputs": "repo_url,base_branch,run_branch,app_name,bundle_id,app_dir,app_domain,target_audience,feature_goal,required_capabilities,context_paths,max_competitors,use_mobbin_mcp,use_design_corpus,ios_validation_mode,allow_macos_deferred,fabro_server",
+          "last_stage": "emit_contract",
+          "internal.retry_count.start": 0,
+          "outcome": "failed",
+          "internal.retry_count.context_intake_child": 0,
+          "response.emit_contract": "[Simulated] Response for stage: emit_contract",
+          "thread.feature_workflow_preflight.current_node": "context_intake_child",
+          "failure_signature": "context_intake_child|deterministic|child engine error: engine error: deterministic failure cycle detected: signature validate_context_pack|deterministic|script failed with exit code: <n> ## output { \"ok\": false,\"root\": \".workflow/existing-app-feature\",\"packpath\": \".workflow/",
+          "graph.rankdir": "LR",
+          "internal.thread_id": "feature_workflow_preflight",
+          "thread.start.current_node": "feature_workflow_preflight",
+          "current_node": "context_intake_child",
+          "internal.fidelity": "compact",
+          "command.output": "blob://sha256/12ae32cb1ec02d01eda3581b127c1fee3b0dc53572ed6baf239721a03d82e126",
+          "graph.artifact_root": ".workflow/existing-app-feature",
+          "graph.persona": "existing-iphone-app-feature-orchestrator",
+          "graph.retry_target": "feature_spec_child",
+          "failure_class": "deterministic",
+          "graph.default_max_retries": "2",
+          "internal.retry_count.feature_workflow_preflight": 0,
+          "internal.run_id": "01KRV7XXSKVNR9MAMNVDETCP6P",
+          "graph.outputs": "context_pack,research_pack,existing_app_audit,feature_spec,implementation_plan,implementation_evidence,validation_report,publish_handoff,postmortem",
+          "last_response": "[Simulated] Response for stage: emit_contract",
+          "graph.goal": "Implement WakeTask's task-based alarm feature pack through the reusable existing-app feature workflow",
+          "graph.secret_policy": "no secrets; credential checks are presence-only; do not print environment variables or credential values"
+        },
+        "node_outcomes": {
+          "feature_workflow_preflight": {
+            "status": "succeeded",
+            "context_updates": {
+              "response.emit_contract": "[Simulated] Response for stage: emit_contract",
+              "last_response": "[Simulated] Response for stage: emit_contract",
+              "command.output": "blob://sha256/12ae32cb1ec02d01eda3581b127c1fee3b0dc53572ed6baf239721a03d82e126",
+              "last_stage": "emit_contract"
+            },
+            "notes": "Child completed at cycle 3",
+            "usage": null
+          },
+          "start": {
+            "status": "succeeded",
+            "usage": null
+          },
+          "context_intake_child": {
+            "status": "failed",
+            "failure": {
+              "message": "Child engine error: Engine error: deterministic failure cycle detected: signature validate_context_pack|deterministic|script failed with exit code: <n> ## output { \"ok\": false,\"root\": \".workflow/existing-app-feature\",\"packpath\": \".workflow/existing-app-feature/context/context-pack.json\",\"markdownpath\": \".workflow/existing-app-feature/context-intake.md\",\"fa repeated 3 times (limit 3)",
+              "category": "deterministic"
+            },
+            "usage": null
+          }
+        },
+        "next_node_id": "context_intake_child",
+        "git_commit_sha": "4c06b59816d80ce85c52beddebafe034d1cd5fd6",
+        "loop_failure_signatures": {
+          "context_intake_child|deterministic|child engine error: engine error: deterministic failure cycle detected: signature validate_context_pack|deterministic|script failed with exit code: <n> ## output { \"ok\": false,\"root\": \".workflow/existing-app-feature\",\"packpath\": \".workflow/": 1
+        },
+        "node_visits": {
+          "context_intake_child": 1,
+          "start": 1,
+          "feature_workflow_preflight": 1
+        }
+      },
+      "diff": {
+        "summary": {
+          "files_changed": 0,
+          "additions": 0,
+          "deletions": 0
+        }
+      }
+    },
+    {
+      "seq": 101,
+      "checkpoint": {
+        "timestamp": "2026-05-17T15:16:36.966337646Z",
+        "current_node": "start",
+        "completed_nodes": [
+          "start"
+        ],
+        "node_retries": {},
+        "context_values": {
+          "internal.retry_count.context_intake_child": 0,
+          "failure_signature": "",
+          "thread.context_intake_child.current_node": "context_intake_child",
+          "internal.parent_preamble": "Goal: Implement WakeTask's task-based alarm feature pack through the reusable existing-app feature workflow\n\n## Completed stages\n- **feature_workflow_preflight**: succeeded\n- **context_intake_child**: failed\n\n## Context\n- failure_class: deterministic\n- failure_signature: context_intake_child|deterministic|child engine error: engine error: deterministic failure cycle detected: signature validate_context_pack|deterministic|script failed with exit code: <n> ## output { \"ok\": false,\"root\": \".workflow/existing-app-feature\",\"packpath\": \".workflow/\n",
+          "graph.persona": "existing-app-feature-context",
+          "response.emit_contract": "[Simulated] Response for stage: emit_contract",
+          "failure_class": "",
+          "graph.artifact_root": ".workflow/existing-app-feature",
+          "thread.start.current_node": "feature_workflow_preflight",
+          "graph.secret_policy": "no secrets; do not print environment variables or credential values",
+          "command.output": "",
+          "last_stage": "emit_contract",
+          "thread.feature_workflow_preflight.current_node": "context_intake_child",
+          "graph.inputs": "app_name,target_audience,feature_goal,required_capabilities,context_paths",
+          "internal.thread_id": null,
+          "graph.goal": "Turn run-specific app context into a reusable feature context pack",
+          "graph.outputs": "contract.artifact,contract.gate,contract.next_action,contract.failure_classification,context_pack",
+          "internal.retry_count.feature_workflow_preflight": 0,
+          "graph.rankdir": "LR",
+          "internal.node_visit_count": 1,
+          "internal.run_id": "01KRV7XXSKVNR9MAMNVDETCP6P",
+          "graph.retry_target": "feature_spec_child",
+          "last_response": "[Simulated] Response for stage: emit_contract",
+          "current_node": "start",
+          "internal.retry_count.start": 0,
+          "outcome": "succeeded",
+          "internal.work_dir": "/home/daytona/workspace/maestro-os",
+          "graph.default_max_retries": "2",
+          "internal.fidelity": "compact",
+          "graph.model_stylesheet": "* { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }"
+        },
+        "node_outcomes": {
+          "start": {
+            "status": "succeeded",
+            "usage": null
+          }
+        },
+        "next_node_id": "write_context_pack",
+        "node_visits": {
+          "start": 1
+        }
+      },
+      "diff": {}
+    },
+    {
+      "seq": 107,
+      "checkpoint": {
+        "timestamp": "2026-05-17T15:17:37.249463047Z",
+        "current_node": "write_context_pack",
+        "completed_nodes": [
+          "start",
+          "write_context_pack"
+        ],
+        "node_retries": {},
+        "context_values": {
+          "response.emit_contract": "[Simulated] Response for stage: emit_contract",
+          "internal.fidelity": "compact",
+          "outcome": "succeeded",
+          "graph.goal": "Turn run-specific app context into a reusable feature context pack",
+          "graph.rankdir": "LR",
+          "internal.work_dir": "/home/daytona/workspace/maestro-os",
+          "internal.node_visit_count": 1,
+          "graph.persona": "existing-app-feature-context",
+          "internal.retry_count.write_context_pack": 0,
+          "internal.retry_count.context_intake_child": 0,
+          "thread.feature_workflow_preflight.current_node": "context_intake_child",
+          "thread.start.current_node": "write_context_pack",
+          "graph.artifact_root": ".workflow/existing-app-feature",
+          "graph.model_stylesheet": "* { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }",
+          "internal.thread_id": "start",
+          "command.output": "blob://sha256/4534042a60c4e36d06eca04010c531b8a34767620b7d77c08d1b7c630f712f86",
+          "internal.retry_count.start": 0,
+          "graph.secret_policy": "no secrets; do not print environment variables or credential values",
+          "current_node": "write_context_pack",
+          "graph.retry_target": "feature_spec_child",
+          "graph.default_max_retries": "2",
+          "internal.run_id": "01KRV7XXSKVNR9MAMNVDETCP6P",
+          "failure_class": "",
+          "failure_signature": "",
+          "internal.retry_count.feature_workflow_preflight": 0,
+          "thread.context_intake_child.current_node": "context_intake_child",
+          "graph.outputs": "contract.artifact,contract.gate,contract.next_action,contract.failure_classification,context_pack",
+          "graph.inputs": "app_name,target_audience,feature_goal,required_capabilities,context_paths",
+          "last_response": "[Simulated] Response for stage: emit_contract",
+          "internal.parent_preamble": "Goal: Implement WakeTask's task-based alarm feature pack through the reusable existing-app feature workflow\n\n## Completed stages\n- **feature_workflow_preflight**: succeeded\n- **context_intake_child**: failed\n\n## Context\n- failure_class: deterministic\n- failure_signature: context_intake_child|deterministic|child engine error: engine error: deterministic failure cycle detected: signature validate_context_pack|deterministic|script failed with exit code: <n> ## output { \"ok\": false,\"root\": \".workflow/existing-app-feature\",\"packpath\": \".workflow/\n",
+          "last_stage": "emit_contract"
+        },
+        "node_outcomes": {
+          "write_context_pack": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/4534042a60c4e36d06eca04010c531b8a34767620b7d77c08d1b7c630f712f86"
+            },
+            "notes": "Script completed: node scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/feature-context-intake.md --stage feature-context-intake --out .workflow/existing-app-feature/codex/feature-context-intake.json",
+            "usage": null
+          },
+          "start": {
+            "status": "succeeded",
+            "usage": null
+          }
+        },
+        "next_node_id": "validate_context_pack",
+        "node_visits": {
+          "write_context_pack": 1,
+          "start": 1
+        }
+      },
+      "diff": {}
+    },
+    {
+      "seq": 113,
+      "checkpoint": {
+        "timestamp": "2026-05-17T15:17:38.959758322Z",
+        "current_node": "validate_context_pack",
+        "completed_nodes": [
+          "start",
+          "write_context_pack",
+          "validate_context_pack"
+        ],
+        "node_retries": {},
+        "context_values": {
+          "thread.context_intake_child.current_node": "context_intake_child",
+          "thread.start.current_node": "write_context_pack",
+          "command.output": "blob://sha256/46998853491467cd8e33bad2b464231cf872142b51eef559acdbbd987e03be01",
+          "internal.parent_preamble": "Goal: Implement WakeTask's task-based alarm feature pack through the reusable existing-app feature workflow\n\n## Completed stages\n- **feature_workflow_preflight**: succeeded\n- **context_intake_child**: failed\n\n## Context\n- failure_class: deterministic\n- failure_signature: context_intake_child|deterministic|child engine error: engine error: deterministic failure cycle detected: signature validate_context_pack|deterministic|script failed with exit code: <n> ## output { \"ok\": false,\"root\": \".workflow/existing-app-feature\",\"packpath\": \".workflow/\n",
+          "thread.write_context_pack.current_node": "validate_context_pack",
+          "graph.persona": "existing-app-feature-context",
+          "graph.secret_policy": "no secrets; do not print environment variables or credential values",
+          "internal.retry_count.feature_workflow_preflight": 0,
+          "graph.retry_target": "feature_spec_child",
+          "last_stage": "emit_contract",
+          "graph.rankdir": "LR",
+          "last_response": "[Simulated] Response for stage: emit_contract",
+          "graph.inputs": "app_name,target_audience,feature_goal,required_capabilities,context_paths",
+          "response.emit_contract": "[Simulated] Response for stage: emit_contract",
+          "thread.feature_workflow_preflight.current_node": "context_intake_child",
+          "current_node": "validate_context_pack",
+          "failure_signature": "validate_context_pack|deterministic|script failed with exit code: <n> ## output { \"ok\": false,\"root\": \".workflow/existing-app-feature\",\"packpath\": \".workflow/existing-app-feature/context/context-pack.json\",\"markdownpath\": \".workflow/existing-app-feature/context-intake.md\",\"fa",
+          "internal.retry_count.context_intake_child": 0,
+          "internal.fidelity": "compact",
+          "internal.work_dir": "/home/daytona/workspace/maestro-os",
+          "graph.default_max_retries": "2",
+          "failure_class": "deterministic",
+          "graph.model_stylesheet": "* { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }",
+          "internal.retry_count.start": 0,
+          "internal.run_id": "01KRV7XXSKVNR9MAMNVDETCP6P",
+          "graph.goal": "Turn run-specific app context into a reusable feature context pack",
+          "graph.outputs": "contract.artifact,contract.gate,contract.next_action,contract.failure_classification,context_pack",
+          "graph.artifact_root": ".workflow/existing-app-feature",
+          "internal.retry_count.write_context_pack": 0,
+          "outcome": "failed",
+          "internal.node_visit_count": 1,
+          "internal.thread_id": "write_context_pack",
+          "internal.retry_count.validate_context_pack": 0
+        },
+        "node_outcomes": {
+          "start": {
+            "status": "succeeded",
+            "usage": null
+          },
+          "write_context_pack": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/4534042a60c4e36d06eca04010c531b8a34767620b7d77c08d1b7c630f712f86"
+            },
+            "notes": "Script completed: node scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/feature-context-intake.md --stage feature-context-intake --out .workflow/existing-app-feature/codex/feature-context-intake.json",
+            "usage": null
+          },
+          "validate_context_pack": {
+            "status": "failed",
+            "context_updates": {
+              "command.output": "blob://sha256/46998853491467cd8e33bad2b464231cf872142b51eef559acdbbd987e03be01"
+            },
+            "failure": {
+              "message": "Script failed with exit code: 1\n\n## output\n{\n  \"ok\": false,\n  \"root\": \".workflow/existing-app-feature\",\n  \"packPath\": \".workflow/existing-app-feature/context/context-pack.json\",\n  \"markdownPath\": \".workflow/existing-app-feature/context-intake.md\",\n  \"failures\": [\n    \".workflow/existing-app-feature/context-intake.md contains secret-looking material\"\n  ]\n}\n",
+              "category": "deterministic"
+            },
+            "usage": null
+          }
+        },
+        "next_node_id": "write_context_pack",
+        "loop_failure_signatures": {
+          "validate_context_pack|deterministic|script failed with exit code: <n> ## output { \"ok\": false,\"root\": \".workflow/existing-app-feature\",\"packpath\": \".workflow/existing-app-feature/context/context-pack.json\",\"markdownpath\": \".workflow/existing-app-feature/context-intake.md\",\"fa": 1
+        },
+        "node_visits": {
+          "write_context_pack": 1,
+          "start": 1,
+          "validate_context_pack": 1
+        }
+      },
+      "diff": {}
+    },
+    {
+      "seq": 119,
+      "checkpoint": {
+        "timestamp": "2026-05-17T15:18:42.943004931Z",
+        "current_node": "write_context_pack",
+        "completed_nodes": [
+          "start",
+          "write_context_pack",
+          "validate_context_pack",
+          "write_context_pack"
+        ],
+        "node_retries": {},
+        "context_values": {
+          "graph.retry_target": "feature_spec_child",
+          "graph.persona": "existing-app-feature-context",
+          "last_response": "[Simulated] Response for stage: emit_contract",
+          "response.emit_contract": "[Simulated] Response for stage: emit_contract",
+          "thread.start.current_node": "write_context_pack",
+          "thread.write_context_pack.current_node": "validate_context_pack",
+          "internal.retry_count.context_intake_child": 0,
+          "command.output": "blob://sha256/c4e03d1dcd2b6e656721db9ffb3cea9cc98c0deb5dd08c1fbc2756b1f6ab99a8",
+          "internal.retry_count.feature_workflow_preflight": 0,
+          "graph.model_stylesheet": "* { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }",
+          "graph.goal": "Turn run-specific app context into a reusable feature context pack",
+          "internal.retry_count.start": 0,
+          "internal.retry_count.write_context_pack": 0,
+          "internal.thread_id": "validate_context_pack",
+          "graph.inputs": "app_name,target_audience,feature_goal,required_capabilities,context_paths",
+          "internal.run_id": "01KRV7XXSKVNR9MAMNVDETCP6P",
+          "graph.default_max_retries": "2",
+          "internal.fidelity": "compact",
+          "current_node": "write_context_pack",
+          "outcome": "succeeded",
+          "internal.parent_preamble": "Goal: Implement WakeTask's task-based alarm feature pack through the reusable existing-app feature workflow\n\n## Completed stages\n- **feature_workflow_preflight**: succeeded\n- **context_intake_child**: failed\n\n## Context\n- failure_class: deterministic\n- failure_signature: context_intake_child|deterministic|child engine error: engine error: deterministic failure cycle detected: signature validate_context_pack|deterministic|script failed with exit code: <n> ## output { \"ok\": false,\"root\": \".workflow/existing-app-feature\",\"packpath\": \".workflow/\n",
+          "internal.node_visit_count": 2,
+          "graph.outputs": "contract.artifact,contract.gate,contract.next_action,contract.failure_classification,context_pack",
+          "thread.context_intake_child.current_node": "context_intake_child",
+          "graph.rankdir": "LR",
+          "thread.validate_context_pack.current_node": "write_context_pack",
+          "thread.feature_workflow_preflight.current_node": "context_intake_child",
+          "failure_class": "",
+          "failure_signature": "",
+          "internal.retry_count.validate_context_pack": 0,
+          "internal.work_dir": "/home/daytona/workspace/maestro-os",
+          "graph.secret_policy": "no secrets; do not print environment variables or credential values",
+          "last_stage": "emit_contract",
+          "graph.artifact_root": ".workflow/existing-app-feature"
+        },
+        "node_outcomes": {
+          "start": {
+            "status": "succeeded",
+            "usage": null
+          },
+          "write_context_pack": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/c4e03d1dcd2b6e656721db9ffb3cea9cc98c0deb5dd08c1fbc2756b1f6ab99a8"
+            },
+            "notes": "Script completed: node scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/feature-context-intake.md --stage feature-context-intake --out .workflow/existing-app-feature/codex/feature-context-intake.json",
+            "usage": null
+          },
+          "validate_context_pack": {
+            "status": "failed",
+            "context_updates": {
+              "command.output": "blob://sha256/46998853491467cd8e33bad2b464231cf872142b51eef559acdbbd987e03be01"
+            },
+            "failure": {
+              "message": "Script failed with exit code: 1\n\n## output\n{\n  \"ok\": false,\n  \"root\": \".workflow/existing-app-feature\",\n  \"packPath\": \".workflow/existing-app-feature/context/context-pack.json\",\n  \"markdownPath\": \".workflow/existing-app-feature/context-intake.md\",\n  \"failures\": [\n    \".workflow/existing-app-feature/context-intake.md contains secret-looking material\"\n  ]\n}\n",
+              "category": "deterministic"
+            },
+            "usage": null
+          }
+        },
+        "next_node_id": "validate_context_pack",
+        "loop_failure_signatures": {
+          "validate_context_pack|deterministic|script failed with exit code: <n> ## output { \"ok\": false,\"root\": \".workflow/existing-app-feature\",\"packpath\": \".workflow/existing-app-feature/context/context-pack.json\",\"markdownpath\": \".workflow/existing-app-feature/context-intake.md\",\"fa": 1
+        },
+        "node_visits": {
+          "write_context_pack": 2,
+          "start": 1,
+          "validate_context_pack": 1
+        }
+      },
+      "diff": {}
+    },
+    {
+      "seq": 125,
+      "checkpoint": {
+        "timestamp": "2026-05-17T15:18:44.800452836Z",
+        "current_node": "validate_context_pack",
+        "completed_nodes": [
+          "start",
+          "write_context_pack",
+          "validate_context_pack",
+          "write_context_pack",
+          "validate_context_pack"
+        ],
+        "node_retries": {},
+        "context_values": {
+          "internal.thread_id": "write_context_pack",
+          "internal.parent_preamble": "Goal: Implement WakeTask's task-based alarm feature pack through the reusable existing-app feature workflow\n\n## Completed stages\n- **feature_workflow_preflight**: succeeded\n- **context_intake_child**: failed\n\n## Context\n- failure_class: deterministic\n- failure_signature: context_intake_child|deterministic|child engine error: engine error: deterministic failure cycle detected: signature validate_context_pack|deterministic|script failed with exit code: <n> ## output { \"ok\": false,\"root\": \".workflow/existing-app-feature\",\"packpath\": \".workflow/\n",
+          "internal.retry_count.write_context_pack": 0,
+          "graph.inputs": "app_name,target_audience,feature_goal,required_capabilities,context_paths",
+          "internal.work_dir": "/home/daytona/workspace/maestro-os",
+          "graph.default_max_retries": "2",
+          "failure_signature": "validate_context_pack|deterministic|script failed with exit code: <n> ## output { \"ok\": false,\"root\": \".workflow/existing-app-feature\",\"packpath\": \".workflow/existing-app-feature/context/context-pack.json\",\"markdownpath\": \".workflow/existing-app-feature/context-intake.md\",\"fa",
+          "internal.retry_count.start": 0,
+          "internal.retry_count.validate_context_pack": 0,
+          "thread.validate_context_pack.current_node": "write_context_pack",
+          "graph.artifact_root": ".workflow/existing-app-feature",
+          "response.emit_contract": "[Simulated] Response for stage: emit_contract",
+          "internal.run_id": "01KRV7XXSKVNR9MAMNVDETCP6P",
+          "last_stage": "emit_contract",
+          "graph.rankdir": "LR",
+          "internal.fidelity": "compact",
+          "thread.start.current_node": "write_context_pack",
+          "graph.retry_target": "feature_spec_child",
+          "graph.secret_policy": "no secrets; do not print environment variables or credential values",
+          "internal.retry_count.context_intake_child": 0,
+          "current_node": "validate_context_pack",
+          "outcome": "failed",
+          "internal.node_visit_count": 2,
+          "internal.retry_count.feature_workflow_preflight": 0,
+          "thread.context_intake_child.current_node": "context_intake_child",
+          "thread.write_context_pack.current_node": "validate_context_pack",
+          "failure_class": "deterministic",
+          "thread.feature_workflow_preflight.current_node": "context_intake_child",
+          "last_response": "[Simulated] Response for stage: emit_contract",
+          "graph.outputs": "contract.artifact,contract.gate,contract.next_action,contract.failure_classification,context_pack",
+          "graph.model_stylesheet": "* { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }",
+          "command.output": "blob://sha256/46998853491467cd8e33bad2b464231cf872142b51eef559acdbbd987e03be01",
+          "graph.persona": "existing-app-feature-context",
+          "graph.goal": "Turn run-specific app context into a reusable feature context pack"
+        },
+        "node_outcomes": {
+          "validate_context_pack": {
+            "status": "failed",
+            "context_updates": {
+              "command.output": "blob://sha256/46998853491467cd8e33bad2b464231cf872142b51eef559acdbbd987e03be01"
+            },
+            "failure": {
+              "message": "Script failed with exit code: 1\n\n## output\n{\n  \"ok\": false,\n  \"root\": \".workflow/existing-app-feature\",\n  \"packPath\": \".workflow/existing-app-feature/context/context-pack.json\",\n  \"markdownPath\": \".workflow/existing-app-feature/context-intake.md\",\n  \"failures\": [\n    \".workflow/existing-app-feature/context-intake.md contains secret-looking material\"\n  ]\n}\n",
+              "category": "deterministic"
+            },
+            "usage": null
+          },
+          "start": {
+            "status": "succeeded",
+            "usage": null
+          },
+          "write_context_pack": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/c4e03d1dcd2b6e656721db9ffb3cea9cc98c0deb5dd08c1fbc2756b1f6ab99a8"
+            },
+            "notes": "Script completed: node scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/feature-context-intake.md --stage feature-context-intake --out .workflow/existing-app-feature/codex/feature-context-intake.json",
+            "usage": null
+          }
+        },
+        "next_node_id": "write_context_pack",
+        "loop_failure_signatures": {
+          "validate_context_pack|deterministic|script failed with exit code: <n> ## output { \"ok\": false,\"root\": \".workflow/existing-app-feature\",\"packpath\": \".workflow/existing-app-feature/context/context-pack.json\",\"markdownpath\": \".workflow/existing-app-feature/context-intake.md\",\"fa": 2
+        },
+        "node_visits": {
+          "start": 1,
+          "validate_context_pack": 2,
+          "write_context_pack": 2
+        }
+      },
+      "diff": {}
+    },
+    {
+      "seq": 131,
+      "checkpoint": {
+        "timestamp": "2026-05-17T15:19:43.528320744Z",
+        "current_node": "write_context_pack",
+        "completed_nodes": [
+          "start",
+          "write_context_pack",
+          "validate_context_pack",
+          "write_context_pack",
+          "validate_context_pack",
+          "write_context_pack"
+        ],
+        "node_retries": {},
+        "context_values": {
+          "command.output": "blob://sha256/b187cbc0e76e7f2fd7a9a1602b101142ab5b15b8949d01de32b1c0c85144eb3c",
+          "graph.artifact_root": ".workflow/existing-app-feature",
+          "failure_class": "",
+          "internal.work_dir": "/home/daytona/workspace/maestro-os",
+          "graph.outputs": "contract.artifact,contract.gate,contract.next_action,contract.failure_classification,context_pack",
+          "graph.rankdir": "LR",
+          "internal.retry_count.write_context_pack": 0,
+          "current_node": "write_context_pack",
+          "internal.parent_preamble": "Goal: Implement WakeTask's task-based alarm feature pack through the reusable existing-app feature workflow\n\n## Completed stages\n- **feature_workflow_preflight**: succeeded\n- **context_intake_child**: failed\n\n## Context\n- failure_class: deterministic\n- failure_signature: context_intake_child|deterministic|child engine error: engine error: deterministic failure cycle detected: signature validate_context_pack|deterministic|script failed with exit code: <n> ## output { \"ok\": false,\"root\": \".workflow/existing-app-feature\",\"packpath\": \".workflow/\n",
+          "internal.retry_count.feature_workflow_preflight": 0,
+          "internal.run_id": "01KRV7XXSKVNR9MAMNVDETCP6P",
+          "internal.node_visit_count": 3,
+          "internal.retry_count.context_intake_child": 0,
+          "thread.start.current_node": "write_context_pack",
+          "graph.default_max_retries": "2",
+          "internal.retry_count.start": 0,
+          "internal.retry_count.validate_context_pack": 0,
+          "last_stage": "emit_contract",
+          "graph.model_stylesheet": "* { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }",
+          "response.emit_contract": "[Simulated] Response for stage: emit_contract",
+          "thread.validate_context_pack.current_node": "write_context_pack",
+          "graph.goal": "Turn run-specific app context into a reusable feature context pack",
+          "graph.retry_target": "feature_spec_child",
+          "thread.context_intake_child.current_node": "context_intake_child",
+          "internal.thread_id": "validate_context_pack",
+          "last_response": "[Simulated] Response for stage: emit_contract",
+          "thread.feature_workflow_preflight.current_node": "context_intake_child",
+          "graph.persona": "existing-app-feature-context",
+          "graph.secret_policy": "no secrets; do not print environment variables or credential values",
+          "failure_signature": "",
+          "outcome": "succeeded",
+          "graph.inputs": "app_name,target_audience,feature_goal,required_capabilities,context_paths",
+          "thread.write_context_pack.current_node": "validate_context_pack",
+          "internal.fidelity": "compact"
+        },
+        "node_outcomes": {
+          "start": {
+            "status": "succeeded",
+            "usage": null
+          },
+          "validate_context_pack": {
+            "status": "failed",
+            "context_updates": {
+              "command.output": "blob://sha256/46998853491467cd8e33bad2b464231cf872142b51eef559acdbbd987e03be01"
+            },
+            "failure": {
+              "message": "Script failed with exit code: 1\n\n## output\n{\n  \"ok\": false,\n  \"root\": \".workflow/existing-app-feature\",\n  \"packPath\": \".workflow/existing-app-feature/context/context-pack.json\",\n  \"markdownPath\": \".workflow/existing-app-feature/context-intake.md\",\n  \"failures\": [\n    \".workflow/existing-app-feature/context-intake.md contains secret-looking material\"\n  ]\n}\n",
+              "category": "deterministic"
+            },
+            "usage": null
+          },
+          "write_context_pack": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/b187cbc0e76e7f2fd7a9a1602b101142ab5b15b8949d01de32b1c0c85144eb3c"
+            },
+            "notes": "Script completed: node scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/feature-context-intake.md --stage feature-context-intake --out .workflow/existing-app-feature/codex/feature-context-intake.json",
+            "usage": null
+          }
+        },
+        "next_node_id": "validate_context_pack",
+        "loop_failure_signatures": {
+          "validate_context_pack|deterministic|script failed with exit code: <n> ## output { \"ok\": false,\"root\": \".workflow/existing-app-feature\",\"packpath\": \".workflow/existing-app-feature/context/context-pack.json\",\"markdownpath\": \".workflow/existing-app-feature/context-intake.md\",\"fa": 2
+        },
+        "node_visits": {
+          "write_context_pack": 3,
+          "validate_context_pack": 2,
+          "start": 1
+        }
+      },
+      "diff": {}
+    },
+    {
+      "seq": 0,
+      "checkpoint": {
+        "timestamp": "2026-05-17T15:19:45.466589502Z",
+        "current_node": "context_intake_child",
+        "completed_nodes": [
+          "start",
+          "feature_workflow_preflight",
+          "context_intake_child",
           "context_intake_child"
         ],
         "node_retries": {},
@@ -1597,7 +2143,7 @@
           "internal.retry_count.feature_workflow_preflight": 0,
           "internal.retry_count.start": 0,
           "graph.rankdir": "LR",
-          "internal.node_visit_count": 1,
+          "internal.node_visit_count": 2,
           "thread.feature_workflow_preflight.current_node": "context_intake_child",
           "graph.default_max_retries": "2",
           "graph.artifact_root": ".workflow/existing-app-feature",
@@ -1613,9 +2159,10 @@
           "outcome": "failed",
           "graph.inputs": "repo_url,base_branch,run_branch,app_name,bundle_id,app_dir,app_domain,target_audience,feature_goal,required_capabilities,context_paths,max_competitors,use_mobbin_mcp,use_design_corpus,ios_validation_mode,allow_macos_deferred,fabro_server",
           "internal.work_dir": "/home/daytona/workspace/maestro-os",
+          "thread.context_intake_child.current_node": "context_intake_child",
           "failure_class": "deterministic",
           "graph.model_stylesheet": "\n            *       { backend: cli; provider: openai; model: gpt-5.3-codex-spark; reasoning_effort: low; }\n            .spec   { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            .build  { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            .review { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n        ",
-          "internal.thread_id": "feature_workflow_preflight"
+          "internal.thread_id": "context_intake_child"
         },
         "node_outcomes": {
           "feature_workflow_preflight": {
@@ -1646,7 +2193,7 @@
         "node_visits": {
           "feature_workflow_preflight": 1,
           "start": 1,
-          "context_intake_child": 1
+          "context_intake_child": 2
         }
       },
       "diff": {}
@@ -1714,7 +2261,7 @@
         "outcome": "failed",
         "notes": null,
         "failure_reason": "Script failed with exit code: 1\n\n## output\n{\n  \"ok\": false,\n  \"root\": \".workflow/existing-app-feature\",\n  \"packPath\": \".workflow/existing-app-feature/context/context-pack.json\",\n  \"markdownPath\": \".workflow/existing-app-feature/context-intake.md\",\n  \"failures\": [\n    \".workflow/existing-app-feature/context-intake.md contains secret-looking material\"\n  ]\n}\n",
-        "timestamp": "2026-05-17T15:15:28.262197788Z"
+        "timestamp": "2026-05-17T15:18:44.800261399Z"
       },
       "provider_used": null,
       "diff": null,
@@ -1726,7 +2273,7 @@
       "script_timing": {
         "output": "blob://sha256/46998853491467cd8e33bad2b464231cf872142b51eef559acdbbd987e03be01",
         "exit_code": 1,
-        "duration_ms": 1992,
+        "duration_ms": 1854,
         "termination": "exited",
         "output_bytes": 315,
         "live_streaming": true
@@ -1736,9 +2283,9 @@
       "output_bytes": 315,
       "live_streaming": true,
       "termination": "exited",
-      "started_at": "2026-05-17T15:15:26.266342298Z",
+      "started_at": "2026-05-17T15:18:42.943153523Z",
       "handler": "command",
-      "duration_ms": 1995,
+      "duration_ms": 1857,
       "usage": {
         "input_tokens": 0,
         "output_tokens": 0,
@@ -1800,7 +2347,7 @@
         "outcome": "succeeded",
         "notes": null,
         "failure_reason": null,
-        "timestamp": "2026-05-17T15:12:41.353705111Z"
+        "timestamp": "2026-05-17T15:16:36.966262997Z"
       },
       "provider_used": null,
       "diff": null,
@@ -1808,7 +2355,7 @@
       "script_timing": null,
       "parallel_results": null,
       "output": null,
-      "started_at": "2026-05-17T15:12:41.353639488Z",
+      "started_at": "2026-05-17T15:16:36.966200547Z",
       "handler": "start",
       "duration_ms": 0,
       "usage": {
@@ -1829,7 +2376,7 @@
         "outcome": "succeeded",
         "notes": "Script completed: node scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/feature-context-intake.md --stage feature-context-intake --out .workflow/existing-app-feature/codex/feature-context-intake.json",
         "failure_reason": null,
-        "timestamp": "2026-05-17T15:15:26.265959826Z"
+        "timestamp": "2026-05-17T15:18:42.942814229Z"
       },
       "provider_used": null,
       "diff": null,
@@ -1840,21 +2387,21 @@
         "timeout_ms": 3600000
       },
       "script_timing": {
-        "output": "blob://sha256/078a624cd049688bea7e9e0060a8d85678a0b384d30f380d221ec637deb5655e",
+        "output": "blob://sha256/c4e03d1dcd2b6e656721db9ffb3cea9cc98c0deb5dd08c1fbc2756b1f6ab99a8",
         "exit_code": 0,
-        "duration_ms": 99227,
+        "duration_ms": 63980,
         "termination": "exited",
-        "output_bytes": 4467,
+        "output_bytes": 4722,
         "live_streaming": true
       },
       "parallel_results": null,
       "output": null,
-      "output_bytes": 4467,
+      "output_bytes": 4722,
       "live_streaming": true,
       "termination": "exited",
-      "started_at": "2026-05-17T15:13:47.035615117Z",
+      "started_at": "2026-05-17T15:17:38.959895818Z",
       "handler": "command",
-      "duration_ms": 99230,
+      "duration_ms": 63982,
       "usage": {
         "input_tokens": 0,
         "output_tokens": 0,
@@ -1873,7 +2420,7 @@
         "outcome": "failed",
         "notes": null,
         "failure_reason": "Script failed with exit code: 1\n\n## output\n{\n  \"ok\": false,\n  \"root\": \".workflow/existing-app-feature\",\n  \"packPath\": \".workflow/existing-app-feature/context/context-pack.json\",\n  \"markdownPath\": \".workflow/existing-app-feature/context-intake.md\",\n  \"failures\": [\n    \".workflow/existing-app-feature/context-intake.md contains secret-looking material\"\n  ]\n}\n",
-        "timestamp": "2026-05-17T15:13:47.035312408Z"
+        "timestamp": "2026-05-17T15:17:38.959568472Z"
       },
       "provider_used": null,
       "diff": null,
@@ -1885,7 +2432,7 @@
       "script_timing": {
         "output": "blob://sha256/46998853491467cd8e33bad2b464231cf872142b51eef559acdbbd987e03be01",
         "exit_code": 1,
-        "duration_ms": 1982,
+        "duration_ms": 1708,
         "termination": "exited",
         "output_bytes": 315,
         "live_streaming": true
@@ -1895,9 +2442,9 @@
       "output_bytes": 315,
       "live_streaming": true,
       "termination": "exited",
-      "started_at": "2026-05-17T15:13:45.050056450Z",
+      "started_at": "2026-05-17T15:17:37.249611803Z",
       "handler": "command",
-      "duration_ms": 1984,
+      "duration_ms": 1709,
       "usage": {
         "input_tokens": 0,
         "output_tokens": 0,
@@ -1916,7 +2463,7 @@
         "outcome": "succeeded",
         "notes": "Script completed: node scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/feature-context-intake.md --stage feature-context-intake --out .workflow/existing-app-feature/codex/feature-context-intake.json",
         "failure_reason": null,
-        "timestamp": "2026-05-17T15:16:31.716697918Z"
+        "timestamp": "2026-05-17T15:19:43.528164526Z"
       },
       "provider_used": null,
       "diff": null,
@@ -1927,21 +2474,21 @@
         "timeout_ms": 3600000
       },
       "script_timing": {
-        "output": "blob://sha256/1b44aad22317b13a904262b3ea4b4bc34d88258f09cef9beeb962812216e7e08",
+        "output": "blob://sha256/b187cbc0e76e7f2fd7a9a1602b101142ab5b15b8949d01de32b1c0c85144eb3c",
         "exit_code": 0,
-        "duration_ms": 63451,
+        "duration_ms": 58724,
         "termination": "exited",
-        "output_bytes": 4504,
+        "output_bytes": 4519,
         "live_streaming": true
       },
       "parallel_results": null,
       "output": null,
-      "output_bytes": 4504,
+      "output_bytes": 4519,
       "live_streaming": true,
       "termination": "exited",
-      "started_at": "2026-05-17T15:15:28.262480227Z",
+      "started_at": "2026-05-17T15:18:44.800690391Z",
       "handler": "command",
-      "duration_ms": 63454,
+      "duration_ms": 58727,
       "usage": {
         "input_tokens": 0,
         "output_tokens": 0,
@@ -1985,7 +2532,12 @@
       "first_event_seq": 48,
       "prompt": null,
       "response": null,
-      "completion": null,
+      "completion": {
+        "outcome": "failed",
+        "notes": null,
+        "failure_reason": "Child engine error: Engine error: deterministic failure cycle detected: signature validate_context_pack|deterministic|script failed with exit code: <n> ## output { \"ok\": false,\"root\": \".workflow/existing-app-feature\",\"packpath\": \".workflow/existing-app-feature/context/context-pack.json\",\"markdownpath\": \".workflow/existing-app-feature/context-intake.md\",\"fa repeated 3 times (limit 3)",
+        "timestamp": "2026-05-17T15:16:33.538074868Z"
+      },
       "provider_used": null,
       "diff": null,
       "script_invocation": null,
@@ -1994,6 +2546,7 @@
       "output": null,
       "started_at": "2026-05-17T15:12:41.346517173Z",
       "handler": "stack.manager_loop",
+      "duration_ms": 232110,
       "usage": {
         "input_tokens": 0,
         "output_tokens": 0,
@@ -2002,7 +2555,7 @@
         "cache_read_tokens": 0,
         "cache_write_tokens": 0
       },
-      "state": "running"
+      "state": "failed"
     },
     "write_context_pack@1": {
       "first_event_seq": 55,
@@ -2012,7 +2565,7 @@
         "outcome": "succeeded",
         "notes": "Script completed: node scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/feature-context-intake.md --stage feature-context-intake --out .workflow/existing-app-feature/codex/feature-context-intake.json",
         "failure_reason": null,
-        "timestamp": "2026-05-17T15:13:45.049768883Z"
+        "timestamp": "2026-05-17T15:17:37.249304030Z"
       },
       "provider_used": null,
       "diff": null,
@@ -2023,21 +2576,21 @@
         "timeout_ms": 3600000
       },
       "script_timing": {
-        "output": "blob://sha256/5eddc1b51e5ebb2b87c3ac6a853ed86b1ca871a9465d1dcdb9a3f5adebcf7c5b",
+        "output": "blob://sha256/4534042a60c4e36d06eca04010c531b8a34767620b7d77c08d1b7c630f712f86",
         "exit_code": 0,
-        "duration_ms": 63693,
+        "duration_ms": 60281,
         "termination": "exited",
-        "output_bytes": 4720,
+        "output_bytes": 4522,
         "live_streaming": true
       },
       "parallel_results": null,
       "output": null,
-      "output_bytes": 4720,
+      "output_bytes": 4522,
       "live_streaming": true,
       "termination": "exited",
-      "started_at": "2026-05-17T15:12:41.353825080Z",
+      "started_at": "2026-05-17T15:16:36.966407729Z",
       "handler": "command",
-      "duration_ms": 63695,
+      "duration_ms": 60282,
       "usage": {
         "input_tokens": 0,
         "output_tokens": 0,
@@ -2047,6 +2600,29 @@
         "cache_write_tokens": 0
       },
       "state": "succeeded"
+    },
+    "context_intake_child@2": {
+      "first_event_seq": 95,
+      "prompt": null,
+      "response": null,
+      "completion": null,
+      "provider_used": null,
+      "diff": null,
+      "script_invocation": null,
+      "script_timing": null,
+      "parallel_results": null,
+      "output": null,
+      "started_at": "2026-05-17T15:16:36.961647757Z",
+      "handler": "stack.manager_loop",
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "total_tokens": 0,
+        "reasoning_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "state": "running"
     },
     "validate_context_pack@3": {
       "first_event_seq": 85,
@@ -2063,7 +2639,7 @@
       "script_timing": {
         "output": "blob://sha256/46998853491467cd8e33bad2b464231cf872142b51eef559acdbbd987e03be01",
         "exit_code": 1,
-        "duration_ms": 1737,
+        "duration_ms": 1854,
         "termination": "exited",
         "output_bytes": 315,
         "live_streaming": true
@@ -2073,7 +2649,7 @@
       "output_bytes": 315,
       "live_streaming": true,
       "termination": "exited",
-      "started_at": "2026-05-17T15:16:31.717044430Z",
+      "started_at": "2026-05-17T15:19:43.528464125Z",
       "handler": "command",
       "usage": {
         "input_tokens": 0,
