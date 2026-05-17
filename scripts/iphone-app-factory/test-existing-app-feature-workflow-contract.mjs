@@ -31,6 +31,7 @@ test("existing-app feature parent workflow calls reusable child workflows", () =
   for (const node of [
     "feature_workflow_preflight",
     "context_intake_child",
+    "research_audit_fanout",
     "research_child",
     "existing_app_audit_child",
     "research_audit_join",
@@ -43,6 +44,49 @@ test("existing-app feature parent workflow calls reusable child workflows", () =
     assert.ok(graph.includes(node), `missing parent node ${node}`);
   }
   assert.match(graph, /join_policy="wait_all"/);
+  assert.match(graph, /research_audit_fanout\s*\[[^\]]*max_parallel=2/s);
+  assert.match(graph, /context_intake_child -> research_audit_fanout \[condition="outcome=succeeded"\]/);
+  assert.match(graph, /research_audit_fanout -> research_child/);
+  assert.match(graph, /research_audit_fanout -> existing_app_audit_child/);
+  assert.match(graph, /research_child -> research_audit_join \[condition="outcome=succeeded"\]/);
+  assert.match(graph, /existing_app_audit_child -> research_audit_join \[condition="outcome=succeeded"\]/);
+});
+
+test("parent workflow repair edges are unconditional fallbacks behind success routes", () => {
+  const graph = read(parentWorkflow);
+  for (const [source, successTarget] of [
+    ["feature_workflow_preflight", "context_intake_child"],
+    ["context_intake_child", "research_audit_fanout"],
+    ["research_child", "research_audit_join"],
+    ["existing_app_audit_child", "research_audit_join"],
+    ["research_audit_join", "feature_spec_child"],
+    ["feature_spec_child", "implementation_plan_child"],
+    ["implementation_plan_child", "implementation_child"],
+    ["implementation_child", "validation_child"],
+    ["validation_child", "publish_postmortem_child"],
+    ["publish_postmortem_child", "exit"],
+  ]) {
+    assert.match(graph, new RegExp(`${source} -> ${successTarget} \\[condition="outcome=succeeded"\\]`));
+  }
+  for (const label of [
+    "Fix Workflow/Environment",
+    "Fix Context",
+    "Research Context Fix",
+    "Audit Context Fix",
+    "Fix Research/Audit Inputs",
+    "Fix Feature Spec",
+    "Fix Mapping",
+    "Fix Implementation",
+    "Fix Validation Failures",
+    "Complete Handoff/Postmortem",
+  ]) {
+    const escaped = label.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    assert.match(
+      graph,
+      new RegExp(`\\[label="${escaped}"\\]`),
+      `${label} must be modeled as a fallback edge`,
+    );
+  }
 });
 
 test("generic feature workflows do not hardcode WakeTask specifics", () => {

@@ -52,6 +52,7 @@ digraph IterateExistingAppFeatures {
         manager.poll_interval="2s"
     ]
 
+    research_audit_fanout [label="Research/Audit Fan-Out", shape=component, join_policy="wait_all", max_parallel=2]
     research_audit_join [label="Research/Audit Join", shape=tripleoctagon, join_policy="wait_all"]
 
     feature_spec_child [
@@ -97,14 +98,16 @@ digraph IterateExistingAppFeatures {
     start -> feature_workflow_preflight
     feature_workflow_preflight -> context_intake_child [condition="outcome=succeeded"]
     feature_workflow_preflight -> feature_workflow_preflight [label="Fix Workflow/Environment"]
-    context_intake_child -> research_child [condition="outcome=succeeded"]
-    context_intake_child -> existing_app_audit_child [condition="outcome=succeeded"]
+    context_intake_child -> research_audit_fanout [condition="outcome=succeeded"]
     context_intake_child -> context_intake_child [label="Fix Context"]
-    research_child -> research_audit_join
-    existing_app_audit_child -> research_audit_join
+    research_audit_fanout -> research_child
+    research_audit_fanout -> existing_app_audit_child
+    research_child -> research_audit_join [condition="outcome=succeeded"]
+    existing_app_audit_child -> research_audit_join [condition="outcome=succeeded"]
     research_child -> context_intake_child [label="Research Context Fix"]
     existing_app_audit_child -> context_intake_child [label="Audit Context Fix"]
-    research_audit_join -> feature_spec_child
+    research_audit_join -> feature_spec_child [condition="outcome=succeeded"]
+    research_audit_join -> context_intake_child [label="Fix Research/Audit Inputs"]
     feature_spec_child -> implementation_plan_child [condition="outcome=succeeded"]
     feature_spec_child -> feature_spec_child [label="Fix Feature Spec"]
     implementation_plan_child -> implementation_child [condition="outcome=succeeded"]

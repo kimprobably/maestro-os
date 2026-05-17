@@ -236,6 +236,7 @@ const featureDaytona = requireFile("workflows/iphone-app-factory/iterate-existin
 for (const token of [
   "feature_workflow_preflight",
   "context_intake_child",
+  "research_audit_fanout",
   "research_child",
   "existing_app_audit_child",
   "feature_spec_child",
@@ -246,6 +247,43 @@ for (const token of [
   "join_policy=\"wait_all\"",
 ]) {
   if (!featureGraph.includes(token)) failures.push(`feature workflow missing ${token}`);
+}
+for (const [source, target] of [
+  ["feature_workflow_preflight", "context_intake_child"],
+  ["context_intake_child", "research_audit_fanout"],
+  ["research_child", "research_audit_join"],
+  ["existing_app_audit_child", "research_audit_join"],
+  ["research_audit_join", "feature_spec_child"],
+  ["feature_spec_child", "implementation_plan_child"],
+  ["implementation_plan_child", "implementation_child"],
+  ["implementation_child", "validation_child"],
+  ["validation_child", "publish_postmortem_child"],
+  ["publish_postmortem_child", "exit"],
+]) {
+  const escapedSource = source.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const escapedTarget = target.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const successRoute = new RegExp(`${escapedSource}\\s*->\\s*${escapedTarget}\\s*\\[condition="outcome=succeeded"\\]`);
+  if (!successRoute.test(featureGraph)) {
+    failures.push(`feature workflow missing success route ${source} -> ${target}`);
+  }
+}
+for (const label of [
+  "Fix Workflow/Environment",
+  "Fix Context",
+  "Research Context Fix",
+  "Audit Context Fix",
+  "Fix Research/Audit Inputs",
+  "Fix Feature Spec",
+  "Fix Mapping",
+  "Fix Implementation",
+  "Fix Validation Failures",
+  "Complete Handoff/Postmortem",
+]) {
+  const escapedLabel = label.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const fallbackRoute = new RegExp(`\\[label="${escapedLabel}"\\]`);
+  if (!fallbackRoute.test(featureGraph)) {
+    failures.push(`feature workflow missing repair fallback ${label}`);
+  }
 }
 for (const script of [
   "feature-context-gate.mjs",
