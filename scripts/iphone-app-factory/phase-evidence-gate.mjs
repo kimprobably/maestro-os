@@ -13,6 +13,33 @@ const evidence = `${root}/evidence/${phase}.md`;
 const reportDir = `${root}/evidence`;
 const failures = [];
 
+function verifierNotesSection(markdown) {
+  const match = markdown.match(/^## Verifier notes\b/im);
+  if (!match) return "";
+  const start = match.index + match[0].length;
+  const rest = markdown.slice(start);
+  const nextHeading = rest.search(/^##\s+/m);
+  return nextHeading >= 0 ? rest.slice(0, nextHeading) : rest;
+}
+
+function latestVerifierDecision(notes) {
+  const decisions = [];
+  const lines = notes.split(/\r?\n/);
+  lines.forEach((line, index) => {
+    if (/accepted by independent verifier|scope is acceptable(?: and complete)?|acceptable to advance/i.test(line)) {
+      decisions.push({ index, status: "accepted" });
+    }
+    if (
+      /rejected by independent verifier|needs another implementation pass|not acceptable|do not advance|cannot advance|not ready|pending independent verifier/i.test(
+        line
+      )
+    ) {
+      decisions.push({ index, status: "rejected" });
+    }
+  });
+  return decisions.at(-1)?.status || null;
+}
+
 if (!phase) failures.push("missing phase");
 if (!existsSync(appDir)) failures.push(`missing app_dir ${appDir}`);
 if (!existsSync(evidence)) failures.push(`missing evidence ${evidence}`);
@@ -54,10 +81,18 @@ if (
 }
 
 const verifierIndex = text.search(/Verifier notes/i);
+const verifierNotes = verifierNotesSection(text);
+const latestDecision = latestVerifierDecision(verifierNotes);
 if (
   verifierIndex >= 0 &&
-  /rejected|failed|not acceptable|do not advance|retry|needs another implementation pass|another implementation pass|not ready|cannot advance|pending independent verifier/i.test(
-    text.slice(verifierIndex)
+  (
+    latestDecision === "rejected" ||
+    (
+      latestDecision !== "accepted" &&
+      /rejected|failed|not acceptable|do not advance|retry|needs another implementation pass|another implementation pass|not ready|cannot advance|pending independent verifier/i.test(
+        verifierNotes
+      )
+    )
   )
 ) {
   failures.push(`${evidence} verifier notes reject phase`);

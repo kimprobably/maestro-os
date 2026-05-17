@@ -242,6 +242,11 @@ test("UX studio implementation retry prompts consume verifier feedback", () => {
       /retry/i,
       `Expected ${label} implementation prompt to distinguish first pass from retry pass`,
     );
+    assert.match(
+      prompt,
+      /replace the current `## Verifier notes` decision with exactly `- Pending independent verifier\.`/i,
+      `Expected ${label} implementation prompt to clear stale verifier decisions after addressed retries`,
+    );
   }
 });
 
@@ -267,6 +272,11 @@ test("UX studio verifier prompt resolves pending verifier notes before gates", (
     verifyPrompt,
     /If not acceptable, write a concise rejection note/i,
     "Expected verifier prompt to require explicit rejection notes for unacceptable evidence",
+  );
+  assert.match(
+    verifyPrompt,
+    /Keep only the current decision under `## Verifier notes`/i,
+    "Expected verifier prompt to avoid stale retry/rejection history under verifier notes",
   );
 });
 

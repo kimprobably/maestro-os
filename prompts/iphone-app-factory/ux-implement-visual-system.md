@@ -20,6 +20,7 @@ If `.workflow/iphone-app-ux-studio/evidence/visual-system.md` already exists, tr
 - identify the exact rejected criteria or missing evidence
 - make targeted code, test, preview, or evidence changes that address those verifier notes
 - preserve useful prior evidence while updating stale claims
+- after concrete retry work addresses the rejection, replace the current `## Verifier notes` decision with exactly `- Pending independent verifier.`; move any resolved rejection history into `## Risks` or the relevant evidence section instead of leaving stale rejection bullets under `## Verifier notes`
 - do not remove rejection language or reset to pending unless the concrete retry work addresses the rejection
 
 If the verifier notes are ambiguous, inspect the surrounding evidence and changed files before editing. Do not repeat generic visual-system work without addressing the prior failure.

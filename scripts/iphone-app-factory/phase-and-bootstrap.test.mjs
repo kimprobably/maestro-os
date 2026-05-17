@@ -197,6 +197,76 @@ test("phase evidence gate allows accepted evidence with nonblocking command fail
   });
 });
 
+test("phase evidence gate uses latest verifier decision when retry history is preserved", () => {
+  withTempDir((dir) => {
+    const appDir = join(dir, "apps/waketask-iphone");
+    const evidence = join(dir, ".workflow/iphone-app-ux-studio/evidence/visual-system.md");
+    mkdirSync(appDir, { recursive: true });
+    mkdirSync(dirname(evidence), { recursive: true });
+    writeFileSync(
+      evidence,
+      `# Visual System Evidence
+
+## Files changed
+- apps/waketask-iphone/SwiftAIBoilerplatePro/DesignSystem/AppTheme.swift
+
+## Commands run
+- swift test in apps/waketask-iphone/Packages/DesignSystem (failed: swift command not found in worker)
+
+## Acceptance criteria
+- [x] Visual tokens and app-specific components are implemented.
+
+## Risks
+- swift toolchain is unavailable in this worker, so package tests could not be executed locally in this pass.
+
+## Verifier notes
+- Rejected by independent verifier: retry visual-system because Dynamic Type evidence is missing.
+- Accepted by independent verifier: reviewed the retry evidence, resolved Dynamic Type coverage, and phase scope is acceptable to advance.
+`
+    );
+
+    const result = runNode(phaseGate, ["visual-system", "apps/waketask-iphone"], dir);
+
+    assert.equal(result.status, 0, result.stderr);
+    assert.match(result.stdout, /"ok":true/);
+  });
+});
+
+test("phase evidence gate rejects when latest verifier decision is rejection", () => {
+  withTempDir((dir) => {
+    const appDir = join(dir, "apps/waketask-iphone");
+    const evidence = join(dir, ".workflow/iphone-app-ux-studio/evidence/visual-system.md");
+    mkdirSync(appDir, { recursive: true });
+    mkdirSync(dirname(evidence), { recursive: true });
+    writeFileSync(
+      evidence,
+      `# Visual System Evidence
+
+## Files changed
+- apps/waketask-iphone/SwiftAIBoilerplatePro/DesignSystem/AppTheme.swift
+
+## Commands run
+- xcodebuild test
+
+## Acceptance criteria
+- [x] Visual tokens and app-specific components are implemented.
+
+## Risks
+- None known.
+
+## Verifier notes
+- Accepted by independent verifier: reviewed files and phase scope is acceptable to advance.
+- Rejected by independent verifier: retry visual-system because VoiceOver evidence is missing.
+`
+    );
+
+    const result = runNode(phaseGate, ["visual-system", "apps/waketask-iphone"], dir);
+
+    assert.notEqual(result.status, 0);
+    assert.match(result.stderr, /verifier notes reject phase/i);
+  });
+});
+
 test("phase evidence gate reads screen-flows evidence from UX Studio evidence directory", () => {
   withTempDir((dir) => {
     const appDir = join(dir, "apps/waketask-iphone");

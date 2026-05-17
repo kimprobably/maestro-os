@@ -32,7 +32,7 @@ Check that:
 
 ## Required Update
 
-Update the same evidence file by replacing the pending verifier line under `## Verifier notes`.
+Update the same evidence file by replacing the current verifier decision under `## Verifier notes`.
 
 You are the independent verifier for this phase. Updating verifier notes, verifier
 reports, or the Codex stage output is not implementation work. If your verification
@@ -48,6 +48,11 @@ If acceptable, write a concise verifier note that avoids the gate rejection phra
 If not acceptable, write a concise rejection note that includes the exact retry target, for example:
 
 `- Rejected by independent verifier: retry visual-system because Dynamic Type evidence is missing.`
+
+Keep only the current decision under `## Verifier notes`. Do not preserve older rejected,
+pending, retry, or not-acceptable bullets in that section. If historical context is useful,
+move it to `## Risks` or another evidence section so the gate can evaluate the latest verifier
+decision unambiguously.
 
 Do not self-approve implementation work you performed in the same stage. Only leave
 `- Pending independent verifier.` if you directly changed app source, tests,
