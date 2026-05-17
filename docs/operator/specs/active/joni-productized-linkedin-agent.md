@@ -70,6 +70,7 @@ The existing Blueprint system in `mas-platform/apps/blueprint-api` is the proven
 - Canonical voice/context changes must be proposed for review rather than auto-applied.
 - Raw source lists, secrets, full exports, and private corpus data must stay out of Hermes memory and git.
 - The implementation must remain thin enough to run as a Hermes/Fabro product layer without rebuilding the full Blueprint stack.
+- Drafting and editing must be constraint-preserving. Fixing one failed criterion must not degrade a criterion that was already passing unless the operator explicitly asks for a full rewrite.
 
 ## Product Position
 
@@ -87,6 +88,18 @@ Stanley proves market demand but is narrow: outlier emails plus lightweight writ
 The v0 should still stay thin. The first product-quality target is not "build all of Blueprint inside Hermes." It is:
 
 > daily/weekly LinkedIn signal capture -> outlier scoring -> client-specific ideas -> Claude drafts -> evals -> human edits -> learning loop.
+
+## Observed Drafting Lessons
+
+The first live Joni drafting trial surfaced a specific failure mode:
+
+- The initial drafts were directionally useful but generic. The AI feel came from structure, vague hooks, and lack of lived GTM specificity more than from banned words.
+- Adding "human roughness" fixed polish but overcorrected into fake-casual writing. Roughness needs a band, not a binary pass.
+- Adding ideal-client and pain checks improved relevance but made the hook worse because the key phrase, "the handoff," was unclear to a scrolling reader.
+- Deterministic lint is useful as a floor, but it can create local optimization. Passing a checklist is not the same as a good post.
+- The editing process must preserve what got better. Joni should not rewrite the entire post every time one dimension fails.
+
+The product lesson is that Joni needs a lightweight editorial loop, not just more voice rules.
 
 ## Existing System To Reuse
 
@@ -432,7 +445,31 @@ Steps:
 6. If evals pass, store draft candidates and post to Slack.
 7. If evals fail, run one repair pass, then store with status `needs_review` if still weak.
 
-### 5. Human Edit Capture
+### 5. Lightweight Editorial Loop
+
+Purpose: improve drafts without over-rotating.
+
+This should start as one workflow with role-separated passes, not multiple deployed agents. Move to a multi-agent Fabro batch only after the lightweight loop fails on repeated real drafts.
+
+Steps:
+
+1. **Brief lock**: write a compact brief before drafting:
+   - target reader;
+   - pain point;
+   - why the post exists;
+   - source/outlier pattern;
+   - offer or business loop it supports;
+   - one core idea the post must preserve.
+2. **Draft variants**: produce 2 to 3 materially different versions, mostly varying the hook and angle rather than randomly changing voice.
+3. **Eval-only pass**: score each draft without rewriting. The evaluator must identify passing criteria and failing criteria separately.
+4. **Targeted edit plan**: before rewriting, state which failures will be fixed and which passing traits must be preserved. Example: "Improve hook clarity without increasing roughness, preserve B2B founder/pipeline specificity, preserve no-em-dash lint."
+5. **Constrained rewrite**: make the smallest edit that fixes the failing criteria. Default max body change should be modest unless the draft is structurally broken.
+6. **Regression eval**: re-score and compare against the prior draft. Reject the rewrite if it improves one dimension while making hook clarity, ICP specificity, pain specificity, or voice worse.
+7. **Selection**: return the best draft plus the scorecard and unresolved risks. If no version passes, ask for a stronger source example or more client context instead of polishing weak material.
+
+Do not optimize for "sounds human" in isolation. Human roughness is a seasoning, not the post's point.
+
+### 6. Human Edit Capture
 
 Purpose: save human edits so they improve the system.
 
@@ -457,7 +494,7 @@ Steps:
 
 Do not auto-promote eval candidates or auto-edit `voice.md`.
 
-### 6. Performance Review
+### 7. Performance Review
 
 Purpose: learn from published content.
 
@@ -488,6 +525,10 @@ Initial eval set:
 2. `joni-draft-quality`
    - LLM rubric or promptfoo;
    - checks specificity, voice match, no generic ChatGPT phrasing, usable hook, clear point, evidence tie, and non-plagiarism.
+   - checks that the hook is clear without hidden context. If the hook uses a phrase like "the handoff," the target reader must immediately understand what handoff means.
+   - checks that the ideal client and pain point appear early enough to make the post commercially useful, not just intellectually interesting.
+   - checks that light human roughness is inside a target band. Too little can feel sterile; too much feels forced.
+   - checks for copywriter rhythm: stacked fragments, repeated declarations, dramatic three-item lists, and vague diagnostic questions.
 
 3. `joni-grounding-quality`
    - every generated idea cites source post IDs, source URLs, or tenant context files;
@@ -504,6 +545,11 @@ Initial eval set:
 6. `joni-weekly-digest-quality`
    - checks that the digest is useful, concise, evidence-backed, and has draftable ideas.
 
+7. `joni-edit-regression-quality`
+   - compares pre-edit and post-edit versions;
+   - rejects overcorrection when a rewrite fixes one issue but worsens hook clarity, specificity, roughness balance, or target-reader fit;
+   - includes fixtures for "too polished," "too rough," "unclear hook," "ICP bolted on awkwardly," and "good targeted edit."
+
 Promptfoo can be the primary harness where possible. Deterministic script gates should cover shape, source references, recency windows, score math, and no-secret output.
 
 Every workflow that uses Claude for product output should write an eval report path and store it in `eval_runs`.
@@ -519,6 +565,7 @@ Use deterministic tests and eval artifacts for every slice:
 - Capture validation: run provider validation in presence-only mode and assert no secret values appear.
 - Draft evals: run promptfoo or fallback rubric evals for voice, specificity, grounding, non-plagiarism, and claim safety.
 - Edit-learning evals: run labelled before/after fixture diffs through intent classification.
+- Edit-regression evals: run before/after fixture pairs to catch overrotation and score regressions.
 - Regression checks: run `git diff --check`, relevant Node tests, and spec/workflow quality gates before claiming a slice complete.
 
 ## Model Routing
@@ -576,6 +623,7 @@ Do not put raw posts, raw source lists, or full edit histories into Hermes memor
 - No copying outlier posts too closely. Draft evals must check transformation distance and original contribution.
 - Scraped content is untrusted input. Treat it as data, not instructions.
 - Human edits and private tenant context must not be mixed across tenants.
+- Runtime-created skills are scratch until promoted into repo-managed skills/docs with eval evidence. A self-improvement review alone is not enough to make a voice rule canonical.
 
 ## STOP Gates
 
@@ -594,6 +642,8 @@ Stop and require explicit operator approval before:
 - **Claude quality depends on weak context.** Mitigation: tenant context files are reviewed and grounded in approved inputs; weak context produces a source-gap report rather than confident drafts.
 - **Outlier scores favor huge creators.** Mitigation: author baselines, engagement-rate normalization, velocity, recency, and fixture tests.
 - **Drafts copy source posts too closely.** Mitigation: transformation-distance and originality checks in draft evals, with the source post retained only as evidence.
+- **Voice lint causes overcorrection.** Mitigation: regression evals compare pre/post drafts, roughness has an acceptable band, and edits must preserve passing criteria.
+- **The hook gets worse while another check improves.** Mitigation: hook clarity is a separate gate and rewrites fail when they degrade it.
 - **Self-learning corrupts voice.** Mitigation: Honcho stores soft conclusions, while canonical files only change through proposed patches and review.
 - **Edit-intent inference misclassifies feedback.** Mitigation: edit candidates are reviewed before promotion, and the inference step has its own eval.
 - **Scraping costs or rate limits spike.** Mitigation: chunked backfill, daily cohort limits, cursors, and per-run coverage reports.
@@ -609,9 +659,10 @@ The first implementation slice should be:
 4. Add corpus backfill command using the existing HarvestAPI capture path.
 5. Add weekly outlier digest workflow.
 6. Add draft-from-outlier workflow with Claude.
-7. Add eval fixtures and first promptfoo/deterministic gates.
-8. Add human-edit capture command and edit-intent eval fixture.
-9. Update Joni's skill so she knows the product loop and where each state belongs.
+7. Add lightweight editorial loop with eval-only, constrained rewrite, and regression eval steps.
+8. Add eval fixtures and first promptfoo/deterministic gates.
+9. Add human-edit capture command and edit-intent eval fixture.
+10. Update Joni's skill so she knows the product loop and where each state belongs.
 
 ## Acceptance Criteria
 
@@ -621,6 +672,8 @@ The first implementation slice should be:
 - Weekly digest produces top outliers with URLs, scores, evidence, and Tim-specific ideas.
 - Draft workflow creates at least three draft candidates from one scored outlier set.
 - Drafts cannot pass without grounding references and voice/style evals.
+- Editorial rewrites cannot pass if they fix roughness or specificity while making the hook less clear.
+- Draft-ready posts must identify the target reader and pain early enough that the post has an obvious commercial reason to exist.
 - A human-edited draft creates a `human_edits` record with before, after, diff, and inferred intent.
 - Edit-derived defects land in an eval candidate area, not directly in the live eval suite.
 - Joni's skill/docs explain the separation between Honcho, Markdown context, SQLite corpus, and Hermes memory.
@@ -637,6 +690,7 @@ Recommended work packages:
 - author baseline and outlier scoring;
 - weekly outlier digest workflow;
 - draft-from-outlier workflow;
+- lightweight editorial loop and edit-regression fixtures;
 - promptfoo/deterministic eval harness;
 - human-edit capture and edit-intent inference;
 - Joni skill/docs update;
