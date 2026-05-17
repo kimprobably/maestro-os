@@ -6,6 +6,7 @@ Goal: Create staged WakeTask product-iteration workflows, then run the UX Studio
 - **product_spec_child**: succeeded
 - **ux_iteration_child**: succeeded
 - **validation_postmortem_child**: failed
+- **validation_postmortem_child**: failed
 
 ## Context
 - failure_class: deterministic
