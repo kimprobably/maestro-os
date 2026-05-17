@@ -38,6 +38,7 @@ const aiPeerByProfile = new Map([
   ["smith", "smith"],
   ["johann", "johann"],
   ["quill", "quill"],
+  ["joni", "joni"],
 ]);
 
 const apiKeyPresent = Boolean(String(process.env.HONCHO_API_KEY || "").trim());

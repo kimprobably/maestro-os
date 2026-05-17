@@ -20,7 +20,9 @@ test("quincy profile is installed as a specialist worker", async () => {
   const soulPath = path.join(repoRoot, "hermes/profiles/quincy/SOUL.md");
 
   assert.match(installer, /install_worker quincy/);
+  assert.match(installer, /install_worker joni/);
   assert.match(installer, /copy_worker_skills/);
+  assert.match(installer, /copy_profile_skills/);
   assert.match(entrypoint, /install-worker-profiles\.sh/);
   assert.match(entrypoint, /render-honcho-config\.mjs/);
   assert.equal(existsSync(soulPath), true);
@@ -30,6 +32,28 @@ test("quincy profile is installed as a specialist worker", async () => {
   assert.match(soul, /run ledger/);
   assert.match(soul, /workflow/);
   assert.match(soul, /Honcho/);
+});
+
+test("joni has a LinkedIn operator skill with safe capture and no-publish boundaries", async () => {
+  const skill = await readFile(
+    path.join(repoRoot, "hermes/profiles/joni/skills/linkedin-operator/SKILL.md"),
+    "utf8",
+  );
+
+  assert.match(skill, /authorized content capture/);
+  assert.match(skill, /5 draft-ready posts per week/);
+  assert.match(skill, /not publish/i);
+  assert.match(skill, /scraping private\/authenticated LinkedIn surfaces/);
+  assert.match(skill, /JONI-LINKEDIN-LEDGER\.md/);
+  assert.match(skill, /weekly performance/);
+
+  const ledger = await readFile(
+    path.join(repoRoot, "docs/operator/linkedin/JONI-LINKEDIN-LEDGER.md"),
+    "utf8",
+  );
+  assert.match(ledger, /Target: 5 draft-ready posts per week/);
+  assert.match(ledger, /Daily capture workflow not yet implemented/);
+  assert.match(ledger, /Publishing, commenting, DMs, connection requests/);
 });
 
 test("Honcho renderer creates separate AI peers without persisting the API key", async () => {

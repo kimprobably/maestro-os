@@ -29,6 +29,19 @@ copy_worker_skills() {
   cp -R "$worker_skills_src/." "$profile_dir/skills/"
 }
 
+copy_profile_skills() {
+  local profile="$1"
+  local profile_dir="$2"
+  local profile_skills_src="$repo_root/hermes/profiles/$profile/skills"
+
+  if [ ! -d "$profile_skills_src" ]; then
+    return 0
+  fi
+
+  mkdir -p "$profile_dir/skills"
+  cp -R "$profile_skills_src/." "$profile_dir/skills/"
+}
+
 retire_legacy_profile() {
   local legacy_profile="$1"
   local replacement_profile="$2"
@@ -64,6 +77,7 @@ install_worker() {
 
   cp "$soul_src" "$profile_dir/SOUL.md"
   copy_worker_skills "$profile_dir"
+  copy_profile_skills "$profile" "$profile_dir"
   printf 'installed worker profile %s\n' "$profile"
 }
 
