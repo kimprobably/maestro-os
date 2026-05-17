@@ -56,3 +56,13 @@ test("WakeTask parent run config targets Railway Fabro and the parent graph", ()
   assert.match(config, /\[run\.sandbox\.daytona\](?:(?!\n\[)[\s\S])*\bnetwork\s*=\s*"allow_all"/);
   assert.doesNotMatch(config, /localhost|127\.0\.0\.1/);
 });
+
+test("WakeTask preflight keeps verbose validator output out of Fabro context", () => {
+  const graph = readRequiredFile("workflows/iphone-app-factory/waketask-workflow-preflight-stage.fabro");
+  const redirectIndex = graph.indexOf("> .workflow/waketask-product-iteration/workflow-preflight.log 2>&1");
+  const summaryEmitIndex = graph.indexOf("&& node -e");
+  assert.match(graph, /workflow-preflight\.log/);
+  assert.match(graph, /> \.workflow\/waketask-product-iteration\/workflow-preflight\.log 2>&1/);
+  assert.ok(redirectIndex > 0, "Expected validator output to be redirected to a log artifact");
+  assert.ok(summaryEmitIndex > redirectIndex, "Expected only the compact JSON summary to be emitted after verbose logs");
+});
