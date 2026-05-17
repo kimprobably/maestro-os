@@ -13,6 +13,10 @@ function argValue(name, fallback) {
   return process.argv[index + 1] ?? fallback;
 }
 
+function hasFlag(name) {
+  return process.argv.includes(name);
+}
+
 function hasCommand(name) {
   const result = spawnSync("sh", ["-lc", `command -v ${name} >/dev/null 2>&1`], {
     stdio: "ignore",
@@ -57,6 +61,7 @@ function writeBlocker(path, report) {
 const manifestPath = argValue("--manifest", DEFAULT_MANIFEST);
 const reportPath = argValue("--out", DEFAULT_REPORT);
 const blockerPath = argValue("--blocker", DEFAULT_BLOCKER);
+const successOnBlocker = hasFlag("--success-on-blocker");
 const manifestPresent = existsSync(manifestPath);
 const xcrunAvailable = hasCommand("xcrun");
 const xcodebuildAvailable = hasCommand("xcodebuild");
@@ -81,4 +86,4 @@ if (!report.ok) {
 
 writeJson(reportPath, report);
 console.log(JSON.stringify(report, null, 2));
-process.exit(report.ok ? 0 : 1);
+process.exit(report.ok || successOnBlocker ? 0 : 1);

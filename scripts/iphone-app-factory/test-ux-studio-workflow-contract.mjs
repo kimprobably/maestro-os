@@ -249,20 +249,26 @@ test("UX studio verifier prompt resolves pending verifier notes before gates", (
   );
 });
 
-test("UX studio routes missing hosted iOS runtime evidence to postmortem instead of screen-flow loop", () => {
+test("UX studio routes hosted iOS runtime blockers to postmortem without failed child outcomes", () => {
   const graph = readRequiredFile(workflowPath);
 
+  assert.match(
+    graph,
+    /ios-runtime-evidence-preflight\.mjs --success-on-blocker/,
+    "Expected hosted iOS runtime blockers to be recorded without a failing child node outcome",
+  );
   assert.match(
     graph,
     /screenshot_evidence_review -> ios_runtime_evidence_preflight \[condition="outcome=succeeded"\]/,
   );
   assert.match(
     graph,
-    /ios_runtime_evidence_preflight -> postmortem_learning_capture \[label="iOS Runtime Blocker"\]/,
+    /ios_runtime_evidence_preflight -> postmortem_learning_capture \[condition="outcome=succeeded", label="iOS Runtime Blocker"\]/,
   );
   assert.doesNotMatch(
     graph,
-    /screenshot_evidence_review -> screenshot_evidence_gate \[condition="outcome=succeeded"\]/,
+    /ios_runtime_evidence_preflight -> postmortem_learning_capture \[label="iOS Runtime Blocker"\]/,
+    "Expected blocker postmortem routing to be a success edge, not a failed-node fallback edge",
   );
 });
 
