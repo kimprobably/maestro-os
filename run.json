@@ -826,13 +826,13 @@
   },
   "web_url": "https://fabro-maestro-production.up.railway.app/runs/01KRV4J4CADQ5YYG1GM47H4D6T",
   "start": {
-    "start_time": "2026-05-17T14:13:44.876332374Z"
+    "start_time": "2026-05-17T14:15:10.509020399Z"
   },
   "status": {
     "kind": "running"
   },
   "status_updated_at": "2026-05-17T14:13:40.830373890Z",
-  "last_event_at": "2026-05-17T14:15:08.605244803Z",
+  "last_event_at": "2026-05-17T14:16:11.360511786Z",
   "pending_control": null,
   "checkpoints": [
     {
@@ -1390,13 +1390,297 @@
       "diff": {}
     },
     {
-      "seq": 0,
+      "seq": 80,
       "checkpoint": {
-        "timestamp": "2026-05-17T14:15:08.655586073Z",
+        "timestamp": "2026-05-17T14:15:10.501466136Z",
         "current_node": "context_intake_child",
         "completed_nodes": [
           "start",
           "feature_workflow_preflight",
+          "context_intake_child"
+        ],
+        "node_retries": {},
+        "context_values": {
+          "internal.fidelity": "compact",
+          "internal.node_visit_count": 1,
+          "graph.artifact_root": ".workflow/existing-app-feature",
+          "graph.outputs": "context_pack,research_pack,existing_app_audit,feature_spec,implementation_plan,implementation_evidence,validation_report,publish_handoff,postmortem",
+          "graph.persona": "existing-iphone-app-feature-orchestrator",
+          "graph.rankdir": "LR",
+          "internal.retry_count.context_intake_child": 0,
+          "internal.retry_count.start": 0,
+          "internal.thread_id": "feature_workflow_preflight",
+          "internal.retry_count.feature_workflow_preflight": 0,
+          "current_node": "context_intake_child",
+          "internal.work_dir": "/home/daytona/workspace/maestro-os",
+          "last_response": "[Simulated] Response for stage: emit_contract",
+          "graph.default_max_retries": "2",
+          "failure_class": "deterministic",
+          "graph.model_stylesheet": "\n            *       { backend: cli; provider: openai; model: gpt-5.3-codex-spark; reasoning_effort: low; }\n            .spec   { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            .build  { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            .review { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n        ",
+          "graph.secret_policy": "no secrets; credential checks are presence-only; do not print environment variables or credential values",
+          "last_stage": "emit_contract",
+          "graph.goal": "Implement WakeTask's task-based alarm feature pack through the reusable existing-app feature workflow",
+          "failure_signature": "context_intake_child|deterministic|child engine error: engine error: deterministic failure cycle detected: signature write_context_pack|deterministic|script failed with exit code: <n> ## output { \"ok\": false,\"stage\": \"feature-context-intake\",\"model\": \"gpt-<n>.<n>-codex\",\"pro",
+          "graph.retry_target": "feature_spec_child",
+          "outcome": "failed",
+          "graph.inputs": "repo_url,base_branch,run_branch,app_name,bundle_id,app_dir,app_domain,target_audience,feature_goal,required_capabilities,context_paths,max_competitors,use_mobbin_mcp,use_design_corpus,ios_validation_mode,allow_macos_deferred,fabro_server",
+          "command.output": "blob://sha256/12ae32cb1ec02d01eda3581b127c1fee3b0dc53572ed6baf239721a03d82e126",
+          "response.emit_contract": "[Simulated] Response for stage: emit_contract",
+          "thread.feature_workflow_preflight.current_node": "context_intake_child",
+          "internal.run_id": "01KRV4J4CADQ5YYG1GM47H4D6T",
+          "thread.start.current_node": "feature_workflow_preflight"
+        },
+        "node_outcomes": {
+          "start": {
+            "status": "succeeded",
+            "usage": null
+          },
+          "feature_workflow_preflight": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/12ae32cb1ec02d01eda3581b127c1fee3b0dc53572ed6baf239721a03d82e126",
+              "last_response": "[Simulated] Response for stage: emit_contract",
+              "response.emit_contract": "[Simulated] Response for stage: emit_contract",
+              "last_stage": "emit_contract"
+            },
+            "notes": "Child completed at cycle 2",
+            "usage": null
+          },
+          "context_intake_child": {
+            "status": "failed",
+            "failure": {
+              "message": "Child engine error: Engine error: deterministic failure cycle detected: signature write_context_pack|deterministic|script failed with exit code: <n> ## output { \"ok\": false,\"stage\": \"feature-context-intake\",\"model\": \"gpt-<n>.<n>-codex\",\"prompt_path\": \"/home/daytona/repos/kimprobably/maestro-os/prompts/iphone-app-factory/feature-context-intake.md\",\"rende repeated 3 times (limit 3)",
+              "category": "deterministic"
+            },
+            "usage": null
+          }
+        },
+        "next_node_id": "context_intake_child",
+        "git_commit_sha": "460e1b2916f7809a8f569c47c8f87fc8877bb09c",
+        "loop_failure_signatures": {
+          "context_intake_child|deterministic|child engine error: engine error: deterministic failure cycle detected: signature write_context_pack|deterministic|script failed with exit code: <n> ## output { \"ok\": false,\"stage\": \"feature-context-intake\",\"model\": \"gpt-<n>.<n>-codex\",\"pro": 1
+        },
+        "node_visits": {
+          "feature_workflow_preflight": 1,
+          "start": 1,
+          "context_intake_child": 1
+        }
+      },
+      "diff": {
+        "summary": {
+          "files_changed": 0,
+          "additions": 0,
+          "deletions": 0
+        }
+      }
+    },
+    {
+      "seq": 89,
+      "checkpoint": {
+        "timestamp": "2026-05-17T14:15:10.509346413Z",
+        "current_node": "start",
+        "completed_nodes": [
+          "start"
+        ],
+        "node_retries": {},
+        "context_values": {
+          "thread.context_intake_child.current_node": "context_intake_child",
+          "graph.goal": "Turn run-specific app context into a reusable feature context pack",
+          "command.output": "",
+          "failure_class": "",
+          "internal.retry_count.feature_workflow_preflight": 0,
+          "last_stage": "emit_contract",
+          "internal.thread_id": null,
+          "graph.retry_target": "feature_spec_child",
+          "graph.artifact_root": ".workflow/existing-app-feature",
+          "last_response": "[Simulated] Response for stage: emit_contract",
+          "response.emit_contract": "[Simulated] Response for stage: emit_contract",
+          "graph.rankdir": "LR",
+          "internal.parent_preamble": "Goal: Implement WakeTask's task-based alarm feature pack through the reusable existing-app feature workflow\n\n## Completed stages\n- **feature_workflow_preflight**: succeeded\n- **context_intake_child**: failed\n\n## Context\n- failure_class: deterministic\n- failure_signature: context_intake_child|deterministic|child engine error: engine error: deterministic failure cycle detected: signature write_context_pack|deterministic|script failed with exit code: <n> ## output { \"ok\": false,\"stage\": \"feature-context-intake\",\"model\": \"gpt-<n>.<n>-codex\",\"pro\n",
+          "current_node": "start",
+          "graph.outputs": "contract.artifact,contract.gate,contract.next_action,contract.failure_classification,context_pack",
+          "internal.retry_count.context_intake_child": 0,
+          "internal.work_dir": "/home/daytona/workspace/maestro-os",
+          "internal.node_visit_count": 1,
+          "thread.feature_workflow_preflight.current_node": "context_intake_child",
+          "graph.inputs": "app_name,target_audience,feature_goal,required_capabilities,context_paths",
+          "graph.default_max_retries": "2",
+          "thread.start.current_node": "feature_workflow_preflight",
+          "internal.fidelity": "compact",
+          "internal.run_id": "01KRV4J4CADQ5YYG1GM47H4D6T",
+          "internal.retry_count.start": 0,
+          "outcome": "succeeded",
+          "graph.secret_policy": "no secrets; do not print environment variables or credential values",
+          "failure_signature": "",
+          "graph.model_stylesheet": "* { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }",
+          "graph.persona": "existing-app-feature-context"
+        },
+        "node_outcomes": {
+          "start": {
+            "status": "succeeded",
+            "usage": null
+          }
+        },
+        "next_node_id": "write_context_pack",
+        "node_visits": {
+          "start": 1
+        }
+      },
+      "diff": {}
+    },
+    {
+      "seq": 95,
+      "checkpoint": {
+        "timestamp": "2026-05-17T14:15:31.242887452Z",
+        "current_node": "write_context_pack",
+        "completed_nodes": [
+          "start",
+          "write_context_pack"
+        ],
+        "node_retries": {},
+        "context_values": {
+          "outcome": "failed",
+          "graph.default_max_retries": "2",
+          "current_node": "write_context_pack",
+          "last_response": "[Simulated] Response for stage: emit_contract",
+          "graph.persona": "existing-app-feature-context",
+          "response.emit_contract": "[Simulated] Response for stage: emit_contract",
+          "thread.feature_workflow_preflight.current_node": "context_intake_child",
+          "last_stage": "emit_contract",
+          "graph.artifact_root": ".workflow/existing-app-feature",
+          "internal.fidelity": "compact",
+          "graph.retry_target": "feature_spec_child",
+          "graph.secret_policy": "no secrets; do not print environment variables or credential values",
+          "internal.parent_preamble": "Goal: Implement WakeTask's task-based alarm feature pack through the reusable existing-app feature workflow\n\n## Completed stages\n- **feature_workflow_preflight**: succeeded\n- **context_intake_child**: failed\n\n## Context\n- failure_class: deterministic\n- failure_signature: context_intake_child|deterministic|child engine error: engine error: deterministic failure cycle detected: signature write_context_pack|deterministic|script failed with exit code: <n> ## output { \"ok\": false,\"stage\": \"feature-context-intake\",\"model\": \"gpt-<n>.<n>-codex\",\"pro\n",
+          "internal.retry_count.feature_workflow_preflight": 0,
+          "thread.start.current_node": "write_context_pack",
+          "graph.inputs": "app_name,target_audience,feature_goal,required_capabilities,context_paths",
+          "internal.work_dir": "/home/daytona/workspace/maestro-os",
+          "internal.retry_count.start": 0,
+          "internal.thread_id": "start",
+          "internal.node_visit_count": 1,
+          "graph.model_stylesheet": "* { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }",
+          "graph.outputs": "contract.artifact,contract.gate,contract.next_action,contract.failure_classification,context_pack",
+          "graph.rankdir": "LR",
+          "failure_class": "deterministic",
+          "internal.run_id": "01KRV4J4CADQ5YYG1GM47H4D6T",
+          "command.output": "blob://sha256/74009627b733d9f34127c8887a4b769c29a62d1bf00e4c6384aeab8982ca9450",
+          "thread.context_intake_child.current_node": "context_intake_child",
+          "graph.goal": "Turn run-specific app context into a reusable feature context pack",
+          "internal.retry_count.context_intake_child": 0,
+          "failure_signature": "write_context_pack|deterministic|script failed with exit code: <n> ## output { \"ok\": false,\"stage\": \"feature-context-intake\",\"model\": \"gpt-<n>.<n>-codex\",\"prompt_path\": \"/home/daytona/repos/kimprobably/maestro-os/prompts/iphone-app-factory/feature-context-intake.md\",\"rende",
+          "internal.retry_count.write_context_pack": 0
+        },
+        "node_outcomes": {
+          "start": {
+            "status": "succeeded",
+            "usage": null
+          },
+          "write_context_pack": {
+            "status": "failed",
+            "context_updates": {
+              "command.output": "blob://sha256/74009627b733d9f34127c8887a4b769c29a62d1bf00e4c6384aeab8982ca9450"
+            },
+            "failure": {
+              "message": "Script failed with exit code: 1\n\n## output\n{\n  \"ok\": false,\n  \"stage\": \"feature-context-intake\",\n  \"model\": \"gpt-5.3-codex\",\n  \"prompt_path\": \"/home/daytona/repos/kimprobably/maestro-os/prompts/iphone-app-factory/feature-context-intake.md\",\n  \"rendered_prompt_path\": \"/home/daytona/repos/kimprobably/maestro-os/.workflow/iphone-app-ux-studio/codex/feature-context-intake.prompt.md\",\n  \"last_message_path\": \"/home/daytona/repos/kimprobably/maestro-os/.workflow/iphone-app-ux-studio/codex/feature-context-intake.last-message.md\",\n  \"status\": 1,\n  \"signal\": null,\n  \"stdout_excerpt\": \"\",\n  \"stderr_excerpt\": \"oal`\\n- `## Target User`\\n- `## Required Capabilities`\\n- `## Acceptance Criteria`\\n- `## Non-Goals`\\n- `## Source List`\\n- `## Reusable Artifacts`\\n- `## No Secrets`\\n\\n## JSON Contract\\n\\n`context-pack.json` must include:\\n\\n```json\\n{\\n  \\\"app_name\\\": \\\"string\\\",\\n  \\\"feature_goal\\\": \\\"string\\\",\\n  \\\"target_audience\\\": \\\"string\\\",\\n  \\\"required_capabilities\\\": [\\\"string\\\"],\\n  \\\"acceptance_criteria\\\": [\\\"string\\\"],\\n  \\\"non_goals\\\": [\\\"string\\\"],\\n  \\\"research_sources\\\": [\\\"string\\\"],\\n  \\\"context_paths\\\": [\\\"string\\\"],\\n  \\\"artifact_viewer_inputs\\\": [\\\"string\\\"]\\n}\\n```\\n\\nUse `FEATURE_REQUIRED_CAPABILITIES` as the required capability list when present. Do not remove or rename those capability ids.\\n\\n## Constraints\\n\\n- Do not print secrets, credentials, tokens, cookies, private keys, signed URLs, or environment values.\\n- Keep app specifics in this context artifact. Do not hardcode app specifics into reusable workflow files.\\n- Treat competitor screenshots, Mobbin references, Pageflows references, and App Store examples as private research material. Extract patterns and cite source metadata; do not copy assets or distinctive layouts.\\n\\n2026-05-17T14:15:11.410990Z ERROR codex_api::endpoint::responses_websocket: failed to connect to websocket: HTTP error: 401 Unauthorized, url: wss://api.openai.com/v1/responses\\n2026-05-17T14:15:12.103702Z ERROR codex_api::endpoint::responses_websocket: failed to connect to websocket: HTTP error: 401 Unauthorized, url: wss://api.openai.com/v1/responses\\n2026-05-17T14:15:13.033095Z ERROR codex_api::endpoint::responses_websocket: failed to connect to websocket: HTTP error: 401 Unauthorized, url: wss://api.openai.com/v1/responses\\nERROR: Reconnecting... 2/5\\n2026-05-17T14:15:14.154830Z ERROR codex_api::endpoint::responses_websocket: failed to connect to websocket: HTTP error: 401 Unauthorized, url: wss://api.openai.com/v1/responses\\nERROR: Reconnecting... 3/5\\n2026-05-17T14:15:15.655769Z ERROR codex_api::endpoint::responses_websocket: failed to connect to websocket: HTTP error: 401 Unauthorized, url: wss://api.openai.com/v1/responses\\nERROR: Reconnecting... 4/5\\n2026-05-17T14:15:17.967989Z ERROR codex_api::endpoint::responses_websocket: failed to connect to websocket: HTTP error: 401 Unauthorized, url: wss://api.openai.com/v1/responses\\nERROR: Reconnecting... 5/5\\n2026-05-17T14:15:22.044779Z ERROR codex_api::endpoint::responses_websocket: failed to connect to websocket: HTTP error: 401 Unauthorized, url: wss://api.openai.com/v1/responses\\nERROR: Reconnecting... 1/5\\nERROR: Reconnecting... 2/5\\nERROR: Reconnecting... 3/5\\nERROR: Reconnecting... 4/5\\nERROR: Reconnecting... 5/5\\nERROR: unexpected status 401 Unauthorized: Missing bearer or basic authentication in header, url: https://api.openai.com/v1/responses, cf-ray: 9fd33c0b4d4372b1-EWR, request id: req_8951ddd6a2cf48909470955d11984588\\nERROR: unexpected status 401 Unauthorized: Missing bearer or basic authentication in header, url: https://api.openai.com/v1/responses, cf-ray: 9fd33c0b4d4372b1-EWR, request id: req_8951ddd6a2cf48909470955d11984588\\n\",\n  \"codex_auth_installed\": false,\n  \"codex_mcp_credentials_installed\": false,\n  \"codex_mobbin_mcp\": {\n    \"configured\": false,\n    \"skipped\": true,\n    \"status\": null\n  },\n  \"failures\": [\n    \"codex exec exited with status 1\"\n  ]\n}\n",
+              "category": "deterministic"
+            },
+            "usage": null
+          }
+        },
+        "next_node_id": "write_context_pack",
+        "loop_failure_signatures": {
+          "write_context_pack|deterministic|script failed with exit code: <n> ## output { \"ok\": false,\"stage\": \"feature-context-intake\",\"model\": \"gpt-<n>.<n>-codex\",\"prompt_path\": \"/home/daytona/repos/kimprobably/maestro-os/prompts/iphone-app-factory/feature-context-intake.md\",\"rende": 1
+        },
+        "node_visits": {
+          "start": 1,
+          "write_context_pack": 1
+        }
+      },
+      "diff": {}
+    },
+    {
+      "seq": 101,
+      "checkpoint": {
+        "timestamp": "2026-05-17T14:15:51.592999167Z",
+        "current_node": "write_context_pack",
+        "completed_nodes": [
+          "start",
+          "write_context_pack",
+          "write_context_pack"
+        ],
+        "node_retries": {},
+        "context_values": {
+          "graph.rankdir": "LR",
+          "outcome": "failed",
+          "thread.context_intake_child.current_node": "context_intake_child",
+          "graph.persona": "existing-app-feature-context",
+          "thread.start.current_node": "write_context_pack",
+          "graph.inputs": "app_name,target_audience,feature_goal,required_capabilities,context_paths",
+          "response.emit_contract": "[Simulated] Response for stage: emit_contract",
+          "graph.secret_policy": "no secrets; do not print environment variables or credential values",
+          "last_response": "[Simulated] Response for stage: emit_contract",
+          "internal.retry_count.start": 0,
+          "current_node": "write_context_pack",
+          "internal.retry_count.context_intake_child": 0,
+          "internal.retry_count.write_context_pack": 0,
+          "failure_signature": "write_context_pack|deterministic|script failed with exit code: <n> ## output { \"ok\": false,\"stage\": \"feature-context-intake\",\"model\": \"gpt-<n>.<n>-codex\",\"prompt_path\": \"/home/daytona/repos/kimprobably/maestro-os/prompts/iphone-app-factory/feature-context-intake.md\",\"rende",
+          "internal.parent_preamble": "Goal: Implement WakeTask's task-based alarm feature pack through the reusable existing-app feature workflow\n\n## Completed stages\n- **feature_workflow_preflight**: succeeded\n- **context_intake_child**: failed\n\n## Context\n- failure_class: deterministic\n- failure_signature: context_intake_child|deterministic|child engine error: engine error: deterministic failure cycle detected: signature write_context_pack|deterministic|script failed with exit code: <n> ## output { \"ok\": false,\"stage\": \"feature-context-intake\",\"model\": \"gpt-<n>.<n>-codex\",\"pro\n",
+          "internal.work_dir": "/home/daytona/workspace/maestro-os",
+          "graph.model_stylesheet": "* { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }",
+          "thread.write_context_pack.current_node": "write_context_pack",
+          "graph.retry_target": "feature_spec_child",
+          "graph.goal": "Turn run-specific app context into a reusable feature context pack",
+          "internal.node_visit_count": 2,
+          "thread.feature_workflow_preflight.current_node": "context_intake_child",
+          "command.output": "blob://sha256/50d7bf7cf0648053764e265088956a83a767e2f06f9a0fe6ace1f0c6eba89f02",
+          "graph.default_max_retries": "2",
+          "graph.outputs": "contract.artifact,contract.gate,contract.next_action,contract.failure_classification,context_pack",
+          "last_stage": "emit_contract",
+          "internal.run_id": "01KRV4J4CADQ5YYG1GM47H4D6T",
+          "internal.retry_count.feature_workflow_preflight": 0,
+          "graph.artifact_root": ".workflow/existing-app-feature",
+          "internal.thread_id": "write_context_pack",
+          "failure_class": "deterministic",
+          "internal.fidelity": "compact"
+        },
+        "node_outcomes": {
+          "start": {
+            "status": "succeeded",
+            "usage": null
+          },
+          "write_context_pack": {
+            "status": "failed",
+            "context_updates": {
+              "command.output": "blob://sha256/50d7bf7cf0648053764e265088956a83a767e2f06f9a0fe6ace1f0c6eba89f02"
+            },
+            "failure": {
+              "message": "Script failed with exit code: 1\n\n## output\n{\n  \"ok\": false,\n  \"stage\": \"feature-context-intake\",\n  \"model\": \"gpt-5.3-codex\",\n  \"prompt_path\": \"/home/daytona/repos/kimprobably/maestro-os/prompts/iphone-app-factory/feature-context-intake.md\",\n  \"rendered_prompt_path\": \"/home/daytona/repos/kimprobably/maestro-os/.workflow/iphone-app-ux-studio/codex/feature-context-intake.prompt.md\",\n  \"last_message_path\": \"/home/daytona/repos/kimprobably/maestro-os/.workflow/iphone-app-ux-studio/codex/feature-context-intake.last-message.md\",\n  \"status\": 1,\n  \"signal\": null,\n  \"stdout_excerpt\": \"\",\n  \"stderr_excerpt\": \"oal`\\n- `## Target User`\\n- `## Required Capabilities`\\n- `## Acceptance Criteria`\\n- `## Non-Goals`\\n- `## Source List`\\n- `## Reusable Artifacts`\\n- `## No Secrets`\\n\\n## JSON Contract\\n\\n`context-pack.json` must include:\\n\\n```json\\n{\\n  \\\"app_name\\\": \\\"string\\\",\\n  \\\"feature_goal\\\": \\\"string\\\",\\n  \\\"target_audience\\\": \\\"string\\\",\\n  \\\"required_capabilities\\\": [\\\"string\\\"],\\n  \\\"acceptance_criteria\\\": [\\\"string\\\"],\\n  \\\"non_goals\\\": [\\\"string\\\"],\\n  \\\"research_sources\\\": [\\\"string\\\"],\\n  \\\"context_paths\\\": [\\\"string\\\"],\\n  \\\"artifact_viewer_inputs\\\": [\\\"string\\\"]\\n}\\n```\\n\\nUse `FEATURE_REQUIRED_CAPABILITIES` as the required capability list when present. Do not remove or rename those capability ids.\\n\\n## Constraints\\n\\n- Do not print secrets, credentials, tokens, cookies, private keys, signed URLs, or environment values.\\n- Keep app specifics in this context artifact. Do not hardcode app specifics into reusable workflow files.\\n- Treat competitor screenshots, Mobbin references, Pageflows references, and App Store examples as private research material. Extract patterns and cite source metadata; do not copy assets or distinctive layouts.\\n\\n2026-05-17T14:15:32.030756Z ERROR codex_api::endpoint::responses_websocket: failed to connect to websocket: HTTP error: 401 Unauthorized, url: wss://api.openai.com/v1/responses\\n2026-05-17T14:15:32.776967Z ERROR codex_api::endpoint::responses_websocket: failed to connect to websocket: HTTP error: 401 Unauthorized, url: wss://api.openai.com/v1/responses\\n2026-05-17T14:15:33.690649Z ERROR codex_api::endpoint::responses_websocket: failed to connect to websocket: HTTP error: 401 Unauthorized, url: wss://api.openai.com/v1/responses\\nERROR: Reconnecting... 2/5\\n2026-05-17T14:15:34.937913Z ERROR codex_api::endpoint::responses_websocket: failed to connect to websocket: HTTP error: 401 Unauthorized, url: wss://api.openai.com/v1/responses\\nERROR: Reconnecting... 3/5\\n2026-05-17T14:15:36.364038Z ERROR codex_api::endpoint::responses_websocket: failed to connect to websocket: HTTP error: 401 Unauthorized, url: wss://api.openai.com/v1/responses\\nERROR: Reconnecting... 4/5\\n2026-05-17T14:15:38.664776Z ERROR codex_api::endpoint::responses_websocket: failed to connect to websocket: HTTP error: 401 Unauthorized, url: wss://api.openai.com/v1/responses\\nERROR: Reconnecting... 5/5\\n2026-05-17T14:15:42.901832Z ERROR codex_api::endpoint::responses_websocket: failed to connect to websocket: HTTP error: 401 Unauthorized, url: wss://api.openai.com/v1/responses\\nERROR: Reconnecting... 1/5\\nERROR: Reconnecting... 2/5\\nERROR: Reconnecting... 3/5\\nERROR: Reconnecting... 4/5\\nERROR: Reconnecting... 5/5\\nERROR: unexpected status 401 Unauthorized: Missing bearer or basic authentication in header, url: https://api.openai.com/v1/responses, cf-ray: 9fd33c8aefa1125e-EWR, request id: req_05fe4e4223d74b22bf9e87bdba3cac30\\nERROR: unexpected status 401 Unauthorized: Missing bearer or basic authentication in header, url: https://api.openai.com/v1/responses, cf-ray: 9fd33c8aefa1125e-EWR, request id: req_05fe4e4223d74b22bf9e87bdba3cac30\\n\",\n  \"codex_auth_installed\": false,\n  \"codex_mcp_credentials_installed\": false,\n  \"codex_mobbin_mcp\": {\n    \"configured\": false,\n    \"skipped\": true,\n    \"status\": null\n  },\n  \"failures\": [\n    \"codex exec exited with status 1\"\n  ]\n}\n",
+              "category": "deterministic"
+            },
+            "usage": null
+          }
+        },
+        "next_node_id": "write_context_pack",
+        "loop_failure_signatures": {
+          "write_context_pack|deterministic|script failed with exit code: <n> ## output { \"ok\": false,\"stage\": \"feature-context-intake\",\"model\": \"gpt-<n>.<n>-codex\",\"prompt_path\": \"/home/daytona/repos/kimprobably/maestro-os/prompts/iphone-app-factory/feature-context-intake.md\",\"rende": 2
+        },
+        "node_visits": {
+          "start": 1,
+          "write_context_pack": 2
+        }
+      },
+      "diff": {}
+    },
+    {
+      "seq": 0,
+      "checkpoint": {
+        "timestamp": "2026-05-17T14:16:11.381181545Z",
+        "current_node": "context_intake_child",
+        "completed_nodes": [
+          "start",
+          "feature_workflow_preflight",
+          "context_intake_child",
           "context_intake_child"
         ],
         "node_retries": {},
@@ -1409,10 +1693,11 @@
           "last_stage": "emit_contract",
           "graph.outputs": "context_pack,research_pack,existing_app_audit,feature_spec,implementation_plan,implementation_evidence,validation_report,publish_handoff,postmortem",
           "graph.retry_target": "feature_spec_child",
-          "internal.thread_id": "feature_workflow_preflight",
+          "thread.context_intake_child.current_node": "context_intake_child",
+          "internal.thread_id": "context_intake_child",
           "internal.retry_count.context_intake_child": 0,
           "response.emit_contract": "[Simulated] Response for stage: emit_contract",
-          "internal.node_visit_count": 1,
+          "internal.node_visit_count": 2,
           "internal.retry_count.start": 0,
           "graph.inputs": "repo_url,base_branch,run_branch,app_name,bundle_id,app_dir,app_domain,target_audience,feature_goal,required_capabilities,context_paths,max_competitors,use_mobbin_mcp,use_design_corpus,ios_validation_mode,allow_macos_deferred,fabro_server",
           "graph.artifact_root": ".workflow/existing-app-feature",
@@ -1458,7 +1743,7 @@
         "next_node_id": "context_intake_child",
         "node_visits": {
           "feature_workflow_preflight": 1,
-          "context_intake_child": 1,
+          "context_intake_child": 2,
           "start": 1
         }
       },
@@ -1493,8 +1778,8 @@
       "completion": {
         "outcome": "failed",
         "notes": null,
-        "failure_reason": "Script failed with exit code: 1\n\n## output\n{\n  \"ok\": false,\n  \"stage\": \"feature-context-intake\",\n  \"model\": \"gpt-5.3-codex\",\n  \"prompt_path\": \"/home/daytona/repos/kimprobably/maestro-os/prompts/iphone-app-factory/feature-context-intake.md\",\n  \"rendered_prompt_path\": \"/home/daytona/repos/kimprobably/maestro-os/.workflow/iphone-app-ux-studio/codex/feature-context-intake.prompt.md\",\n  \"last_message_path\": \"/home/daytona/repos/kimprobably/maestro-os/.workflow/iphone-app-ux-studio/codex/feature-context-intake.last-message.md\",\n  \"status\": 1,\n  \"signal\": null,\n  \"stdout_excerpt\": \"\",\n  \"stderr_excerpt\": \"oal`\\n- `## Target User`\\n- `## Required Capabilities`\\n- `## Acceptance Criteria`\\n- `## Non-Goals`\\n- `## Source List`\\n- `## Reusable Artifacts`\\n- `## No Secrets`\\n\\n## JSON Contract\\n\\n`context-pack.json` must include:\\n\\n```json\\n{\\n  \\\"app_name\\\": \\\"string\\\",\\n  \\\"feature_goal\\\": \\\"string\\\",\\n  \\\"target_audience\\\": \\\"string\\\",\\n  \\\"required_capabilities\\\": [\\\"string\\\"],\\n  \\\"acceptance_criteria\\\": [\\\"string\\\"],\\n  \\\"non_goals\\\": [\\\"string\\\"],\\n  \\\"research_sources\\\": [\\\"string\\\"],\\n  \\\"context_paths\\\": [\\\"string\\\"],\\n  \\\"artifact_viewer_inputs\\\": [\\\"string\\\"]\\n}\\n```\\n\\nUse `FEATURE_REQUIRED_CAPABILITIES` as the required capability list when present. Do not remove or rename those capability ids.\\n\\n## Constraints\\n\\n- Do not print secrets, credentials, tokens, cookies, private keys, signed URLs, or environment values.\\n- Keep app specifics in this context artifact. Do not hardcode app specifics into reusable workflow files.\\n- Treat competitor screenshots, Mobbin references, Pageflows references, and App Store examples as private research material. Extract patterns and cite source metadata; do not copy assets or distinctive layouts.\\n\\n2026-05-17T14:13:45.921216Z ERROR codex_api::endpoint::responses_websocket: failed to connect to websocket: HTTP error: 401 Unauthorized, url: wss://api.openai.com/v1/responses\\n2026-05-17T14:13:46.628812Z ERROR codex_api::endpoint::responses_websocket: failed to connect to websocket: HTTP error: 401 Unauthorized, url: wss://api.openai.com/v1/responses\\n2026-05-17T14:13:47.498248Z ERROR codex_api::endpoint::responses_websocket: failed to connect to websocket: HTTP error: 401 Unauthorized, url: wss://api.openai.com/v1/responses\\nERROR: Reconnecting... 2/5\\n2026-05-17T14:13:48.681889Z ERROR codex_api::endpoint::responses_websocket: failed to connect to websocket: HTTP error: 401 Unauthorized, url: wss://api.openai.com/v1/responses\\nERROR: Reconnecting... 3/5\\n2026-05-17T14:13:50.115732Z ERROR codex_api::endpoint::responses_websocket: failed to connect to websocket: HTTP error: 401 Unauthorized, url: wss://api.openai.com/v1/responses\\nERROR: Reconnecting... 4/5\\n2026-05-17T14:13:52.430641Z ERROR codex_api::endpoint::responses_websocket: failed to connect to websocket: HTTP error: 401 Unauthorized, url: wss://api.openai.com/v1/responses\\nERROR: Reconnecting... 5/5\\n2026-05-17T14:13:57.492212Z ERROR codex_api::endpoint::responses_websocket: failed to connect to websocket: HTTP error: 401 Unauthorized, url: wss://api.openai.com/v1/responses\\nERROR: Reconnecting... 1/5\\nERROR: Reconnecting... 2/5\\nERROR: Reconnecting... 3/5\\nERROR: Reconnecting... 4/5\\nERROR: Reconnecting... 5/5\\nERROR: unexpected status 401 Unauthorized: Missing bearer or basic authentication in header, url: https://api.openai.com/v1/responses, cf-ray: 9fd339f8dcc2114c-EWR, request id: req_bbb3ea300d6745c0807ccd7153550239\\nERROR: unexpected status 401 Unauthorized: Missing bearer or basic authentication in header, url: https://api.openai.com/v1/responses, cf-ray: 9fd339f8dcc2114c-EWR, request id: req_bbb3ea300d6745c0807ccd7153550239\\n\",\n  \"codex_auth_installed\": false,\n  \"codex_mcp_credentials_installed\": false,\n  \"codex_mobbin_mcp\": {\n    \"configured\": false,\n    \"skipped\": true,\n    \"status\": null\n  },\n  \"failures\": [\n    \"codex exec exited with status 1\"\n  ]\n}\n",
-        "timestamp": "2026-05-17T14:14:06.307074894Z"
+        "failure_reason": "Script failed with exit code: 1\n\n## output\n{\n  \"ok\": false,\n  \"stage\": \"feature-context-intake\",\n  \"model\": \"gpt-5.3-codex\",\n  \"prompt_path\": \"/home/daytona/repos/kimprobably/maestro-os/prompts/iphone-app-factory/feature-context-intake.md\",\n  \"rendered_prompt_path\": \"/home/daytona/repos/kimprobably/maestro-os/.workflow/iphone-app-ux-studio/codex/feature-context-intake.prompt.md\",\n  \"last_message_path\": \"/home/daytona/repos/kimprobably/maestro-os/.workflow/iphone-app-ux-studio/codex/feature-context-intake.last-message.md\",\n  \"status\": 1,\n  \"signal\": null,\n  \"stdout_excerpt\": \"\",\n  \"stderr_excerpt\": \"oal`\\n- `## Target User`\\n- `## Required Capabilities`\\n- `## Acceptance Criteria`\\n- `## Non-Goals`\\n- `## Source List`\\n- `## Reusable Artifacts`\\n- `## No Secrets`\\n\\n## JSON Contract\\n\\n`context-pack.json` must include:\\n\\n```json\\n{\\n  \\\"app_name\\\": \\\"string\\\",\\n  \\\"feature_goal\\\": \\\"string\\\",\\n  \\\"target_audience\\\": \\\"string\\\",\\n  \\\"required_capabilities\\\": [\\\"string\\\"],\\n  \\\"acceptance_criteria\\\": [\\\"string\\\"],\\n  \\\"non_goals\\\": [\\\"string\\\"],\\n  \\\"research_sources\\\": [\\\"string\\\"],\\n  \\\"context_paths\\\": [\\\"string\\\"],\\n  \\\"artifact_viewer_inputs\\\": [\\\"string\\\"]\\n}\\n```\\n\\nUse `FEATURE_REQUIRED_CAPABILITIES` as the required capability list when present. Do not remove or rename those capability ids.\\n\\n## Constraints\\n\\n- Do not print secrets, credentials, tokens, cookies, private keys, signed URLs, or environment values.\\n- Keep app specifics in this context artifact. Do not hardcode app specifics into reusable workflow files.\\n- Treat competitor screenshots, Mobbin references, Pageflows references, and App Store examples as private research material. Extract patterns and cite source metadata; do not copy assets or distinctive layouts.\\n\\n2026-05-17T14:15:11.410990Z ERROR codex_api::endpoint::responses_websocket: failed to connect to websocket: HTTP error: 401 Unauthorized, url: wss://api.openai.com/v1/responses\\n2026-05-17T14:15:12.103702Z ERROR codex_api::endpoint::responses_websocket: failed to connect to websocket: HTTP error: 401 Unauthorized, url: wss://api.openai.com/v1/responses\\n2026-05-17T14:15:13.033095Z ERROR codex_api::endpoint::responses_websocket: failed to connect to websocket: HTTP error: 401 Unauthorized, url: wss://api.openai.com/v1/responses\\nERROR: Reconnecting... 2/5\\n2026-05-17T14:15:14.154830Z ERROR codex_api::endpoint::responses_websocket: failed to connect to websocket: HTTP error: 401 Unauthorized, url: wss://api.openai.com/v1/responses\\nERROR: Reconnecting... 3/5\\n2026-05-17T14:15:15.655769Z ERROR codex_api::endpoint::responses_websocket: failed to connect to websocket: HTTP error: 401 Unauthorized, url: wss://api.openai.com/v1/responses\\nERROR: Reconnecting... 4/5\\n2026-05-17T14:15:17.967989Z ERROR codex_api::endpoint::responses_websocket: failed to connect to websocket: HTTP error: 401 Unauthorized, url: wss://api.openai.com/v1/responses\\nERROR: Reconnecting... 5/5\\n2026-05-17T14:15:22.044779Z ERROR codex_api::endpoint::responses_websocket: failed to connect to websocket: HTTP error: 401 Unauthorized, url: wss://api.openai.com/v1/responses\\nERROR: Reconnecting... 1/5\\nERROR: Reconnecting... 2/5\\nERROR: Reconnecting... 3/5\\nERROR: Reconnecting... 4/5\\nERROR: Reconnecting... 5/5\\nERROR: unexpected status 401 Unauthorized: Missing bearer or basic authentication in header, url: https://api.openai.com/v1/responses, cf-ray: 9fd33c0b4d4372b1-EWR, request id: req_8951ddd6a2cf48909470955d11984588\\nERROR: unexpected status 401 Unauthorized: Missing bearer or basic authentication in header, url: https://api.openai.com/v1/responses, cf-ray: 9fd33c0b4d4372b1-EWR, request id: req_8951ddd6a2cf48909470955d11984588\\n\",\n  \"codex_auth_installed\": false,\n  \"codex_mcp_credentials_installed\": false,\n  \"codex_mobbin_mcp\": {\n    \"configured\": false,\n    \"skipped\": true,\n    \"status\": null\n  },\n  \"failures\": [\n    \"codex exec exited with status 1\"\n  ]\n}\n",
+        "timestamp": "2026-05-17T14:15:31.242650262Z"
       },
       "provider_used": null,
       "diff": null,
@@ -1505,9 +1790,9 @@
         "timeout_ms": 3600000
       },
       "script_timing": {
-        "output": "blob://sha256/efc9a6668068b1596a5d043c93f938c335f17cb083f72c4278fd800768cc7c02",
+        "output": "blob://sha256/74009627b733d9f34127c8887a4b769c29a62d1bf00e4c6384aeab8982ca9450",
         "exit_code": 1,
-        "duration_ms": 21427,
+        "duration_ms": 20730,
         "termination": "exited",
         "output_bytes": 3886,
         "live_streaming": true
@@ -1517,9 +1802,9 @@
       "output_bytes": 3886,
       "live_streaming": true,
       "termination": "exited",
-      "started_at": "2026-05-17T14:13:44.876601761Z",
+      "started_at": "2026-05-17T14:15:10.509429928Z",
       "handler": "command",
-      "duration_ms": 21429,
+      "duration_ms": 20733,
       "usage": {
         "input_tokens": 0,
         "output_tokens": 0,
@@ -1537,8 +1822,8 @@
       "completion": {
         "outcome": "failed",
         "notes": null,
-        "failure_reason": "Script failed with exit code: 1\n\n## output\n{\n  \"ok\": false,\n  \"stage\": \"feature-context-intake\",\n  \"model\": \"gpt-5.3-codex\",\n  \"prompt_path\": \"/home/daytona/repos/kimprobably/maestro-os/prompts/iphone-app-factory/feature-context-intake.md\",\n  \"rendered_prompt_path\": \"/home/daytona/repos/kimprobably/maestro-os/.workflow/iphone-app-ux-studio/codex/feature-context-intake.prompt.md\",\n  \"last_message_path\": \"/home/daytona/repos/kimprobably/maestro-os/.workflow/iphone-app-ux-studio/codex/feature-context-intake.last-message.md\",\n  \"status\": 1,\n  \"signal\": null,\n  \"stdout_excerpt\": \"\",\n  \"stderr_excerpt\": \"oal`\\n- `## Target User`\\n- `## Required Capabilities`\\n- `## Acceptance Criteria`\\n- `## Non-Goals`\\n- `## Source List`\\n- `## Reusable Artifacts`\\n- `## No Secrets`\\n\\n## JSON Contract\\n\\n`context-pack.json` must include:\\n\\n```json\\n{\\n  \\\"app_name\\\": \\\"string\\\",\\n  \\\"feature_goal\\\": \\\"string\\\",\\n  \\\"target_audience\\\": \\\"string\\\",\\n  \\\"required_capabilities\\\": [\\\"string\\\"],\\n  \\\"acceptance_criteria\\\": [\\\"string\\\"],\\n  \\\"non_goals\\\": [\\\"string\\\"],\\n  \\\"research_sources\\\": [\\\"string\\\"],\\n  \\\"context_paths\\\": [\\\"string\\\"],\\n  \\\"artifact_viewer_inputs\\\": [\\\"string\\\"]\\n}\\n```\\n\\nUse `FEATURE_REQUIRED_CAPABILITIES` as the required capability list when present. Do not remove or rename those capability ids.\\n\\n## Constraints\\n\\n- Do not print secrets, credentials, tokens, cookies, private keys, signed URLs, or environment values.\\n- Keep app specifics in this context artifact. Do not hardcode app specifics into reusable workflow files.\\n- Treat competitor screenshots, Mobbin references, Pageflows references, and App Store examples as private research material. Extract patterns and cite source metadata; do not copy assets or distinctive layouts.\\n\\n2026-05-17T14:14:07.147572Z ERROR codex_api::endpoint::responses_websocket: failed to connect to websocket: HTTP error: 401 Unauthorized, url: wss://api.openai.com/v1/responses\\n2026-05-17T14:14:07.884907Z ERROR codex_api::endpoint::responses_websocket: failed to connect to websocket: HTTP error: 401 Unauthorized, url: wss://api.openai.com/v1/responses\\n2026-05-17T14:14:08.744447Z ERROR codex_api::endpoint::responses_websocket: failed to connect to websocket: HTTP error: 401 Unauthorized, url: wss://api.openai.com/v1/responses\\nERROR: Reconnecting... 2/5\\n2026-05-17T14:14:09.815083Z ERROR codex_api::endpoint::responses_websocket: failed to connect to websocket: HTTP error: 401 Unauthorized, url: wss://api.openai.com/v1/responses\\nERROR: Reconnecting... 3/5\\n2026-05-17T14:14:11.414689Z ERROR codex_api::endpoint::responses_websocket: failed to connect to websocket: HTTP error: 401 Unauthorized, url: wss://api.openai.com/v1/responses\\nERROR: Reconnecting... 4/5\\n2026-05-17T14:14:13.699101Z ERROR codex_api::endpoint::responses_websocket: failed to connect to websocket: HTTP error: 401 Unauthorized, url: wss://api.openai.com/v1/responses\\nERROR: Reconnecting... 5/5\\n2026-05-17T14:14:17.569249Z ERROR codex_api::endpoint::responses_websocket: failed to connect to websocket: HTTP error: 401 Unauthorized, url: wss://api.openai.com/v1/responses\\nERROR: Reconnecting... 1/5\\nERROR: Reconnecting... 2/5\\nERROR: Reconnecting... 3/5\\nERROR: Reconnecting... 4/5\\nERROR: Reconnecting... 5/5\\nERROR: unexpected status 401 Unauthorized: Missing bearer or basic authentication in header, url: https://api.openai.com/v1/responses, cf-ray: 9fd33a73e883c5dc-EWR, request id: req_b5c00313e4d14bd7a9b09bdd8f21fd21\\nERROR: unexpected status 401 Unauthorized: Missing bearer or basic authentication in header, url: https://api.openai.com/v1/responses, cf-ray: 9fd33a73e883c5dc-EWR, request id: req_b5c00313e4d14bd7a9b09bdd8f21fd21\\n\",\n  \"codex_auth_installed\": false,\n  \"codex_mcp_credentials_installed\": false,\n  \"codex_mobbin_mcp\": {\n    \"configured\": false,\n    \"skipped\": true,\n    \"status\": null\n  },\n  \"failures\": [\n    \"codex exec exited with status 1\"\n  ]\n}\n",
-        "timestamp": "2026-05-17T14:14:26.005119331Z"
+        "failure_reason": "Script failed with exit code: 1\n\n## output\n{\n  \"ok\": false,\n  \"stage\": \"feature-context-intake\",\n  \"model\": \"gpt-5.3-codex\",\n  \"prompt_path\": \"/home/daytona/repos/kimprobably/maestro-os/prompts/iphone-app-factory/feature-context-intake.md\",\n  \"rendered_prompt_path\": \"/home/daytona/repos/kimprobably/maestro-os/.workflow/iphone-app-ux-studio/codex/feature-context-intake.prompt.md\",\n  \"last_message_path\": \"/home/daytona/repos/kimprobably/maestro-os/.workflow/iphone-app-ux-studio/codex/feature-context-intake.last-message.md\",\n  \"status\": 1,\n  \"signal\": null,\n  \"stdout_excerpt\": \"\",\n  \"stderr_excerpt\": \"oal`\\n- `## Target User`\\n- `## Required Capabilities`\\n- `## Acceptance Criteria`\\n- `## Non-Goals`\\n- `## Source List`\\n- `## Reusable Artifacts`\\n- `## No Secrets`\\n\\n## JSON Contract\\n\\n`context-pack.json` must include:\\n\\n```json\\n{\\n  \\\"app_name\\\": \\\"string\\\",\\n  \\\"feature_goal\\\": \\\"string\\\",\\n  \\\"target_audience\\\": \\\"string\\\",\\n  \\\"required_capabilities\\\": [\\\"string\\\"],\\n  \\\"acceptance_criteria\\\": [\\\"string\\\"],\\n  \\\"non_goals\\\": [\\\"string\\\"],\\n  \\\"research_sources\\\": [\\\"string\\\"],\\n  \\\"context_paths\\\": [\\\"string\\\"],\\n  \\\"artifact_viewer_inputs\\\": [\\\"string\\\"]\\n}\\n```\\n\\nUse `FEATURE_REQUIRED_CAPABILITIES` as the required capability list when present. Do not remove or rename those capability ids.\\n\\n## Constraints\\n\\n- Do not print secrets, credentials, tokens, cookies, private keys, signed URLs, or environment values.\\n- Keep app specifics in this context artifact. Do not hardcode app specifics into reusable workflow files.\\n- Treat competitor screenshots, Mobbin references, Pageflows references, and App Store examples as private research material. Extract patterns and cite source metadata; do not copy assets or distinctive layouts.\\n\\n2026-05-17T14:15:32.030756Z ERROR codex_api::endpoint::responses_websocket: failed to connect to websocket: HTTP error: 401 Unauthorized, url: wss://api.openai.com/v1/responses\\n2026-05-17T14:15:32.776967Z ERROR codex_api::endpoint::responses_websocket: failed to connect to websocket: HTTP error: 401 Unauthorized, url: wss://api.openai.com/v1/responses\\n2026-05-17T14:15:33.690649Z ERROR codex_api::endpoint::responses_websocket: failed to connect to websocket: HTTP error: 401 Unauthorized, url: wss://api.openai.com/v1/responses\\nERROR: Reconnecting... 2/5\\n2026-05-17T14:15:34.937913Z ERROR codex_api::endpoint::responses_websocket: failed to connect to websocket: HTTP error: 401 Unauthorized, url: wss://api.openai.com/v1/responses\\nERROR: Reconnecting... 3/5\\n2026-05-17T14:15:36.364038Z ERROR codex_api::endpoint::responses_websocket: failed to connect to websocket: HTTP error: 401 Unauthorized, url: wss://api.openai.com/v1/responses\\nERROR: Reconnecting... 4/5\\n2026-05-17T14:15:38.664776Z ERROR codex_api::endpoint::responses_websocket: failed to connect to websocket: HTTP error: 401 Unauthorized, url: wss://api.openai.com/v1/responses\\nERROR: Reconnecting... 5/5\\n2026-05-17T14:15:42.901832Z ERROR codex_api::endpoint::responses_websocket: failed to connect to websocket: HTTP error: 401 Unauthorized, url: wss://api.openai.com/v1/responses\\nERROR: Reconnecting... 1/5\\nERROR: Reconnecting... 2/5\\nERROR: Reconnecting... 3/5\\nERROR: Reconnecting... 4/5\\nERROR: Reconnecting... 5/5\\nERROR: unexpected status 401 Unauthorized: Missing bearer or basic authentication in header, url: https://api.openai.com/v1/responses, cf-ray: 9fd33c8aefa1125e-EWR, request id: req_05fe4e4223d74b22bf9e87bdba3cac30\\nERROR: unexpected status 401 Unauthorized: Missing bearer or basic authentication in header, url: https://api.openai.com/v1/responses, cf-ray: 9fd33c8aefa1125e-EWR, request id: req_05fe4e4223d74b22bf9e87bdba3cac30\\n\",\n  \"codex_auth_installed\": false,\n  \"codex_mcp_credentials_installed\": false,\n  \"codex_mobbin_mcp\": {\n    \"configured\": false,\n    \"skipped\": true,\n    \"status\": null\n  },\n  \"failures\": [\n    \"codex exec exited with status 1\"\n  ]\n}\n",
+        "timestamp": "2026-05-17T14:15:51.592767629Z"
       },
       "provider_used": null,
       "diff": null,
@@ -1549,9 +1834,9 @@
         "timeout_ms": 3600000
       },
       "script_timing": {
-        "output": "blob://sha256/b2bfa97831680c3a99df2f2001d0b068b71b7a1e87a69380acf30475de120335",
+        "output": "blob://sha256/50d7bf7cf0648053764e265088956a83a767e2f06f9a0fe6ace1f0c6eba89f02",
         "exit_code": 1,
-        "duration_ms": 19695,
+        "duration_ms": 20346,
         "termination": "exited",
         "output_bytes": 3886,
         "live_streaming": true
@@ -1561,9 +1846,9 @@
       "output_bytes": 3886,
       "live_streaming": true,
       "termination": "exited",
-      "started_at": "2026-05-17T14:14:06.307417217Z",
+      "started_at": "2026-05-17T14:15:31.243049235Z",
       "handler": "command",
-      "duration_ms": 19697,
+      "duration_ms": 20349,
       "usage": {
         "input_tokens": 0,
         "output_tokens": 0,
@@ -1636,7 +1921,12 @@
       "first_event_seq": 48,
       "prompt": null,
       "response": null,
-      "completion": null,
+      "completion": {
+        "outcome": "failed",
+        "notes": null,
+        "failure_reason": "Child engine error: Engine error: deterministic failure cycle detected: signature write_context_pack|deterministic|script failed with exit code: <n> ## output { \"ok\": false,\"stage\": \"feature-context-intake\",\"model\": \"gpt-<n>.<n>-codex\",\"prompt_path\": \"/home/daytona/repos/kimprobably/maestro-os/prompts/iphone-app-factory/feature-context-intake.md\",\"rende repeated 3 times (limit 3)",
+        "timestamp": "2026-05-17T14:15:08.652860360Z"
+      },
       "provider_used": null,
       "diff": null,
       "script_invocation": null,
@@ -1645,6 +1935,7 @@
       "output": null,
       "started_at": "2026-05-17T14:13:44.871792913Z",
       "handler": "stack.manager_loop",
+      "duration_ms": 83735,
       "usage": {
         "input_tokens": 0,
         "output_tokens": 0,
@@ -1653,7 +1944,7 @@
         "cache_read_tokens": 0,
         "cache_write_tokens": 0
       },
-      "state": "running"
+      "state": "failed"
     },
     "start@1": {
       "first_event_seq": 16,
@@ -1663,7 +1954,7 @@
         "outcome": "succeeded",
         "notes": null,
         "failure_reason": null,
-        "timestamp": "2026-05-17T14:13:44.876482611Z"
+        "timestamp": "2026-05-17T14:15:10.509262570Z"
       },
       "provider_used": null,
       "diff": null,
@@ -1671,7 +1962,7 @@
       "script_timing": null,
       "parallel_results": null,
       "output": null,
-      "started_at": "2026-05-17T14:13:44.876424806Z",
+      "started_at": "2026-05-17T14:15:10.509122144Z",
       "handler": "start",
       "duration_ms": 0,
       "usage": {
@@ -1688,12 +1979,7 @@
       "first_event_seq": 67,
       "prompt": null,
       "response": null,
-      "completion": {
-        "outcome": "failed",
-        "notes": null,
-        "failure_reason": "Script failed with exit code: 1\n\n## output\n{\n  \"ok\": false,\n  \"stage\": \"feature-context-intake\",\n  \"model\": \"gpt-5.3-codex\",\n  \"prompt_path\": \"/home/daytona/repos/kimprobably/maestro-os/prompts/iphone-app-factory/feature-context-intake.md\",\n  \"rendered_prompt_path\": \"/home/daytona/repos/kimprobably/maestro-os/.workflow/iphone-app-ux-studio/codex/feature-context-intake.prompt.md\",\n  \"last_message_path\": \"/home/daytona/repos/kimprobably/maestro-os/.workflow/iphone-app-ux-studio/codex/feature-context-intake.last-message.md\",\n  \"status\": 1,\n  \"signal\": null,\n  \"stdout_excerpt\": \"\",\n  \"stderr_excerpt\": \"oal`\\n- `## Target User`\\n- `## Required Capabilities`\\n- `## Acceptance Criteria`\\n- `## Non-Goals`\\n- `## Source List`\\n- `## Reusable Artifacts`\\n- `## No Secrets`\\n\\n## JSON Contract\\n\\n`context-pack.json` must include:\\n\\n```json\\n{\\n  \\\"app_name\\\": \\\"string\\\",\\n  \\\"feature_goal\\\": \\\"string\\\",\\n  \\\"target_audience\\\": \\\"string\\\",\\n  \\\"required_capabilities\\\": [\\\"string\\\"],\\n  \\\"acceptance_criteria\\\": [\\\"string\\\"],\\n  \\\"non_goals\\\": [\\\"string\\\"],\\n  \\\"research_sources\\\": [\\\"string\\\"],\\n  \\\"context_paths\\\": [\\\"string\\\"],\\n  \\\"artifact_viewer_inputs\\\": [\\\"string\\\"]\\n}\\n```\\n\\nUse `FEATURE_REQUIRED_CAPABILITIES` as the required capability list when present. Do not remove or rename those capability ids.\\n\\n## Constraints\\n\\n- Do not print secrets, credentials, tokens, cookies, private keys, signed URLs, or environment values.\\n- Keep app specifics in this context artifact. Do not hardcode app specifics into reusable workflow files.\\n- Treat competitor screenshots, Mobbin references, Pageflows references, and App Store examples as private research material. Extract patterns and cite source metadata; do not copy assets or distinctive layouts.\\n\\n2026-05-17T14:14:26.939736Z ERROR codex_api::endpoint::responses_websocket: failed to connect to websocket: HTTP error: 401 Unauthorized, url: wss://api.openai.com/v1/responses\\n2026-05-17T14:14:27.593812Z ERROR codex_api::endpoint::responses_websocket: failed to connect to websocket: HTTP error: 401 Unauthorized, url: wss://api.openai.com/v1/responses\\n2026-05-17T14:14:28.548925Z ERROR codex_api::endpoint::responses_websocket: failed to connect to websocket: HTTP error: 401 Unauthorized, url: wss://api.openai.com/v1/responses\\nERROR: Reconnecting... 2/5\\n2026-05-17T14:14:29.857189Z ERROR codex_api::endpoint::responses_websocket: failed to connect to websocket: HTTP error: 401 Unauthorized, url: wss://api.openai.com/v1/responses\\nERROR: Reconnecting... 3/5\\n2026-05-17T14:14:31.531769Z ERROR codex_api::endpoint::responses_websocket: failed to connect to websocket: HTTP error: 401 Unauthorized, url: wss://api.openai.com/v1/responses\\nERROR: Reconnecting... 4/5\\n2026-05-17T14:14:33.839198Z ERROR codex_api::endpoint::responses_websocket: failed to connect to websocket: HTTP error: 401 Unauthorized, url: wss://api.openai.com/v1/responses\\nERROR: Reconnecting... 5/5\\n2026-05-17T14:14:37.875756Z ERROR codex_api::endpoint::responses_websocket: failed to connect to websocket: HTTP error: 401 Unauthorized, url: wss://api.openai.com/v1/responses\\nERROR: Reconnecting... 1/5\\nERROR: Reconnecting... 2/5\\nERROR: Reconnecting... 3/5\\nERROR: Reconnecting... 4/5\\nERROR: Reconnecting... 5/5\\nERROR: unexpected status 401 Unauthorized: Missing bearer or basic authentication in header, url: https://api.openai.com/v1/responses, cf-ray: 9fd33af63e34ed71-EWR, request id: req_91f34060878f4b969e0efb2e8bd32d7b\\nERROR: unexpected status 401 Unauthorized: Missing bearer or basic authentication in header, url: https://api.openai.com/v1/responses, cf-ray: 9fd33af63e34ed71-EWR, request id: req_91f34060878f4b969e0efb2e8bd32d7b\\n\",\n  \"codex_auth_installed\": false,\n  \"codex_mcp_credentials_installed\": false,\n  \"codex_mobbin_mcp\": {\n    \"configured\": false,\n    \"skipped\": true,\n    \"status\": null\n  },\n  \"failures\": [\n    \"codex exec exited with status 1\"\n  ]\n}\n",
-        "timestamp": "2026-05-17T14:14:46.892552592Z"
-      },
+      "completion": null,
       "provider_used": null,
       "diff": null,
       "script_invocation": {
@@ -1703,9 +1989,9 @@
         "timeout_ms": 3600000
       },
       "script_timing": {
-        "output": "blob://sha256/ac606d670fa9c6b078697ad589e02ec3cc6f8c167e301e5616e2d9ed7a10e2ae",
+        "output": "blob://sha256/e9d51f7868747b2ef730066b12032bbe022fdde8378529dc5552dffb89e22c2f",
         "exit_code": 1,
-        "duration_ms": 20884,
+        "duration_ms": 19764,
         "termination": "exited",
         "output_bytes": 3886,
         "live_streaming": true
@@ -1715,9 +2001,8 @@
       "output_bytes": 3886,
       "live_streaming": true,
       "termination": "exited",
-      "started_at": "2026-05-17T14:14:26.005516493Z",
+      "started_at": "2026-05-17T14:15:51.593152143Z",
       "handler": "command",
-      "duration_ms": 20886,
       "usage": {
         "input_tokens": 0,
         "output_tokens": 0,
@@ -1726,7 +2011,7 @@
         "cache_read_tokens": 0,
         "cache_write_tokens": 0
       },
-      "state": "failed"
+      "state": "running"
     },
     "write_context_pack@4": {
       "first_event_seq": 73,
@@ -1756,6 +2041,29 @@
       "termination": "exited",
       "started_at": "2026-05-17T14:14:46.892962507Z",
       "handler": "command",
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "total_tokens": 0,
+        "reasoning_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "state": "running"
+    },
+    "context_intake_child@2": {
+      "first_event_seq": 83,
+      "prompt": null,
+      "response": null,
+      "completion": null,
+      "provider_used": null,
+      "diff": null,
+      "script_invocation": null,
+      "script_timing": null,
+      "parallel_results": null,
+      "output": null,
+      "started_at": "2026-05-17T14:15:10.503117561Z",
+      "handler": "stack.manager_loop",
       "usage": {
         "input_tokens": 0,
         "output_tokens": 0,
