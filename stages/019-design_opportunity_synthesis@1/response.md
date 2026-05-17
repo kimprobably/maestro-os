@@ -1,0 +1,1 @@
+[Simulated] Response for stage: design_opportunity_synthesis
