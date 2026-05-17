@@ -1,0 +1,5 @@
+{
+  "script": "test -s .workflow/waketask-product-iteration/product-spec.md && test -s .workflow/waketask-product-iteration/product-spec.json && rg -q \"Apple Clock-like|mission|dismiss|loud|completion|share\" .workflow/waketask-product-iteration/product-spec.md && node -e \"const fs=require('fs'); const spec=JSON.parse(fs.readFileSync('.workflow/waketask-product-iteration/product-spec.json','utf8')); for (const key of ['screens','missions','acceptance_criteria','non_goals','next_action']) if (!(key in spec)) throw new Error('missing '+key);\"",
+  "command": "exec 2>&1\ntest -s .workflow/waketask-product-iteration/product-spec.md && test -s .workflow/waketask-product-iteration/product-spec.json && rg -q \"Apple Clock-like|mission|dismiss|loud|completion|share\" .workflow/waketask-product-iteration/product-spec.md && node -e \"const fs=require('fs'); const spec=JSON.parse(fs.readFileSync('.workflow/waketask-product-iteration/product-spec.json','utf8')); for (const key of ['screens','missions','acceptance_criteria','non_goals','next_action']) if (!(key in spec)) throw new Error('missing '+key);\"",
+  "language": "shell"
+}
