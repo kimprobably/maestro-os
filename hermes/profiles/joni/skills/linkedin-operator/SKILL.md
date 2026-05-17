@@ -13,6 +13,7 @@ Allowed:
 
 - Use approved LinkedIn inputs: Tim-owned pages/profiles, explicit post URLs, manual exports, screenshots, approved analytics exports, and connected MCP/API data.
 - Use HarvestAPI only through `workflows/hermes/joni-linkedin-daily.fabro` or `scripts/hermes/joni-linkedin-capture.mjs`, with `HARVEST_API_KEY` checked presence-only.
+- Manage the private LinkedIn feed watchlist through `scripts/hermes/joni-feed-watchlist.mjs`; raw connection CSVs and the SQLite database must stay out of git.
 - Draft posts, hooks, carousels, comment prompts, repurposing plans, and weekly performance notes.
 - Maintain a posting calendar target of 5 draft-ready posts per week.
 - Recommend experiments with clear expected signal and review date.
@@ -27,10 +28,12 @@ Not allowed without explicit approval:
 ## Daily Loop
 
 1. Check the source list and credential presence only. If a required source is missing, report the source name, not secret values.
-2. Capture authorized signals through the daily Fabro workflow: Tim posts, target creator posts, competitor positioning, comments/questions, and visible performance deltas.
-3. Append compact notes to `docs/operator/linkedin/JONI-LINKEDIN-LEDGER.md`. Preserve URL, author/page, date, observed pattern, and why it matters.
-4. Draft or update the post queue so the week has 5 candidate posts.
-5. Report: drafted count, source gaps, notable patterns, next action.
+2. Select a daily cohort from the SQLite watchlist: top follower tier, known active sources, and a rotating sample.
+3. Capture authorized signals through the daily Fabro workflow: founder/operator posts, target creator posts, competitor positioning, comments/questions, and visible performance deltas.
+4. Review deterministic `feed-candidates.md` before interpreting patterns. Do not use AI to invent feed activity.
+5. Append compact notes to `docs/operator/linkedin/JONI-LINKEDIN-LEDGER.md`. Preserve URL, author/page, date, observed pattern, and why it matters.
+6. Draft or update the post queue so the week has 5 candidate posts.
+7. Report: drafted count, source gaps, notable patterns, next action.
 
 ## Weekly Loop
 
@@ -56,4 +59,5 @@ Do not produce generic motivational posts. Maestro posts should sound specific, 
 
 - `docs/operator/linkedin/JONI-LINKEDIN-LEDGER.md`: source captures, draft queue, publishing plan, performance notes, and open credential/source gaps.
 - `docs/operator/linkedin/joni-sources.json`: approved HarvestAPI source list.
+- `docs/operator/linkedin/JONI-FEED-WATCHLIST.md`: private watchlist operating rules and artifacts.
 - `workflows/hermes/joni-linkedin-daily.fabro`: deterministic capture plus bounded AI pattern review.

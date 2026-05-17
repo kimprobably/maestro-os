@@ -165,8 +165,10 @@ function normalizePost(item, source, capturedAt) {
     dedupe_key: hash(stableId),
     linkedin_url: url,
     source: {
+      id: source.source_id || source.id || "",
       type: source.type,
       name: source.name,
+      tier: source.tier || "",
     },
     author: {
       name: author.name || "",
@@ -300,7 +302,7 @@ async function verifyReview() {
   const outDir = rel(root, argValue("--out-dir", ".workflow/joni-linkedin/daily"));
   const reviewPath = path.join(outDir, "ai-review.md");
   const text = await readFile(reviewPath, "utf8");
-  const required = ["## Patterns", "## Draft Candidates", "## Risks"];
+  const required = ["## Patterns", "## Outperforming Posts", "## Draft Candidates", "## Risks"];
   const missing = required.filter((section) => !text.includes(section));
   if (missing.length) throw new Error(`AI review missing required section(s): ${missing.join(", ")}`);
   if (/publish now|post now|send dm|connect with/i.test(text)) {

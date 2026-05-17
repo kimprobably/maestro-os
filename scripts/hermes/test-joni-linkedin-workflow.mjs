@@ -140,14 +140,21 @@ test("joni linkedin daily workflow keeps capture deterministic and AI review dow
   const runConfig = await readFile(path.join(repoRoot, "workflows/hermes/joni-linkedin-daily.toml"), "utf8");
   const prompt = await readFile(path.join(repoRoot, "prompts/hermes/joni-linkedin-ai-review.md"), "utf8");
 
+  assert.match(workflow, /ensure_feed_watchlist/);
+  assert.match(workflow, /select_daily_sources/);
   assert.match(workflow, /validate_harvest_sources/);
   assert.match(workflow, /capture_linkedin_posts/);
+  assert.match(workflow, /record_feed_snapshots/);
+  assert.match(workflow, /score_feed_candidates/);
   assert.match(workflow, /summarize_capture/);
   assert.match(workflow, /ai_pattern_review/);
+  assert.match(workflow, /select_daily_sources -> validate_harvest_sources/);
   assert.match(workflow, /capture_linkedin_posts -> summarize_capture/);
-  assert.match(workflow, /summarize_capture -> ai_pattern_review/);
+  assert.match(workflow, /score_feed_candidates -> ai_pattern_review/);
   assert.match(workflow, /verify_ai_review/);
   assert.match(runConfig, /HARVEST_API_KEY = "{{ env\.HARVEST_API_KEY }}"/);
+  assert.match(runConfig, /feed_db = "\/data\/\.hermes\/profiles\/joni\/state\/linkedin-feed\/joni-linkedin-feed\.sqlite"/);
   assert.match(prompt, /Do not invent/);
+  assert.match(prompt, /feed-candidates\.md/);
   assert.match(prompt, /Do not recommend publishing/);
 });
