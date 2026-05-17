@@ -34,6 +34,13 @@ Check that:
 
 Update the same evidence file by replacing the pending verifier line under `## Verifier notes`.
 
+You are the independent verifier for this phase. Updating verifier notes, verifier
+reports, or the Codex stage output is not implementation work. If your verification
+pass is read-only with respect to app source, tests, previews, and implementation
+evidence, do not leave `- Pending independent verifier.` in the evidence file.
+The phase evidence gate treats `- Pending independent verifier.` as a rejection
+after this verifier stage.
+
 If acceptable, write a concise verifier note that avoids the gate rejection phrases and includes concrete evidence, for example:
 
 `- Accepted by independent verifier: reviewed files, commands, and screenshots; phase scope is acceptable to advance.`
@@ -42,7 +49,11 @@ If not acceptable, write a concise rejection note that includes the exact retry 
 
 `- Rejected by independent verifier: retry visual-system because Dynamic Type evidence is missing.`
 
-Do not self-approve implementation work you performed in the same stage. If you made edits, leave `- Pending independent verifier.` and explain the edits outside the evidence file.
+Do not self-approve implementation work you performed in the same stage. Only leave
+`- Pending independent verifier.` if you directly changed app source, tests,
+previews, screenshot manifests, Appium identifiers, or implementation evidence
+beyond the verifier note itself; explain those implementation edits outside the
+evidence file so a later verifier can review them.
 
 ## Output Rules
 

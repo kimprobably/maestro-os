@@ -52,7 +52,6 @@ if (
 
 const verifierIndex = text.search(/Verifier notes/i);
 if (
-  !hasAcceptedDeferred &&
   verifierIndex >= 0 &&
   /rejected|failed|not acceptable|do not advance|retry|needs another implementation pass|another implementation pass|not ready|cannot advance|pending independent verifier/i.test(
     text.slice(verifierIndex)

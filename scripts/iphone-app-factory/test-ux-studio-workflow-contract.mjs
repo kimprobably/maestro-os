@@ -224,6 +224,31 @@ test("UX studio implementation retry prompts consume verifier feedback", () => {
   }
 });
 
+test("UX studio verifier prompt resolves pending verifier notes before gates", () => {
+  const verifyPrompt = readRequiredFile("prompts/iphone-app-factory/ux-verify-phase.md");
+
+  assert.match(
+    verifyPrompt,
+    /Updating verifier notes, verifier\s+reports, or the Codex stage output is not implementation work/i,
+    "Expected verifier prompt to distinguish evidence review from implementation edits",
+  );
+  assert.match(
+    verifyPrompt,
+    /phase evidence gate treats `- Pending independent verifier\.` as a rejection/i,
+    "Expected verifier prompt to warn that pending verifier notes cannot pass the gate",
+  );
+  assert.match(
+    verifyPrompt,
+    /If acceptable, write a concise verifier note/i,
+    "Expected verifier prompt to require accepted verifier notes for acceptable evidence",
+  );
+  assert.match(
+    verifyPrompt,
+    /If not acceptable, write a concise rejection note/i,
+    "Expected verifier prompt to require explicit rejection notes for unacceptable evidence",
+  );
+});
+
 test("UX studio routes missing hosted iOS runtime evidence to postmortem instead of screen-flow loop", () => {
   const graph = readRequiredFile(workflowPath);
 
