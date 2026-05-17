@@ -38,6 +38,7 @@ const requiredWorkflowTokens = [
   "verify_screen_flows",
   "gate_screen_flows",
   "screenshot_evidence_gate",
+  "ios_runtime_evidence_preflight",
   "appium_exploratory_gate",
   "ios_quality_gate",
   "final_review_fanout",
@@ -85,6 +86,7 @@ const requiredScriptFiles = [
   "scripts/iphone-app-factory/design-corpus.mjs",
   "scripts/iphone-app-factory/reference-pack-gate.mjs",
   "scripts/iphone-app-factory/ios-screenshot-manifest-gate.mjs",
+  "scripts/iphone-app-factory/ios-runtime-evidence-preflight.mjs",
   "scripts/iphone-app-factory/design-tournament-gate.mjs",
   "scripts/iphone-app-factory/ux-postmortem-gate.mjs",
   "scripts/iphone-app-factory/ux-final-review-gate.mjs",
@@ -199,6 +201,23 @@ test("UX studio implementation retry prompts consume verifier feedback", () => {
       `Expected ${label} implementation prompt to distinguish first pass from retry pass`,
     );
   }
+});
+
+test("UX studio routes missing hosted iOS runtime evidence to postmortem instead of screen-flow loop", () => {
+  const graph = readRequiredFile(workflowPath);
+
+  assert.match(
+    graph,
+    /screenshot_evidence_review -> ios_runtime_evidence_preflight \[condition="outcome=succeeded"\]/,
+  );
+  assert.match(
+    graph,
+    /ios_runtime_evidence_preflight -> postmortem_learning_capture \[label="iOS Runtime Blocker"\]/,
+  );
+  assert.doesNotMatch(
+    graph,
+    /screenshot_evidence_review -> screenshot_evidence_gate \[condition="outcome=succeeded"\]/,
+  );
 });
 
 test("UX studio script files exist", () => {

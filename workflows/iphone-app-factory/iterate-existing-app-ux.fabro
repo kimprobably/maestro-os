@@ -248,6 +248,13 @@ digraph IterateExistingAppUX {
         retry_target="implement_screen_flows",
         script="node scripts/iphone-app-factory/ios-screenshot-manifest-gate.mjs --manifest reports/ios/screenshots/manifest.json --phase after --require-before-after true"
     ]
+    ios_runtime_evidence_preflight [
+        label="iOS Runtime Evidence Preflight",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="postmortem_learning_capture",
+        script="node scripts/iphone-app-factory/ios-runtime-evidence-preflight.mjs --manifest reports/ios/screenshots/manifest.json"
+    ]
     appium_exploratory_gate [
         label="Appium Exploratory Gate",
         shape=parallelogram,
@@ -415,8 +422,10 @@ digraph IterateExistingAppUX {
     verify_screen_flows -> implement_screen_flows [label="Fix Screen Flows"]
     gate_screen_flows -> screenshot_evidence_review [condition="outcome=succeeded"]
     gate_screen_flows -> implement_screen_flows [label="Fix Screen Flows"]
-    screenshot_evidence_review -> screenshot_evidence_gate [condition="outcome=succeeded"]
+    screenshot_evidence_review -> ios_runtime_evidence_preflight [condition="outcome=succeeded"]
     screenshot_evidence_review -> implement_screen_flows [label="Screenshot Review Fix"]
+    ios_runtime_evidence_preflight -> screenshot_evidence_gate [condition="outcome=succeeded"]
+    ios_runtime_evidence_preflight -> postmortem_learning_capture [label="iOS Runtime Blocker"]
     screenshot_evidence_gate -> appium_exploratory_gate [condition="outcome=succeeded"]
     screenshot_evidence_gate -> implement_screen_flows [label="Screenshot Fix"]
     appium_exploratory_gate -> ios_quality_gate [condition="outcome=succeeded"]
