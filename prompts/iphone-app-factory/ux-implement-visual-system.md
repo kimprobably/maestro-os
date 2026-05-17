@@ -7,9 +7,22 @@ Read:
 - `.workflow/iphone-app-ux-studio/implementation-plan.md`
 - `.workflow/iphone-app-ux-studio/design/screen-spec.md`
 - `.workflow/iphone-app-ux-studio/design/screen-spec.json`
+- `.workflow/iphone-app-ux-studio/evidence/visual-system.md` if it exists from a prior retry
 - existing app design system, theme, SwiftUI component, localization, accessibility, and test files
 
 Focus on reusable app-specific SwiftUI building blocks that let the existing app express the selected direction without rebuilding app behavior.
+
+## Retry Handling
+
+If `.workflow/iphone-app-ux-studio/evidence/visual-system.md` already exists, treat this as a retry pass:
+
+- read `## Verifier notes` first
+- identify the exact rejected criteria or missing evidence
+- make targeted code, test, preview, or evidence changes that address those verifier notes
+- preserve useful prior evidence while updating stale claims
+- do not remove rejection language or reset to pending unless the concrete retry work addresses the rejection
+
+If the verifier notes are ambiguous, inspect the surrounding evidence and changed files before editing. Do not repeat generic visual-system work without addressing the prior failure.
 
 ## Scope
 

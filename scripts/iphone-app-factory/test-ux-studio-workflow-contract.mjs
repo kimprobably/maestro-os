@@ -175,6 +175,32 @@ test("UX studio prompt files exist", () => {
   assertFilesExist(requiredPromptFiles, "prompt files");
 });
 
+test("UX studio implementation retry prompts consume verifier feedback", () => {
+  const visualSystemPrompt = readRequiredFile("prompts/iphone-app-factory/ux-implement-visual-system.md");
+  const screenFlowsPrompt = readRequiredFile("prompts/iphone-app-factory/ux-implement-screen-flows.md");
+
+  for (const [label, prompt] of [
+    ["visual-system", visualSystemPrompt],
+    ["screen-flows", screenFlowsPrompt],
+  ]) {
+    assert.match(
+      prompt,
+      /\.workflow\/iphone-app-ux-studio\/evidence\/[a-z-]+\.md/,
+      `Expected ${label} implementation prompt to read its prior evidence artifact on retry`,
+    );
+    assert.match(
+      prompt,
+      /Verifier notes/i,
+      `Expected ${label} implementation prompt to consume verifier notes before retrying`,
+    );
+    assert.match(
+      prompt,
+      /retry/i,
+      `Expected ${label} implementation prompt to distinguish first pass from retry pass`,
+    );
+  }
+});
+
 test("UX studio script files exist", () => {
   assertFilesExist(requiredScriptFiles, "script files");
 });
