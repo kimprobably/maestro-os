@@ -57,12 +57,22 @@ test("WakeTask parent run config targets Railway Fabro and the parent graph", ()
   assert.doesNotMatch(config, /localhost|127\.0\.0\.1/);
 });
 
-test("WakeTask preflight keeps verbose validator output out of Fabro context", () => {
+test("WakeTask child command gates do not emit stdout blobs into parent context", () => {
+  const commandWorkflowPaths = [
+    "workflows/iphone-app-factory/waketask-workflow-preflight-stage.fabro",
+    "workflows/iphone-app-factory/waketask-product-spec-stage.fabro",
+    "workflows/iphone-app-factory/waketask-validation-postmortem-stage.fabro",
+  ];
   const graph = readRequiredFile("workflows/iphone-app-factory/waketask-workflow-preflight-stage.fabro");
   const redirectIndex = graph.indexOf("> .workflow/waketask-product-iteration/workflow-preflight.log 2>&1");
   const summaryEmitIndex = graph.indexOf("&& node -e");
   assert.match(graph, /workflow-preflight\.log/);
   assert.match(graph, /> \.workflow\/waketask-product-iteration\/workflow-preflight\.log 2>&1/);
   assert.ok(redirectIndex > 0, "Expected validator output to be redirected to a log artifact");
-  assert.ok(summaryEmitIndex > redirectIndex, "Expected only the compact JSON summary to be emitted after verbose logs");
+  assert.ok(summaryEmitIndex > redirectIndex, "Expected artifact-writing summary code after verbose logs");
+
+  for (const workflowPath of commandWorkflowPaths) {
+    const workflow = readRequiredFile(workflowPath);
+    assert.doesNotMatch(workflow, /console\.log\(/, `Expected ${workflowPath} command gates to avoid stdout`);
+  }
 });

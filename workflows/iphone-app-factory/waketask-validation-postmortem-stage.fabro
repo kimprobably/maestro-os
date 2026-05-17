@@ -26,7 +26,7 @@ digraph WakeTaskValidationPostmortemStage {
         label="Validate Postmortem Contract",
         shape=parallelogram,
         retry_target="write_validation_postmortem",
-        script="test -s .workflow/waketask-product-iteration/validation-postmortem.md && test -s .workflow/waketask-product-iteration/validation-postmortem.json && rg -q \"What Worked|What Failed|Manual Versus Fabro Executed|Workflow Changes Needed|Product Backlog|Next Operator Action|No Secrets\" .workflow/waketask-product-iteration/validation-postmortem.md && node -e \"const fs=require('fs'); JSON.parse(fs.readFileSync('.workflow/waketask-product-iteration/validation-postmortem.json','utf8')); console.log(JSON.stringify({ok:true,artifact:'.workflow/waketask-product-iteration/validation-postmortem.md'}));\""
+        script="test -s .workflow/waketask-product-iteration/validation-postmortem.md && test -s .workflow/waketask-product-iteration/validation-postmortem.json && rg -q \"What Worked|What Failed|Manual Versus Fabro Executed|Workflow Changes Needed|Product Backlog|Next Operator Action|No Secrets\" .workflow/waketask-product-iteration/validation-postmortem.md && node -e \"const fs=require('fs'); JSON.parse(fs.readFileSync('.workflow/waketask-product-iteration/validation-postmortem.json','utf8'));\""
     ]
 
     start -> write_validation_postmortem -> validate_postmortem_contract -> exit
