@@ -826,13 +826,13 @@
   },
   "web_url": "https://fabro-maestro-production.up.railway.app/runs/01KRV4236KY1S5FESNCGNJPXQA",
   "start": {
-    "start_time": "2026-05-17T14:05:10.257491083Z"
+    "start_time": "2026-05-17T14:05:22.310665446Z"
   },
   "status": {
     "kind": "running"
   },
   "status_updated_at": "2026-05-17T14:04:55.672466664Z",
-  "last_event_at": "2026-05-17T14:05:20.378251906Z",
+  "last_event_at": "2026-05-17T14:05:32.323858423Z",
   "pending_control": null,
   "checkpoints": [
     {
@@ -1304,9 +1304,9 @@
       "diff": {}
     },
     {
-      "seq": 0,
+      "seq": 75,
       "checkpoint": {
-        "timestamp": "2026-05-17T14:05:20.430122542Z",
+        "timestamp": "2026-05-17T14:05:22.305460886Z",
         "current_node": "feature_workflow_preflight",
         "completed_nodes": [
           "start",
@@ -1315,35 +1315,31 @@
         ],
         "node_retries": {},
         "context_values": {
+          "internal.run_id": "01KRV4236KY1S5FESNCGNJPXQA",
+          "current_node": "feature_workflow_preflight",
+          "failure_class": "deterministic",
           "failure_signature": "feature_workflow_preflight|deterministic|child engine error: engine error: deterministic failure cycle detected: signature validate_feature_workflow|deterministic|script failed with exit code: <n> repeated <n> times (limit <n>)",
           "graph.model_stylesheet": "\n            *       { backend: cli; provider: openai; model: gpt-5.3-codex-spark; reasoning_effort: low; }\n            .spec   { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            .build  { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            .review { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n        ",
-          "outcome": "failed",
-          "graph.secret_policy": "no secrets; credential checks are presence-only; do not print environment variables or credential values",
-          "failure_class": "deterministic",
-          "thread.start.current_node": "feature_workflow_preflight",
-          "internal.retry_count.feature_workflow_preflight": 0,
-          "internal.fidelity": "compact",
-          "internal.run_id": "01KRV4236KY1S5FESNCGNJPXQA",
-          "graph.persona": "existing-iphone-app-feature-orchestrator",
-          "thread.feature_workflow_preflight.current_node": "feature_workflow_preflight",
-          "graph.rankdir": "LR",
           "graph.outputs": "context_pack,research_pack,existing_app_audit,feature_spec,implementation_plan,implementation_evidence,validation_report,publish_handoff,postmortem",
+          "graph.rankdir": "LR",
+          "graph.inputs": "repo_url,base_branch,run_branch,app_name,bundle_id,app_dir,app_domain,target_audience,feature_goal,required_capabilities,context_paths,max_competitors,use_mobbin_mcp,use_design_corpus,ios_validation_mode,allow_macos_deferred,fabro_server",
+          "internal.fidelity": "compact",
+          "thread.feature_workflow_preflight.current_node": "feature_workflow_preflight",
           "graph.artifact_root": ".workflow/existing-app-feature",
           "graph.retry_target": "feature_spec_child",
-          "internal.thread_id": "feature_workflow_preflight",
-          "graph.inputs": "repo_url,base_branch,run_branch,app_name,bundle_id,app_dir,app_domain,target_audience,feature_goal,required_capabilities,context_paths,max_competitors,use_mobbin_mcp,use_design_corpus,ios_validation_mode,allow_macos_deferred,fabro_server",
-          "internal.retry_count.start": 0,
-          "current_node": "feature_workflow_preflight",
-          "internal.work_dir": "/home/daytona/workspace/maestro-os",
+          "graph.secret_policy": "no secrets; credential checks are presence-only; do not print environment variables or credential values",
+          "internal.retry_count.feature_workflow_preflight": 0,
+          "internal.node_visit_count": 2,
           "graph.default_max_retries": "2",
+          "internal.retry_count.start": 0,
           "graph.goal": "Implement WakeTask's task-based alarm feature pack through the reusable existing-app feature workflow",
-          "internal.node_visit_count": 2
+          "outcome": "failed",
+          "thread.start.current_node": "feature_workflow_preflight",
+          "graph.persona": "existing-iphone-app-feature-orchestrator",
+          "internal.thread_id": "feature_workflow_preflight",
+          "internal.work_dir": "/home/daytona/workspace/maestro-os"
         },
         "node_outcomes": {
-          "start": {
-            "status": "succeeded",
-            "usage": null
-          },
           "feature_workflow_preflight": {
             "status": "failed",
             "failure": {
@@ -1351,18 +1347,242 @@
               "category": "deterministic"
             },
             "usage": null
+          },
+          "start": {
+            "status": "succeeded",
+            "usage": null
           }
         },
         "next_node_id": "feature_workflow_preflight",
+        "git_commit_sha": "31f07168ffae3d23f2c5fe87c2671521b5f130ea",
+        "loop_failure_signatures": {
+          "feature_workflow_preflight|deterministic|child engine error: engine error: deterministic failure cycle detected: signature validate_feature_workflow|deterministic|script failed with exit code: <n> repeated <n> times (limit <n>)": 2
+        },
         "node_visits": {
           "feature_workflow_preflight": 2,
+          "start": 1
+        }
+      },
+      "diff": {
+        "summary": {
+          "files_changed": 0,
+          "additions": 0,
+          "deletions": 0
+        }
+      }
+    },
+    {
+      "seq": 84,
+      "checkpoint": {
+        "timestamp": "2026-05-17T14:05:22.310880911Z",
+        "current_node": "start",
+        "completed_nodes": [
+          "start"
+        ],
+        "node_retries": {},
+        "context_values": {
+          "graph.default_max_retries": "2",
+          "graph.goal": "Validate reusable existing-app feature workflow contracts and Railway execution requirements",
+          "graph.outputs": "contract.artifact,contract.gate,contract.next_action,contract.failure_classification",
+          "graph.rankdir": "LR",
+          "graph.artifact_root": ".workflow/existing-app-feature",
+          "failure_class": "",
+          "graph.retry_target": "feature_spec_child",
+          "graph.secret_policy": "no secrets; do not print environment variables or credential values",
+          "current_node": "start",
+          "internal.retry_count.feature_workflow_preflight": 0,
+          "internal.retry_count.start": 0,
+          "internal.thread_id": null,
+          "internal.node_visit_count": 1,
+          "thread.feature_workflow_preflight.current_node": "feature_workflow_preflight",
+          "internal.fidelity": "compact",
+          "outcome": "succeeded",
+          "internal.work_dir": "/home/daytona/workspace/maestro-os",
+          "graph.persona": "existing-app-feature-preflight",
+          "internal.run_id": "01KRV4236KY1S5FESNCGNJPXQA",
+          "graph.inputs": "fabro_server,use_mobbin_mcp,app_dir",
+          "thread.start.current_node": "feature_workflow_preflight",
+          "failure_signature": "",
+          "internal.parent_preamble": "Goal: Implement WakeTask's task-based alarm feature pack through the reusable existing-app feature workflow\n\n## Completed stages\n- **feature_workflow_preflight**: failed\n- **feature_workflow_preflight**: failed\n\n## Context\n- failure_class: deterministic\n- failure_signature: feature_workflow_preflight|deterministic|child engine error: engine error: deterministic failure cycle detected: signature validate_feature_workflow|deterministic|script failed with exit code: <n> repeated <n> times (limit <n>)\n",
+          "graph.model_stylesheet": "* { backend: cli; provider: openai; model: gpt-5.3-codex-spark; reasoning_effort: low; }"
+        },
+        "node_outcomes": {
+          "start": {
+            "status": "succeeded",
+            "usage": null
+          }
+        },
+        "next_node_id": "validate_feature_workflow",
+        "node_visits": {
+          "start": 1
+        }
+      },
+      "diff": {}
+    },
+    {
+      "seq": 90,
+      "checkpoint": {
+        "timestamp": "2026-05-17T14:05:25.673168377Z",
+        "current_node": "validate_feature_workflow",
+        "completed_nodes": [
+          "start",
+          "validate_feature_workflow"
+        ],
+        "node_retries": {},
+        "context_values": {
+          "internal.node_visit_count": 1,
+          "internal.parent_preamble": "Goal: Implement WakeTask's task-based alarm feature pack through the reusable existing-app feature workflow\n\n## Completed stages\n- **feature_workflow_preflight**: failed\n- **feature_workflow_preflight**: failed\n\n## Context\n- failure_class: deterministic\n- failure_signature: feature_workflow_preflight|deterministic|child engine error: engine error: deterministic failure cycle detected: signature validate_feature_workflow|deterministic|script failed with exit code: <n> repeated <n> times (limit <n>)\n",
+          "internal.run_id": "01KRV4236KY1S5FESNCGNJPXQA",
+          "internal.retry_count.start": 0,
+          "internal.work_dir": "/home/daytona/workspace/maestro-os",
+          "thread.start.current_node": "validate_feature_workflow",
+          "failure_signature": "validate_feature_workflow|deterministic|script failed with exit code: <n>",
+          "thread.feature_workflow_preflight.current_node": "feature_workflow_preflight",
+          "failure_class": "deterministic",
+          "graph.secret_policy": "no secrets; do not print environment variables or credential values",
+          "internal.retry_count.validate_feature_workflow": 0,
+          "internal.retry_count.feature_workflow_preflight": 0,
+          "internal.thread_id": "start",
+          "graph.retry_target": "feature_spec_child",
+          "command.output": "blob://sha256/12ae32cb1ec02d01eda3581b127c1fee3b0dc53572ed6baf239721a03d82e126",
+          "graph.rankdir": "LR",
+          "internal.fidelity": "compact",
+          "outcome": "failed",
+          "graph.inputs": "fabro_server,use_mobbin_mcp,app_dir",
+          "graph.model_stylesheet": "* { backend: cli; provider: openai; model: gpt-5.3-codex-spark; reasoning_effort: low; }",
+          "graph.default_max_retries": "2",
+          "graph.outputs": "contract.artifact,contract.gate,contract.next_action,contract.failure_classification",
+          "graph.persona": "existing-app-feature-preflight",
+          "graph.artifact_root": ".workflow/existing-app-feature",
+          "graph.goal": "Validate reusable existing-app feature workflow contracts and Railway execution requirements",
+          "current_node": "validate_feature_workflow"
+        },
+        "node_outcomes": {
+          "validate_feature_workflow": {
+            "status": "failed",
+            "context_updates": {
+              "command.output": "blob://sha256/12ae32cb1ec02d01eda3581b127c1fee3b0dc53572ed6baf239721a03d82e126"
+            },
+            "failure": {
+              "message": "Script failed with exit code: 1",
+              "category": "deterministic"
+            },
+            "usage": null
+          },
+          "start": {
+            "status": "succeeded",
+            "usage": null
+          }
+        },
+        "next_node_id": "validate_feature_workflow",
+        "loop_failure_signatures": {
+          "validate_feature_workflow|deterministic|script failed with exit code: <n>": 1
+        },
+        "node_visits": {
+          "validate_feature_workflow": 1,
+          "start": 1
+        }
+      },
+      "diff": {}
+    },
+    {
+      "seq": 96,
+      "checkpoint": {
+        "timestamp": "2026-05-17T14:05:29.018428900Z",
+        "current_node": "validate_feature_workflow",
+        "completed_nodes": [
+          "start",
+          "validate_feature_workflow",
+          "validate_feature_workflow"
+        ],
+        "node_retries": {},
+        "context_values": {
+          "graph.secret_policy": "no secrets; do not print environment variables or credential values",
+          "internal.thread_id": "validate_feature_workflow",
+          "internal.work_dir": "/home/daytona/workspace/maestro-os",
+          "outcome": "failed",
+          "internal.run_id": "01KRV4236KY1S5FESNCGNJPXQA",
+          "thread.feature_workflow_preflight.current_node": "feature_workflow_preflight",
+          "command.output": "blob://sha256/12ae32cb1ec02d01eda3581b127c1fee3b0dc53572ed6baf239721a03d82e126",
+          "thread.validate_feature_workflow.current_node": "validate_feature_workflow",
+          "graph.goal": "Validate reusable existing-app feature workflow contracts and Railway execution requirements",
+          "graph.artifact_root": ".workflow/existing-app-feature",
+          "internal.fidelity": "compact",
+          "internal.retry_count.feature_workflow_preflight": 0,
+          "internal.retry_count.validate_feature_workflow": 0,
+          "graph.default_max_retries": "2",
+          "thread.start.current_node": "validate_feature_workflow",
+          "failure_signature": "validate_feature_workflow|deterministic|script failed with exit code: <n>",
+          "graph.inputs": "fabro_server,use_mobbin_mcp,app_dir",
+          "internal.retry_count.start": 0,
+          "internal.parent_preamble": "Goal: Implement WakeTask's task-based alarm feature pack through the reusable existing-app feature workflow\n\n## Completed stages\n- **feature_workflow_preflight**: failed\n- **feature_workflow_preflight**: failed\n\n## Context\n- failure_class: deterministic\n- failure_signature: feature_workflow_preflight|deterministic|child engine error: engine error: deterministic failure cycle detected: signature validate_feature_workflow|deterministic|script failed with exit code: <n> repeated <n> times (limit <n>)\n",
+          "graph.rankdir": "LR",
+          "graph.retry_target": "feature_spec_child",
+          "graph.outputs": "contract.artifact,contract.gate,contract.next_action,contract.failure_classification",
+          "internal.node_visit_count": 2,
+          "current_node": "validate_feature_workflow",
+          "failure_class": "deterministic",
+          "graph.model_stylesheet": "* { backend: cli; provider: openai; model: gpt-5.3-codex-spark; reasoning_effort: low; }",
+          "graph.persona": "existing-app-feature-preflight"
+        },
+        "node_outcomes": {
+          "validate_feature_workflow": {
+            "status": "failed",
+            "context_updates": {
+              "command.output": "blob://sha256/12ae32cb1ec02d01eda3581b127c1fee3b0dc53572ed6baf239721a03d82e126"
+            },
+            "failure": {
+              "message": "Script failed with exit code: 1",
+              "category": "deterministic"
+            },
+            "usage": null
+          },
+          "start": {
+            "status": "succeeded",
+            "usage": null
+          }
+        },
+        "next_node_id": "validate_feature_workflow",
+        "loop_failure_signatures": {
+          "validate_feature_workflow|deterministic|script failed with exit code: <n>": 2
+        },
+        "node_visits": {
+          "validate_feature_workflow": 2,
           "start": 1
         }
       },
       "diff": {}
     }
   ],
-  "conclusion": null,
+  "conclusion": {
+    "timestamp": "2026-05-17T14:05:32.363096255Z",
+    "status": "failed",
+    "duration_ms": 36679,
+    "failure": {
+      "reason": "workflow_error",
+      "detail": {
+        "message": "deterministic failure cycle detected: signature feature_workflow_preflight|deterministic|child engine error: engine error: deterministic failure cycle detected: signature validate_feature_workflow|deterministic|script failed with exit code: <n> repeated <n> times (limit <n>) repeated 3 times (limit 3)",
+        "category": "deterministic"
+      }
+    },
+    "final_git_commit_sha": "31f07168ffae3d23f2c5fe87c2671521b5f130ea",
+    "stages": [
+      {
+        "stage_id": "start",
+        "stage_label": "start",
+        "duration_ms": 0,
+        "retries": 0
+      },
+      {
+        "stage_id": "validate_feature_workflow",
+        "stage_label": "validate_feature_workflow",
+        "duration_ms": 6705,
+        "retries": 0
+      }
+    ],
+    "total_retries": 0,
+    "diff": {}
+  },
   "sandbox": {
     "provider": "daytona",
     "image": "buildpack-deps:noble",
@@ -1420,7 +1640,7 @@
         "outcome": "failed",
         "notes": null,
         "failure_reason": "Script failed with exit code: 1",
-        "timestamp": "2026-05-17T14:05:13.525992586Z"
+        "timestamp": "2026-05-17T14:05:25.672986467Z"
       },
       "provider_used": null,
       "diff": null,
@@ -1432,7 +1652,7 @@
       "script_timing": {
         "output": "blob://sha256/12ae32cb1ec02d01eda3581b127c1fee3b0dc53572ed6baf239721a03d82e126",
         "exit_code": 1,
-        "duration_ms": 3266,
+        "duration_ms": 3359,
         "termination": "exited",
         "output_bytes": 0,
         "live_streaming": false
@@ -1442,9 +1662,9 @@
       "output_bytes": 0,
       "live_streaming": false,
       "termination": "exited",
-      "started_at": "2026-05-17T14:05:10.257792402Z",
+      "started_at": "2026-05-17T14:05:22.310940478Z",
       "handler": "command",
-      "duration_ms": 3268,
+      "duration_ms": 3361,
       "usage": {
         "input_tokens": 0,
         "output_tokens": 0,
@@ -1463,7 +1683,7 @@
         "outcome": "succeeded",
         "notes": null,
         "failure_reason": null,
-        "timestamp": "2026-05-17T14:05:10.257647792Z"
+        "timestamp": "2026-05-17T14:05:22.310822101Z"
       },
       "provider_used": null,
       "diff": null,
@@ -1471,7 +1691,7 @@
       "script_timing": null,
       "parallel_results": null,
       "output": null,
-      "started_at": "2026-05-17T14:05:10.257585067Z",
+      "started_at": "2026-05-17T14:05:22.310753666Z",
       "handler": "start",
       "duration_ms": 0,
       "usage": {
@@ -1488,7 +1708,12 @@
       "first_event_seq": 49,
       "prompt": null,
       "response": null,
-      "completion": null,
+      "completion": {
+        "outcome": "failed",
+        "notes": null,
+        "failure_reason": "Child engine error: Engine error: deterministic failure cycle detected: signature validate_feature_workflow|deterministic|script failed with exit code: <n> repeated 3 times (limit 3)",
+        "timestamp": "2026-05-17T14:05:20.429998303Z"
+      },
       "provider_used": null,
       "diff": null,
       "script_invocation": null,
@@ -1496,6 +1721,30 @@
       "parallel_results": null,
       "output": null,
       "started_at": "2026-05-17T14:05:10.252932728Z",
+      "handler": "stack.manager_loop",
+      "duration_ms": 10126,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "total_tokens": 0,
+        "reasoning_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "state": "failed"
+    },
+    "feature_workflow_preflight@3": {
+      "first_event_seq": 78,
+      "prompt": null,
+      "response": null,
+      "completion": null,
+      "provider_used": null,
+      "diff": null,
+      "script_invocation": null,
+      "script_timing": null,
+      "parallel_results": null,
+      "output": null,
+      "started_at": "2026-05-17T14:05:22.305625633Z",
       "handler": "stack.manager_loop",
       "usage": {
         "input_tokens": 0,
@@ -1515,7 +1764,7 @@
         "outcome": "failed",
         "notes": null,
         "failure_reason": "Script failed with exit code: 1",
-        "timestamp": "2026-05-17T14:05:17.050893906Z"
+        "timestamp": "2026-05-17T14:05:29.018242719Z"
       },
       "provider_used": null,
       "diff": null,
@@ -1527,7 +1776,7 @@
       "script_timing": {
         "output": "blob://sha256/12ae32cb1ec02d01eda3581b127c1fee3b0dc53572ed6baf239721a03d82e126",
         "exit_code": 1,
-        "duration_ms": 3522,
+        "duration_ms": 3342,
         "termination": "exited",
         "output_bytes": 0,
         "live_streaming": false
@@ -1537,9 +1786,9 @@
       "output_bytes": 0,
       "live_streaming": false,
       "termination": "exited",
-      "started_at": "2026-05-17T14:05:13.526376545Z",
+      "started_at": "2026-05-17T14:05:25.673322654Z",
       "handler": "command",
-      "duration_ms": 3524,
+      "duration_ms": 3344,
       "usage": {
         "input_tokens": 0,
         "output_tokens": 0,
@@ -1565,7 +1814,7 @@
       "script_timing": {
         "output": "blob://sha256/12ae32cb1ec02d01eda3581b127c1fee3b0dc53572ed6baf239721a03d82e126",
         "exit_code": 1,
-        "duration_ms": 3324,
+        "duration_ms": 3303,
         "termination": "exited",
         "output_bytes": 0,
         "live_streaming": false
@@ -1575,7 +1824,7 @@
       "output_bytes": 0,
       "live_streaming": false,
       "termination": "exited",
-      "started_at": "2026-05-17T14:05:17.051190049Z",
+      "started_at": "2026-05-17T14:05:29.018582780Z",
       "handler": "command",
       "usage": {
         "input_tokens": 0,
