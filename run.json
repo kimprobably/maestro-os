@@ -1,0 +1,554 @@
+{
+  "title": "Create staged WakeTask product-iteration workflows, then run the UX Studio implementation workflo...",
+  "spec": {
+    "run_id": "01KRTFDCB6VN33BCVMZY2D3EGK",
+    "settings": {
+      "project": {
+        "name": "maestro-os",
+        "description": null,
+        "metadata": {}
+      },
+      "workflow": {
+        "name": null,
+        "description": null,
+        "graph": "workflow.fabro",
+        "metadata": {}
+      },
+      "run": {
+        "goal": {
+          "type": "inline",
+          "value": "Create staged WakeTask product-iteration workflows, then run the UX Studio implementation workflow through Railway Fabro with durable evidence and postmortem learning"
+        },
+        "working_dir": null,
+        "metadata": {
+          "app": "waketask",
+          "orchestration": "parent-child",
+          "factory": "iphone-app-ux-studio",
+          "control_plane": "railway",
+          "topic": "task-alarm-clock"
+        },
+        "inputs": {
+          "base_branch": "main",
+          "use_mobbin_mcp": "true",
+          "design_goal": "Make WakeTask a highly polished task-based alarm app with Apple Clock-like familiarity, obvious task selection, real wired dismiss missions, loud sounds, funny visual viral tasks, completion reward and share moments, and spec build eval loops.",
+          "ios_validation_mode": "github",
+          "app_domain": "task_alarm",
+          "design_corpus_write_mode": "private",
+          "selected_direction_mode": "automatic",
+          "use_design_corpus": "true",
+          "app_dir": "apps/waketask-ios",
+          "target_audience": "heavy sleepers and professionals who need an alarm they cannot dismiss without meaningful wake-up engagement",
+          "fabro_server": "https://fabro-maestro-production.up.railway.app/api/v1",
+          "repo_url": "https://github.com/kimprobably/waketask-ios.git",
+          "bundle_id": "com.keen.waketask",
+          "run_branch": "ux-studio/waketask-product-iteration-20260517",
+          "app_name": "WakeTask",
+          "allow_macos_deferred": "false",
+          "max_competitors": "12"
+        },
+        "model": {
+          "provider": "openrouter",
+          "name": "anthropic/claude-haiku-4-5",
+          "fallbacks": [],
+          "controls": {
+            "reasoning_effort": null,
+            "speed": null
+          }
+        },
+        "git": {
+          "author": null
+        },
+        "prepare": {
+          "commands": [],
+          "timeout_ms": 300000
+        },
+        "execution": {
+          "mode": "normal",
+          "approval": "prompt"
+        },
+        "checkpoint": {
+          "exclude_globs": []
+        },
+        "clone": {
+          "enabled": true
+        },
+        "run_branch": {
+          "enabled": true,
+          "push": true
+        },
+        "meta_branch": {
+          "enabled": true,
+          "push": true
+        },
+        "sandbox": {
+          "provider": "daytona",
+          "preserve": false,
+          "stop_on_terminal": true,
+          "devcontainer": false,
+          "env": {
+            "OPENAI_API_KEY": "{{ env.OPENAI_API_KEY }}",
+            "UX_TARGET_AUDIENCE": "heavy sleepers and professionals who need an alarm they cannot dismiss without meaningful wake-up engagement",
+            "UX_RUN_ID": "ux-studio/waketask-product-iteration-20260517",
+            "LINEAR_API_KEY": "{{ env.LINEAR_API_KEY }}",
+            "UX_ALLOW_MACOS_DEFERRED": "false",
+            "UX_IOS_VALIDATION_MODE": "github",
+            "OPENROUTER_API_KEY": "{{ env.OPENROUTER_API_KEY }}",
+            "UX_APP_DOMAIN": "task_alarm",
+            "APIFY_APPSTORE_ACTOR": "crawlerbros/appstore-scraper",
+            "GITHUB_TOKEN": "{{ env.GITHUB_TOKEN }}",
+            "UX_APP_DIR": "apps/waketask-ios",
+            "FABRO_SLACK_BOT_TOKEN": "{{ env.FABRO_SLACK_BOT_TOKEN }}",
+            "CODEX_MCP_CREDENTIALS_JSON_BASE64": "{{ env.CODEX_MCP_CREDENTIALS_JSON_BASE64 }}",
+            "APIFY_TOKEN": "{{ env.APIFY_TOKEN }}",
+            "APIFY_TIKTOK_ACTOR": "clockworks/tiktok-scraper",
+            "LINEAR_API_URL": "{{ env.LINEAR_API_URL }}",
+            "CLAUDE_CODE_OAUTH_TOKEN": "{{ env.CLAUDE_CODE_OAUTH_TOKEN }}",
+            "DAYTONA_API_KEY": "{{ env.DAYTONA_API_KEY }}",
+            "GH_TOKEN": "{{ env.GH_TOKEN }}",
+            "UX_RUN_BRANCH": "ux-studio/waketask-product-iteration-20260517",
+            "UX_BASE_BRANCH": "main",
+            "UX_USE_MOBBIN_MCP": "true",
+            "FABRO_SERVER": "https://fabro-maestro-production.up.railway.app/api/v1",
+            "UX_SCREEN_TYPE": "task_alarm",
+            "CODEX_AUTH_JSON_BASE64": "{{ env.CODEX_AUTH_JSON_BASE64 }}",
+            "DAYTONA_API_URL": "{{ env.DAYTONA_API_URL }}",
+            "CLAUDE_CODE_CREDENTIALS_JSON_BASE64": "{{ env.CLAUDE_CODE_CREDENTIALS_JSON_BASE64 }}",
+            "FABRO_DEV_TOKEN": "{{ env.FABRO_DEV_TOKEN }}",
+            "PROMPTFOO_DISABLE_TELEMETRY": "1",
+            "APIFY_INSTAGRAM_ACTOR": "apify/instagram-scraper",
+            "APP_DIR": "apps/waketask-ios",
+            "UX_REPO_URL": "https://github.com/kimprobably/waketask-ios.git",
+            "FABRO_SLACK_CHANNEL_ID": "{{ env.FABRO_SLACK_CHANNEL_ID }}"
+          },
+          "docker": {
+            "image": "buildpack-deps:noble",
+            "network_mode": null,
+            "memory_limit": 4000000000,
+            "cpu_quota": 200000,
+            "env_vars": {}
+          },
+          "daytona": {
+            "auto_stop_interval": 30,
+            "labels": {
+              "project": "maestro-os",
+              "purpose": "code-factory"
+            },
+            "snapshot": {
+              "name": "maestro-code-factory-v8",
+              "cpu": 2,
+              "memory_gb": 4,
+              "disk_gb": 10,
+              "dockerfile": {
+                "type": "inline",
+                "value": "FROM ubuntu:24.04\n\nENV DEBIAN_FRONTEND=noninteractive\nENV BUN_INSTALL=/root/.bun\nENV PATH=\"/root/.fabro/bin:/root/.bun/bin:/root/.local/bin:/root/.qlty/bin:${PATH}\"\nWORKDIR /home/daytona\n\nRUN apt-get update && apt-get install -y --no-install-recommends bash ca-certificates curl gh git jq openssh-client python3 python3-pip pipx ripgrep shellcheck sqlite3 unzip xz-utils && rm -rf /var/lib/apt/lists/*\n\nRUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash - && apt-get update && apt-get install -y --no-install-recommends nodejs && npm install -g @anthropic-ai/claude-code@2.1.141 @openai/codex promptfoo && npm cache clean --force && rm -rf /var/lib/apt/lists/*\n\nRUN curl -fsSL https://bun.sh/install | bash -s \"bun-v1.2.22\" && ln -sf /root/.bun/bin/bun /usr/local/bin/bun\n\nRUN pipx install spec-kitty-cli==3.1.8 && curl -fsSL https://qlty.sh | sh && ln -sf /root/.qlty/bin/qlty /usr/local/bin/qlty\n\nRUN set -eux; target=\"x86_64-unknown-linux-gnu\"; asset=\"fabro-${target}.tar.gz\"; url=\"$(curl -fsSL https://api.github.com/repos/fabro-sh/fabro/releases/latest | jq -r --arg asset \"$asset\" '.assets[] | select(.name == $asset) | .browser_download_url')\"; test -n \"$url\"; curl -fsSL \"$url\" -o /tmp/fabro.tar.gz; tar -xzf /tmp/fabro.tar.gz -C /tmp; install -m 0755 \"/tmp/fabro-${target}/fabro\" /usr/local/bin/fabro; rm -rf /tmp/fabro.tar.gz \"/tmp/fabro-${target}\"; fabro --version\n\nCMD [\"/bin/bash\"]\n"
+              }
+            },
+            "network": "allow_all"
+          }
+        },
+        "notifications": {},
+        "interviews": {
+          "provider": null,
+          "slack": null
+        },
+        "agent": {
+          "permissions": "full",
+          "mcps": {}
+        },
+        "hooks": [],
+        "scm": {
+          "provider": null,
+          "owner": null,
+          "repository": null,
+          "github": null
+        },
+        "pull_request": null,
+        "artifacts": {
+          "include": [
+            ".workflow/waketask-product-iteration/**",
+            ".workflow/iphone-app-ux-studio/**",
+            ".workflow/iphone-app-factory/**",
+            "reports/ios/**",
+            ".github/workflows/**"
+          ]
+        },
+        "integrations": {
+          "github": {
+            "permissions": {
+              "metadata": "read",
+              "contents": "write",
+              "actions": "read",
+              "issues": "write",
+              "pull_requests": "write"
+            }
+          }
+        }
+      }
+    },
+    "graph": {
+      "name": "WakeTaskProductIteration",
+      "nodes": {
+        "workflow_definition_preflight": {
+          "id": "workflow_definition_preflight",
+          "attrs": {
+            "model": {
+              "String": "gpt-5.3-codex-spark"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "manager.max_cycles": {
+              "Integer": 120
+            },
+            "label": {
+              "String": "Workflow Definition Preflight"
+            },
+            "provider": {
+              "String": "openai"
+            },
+            "backend": {
+              "String": "cli"
+            },
+            "manager.poll_interval": {
+              "Duration": {
+                "secs": 1,
+                "nanos": 0
+              }
+            },
+            "stack.child_workflow": {
+              "String": "./waketask-workflow-preflight-stage.fabro"
+            },
+            "type": {
+              "String": "stack.manager_loop"
+            }
+          }
+        },
+        "ux_iteration_child": {
+          "id": "ux_iteration_child",
+          "attrs": {
+            "manager.max_cycles": {
+              "Integer": 1000
+            },
+            "label": {
+              "String": "UX Studio Iteration Child"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "manager.poll_interval": {
+              "Duration": {
+                "secs": 10,
+                "nanos": 0
+              }
+            },
+            "provider": {
+              "String": "openai"
+            },
+            "model": {
+              "String": "gpt-5.3-codex-spark"
+            },
+            "backend": {
+              "String": "cli"
+            },
+            "type": {
+              "String": "stack.manager_loop"
+            },
+            "stack.child_workflow": {
+              "String": "./iterate-existing-app-ux.fabro"
+            }
+          }
+        },
+        "start": {
+          "id": "start",
+          "attrs": {
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "shape": {
+              "String": "Mdiamond"
+            },
+            "provider": {
+              "String": "openai"
+            },
+            "label": {
+              "String": "Start"
+            },
+            "backend": {
+              "String": "cli"
+            },
+            "model": {
+              "String": "gpt-5.3-codex-spark"
+            }
+          }
+        },
+        "product_spec_child": {
+          "id": "product_spec_child",
+          "attrs": {
+            "manager.poll_interval": {
+              "Duration": {
+                "secs": 1,
+                "nanos": 0
+              }
+            },
+            "model": {
+              "String": "gpt-5.3-codex-spark"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "type": {
+              "String": "stack.manager_loop"
+            },
+            "stack.child_workflow": {
+              "String": "./waketask-product-spec-stage.fabro"
+            },
+            "provider": {
+              "String": "openai"
+            },
+            "backend": {
+              "String": "cli"
+            },
+            "manager.max_cycles": {
+              "Integer": 120
+            },
+            "label": {
+              "String": "Product Spec Child"
+            }
+          }
+        },
+        "validation_postmortem_child": {
+          "id": "validation_postmortem_child",
+          "attrs": {
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "manager.max_cycles": {
+              "Integer": 180
+            },
+            "label": {
+              "String": "Validation And Postmortem Child"
+            },
+            "type": {
+              "String": "stack.manager_loop"
+            },
+            "backend": {
+              "String": "cli"
+            },
+            "manager.poll_interval": {
+              "Duration": {
+                "secs": 2,
+                "nanos": 0
+              }
+            },
+            "model": {
+              "String": "gpt-5.3-codex-spark"
+            },
+            "provider": {
+              "String": "openai"
+            },
+            "stack.child_workflow": {
+              "String": "./waketask-validation-postmortem-stage.fabro"
+            }
+          }
+        },
+        "exit": {
+          "id": "exit",
+          "attrs": {
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "model": {
+              "String": "gpt-5.3-codex-spark"
+            },
+            "shape": {
+              "String": "Msquare"
+            },
+            "provider": {
+              "String": "openai"
+            },
+            "backend": {
+              "String": "cli"
+            },
+            "label": {
+              "String": "Exit"
+            }
+          }
+        }
+      },
+      "edges": [
+        {
+          "from": "start",
+          "to": "workflow_definition_preflight",
+          "attrs": {}
+        },
+        {
+          "from": "workflow_definition_preflight",
+          "to": "product_spec_child",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "workflow_definition_preflight",
+          "to": "workflow_definition_preflight",
+          "attrs": {
+            "label": {
+              "String": "Fix Workflow Definitions"
+            }
+          }
+        },
+        {
+          "from": "product_spec_child",
+          "to": "ux_iteration_child",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "product_spec_child",
+          "to": "product_spec_child",
+          "attrs": {
+            "label": {
+              "String": "Fix Product Spec"
+            }
+          }
+        },
+        {
+          "from": "ux_iteration_child",
+          "to": "validation_postmortem_child",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "ux_iteration_child",
+          "to": "product_spec_child",
+          "attrs": {
+            "label": {
+              "String": "Spec Or Workflow Fix"
+            }
+          }
+        },
+        {
+          "from": "validation_postmortem_child",
+          "to": "exit",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "validation_postmortem_child",
+          "to": "validation_postmortem_child",
+          "attrs": {
+            "label": {
+              "String": "Complete Postmortem"
+            }
+          }
+        }
+      ],
+      "attrs": {
+        "retry_target": {
+          "String": "workflow_definition_preflight"
+        },
+        "inputs": {
+          "String": "repo_url,base_branch,run_branch,app_name,bundle_id,app_dir,app_domain,target_audience,design_goal,max_competitors,use_mobbin_mcp,use_design_corpus,design_corpus_write_mode,selected_direction_mode,ios_validation_mode,allow_macos_deferred,fabro_server"
+        },
+        "model_stylesheet": {
+          "String": "\n            *       { backend: cli; provider: openai; model: gpt-5.3-codex-spark; reasoning_effort: low; }\n            .design { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            .review { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n        "
+        },
+        "persona": {
+          "String": "waketask-product-iteration-orchestrator"
+        },
+        "goal": {
+          "String": "Create staged WakeTask product-iteration workflows, then run the UX Studio implementation workflow through Railway Fabro with durable evidence and postmortem learning"
+        },
+        "rankdir": {
+          "String": "LR"
+        },
+        "secret_policy": {
+          "String": "no secrets; credential checks are presence-only; do not print environment variables or credential values"
+        },
+        "default_max_retries": {
+          "Integer": 1
+        },
+        "outputs": {
+          "String": "workflow_contract,product_spec,ux_iteration,validation_postmortem"
+        }
+      }
+    },
+    "graph_source": "digraph WakeTaskProductIteration {\n    graph [\n        goal=\"Create or update staged WakeTask product-iteration workflows, then run the existing-app UX Studio implementation workflow through Railway Fabro\",\n        persona=\"waketask-product-iteration-orchestrator\",\n        inputs=\"repo_url,base_branch,run_branch,app_name,bundle_id,app_dir,app_domain,target_audience,design_goal,max_competitors,use_mobbin_mcp,use_design_corpus,design_corpus_write_mode,selected_direction_mode,ios_validation_mode,allow_macos_deferred,fabro_server\",\n        outputs=\"workflow_contract,product_spec,ux_iteration,validation_postmortem\",\n        secret_policy=\"no secrets; credential checks are presence-only; do not print environment variables or credential values\",\n        default_max_retries=1,\n        retry_target=\"workflow_definition_preflight\",\n        model_stylesheet=\"\n            *       { backend: cli; provider: openai; model: gpt-5.3-codex-spark; reasoning_effort: low; }\n            .design { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            .review { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n        \"\n    ]\n    rankdir=LR\n\n    start [shape=Mdiamond, label=\"Start\"]\n    exit  [shape=Msquare, label=\"Exit\"]\n\n    workflow_definition_preflight [\n        label=\"Workflow Definition Preflight\",\n        type=\"stack.manager_loop\",\n        stack.child_workflow=\"./waketask-workflow-preflight-stage.fabro\",\n        manager.max_cycles=120,\n        manager.poll_interval=\"1s\"\n    ]\n\n    product_spec_child [\n        label=\"Product Spec Child\",\n        type=\"stack.manager_loop\",\n        stack.child_workflow=\"./waketask-product-spec-stage.fabro\",\n        manager.max_cycles=120,\n        manager.poll_interval=\"1s\"\n    ]\n\n    ux_iteration_child [\n        label=\"UX Studio Iteration Child\",\n        type=\"stack.manager_loop\",\n        stack.child_workflow=\"./iterate-existing-app-ux.fabro\",\n        manager.max_cycles=1000,\n        manager.poll_interval=\"10s\"\n    ]\n\n    validation_postmortem_child [\n        label=\"Validation And Postmortem Child\",\n        type=\"stack.manager_loop\",\n        stack.child_workflow=\"./waketask-validation-postmortem-stage.fabro\",\n        manager.max_cycles=180,\n        manager.poll_interval=\"2s\"\n    ]\n\n    start -> workflow_definition_preflight\n    workflow_definition_preflight -> product_spec_child [condition=\"outcome=succeeded\"]\n    workflow_definition_preflight -> workflow_definition_preflight [label=\"Fix Workflow Definitions\"]\n    product_spec_child -> ux_iteration_child [condition=\"outcome=succeeded\"]\n    product_spec_child -> product_spec_child [label=\"Fix Product Spec\"]\n    ux_iteration_child -> validation_postmortem_child [condition=\"outcome=succeeded\"]\n    ux_iteration_child -> product_spec_child [label=\"Spec Or Workflow Fix\"]\n    validation_postmortem_child -> exit [condition=\"outcome=succeeded\"]\n    validation_postmortem_child -> validation_postmortem_child [label=\"Complete Postmortem\"]\n}\n",
+    "workflow_slug": "waketask-product-iteration",
+    "source_directory": "/Users/timlife/Documents/claude code/maestro-os",
+    "labels": {
+      "app": "waketask",
+      "control_plane": "railway",
+      "topic": "task-alarm-clock",
+      "orchestration": "parent-child",
+      "factory": "iphone-app-ux-studio"
+    },
+    "provenance": {
+      "server": {
+        "version": "0.232.0-nightly.0"
+      },
+      "client": {
+        "user_agent": "fabro-cli/0.232.0-nightly.0",
+        "name": "fabro-cli",
+        "version": "0.232.0-nightly.0"
+      },
+      "subject": {
+        "kind": "user",
+        "identity": {
+          "issuer": "fabro:dev",
+          "subject": "dev"
+        },
+        "login": "dev",
+        "auth_method": "dev_token"
+      }
+    },
+    "manifest_blob": "18b653222b458c339e9dadf2a021156d4a233f2f15dd0d9a804de9864a3ed040",
+    "definition_blob": "1b782522a15633f7509525405fd57171359d52870da7544f9491e45ed04acc60",
+    "git": {
+      "origin_url": "https://github.com/kimprobably/maestro-os",
+      "branch": "spike/fabro-code-factory-v5",
+      "sha": "5b7527706f804f149904aac853e415f382df4c30",
+      "dirty": "dirty",
+      "push_outcome": {
+        "type": "not_attempted"
+      }
+    }
+  },
+  "web_url": "https://fabro-maestro-production.up.railway.app/runs/01KRTFDCB6VN33BCVMZY2D3EGK",
+  "start": null,
+  "status": {
+    "kind": "starting"
+  },
+  "status_updated_at": "2026-05-17T08:04:03.175107027Z",
+  "last_event_at": "2026-05-17T08:04:04.814102840Z",
+  "pending_control": null,
+  "checkpoints": [],
+  "conclusion": null,
+  "sandbox": {
+    "provider": "daytona",
+    "image": "buildpack-deps:noble",
+    "snapshot": "maestro-code-factory-v8",
+    "runtime": {
+      "id": "fabro-01KRTFDCB6VN33BCVMZY2D3EGK",
+      "working_directory": "/home/daytona/workspace",
+      "repo_cloned": true,
+      "clone_origin_url": "https://github.com/kimprobably/maestro-os",
+      "clone_branch": "spike/fabro-code-factory-v5"
+    }
+  },
+  "pull_request": null,
+  "superseded_by": null,
+  "pending_interviews": {},
+  "stages": {}
+}
