@@ -49,6 +49,7 @@ COPY scripts/hermes /app/scripts/hermes
 COPY scripts/operator-ledger /app/scripts/operator-ledger
 COPY scripts/fabro /app/scripts/fabro
 COPY workflows/hermes /app/workflows/hermes
+COPY prompts/hermes /app/prompts/hermes
 COPY docs/operator /app/docs/operator
 COPY docs/HERMES-DEPLOYMENT-RUNBOOK.md /app/docs/HERMES-DEPLOYMENT-RUNBOOK.md
 COPY docs/HERMES-OPERATOR-ARCHITECTURE.md /app/docs/HERMES-OPERATOR-ARCHITECTURE.md

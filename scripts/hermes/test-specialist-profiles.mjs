@@ -41,6 +41,8 @@ test("joni has a LinkedIn operator skill with safe capture and no-publish bounda
   );
 
   assert.match(skill, /authorized content capture/);
+  assert.match(skill, /HarvestAPI/);
+  assert.match(skill, /joni-linkedin-daily\.fabro/);
   assert.match(skill, /5 draft-ready posts per week/);
   assert.match(skill, /not publish/i);
   assert.match(skill, /scraping private\/authenticated LinkedIn surfaces/);
@@ -52,7 +54,8 @@ test("joni has a LinkedIn operator skill with safe capture and no-publish bounda
     "utf8",
   );
   assert.match(ledger, /Target: 5 draft-ready posts per week/);
-  assert.match(ledger, /Daily capture workflow not yet implemented/);
+  assert.match(ledger, /HARVEST_API_KEY/);
+  assert.match(ledger, /Daily ingestion is deterministic/);
   assert.match(ledger, /Publishing, commenting, DMs, connection requests/);
 });
 

@@ -81,7 +81,7 @@ if [ "$allowed" -eq 0 ] && [ ! -e "$context_dir" ]; then
 fi
 
 rm -rf "$context_dir"
-mkdir -p "$context_dir/docs" "$context_dir/hermes" "$context_dir/scripts" "$context_dir/workflows"
+mkdir -p "$context_dir/docs" "$context_dir/hermes" "$context_dir/scripts" "$context_dir/workflows" "$context_dir/prompts"
 # Mark the directory so subsequent runs can recognize it as a managed context
 # even if it's later moved to a non-standard parent.
 touch "$context_dir/.maestro-gateway-context"
@@ -91,6 +91,7 @@ rsync -a --delete "$repo_root/scripts/hermes/" "$context_dir/scripts/hermes/"
 rsync -a --delete "$repo_root/scripts/operator-ledger/" "$context_dir/scripts/operator-ledger/"
 rsync -a --delete "$repo_root/scripts/fabro/" "$context_dir/scripts/fabro/"
 rsync -a --delete "$repo_root/workflows/hermes/" "$context_dir/workflows/hermes/"
+rsync -a --delete "$repo_root/prompts/hermes/" "$context_dir/prompts/hermes/"
 rsync -a --delete "$repo_root/docs/operator/" "$context_dir/docs/operator/"
 cp "$repo_root/hermes/deploy/railway-gateway/Dockerfile" "$context_dir/Dockerfile"
 cp "$repo_root/docs/HERMES-DEPLOYMENT-RUNBOOK.md" "$context_dir/docs/HERMES-DEPLOYMENT-RUNBOOK.md"

@@ -1,0 +1,82 @@
+digraph JoniLinkedInDaily {
+    graph [
+        goal="Capture approved LinkedIn signals with HarvestAPI, summarize them deterministically, then run a bounded AI review for patterns and draft ideas",
+        persona="joni",
+        inputs="source_config,capture_mode,posted_limit,max_pages",
+        outputs="normalized_posts,daily_summary,ai_review,ledger_entry",
+        default_max_retries=1,
+        retry_target="capture_linkedin_posts",
+        fallback_retry_target="summarize_capture",
+        model_stylesheet="
+            *       { provider: openai; model: gpt-5.4-mini; reasoning_effort: low; }
+            .coding { provider: openai; model: gpt-5.4-mini; reasoning_effort: medium; }
+            .review { provider: openai; model: gpt-5.4; reasoning_effort: medium; }
+        "
+    ]
+    rankdir=LR
+
+    start [shape=Mdiamond, label="Start"]
+    exit  [shape=Msquare, label="Exit"]
+
+    validate_harvest_sources [
+        label="Validate HarvestAPI Sources",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="validate_harvest_sources",
+        script="mkdir -p .workflow/joni-linkedin/daily; node scripts/hermes/joni-linkedin-capture.mjs validate --sources '{{ inputs.source_config|default('docs/operator/linkedin/joni-sources.json') }}' --out-dir .workflow/joni-linkedin/daily --mode '{{ inputs.capture_mode|default('live') }}'"
+    ]
+
+    capture_linkedin_posts [
+        label="Capture LinkedIn Posts",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="capture_linkedin_posts",
+        script="node scripts/hermes/joni-linkedin-capture.mjs capture --sources '{{ inputs.source_config|default('docs/operator/linkedin/joni-sources.json') }}' --out-dir .workflow/joni-linkedin/daily --mode '{{ inputs.capture_mode|default('live') }}' --posted-limit '{{ inputs.posted_limit|default('24h') }}' --max-pages '{{ inputs.max_pages|default('1') }}'"
+    ]
+
+    summarize_capture [
+        label="Deterministic Capture Summary",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="capture_linkedin_posts",
+        script="test -f .workflow/joni-linkedin/daily/posts.jsonl; test -f .workflow/joni-linkedin/daily/summary.json; test -f .workflow/joni-linkedin/daily/summary.md; echo capture-summary-ready"
+    ]
+
+    ai_pattern_review [
+        label="AI Pattern Review",
+        class="review",
+        goal_gate=true,
+        retry_target="summarize_capture",
+        prompt="@../../prompts/hermes/joni-linkedin-ai-review.md"
+    ]
+
+    verify_ai_review [
+        label="Verify AI Review",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="ai_pattern_review",
+        script="node scripts/hermes/joni-linkedin-capture.mjs verify-review --out-dir .workflow/joni-linkedin/daily"
+    ]
+
+    append_linkedin_ledger [
+        label="Append LinkedIn Ledger",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="verify_ai_review",
+        script="node scripts/hermes/joni-linkedin-capture.mjs ledger --out-dir .workflow/joni-linkedin/daily --ledger docs/operator/linkedin/JONI-LINKEDIN-LEDGER.md"
+    ]
+
+    start -> validate_harvest_sources
+    validate_harvest_sources -> capture_linkedin_posts [condition="outcome=succeeded"]
+    validate_harvest_sources -> validate_harvest_sources [label="Fix Sources", loop_restart=true, max_visits=2]
+    capture_linkedin_posts -> summarize_capture [condition="outcome=succeeded"]
+    capture_linkedin_posts -> validate_harvest_sources [label="Fix Capture Input"]
+    summarize_capture -> ai_pattern_review [condition="outcome=succeeded"]
+    summarize_capture -> capture_linkedin_posts [label="Fix Summary"]
+    ai_pattern_review -> verify_ai_review [condition="outcome=succeeded"]
+    ai_pattern_review -> ai_pattern_review [label="Fix Review", loop_restart=true, max_visits=2]
+    verify_ai_review -> append_linkedin_ledger [condition="outcome=succeeded"]
+    verify_ai_review -> ai_pattern_review [label="Fix Review"]
+    append_linkedin_ledger -> exit [condition="outcome=succeeded"]
+    append_linkedin_ledger -> verify_ai_review [label="Fix Ledger"]
+}

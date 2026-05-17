@@ -34,9 +34,15 @@ test("Railway gateway context includes all Fabro docs Quincy needs", async () =>
   }
   assert.match(dockerfile, /COPY docs\/FABRO\*\.md \/app\/docs\//);
   assert.match(dockerfile, /COPY workflows\/hermes \/app\/workflows\/hermes/);
+  assert.match(dockerfile, /COPY prompts\/hermes \/app\/prompts\/hermes/);
 
   const workflow = await readFile(path.join(tmp, "workflows/hermes/create-agent.fabro"), "utf8");
   const runConfig = await readFile(path.join(tmp, "workflows/hermes/create-agent.toml"), "utf8");
   assert.match(workflow, /digraph CreateHermesAgent/);
   assert.match(runConfig, /graph = "create-agent\.fabro"/);
+
+  const linkedinWorkflow = await readFile(path.join(tmp, "workflows/hermes/joni-linkedin-daily.fabro"), "utf8");
+  const linkedinPrompt = await readFile(path.join(tmp, "prompts/hermes/joni-linkedin-ai-review.md"), "utf8");
+  assert.match(linkedinWorkflow, /digraph JoniLinkedInDaily/);
+  assert.match(linkedinPrompt, /Do not invent/);
 });
