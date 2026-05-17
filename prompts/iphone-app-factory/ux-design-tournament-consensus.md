@@ -11,9 +11,12 @@ Read:
 - `.workflow/iphone-app-ux-studio/research/competitor-flows.md`
 - `.workflow/iphone-app-ux-studio/research/app-store-review-mining.md`
 - `.workflow/iphone-app-ux-studio/research/design-opportunity-synthesis.md`
+- `.workflow/iphone-app-ux-studio/research/reference-pack.json`
 - all available research and reference artifacts in `.workflow/iphone-app-ux-studio/research/` and `.workflow/iphone-app-ux-studio/design/`
 
 Run an adversarial design tournament. Consider at least three directions and prefer the direction that is most differentiated, native to iOS, usable in a wake state, convertible without dark patterns, accessible, feasible, and visually distinct without cloning another product.
+
+If parallel research branch Markdown artifacts are absent, use `reference-pack.json` and `design-opportunity-synthesis.md` as the durable research contract. Do not reject a direction solely because a branch sidecar Markdown file was not merged into the parent workspace.
 
 ## Required Outputs
 

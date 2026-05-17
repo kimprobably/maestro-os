@@ -89,6 +89,8 @@ UX Studio runs should leave these artifacts under `.workflow/iphone-app-ux-studi
 
 If a required artifact is intentionally absent, the stage must say why and identify the retry target.
 
+For Fabro parallel research fanouts, `research/reference-pack.json` is the deterministic gate contract after `design_opportunity_synthesis`. Branch Markdown artifacts are expected when available, but the parent workspace may only preserve the selected fan-in branch head. In that case the gate should surface missing branch sidecars as report metadata while continuing if `reference-pack.json` has sufficient source coverage, adaptation guidance, and no secret-looking values.
+
 ## WakeTask Rehearsal
 
 Use WakeTask as the concrete rehearsal for existing-app UX iteration. Generate or check in a run-specific config at `workflows/iphone-app-factory/runs/waketask-ux-studio.railway.toml`, then launch it against Railway Fabro:

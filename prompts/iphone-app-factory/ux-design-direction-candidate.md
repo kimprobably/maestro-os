@@ -20,9 +20,12 @@ Read all available context:
 - `.workflow/iphone-app-ux-studio/research/apple-hig-research.md`
 - `.workflow/iphone-app-ux-studio/research/behavioral-ux-research.md`
 - `.workflow/iphone-app-ux-studio/research/design-opportunity-synthesis.md`
+- `.workflow/iphone-app-ux-studio/research/reference-pack.json`
 - any retrieved reference pack artifacts in `.workflow/iphone-app-ux-studio/design/`
 
 Design a distinct iPhone UX direction for a wake/task app. Treat competitor and Mobbin/Pageflows material as pattern evidence only. Adapt principles, not assets, screenshots, branding, copy, or proprietary compositions.
+
+If parallel research branch Markdown artifacts are absent, use `reference-pack.json` and `design-opportunity-synthesis.md` as the durable research contract. Do not retry or block solely because a branch sidecar Markdown file was not merged into the parent workspace.
 
 ## Required Output
 

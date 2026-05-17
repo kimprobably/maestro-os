@@ -10,18 +10,23 @@ const repoRoot = resolve(import.meta.dirname, "..", "..");
 const script = join(repoRoot, "scripts/iphone-app-factory/reference-pack-gate.mjs");
 const researchRoot = ".workflow/iphone-app-ux-studio/research";
 
-const requiredArtifacts = [
+const baseRequiredArtifacts = [
   "existing-app-intake.md",
   "reference-gap-analysis.json",
+  "design-opportunity-synthesis.md",
+  "reference-pack.json",
+];
+
+const supplementalResearchArtifacts = [
   "competitor-flows.md",
   "app-store-review-mining.md",
   "mobbin-mcp-research.md",
   "pageflows-research.md",
   "apple-hig-research.md",
   "behavioral-ux-research.md",
-  "design-opportunity-synthesis.md",
-  "reference-pack.json",
 ];
+
+const requiredArtifacts = [...baseRequiredArtifacts, ...supplementalResearchArtifacts];
 
 const promptContracts = [
   {
@@ -85,6 +90,15 @@ function writeRequiredArtifacts(root) {
     const content = artifact.endsWith(".json")
       ? `${JSON.stringify({ observations: [] }, null, 2)}\n`
       : "## Source Policy\nUse public sources only.\n\n## Source List\n- Public source\n\n## Findings\nNo secrets.\n";
+    writeArtifact(root, artifact, content);
+  }
+}
+
+function writeBaseArtifacts(root) {
+  for (const artifact of baseRequiredArtifacts.filter((name) => name !== "reference-pack.json")) {
+    const content = artifact.endsWith(".json")
+      ? `${JSON.stringify({ observations: [] }, null, 2)}\n`
+      : "## Source Policy\nUse public sources only.\n\n## Source List\n- Synthesized reference pack\n\n## Findings\nNo secrets.\n";
     writeArtifact(root, artifact, content);
   }
 }
@@ -174,19 +188,35 @@ test("reference pack gate accepts a complete research reference pack", () => {
     assert.equal(report.counts.competitor_flow_references, 4);
     assert.equal(report.counts.mobbin_or_pageflows_references, 4);
     assert.ok(report.counts.screen_types >= 5);
+    assert.deepEqual(report.missing_supplemental_artifacts, []);
   });
 });
 
-test("reference pack gate fails when any required artifact is missing", () => {
+test("reference pack gate accepts synthesized reference pack when fanout sidecars are not merged", () => {
+  withTempResearch((root) => {
+    writeBaseArtifacts(root);
+    writeReferencePack(root);
+
+    const result = runGate(root);
+
+    assert.equal(result.status, 0, result.stderr);
+    const report = readReport(root);
+    assert.equal(report.ok, true);
+    assert.equal(report.counts.total_references, 12);
+    assert.deepEqual(report.missing_supplemental_artifacts.sort(), supplementalResearchArtifacts.toSorted());
+  });
+});
+
+test("reference pack gate fails when a base durable artifact is missing", () => {
   withTempResearch((root) => {
     writeRequiredArtifacts(root);
     writeReferencePack(root);
-    rmSync(join(root, "pageflows-research.md"));
+    rmSync(join(root, "design-opportunity-synthesis.md"));
 
     const result = runGate(root);
 
     assert.notEqual(result.status, 0);
-    assert.match(result.stderr, /missing pageflows-research\.md/);
+    assert.match(result.stderr, /missing design-opportunity-synthesis\.md/);
     assert.equal(readReport(root).ok, false);
   });
 });

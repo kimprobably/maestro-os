@@ -198,6 +198,27 @@ test("UX studio prompt files exist", () => {
   assertFilesExist(requiredPromptFiles, "prompt files");
 });
 
+test("UX studio design prompts consume durable reference pack after parallel research fan-in", () => {
+  const directionPrompt = readRequiredFile("prompts/iphone-app-factory/ux-design-direction-candidate.md");
+  const tournamentPrompt = readRequiredFile("prompts/iphone-app-factory/ux-design-tournament-consensus.md");
+
+  for (const [label, prompt] of [
+    ["direction", directionPrompt],
+    ["tournament", tournamentPrompt],
+  ]) {
+    assert.match(
+      prompt,
+      /\.workflow\/iphone-app-ux-studio\/research\/reference-pack\.json/,
+      `Expected ${label} prompt to read the durable research reference pack`,
+    );
+    assert.match(
+      prompt,
+      /parallel research branch Markdown artifacts are absent/i,
+      `Expected ${label} prompt to tolerate unmerged parallel branch sidecars`,
+    );
+  }
+});
+
 test("UX studio implementation retry prompts consume verifier feedback", () => {
   const visualSystemPrompt = readRequiredFile("prompts/iphone-app-factory/ux-implement-visual-system.md");
   const screenFlowsPrompt = readRequiredFile("prompts/iphone-app-factory/ux-implement-screen-flows.md");

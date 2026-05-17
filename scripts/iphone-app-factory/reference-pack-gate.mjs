@@ -5,14 +5,17 @@ import { dirname, join } from "node:path";
 const requiredArtifacts = [
   "existing-app-intake.md",
   "reference-gap-analysis.json",
+  "design-opportunity-synthesis.md",
+  "reference-pack.json",
+];
+
+const supplementalArtifacts = [
   "competitor-flows.md",
   "app-store-review-mining.md",
   "mobbin-mcp-research.md",
   "pageflows-research.md",
   "apple-hig-research.md",
   "behavioral-ux-research.md",
-  "design-opportunity-synthesis.md",
-  "reference-pack.json",
 ];
 
 function argValue(name, fallback = "") {
@@ -137,6 +140,8 @@ for (const artifact of requiredArtifacts) {
   if (!existsSync(join(root, artifact))) failures.push(`missing ${artifact}`);
 }
 
+const missingSupplementalArtifacts = supplementalArtifacts.filter((artifact) => !existsSync(join(root, artifact)));
+
 let pack = {};
 const packPath = join(root, "reference-pack.json");
 if (existsSync(packPath)) pack = readJson(packPath, "reference-pack.json");
@@ -209,6 +214,9 @@ const report = {
     raw_assets: rawAssets.length,
   },
   required_artifacts: requiredArtifacts,
+  supplemental_artifacts: supplementalArtifacts,
+  missing_supplemental_artifacts: missingSupplementalArtifacts,
+  artifact_policy: "reference-pack.json is the deterministic gate contract; branch sidecar Markdown is supplemental because Fabro parallel fan-in may preserve only one branch head.",
   failures,
 };
 
