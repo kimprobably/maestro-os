@@ -5,6 +5,7 @@ import test from "node:test";
 
 const parentWorkflow = "workflows/iphone-app-factory/waketask-product-iteration.fabro";
 const runConfig = "workflows/iphone-app-factory/waketask-product-iteration.railway.toml";
+const directUxRunConfig = "workflows/iphone-app-factory/iterate-existing-app-ux.waketask-product-iteration.railway.toml";
 const childWorkflows = [
   "workflows/iphone-app-factory/waketask-workflow-preflight-stage.fabro",
   "workflows/iphone-app-factory/waketask-product-spec-stage.fabro",
@@ -63,6 +64,19 @@ test("WakeTask parent run config targets Railway Fabro and the parent graph", ()
   assert.match(config, /graph = "waketask-product-iteration\.fabro"/);
   assert.match(config, /fabro_server = "https:\/\/fabro-maestro-production\.up\.railway\.app\/api\/v1"/);
   assert.match(config, /FABRO_SERVER = "https:\/\/fabro-maestro-production\.up\.railway\.app\/api\/v1"/);
+  assert.match(config, /\[run\.sandbox\.daytona\](?:(?!\n\[)[\s\S])*\bnetwork\s*=\s*"allow_all"/);
+  assert.doesNotMatch(config, /localhost|127\.0\.0\.1/);
+});
+
+test("WakeTask standalone UX run config preserves product iteration inputs", () => {
+  const config = readRequiredFile(directUxRunConfig);
+  assert.match(config, /graph = "iterate-existing-app-ux\.fabro"/);
+  assert.match(config, /fabro_server = "https:\/\/fabro-maestro-production\.up\.railway\.app\/api\/v1"/);
+  assert.match(config, /FABRO_SERVER = "https:\/\/fabro-maestro-production\.up\.railway\.app\/api\/v1"/);
+  assert.match(config, /run_branch = "ux-studio\/waketask-product-iteration-20260517"/);
+  assert.match(config, /Apple Clock-like familiarity/);
+  assert.match(config, /real wired dismiss missions/);
+  assert.match(config, /completion reward and share moments/);
   assert.match(config, /\[run\.sandbox\.daytona\](?:(?!\n\[)[\s\S])*\bnetwork\s*=\s*"allow_all"/);
   assert.doesNotMatch(config, /localhost|127\.0\.0\.1/);
 });
