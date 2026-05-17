@@ -265,10 +265,10 @@ test("UX studio routes hosted iOS runtime blockers to postmortem without failed 
     graph,
     /ios_runtime_evidence_preflight -> postmortem_learning_capture \[condition="outcome=succeeded", label="iOS Runtime Blocker"\]/,
   );
-  assert.doesNotMatch(
+  assert.match(
     graph,
-    /ios_runtime_evidence_preflight -> postmortem_learning_capture \[label="iOS Runtime Blocker"\]/,
-    "Expected blocker postmortem routing to be a success edge, not a failed-node fallback edge",
+    /ios_runtime_evidence_preflight -> postmortem_learning_capture \[label="Unexpected iOS Preflight Failure"\]/,
+    "Fabro requires an unconditional fallback edge for nodes with conditional outgoing edges",
   );
 });
 
