@@ -11,6 +11,7 @@ const childWorkflows = [
   "workflows/iphone-app-factory/iterate-existing-app-ux.fabro",
   "workflows/iphone-app-factory/waketask-validation-postmortem-stage.fabro",
 ];
+const productSpecWriter = "scripts/iphone-app-factory/write-waketask-product-spec.mjs";
 
 function readRequiredFile(path) {
   assert.ok(existsSync(path), `Expected ${path} to exist`);
@@ -46,6 +47,15 @@ test("WakeTask child workflows define durable stage contracts", () => {
     assert.match(graph, /\.workflow\/waketask-product-iteration\//);
     assert.match(graph, /no secrets/i);
   }
+});
+
+test("WakeTask product spec stage uses a deterministic artifact writer", () => {
+  readRequiredFile(productSpecWriter);
+  const graph = readRequiredFile("workflows/iphone-app-factory/waketask-product-spec-stage.fabro");
+  assert.match(graph, /shape=parallelogram/);
+  assert.match(graph, /write-waketask-product-spec\.mjs/);
+  assert.match(graph, /product-spec\.md/);
+  assert.match(graph, /product-spec\.json/);
 });
 
 test("WakeTask parent run config targets Railway Fabro and the parent graph", () => {
