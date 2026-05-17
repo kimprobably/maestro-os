@@ -76,3 +76,33 @@ test("WakeTask child command gates do not emit stdout blobs into parent context"
     assert.doesNotMatch(workflow, /console\.log\(/, `Expected ${workflowPath} command gates to avoid stdout`);
   }
 });
+
+test("WakeTask child workflows only exit after validation succeeds", () => {
+  const workflowEdges = [
+    {
+      path: "workflows/iphone-app-factory/waketask-workflow-preflight-stage.fabro",
+      success: /validate_workflow_contract -> emit_contract \[condition="outcome=succeeded"\]/,
+      retry: /validate_workflow_contract -> validate_workflow_contract \[label="Fix Workflow Contract"\]/,
+      exit: /emit_contract -> exit \[condition="outcome=succeeded"\]/,
+    },
+    {
+      path: "workflows/iphone-app-factory/waketask-product-spec-stage.fabro",
+      success: /validate_product_spec -> exit \[condition="outcome=succeeded"\]/,
+      retry: /validate_product_spec -> write_product_spec \[label="Fix Product Spec"\]/,
+      exit: /write_product_spec -> validate_product_spec \[condition="outcome=succeeded"\]/,
+    },
+    {
+      path: "workflows/iphone-app-factory/waketask-validation-postmortem-stage.fabro",
+      success: /validate_postmortem_contract -> exit \[condition="outcome=succeeded"\]/,
+      retry: /validate_postmortem_contract -> write_validation_postmortem \[label="Complete Postmortem"\]/,
+      exit: /write_validation_postmortem -> validate_postmortem_contract \[condition="outcome=succeeded"\]/,
+    },
+  ];
+
+  for (const { path, success, retry, exit } of workflowEdges) {
+    const graph = readRequiredFile(path);
+    assert.match(graph, success);
+    assert.match(graph, retry);
+    assert.match(graph, exit);
+  }
+});

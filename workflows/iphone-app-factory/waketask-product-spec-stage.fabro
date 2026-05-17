@@ -29,5 +29,9 @@ digraph WakeTaskProductSpecStage {
         script="test -s .workflow/waketask-product-iteration/product-spec.md && test -s .workflow/waketask-product-iteration/product-spec.json && rg -q \"Apple Clock-like|mission|dismiss|loud|completion|share\" .workflow/waketask-product-iteration/product-spec.md && node -e \"const fs=require('fs'); const spec=JSON.parse(fs.readFileSync('.workflow/waketask-product-iteration/product-spec.json','utf8')); for (const key of ['screens','missions','acceptance_criteria','non_goals','next_action']) if (!(key in spec)) throw new Error('missing '+key);\""
     ]
 
-    start -> write_product_spec -> validate_product_spec -> exit
+    start -> write_product_spec
+    write_product_spec -> validate_product_spec [condition="outcome=succeeded"]
+    write_product_spec -> write_product_spec [label="Rewrite Product Spec"]
+    validate_product_spec -> exit [condition="outcome=succeeded"]
+    validate_product_spec -> write_product_spec [label="Fix Product Spec"]
 }

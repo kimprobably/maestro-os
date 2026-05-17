@@ -30,5 +30,9 @@ digraph WakeTaskWorkflowPreflightStage {
         prompt="Read `.workflow/waketask-product-iteration/workflow-preflight.json`. Respond with JSON only: {\"context_updates\":{\"contract.artifact\":\".workflow/waketask-product-iteration/workflow-preflight.json\",\"contract.gate\":\"workflow-contract\",\"contract.next_action\":\"product-spec-child\",\"contract.failure_classification\":\"none\"}}"
     ]
 
-    start -> validate_workflow_contract -> emit_contract -> exit
+    start -> validate_workflow_contract
+    validate_workflow_contract -> emit_contract [condition="outcome=succeeded"]
+    validate_workflow_contract -> validate_workflow_contract [label="Fix Workflow Contract"]
+    emit_contract -> exit [condition="outcome=succeeded"]
+    emit_contract -> validate_workflow_contract [label="Emit Contract Fix"]
 }

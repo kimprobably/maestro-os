@@ -29,5 +29,9 @@ digraph WakeTaskValidationPostmortemStage {
         script="test -s .workflow/waketask-product-iteration/validation-postmortem.md && test -s .workflow/waketask-product-iteration/validation-postmortem.json && rg -q \"What Worked|What Failed|Manual Versus Fabro Executed|Workflow Changes Needed|Product Backlog|Next Operator Action|No Secrets\" .workflow/waketask-product-iteration/validation-postmortem.md && node -e \"const fs=require('fs'); JSON.parse(fs.readFileSync('.workflow/waketask-product-iteration/validation-postmortem.json','utf8'));\""
     ]
 
-    start -> write_validation_postmortem -> validate_postmortem_contract -> exit
+    start -> write_validation_postmortem
+    write_validation_postmortem -> validate_postmortem_contract [condition="outcome=succeeded"]
+    write_validation_postmortem -> write_validation_postmortem [label="Rewrite Postmortem"]
+    validate_postmortem_contract -> exit [condition="outcome=succeeded"]
+    validate_postmortem_contract -> write_validation_postmortem [label="Complete Postmortem"]
 }
