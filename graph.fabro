@@ -1,0 +1,118 @@
+digraph IterateExistingAppFeatures {
+    graph [
+        goal="Implement a product feature iteration in an existing iPhone app with context-driven specs, real behavior changes, validation evidence, and postmortem learning",
+        persona="existing-iphone-app-feature-orchestrator",
+        inputs="repo_url,base_branch,run_branch,app_name,bundle_id,app_dir,app_domain,target_audience,feature_goal,required_capabilities,context_paths,max_competitors,use_mobbin_mcp,use_design_corpus,ios_validation_mode,allow_macos_deferred,fabro_server",
+        outputs="context_pack,research_pack,existing_app_audit,feature_spec,implementation_plan,implementation_evidence,validation_report,publish_handoff,postmortem",
+        artifact_root=".workflow/existing-app-feature",
+        secret_policy="no secrets; credential checks are presence-only; do not print environment variables or credential values",
+        default_max_retries=2,
+        retry_target="feature_spec_child",
+        model_stylesheet="
+            *       { backend: cli; provider: openai; model: gpt-5.3-codex-spark; reasoning_effort: low; }
+            .spec   { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }
+            .build  { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }
+            .review { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }
+        "
+    ]
+    rankdir=LR
+
+    start [shape=Mdiamond, label="Start"]
+    exit  [shape=Msquare, label="Exit"]
+
+    feature_workflow_preflight [
+        label="Feature Workflow Preflight",
+        type="stack.manager_loop",
+        stack.child_workflow="./feature-workflow-preflight-stage.fabro",
+        manager.max_cycles=120,
+        manager.poll_interval="1s"
+    ]
+
+    context_intake_child [
+        label="Context Intake Child",
+        type="stack.manager_loop",
+        stack.child_workflow="./feature-context-intake-stage.fabro",
+        manager.max_cycles=180,
+        manager.poll_interval="2s"
+    ]
+
+    research_child [
+        label="Research Child",
+        type="stack.manager_loop",
+        stack.child_workflow="./feature-research-stage.fabro",
+        manager.max_cycles=240,
+        manager.poll_interval="2s"
+    ]
+
+    existing_app_audit_child [
+        label="Existing App Audit Child",
+        type="stack.manager_loop",
+        stack.child_workflow="./feature-existing-app-audit-stage.fabro",
+        manager.max_cycles=240,
+        manager.poll_interval="2s"
+    ]
+
+    research_audit_join [label="Research/Audit Join", shape=tripleoctagon, join_policy="wait_all"]
+
+    feature_spec_child [
+        label="Feature Spec Child",
+        type="stack.manager_loop",
+        stack.child_workflow="./feature-spec-stage.fabro",
+        manager.max_cycles=240,
+        manager.poll_interval="2s"
+    ]
+
+    implementation_plan_child [
+        label="Implementation Plan Child",
+        type="stack.manager_loop",
+        stack.child_workflow="./feature-implementation-plan-stage.fabro",
+        manager.max_cycles=240,
+        manager.poll_interval="2s"
+    ]
+
+    implementation_child [
+        label="Implementation Child",
+        type="stack.manager_loop",
+        stack.child_workflow="./feature-implementation-stage.fabro",
+        manager.max_cycles=1000,
+        manager.poll_interval="10s"
+    ]
+
+    validation_child [
+        label="Validation Child",
+        type="stack.manager_loop",
+        stack.child_workflow="./feature-validation-stage.fabro",
+        manager.max_cycles=360,
+        manager.poll_interval="5s"
+    ]
+
+    publish_postmortem_child [
+        label="Publish And Postmortem Child",
+        type="stack.manager_loop",
+        stack.child_workflow="./feature-publish-postmortem-stage.fabro",
+        manager.max_cycles=240,
+        manager.poll_interval="2s"
+    ]
+
+    start -> feature_workflow_preflight
+    feature_workflow_preflight -> context_intake_child [condition="outcome=succeeded"]
+    feature_workflow_preflight -> feature_workflow_preflight [label="Fix Workflow/Environment"]
+    context_intake_child -> research_child [condition="outcome=succeeded"]
+    context_intake_child -> existing_app_audit_child [condition="outcome=succeeded"]
+    context_intake_child -> context_intake_child [label="Fix Context"]
+    research_child -> research_audit_join
+    existing_app_audit_child -> research_audit_join
+    research_child -> context_intake_child [label="Research Context Fix"]
+    existing_app_audit_child -> context_intake_child [label="Audit Context Fix"]
+    research_audit_join -> feature_spec_child
+    feature_spec_child -> implementation_plan_child [condition="outcome=succeeded"]
+    feature_spec_child -> feature_spec_child [label="Fix Feature Spec"]
+    implementation_plan_child -> implementation_child [condition="outcome=succeeded"]
+    implementation_plan_child -> feature_spec_child [label="Fix Mapping"]
+    implementation_child -> validation_child [condition="outcome=succeeded"]
+    implementation_child -> implementation_child [label="Fix Implementation"]
+    validation_child -> publish_postmortem_child [condition="outcome=succeeded"]
+    validation_child -> implementation_child [label="Fix Validation Failures"]
+    publish_postmortem_child -> exit [condition="outcome=succeeded"]
+    publish_postmortem_child -> publish_postmortem_child [label="Complete Handoff/Postmortem"]
+}
