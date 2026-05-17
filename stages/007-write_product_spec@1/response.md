@@ -1,0 +1,1 @@
+[Simulated] Response for stage: write_product_spec
