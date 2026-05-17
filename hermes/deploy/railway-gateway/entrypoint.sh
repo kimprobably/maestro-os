@@ -480,6 +480,7 @@ operator_skills = [
 specialist_skills = {
     "joni": [
         "linkedin-operator",
+        "maestro-linkedin-voice-editor",
         "maestro-memory",
         "maestro-skill-governance",
         "maestro-spec-planning",

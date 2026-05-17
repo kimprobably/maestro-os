@@ -55,6 +55,8 @@ For normal daily monitoring, prefer the daily cohort path to control HarvestAPI 
 
 ## Draft Quality Bar
 
+Use `maestro-linkedin-voice-editor` for any post draft or substantive edit. Important posts should run through `scripts/hermes/joni-linkedin-voice-eval.mjs` before they are queued, and rewrites should use the compare mode so voice edits do not damage hook clarity, target reader, or pain specificity.
+
 Every draft should include:
 
 - working title or hook,

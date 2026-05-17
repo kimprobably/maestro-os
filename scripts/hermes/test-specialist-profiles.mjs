@@ -70,6 +70,35 @@ test("joni has a LinkedIn operator skill with safe capture and no-publish bounda
   assert.match(watchlistDoc, /being empty is not a watchlist gap/);
 });
 
+test("joni has a repo-managed voice editor skill with regression checks", async () => {
+  const operatorSkill = await readFile(
+    path.join(repoRoot, "hermes/profiles/joni/skills/linkedin-operator/SKILL.md"),
+    "utf8",
+  );
+  const editorSkill = await readFile(
+    path.join(
+      repoRoot,
+      "hermes/profiles/joni/skills/maestro-linkedin-voice-editor/SKILL.md",
+    ),
+    "utf8",
+  );
+
+  assert.match(operatorSkill, /maestro-linkedin-voice-editor/);
+  assert.match(operatorSkill, /joni-linkedin-voice-eval\.mjs/);
+
+  assert.match(editorSkill, /brief lock/i);
+  assert.match(editorSkill, /eval-only/i);
+  assert.match(editorSkill, /targeted edit plan/i);
+  assert.match(editorSkill, /constrained rewrite/i);
+  assert.match(editorSkill, /regression eval/i);
+  assert.match(editorSkill, /joni-linkedin-voice-eval\.mjs/);
+  assert.match(editorSkill, /runtime-created skills are scratch/i);
+  assert.match(editorSkill, /do not publish/i);
+  assert.match(editorSkill, /target reader/i);
+  assert.match(editorSkill, /pain point/i);
+  assert.match(editorSkill, /human edits/i);
+});
+
 test("Railway gateway can run Joni as a dedicated specialist Slack profile", async () => {
   const entrypoint = await readFile(
     path.join(repoRoot, "hermes/deploy/railway-gateway/entrypoint.sh"),
@@ -81,6 +110,7 @@ test("Railway gateway can run Joni as a dedicated specialist Slack profile", asy
   assert.match(entrypoint, /profile_soul_src="\/app\/hermes\/profiles\/\$profile_name\/SOUL\.md"/);
   assert.match(entrypoint, /HARVEST_API_KEY/);
   assert.match(entrypoint, /linkedin-operator/);
+  assert.match(entrypoint, /maestro-linkedin-voice-editor/);
   assert.match(entrypoint, /exec hermes -p "\$profile_name" gateway run/);
 });
 
