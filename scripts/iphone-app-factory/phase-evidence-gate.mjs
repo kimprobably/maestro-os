@@ -29,7 +29,10 @@ const hasHostedRuntimeDeferral =
   ) && /appium|simulator|runtime|xcode|screenshot/i.test(text);
 const hasAcceptedDeferred = hasKnownDeferred || hasHostedRuntimeDeferral;
 
-if (!hasAcceptedDeferred && /VERDICT:\s*REJECTED|\bFAIL(ED|URE)?\b/i.test(text)) {
+if (
+  !hasAcceptedDeferred &&
+  /(^|\n)\s*VERDICT\s*:\s*(REJECTED|FAIL(ED|URE)?|BLOCKED|NOT ACCEPTABLE)\b/i.test(text)
+) {
   failures.push(`${evidence} contains failing verdict`);
 }
 

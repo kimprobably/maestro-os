@@ -163,6 +163,40 @@ test("phase evidence gate reads visual-system evidence from UX Studio evidence d
   });
 });
 
+test("phase evidence gate allows accepted evidence with nonblocking command failures", () => {
+  withTempDir((dir) => {
+    const appDir = join(dir, "apps/waketask-iphone");
+    const evidence = join(dir, ".workflow/iphone-app-ux-studio/evidence/visual-system.md");
+    mkdirSync(appDir, { recursive: true });
+    mkdirSync(dirname(evidence), { recursive: true });
+    writeFileSync(
+      evidence,
+      `# Visual System Evidence
+
+## Files changed
+- apps/waketask-iphone/SwiftAIBoilerplatePro/DesignSystem/AppTheme.swift
+
+## Commands run
+- swift test in apps/waketask-iphone/Packages/DesignSystem (failed: swift command not found in worker)
+
+## Acceptance criteria
+- [x] Visual tokens and app-specific components are implemented.
+
+## Risks
+- swift toolchain is unavailable in this worker, so package tests could not be executed locally in this pass.
+
+## Verifier notes
+- Accepted by independent verifier: reviewed DesignSystem diffs, evidence commands, and preview state coverage; phase scope is acceptable to advance.
+`
+    );
+
+    const result = runNode(phaseGate, ["visual-system", "apps/waketask-iphone"], dir);
+
+    assert.equal(result.status, 0, result.stderr);
+    assert.match(result.stdout, /"ok":true/);
+  });
+});
+
 test("phase evidence gate reads screen-flows evidence from UX Studio evidence directory", () => {
   withTempDir((dir) => {
     const appDir = join(dir, "apps/waketask-iphone");
