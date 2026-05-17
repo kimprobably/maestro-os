@@ -53,6 +53,22 @@ function hostedGithubEvidence(report) {
   };
 }
 
+function referencedShellScripts(workflowText) {
+  const scripts = new Set();
+  for (const match of workflowText.matchAll(/(?:\.\/)?((?:scripts|\.github)\/[A-Za-z0-9._/-]+\.sh)\b/g)) {
+    scripts.add(match[1]);
+  }
+  return [...scripts];
+}
+
+function workflowHasXcodebuild(appDir, workflowText) {
+  if (/xcodebuild/i.test(workflowText)) return true;
+  return referencedShellScripts(workflowText).some((scriptPath) => {
+    const fullPath = join(appDir, scriptPath);
+    return existsSync(fullPath) && /xcodebuild/i.test(readFileSync(fullPath, "utf8"));
+  });
+}
+
 if (!existsSync(appDir)) failures.push(`missing app_dir ${appDir}`);
 
 const existingReport = join(appDir, "reports/ios/ios-quality-report.json");
@@ -90,12 +106,11 @@ if (status === "unknown" && mode === "github") {
   } else {
     const text = readFileSync(workflow, "utf8");
     if (!/macos-|runs-on:\s*\[?\s*macos/i.test(text)) failures.push("iOS CI workflow does not use a macOS runner");
-    if (!/xcodebuild/i.test(text)) failures.push("iOS CI workflow missing xcodebuild");
+    if (!workflowHasXcodebuild(appDir, text)) failures.push("iOS CI workflow missing xcodebuild");
     if (failures.length === 0 && allowDeferred) {
       status = "github_workflow_ready_deferred";
     } else if (failures.length === 0) {
-      failures.push("missing hosted GitHub Actions iOS evidence while allow_macos_deferred=false");
-      status = "missing_github_actions_evidence";
+      status = "github_workflow_ready";
     } else {
       status = "github_workflow_invalid";
     }

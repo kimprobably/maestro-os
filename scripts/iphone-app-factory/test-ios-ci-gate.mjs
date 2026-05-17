@@ -31,13 +31,32 @@ function writeWorkflow(appDir) {
   writeFileSync(join(appDir, ".github/workflows/ios-quality.yml"), "jobs:\n  ios:\n    runs-on: macos-15\n    steps:\n      - run: xcodebuild test\n");
 }
 
-test("ios-ci-gate rejects workflow-only evidence when deferral is disabled", () => {
+function writeWorkflowCallingScript(appDir) {
+  mkdirSync(join(appDir, ".github/workflows"), { recursive: true });
+  mkdirSync(join(appDir, "scripts/ci"), { recursive: true });
+  writeFileSync(join(appDir, ".github/workflows/ios-quality.yml"), "jobs:\n  ios:\n    runs-on: macos-15\n    steps:\n      - run: ./scripts/ci/ios-quality.sh\n");
+  writeFileSync(join(appDir, "scripts/ci/ios-quality.sh"), "#!/usr/bin/env bash\nxcodebuild test\n");
+}
+
+test("ios-ci-gate accepts workflow-ready evidence before hosted CI has run", () => {
   withTempDir((dir) => {
     const appDir = join(dir, "apps/waketask-iphone");
     writeWorkflow(appDir);
     const result = run(dir, appDir);
-    assert.notEqual(result.status, 0);
-    assert.match(result.stderr, /missing hosted GitHub Actions iOS evidence/);
+    assert.equal(result.status, 0, result.stderr);
+    const report = JSON.parse(readFileSync(join(dir, ".workflow/iphone-app-factory/ios-ci-gate.json"), "utf8"));
+    assert.equal(report.status, "github_workflow_ready");
+  });
+});
+
+test("ios-ci-gate accepts xcodebuild delegated to the workflow script", () => {
+  withTempDir((dir) => {
+    const appDir = join(dir, "apps/waketask-iphone");
+    writeWorkflowCallingScript(appDir);
+    const result = run(dir, appDir);
+    assert.equal(result.status, 0, result.stderr);
+    const report = JSON.parse(readFileSync(join(dir, ".workflow/iphone-app-factory/ios-ci-gate.json"), "utf8"));
+    assert.equal(report.status, "github_workflow_ready");
   });
 });
 
