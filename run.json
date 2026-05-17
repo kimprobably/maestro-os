@@ -2820,7 +2820,7 @@
     "kind": "running"
   },
   "status_updated_at": "2026-05-17T09:36:39.735215592Z",
-  "last_event_at": "2026-05-17T09:40:27.597186745Z",
+  "last_event_at": "2026-05-17T09:40:30.761843630Z",
   "pending_control": null,
   "checkpoints": [
     {
@@ -3309,9 +3309,9 @@
       }
     },
     {
-      "seq": 0,
+      "seq": 91,
       "checkpoint": {
-        "timestamp": "2026-05-17T09:40:27.706369671Z",
+        "timestamp": "2026-05-17T09:40:29.437856686Z",
         "current_node": "retrieve_existing_references",
         "completed_nodes": [
           "start",
@@ -3324,15 +3324,142 @@
         ],
         "node_retries": {},
         "context_values": {
+          "failure_signature": "",
+          "failure_class": "",
+          "graph.secret_policy": "never print environment variables or credential values; credential checks must be presence-only true/false checks; do not run environment dump commands; Mobbin and competitor screenshots are private research references only.",
+          "internal.retry_count.checkout_existing_app": 0,
+          "internal.retry_count.remote_environment_preflight": 0,
+          "graph.inputs": "repo_url,base_branch,run_branch,app_name,bundle_id,app_dir,app_domain,target_audience,design_goal,max_competitors,use_mobbin_mcp,use_design_corpus,design_corpus_write_mode,selected_direction_mode,ios_validation_mode,allow_macos_deferred,fabro_server",
+          "thread.design_corpus_preflight.current_node": "retrieve_existing_references",
+          "graph.rankdir": "LR",
+          "outcome": "succeeded",
+          "internal.run_id": "01KRTMPWT3SJS2DZF9Y1CWW383",
+          "internal.retry_count.baseline_screenshot_capture": 0,
+          "command.output": "blob://sha256/12ae32cb1ec02d01eda3581b127c1fee3b0dc53572ed6baf239721a03d82e126",
+          "graph.model_stylesheet": "\n            *                  { backend: cli; provider: openai; model: gpt-5.3-codex-spark; reasoning_effort: low; }\n            .ux-research       { backend: cli; provider: openai; model: gpt-5.3-codex-spark; reasoning_effort: medium; }\n            .design            { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            .critique          { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            .review            { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            .verify            { backend: cli; provider: openai; model: gpt-5.3-codex-spark; reasoning_effort: medium; }\n            .security          { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n        ",
+          "internal.node_visit_count": 1,
+          "internal.retry_count.retrieve_existing_references": 0,
+          "graph.outputs": "existing_app_intake,reference_pack,design_tournament,screen_spec,ux_implementation_evidence,screenshot_manifest,appium_report,ios_quality_report,ux_handoff,postmortem",
+          "internal.retry_count.design_corpus_preflight": 0,
+          "thread.remote_environment_preflight.current_node": "checkout_existing_app",
+          "graph.fallback_retry_target": "implement_screen_flows",
+          "thread.checkout_existing_app.current_node": "existing_app_intake",
+          "internal.work_dir": "/home/daytona/workspace",
+          "internal.retry_count.start": 0,
+          "internal.fidelity": "compact",
+          "graph.retry_target": "design_tournament_consensus",
+          "thread.baseline_screenshot_capture.current_node": "design_corpus_preflight",
+          "thread.start.current_node": "remote_environment_preflight",
+          "thread.existing_app_intake.current_node": "baseline_screenshot_capture",
+          "graph.default_max_retries": "2",
+          "current_node": "retrieve_existing_references",
+          "graph.persona": "iphone-app-ux-studio",
+          "internal.thread_id": "design_corpus_preflight",
+          "internal.retry_count.existing_app_intake": 0,
+          "graph.goal": "Run the WakeTask existing-app UX Studio implementation workflow through Railway Fabro with durable research, implementation evidence, hosted-runtime blocker capture, and postmortem learning."
+        },
+        "node_outcomes": {
+          "start": {
+            "status": "succeeded",
+            "usage": null
+          },
+          "checkout_existing_app": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/c28888891b3baf251c12c8b04eb7adc0153a01b61f3c2071ef704c0ee25b88bb"
+            },
+            "notes": "Script completed: node scripts/iphone-app-factory/checkout-existing-app.mjs",
+            "usage": null
+          },
+          "baseline_screenshot_capture": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/d0ed6b141ddc4b9f57d50cc1102dd65a9a56e8b5c25c08f8261a63d584329aff"
+            },
+            "notes": "Script completed: node scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/ux-baseline-screenshot-capture.md --stage baseline-screenshot-capture --out .workflow/iphone-app-ux-studio/codex/baseline-screenshot-capture.json",
+            "usage": null
+          },
+          "existing_app_intake": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/543a40a3734bf08312d9ad4fcfdf3992bd996a2e9986ef3df1e4b42bdef5e2a5"
+            },
+            "notes": "Script completed: node scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/ux-existing-app-intake.md --stage existing-app-intake --out .workflow/iphone-app-ux-studio/codex/existing-app-intake.json",
+            "usage": null
+          },
+          "design_corpus_preflight": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/90c1a50e16feb361df11176c55e6364ee1c720ddf45d9b13d23316964a1e0cd5"
+            },
+            "notes": "Script completed: node scripts/iphone-app-factory/design-corpus.mjs init --db .workflow/iphone-app-ux-studio/design-corpus.sqlite",
+            "usage": null
+          },
+          "remote_environment_preflight": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/7a6aa7e7857db26b4993545751276757f256901eb9c4126f18a510d9bdab909d"
+            },
+            "notes": "Script completed: node scripts/iphone-app-factory/ux-studio-preflight.mjs --server https://fabro-maestro-production.up.railway.app/api/v1 --expected-control-plane railway",
+            "usage": null
+          },
+          "retrieve_existing_references": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/12ae32cb1ec02d01eda3581b127c1fee3b0dc53572ed6baf239721a03d82e126"
+            },
+            "notes": "Script completed: mkdir -p .workflow/iphone-app-ux-studio/research; node scripts/iphone-app-factory/design-corpus.mjs reference-pack --db .workflow/iphone-app-ux-studio/design-corpus.sqlite > .workflow/iphone-app-ux-studio/research/reference-pack.json",
+            "usage": null
+          }
+        },
+        "next_node_id": "reference_gap_analysis",
+        "git_commit_sha": "4ee7e0008af5f00bad33a95f7353147675353072",
+        "node_visits": {
+          "retrieve_existing_references": 1,
+          "existing_app_intake": 1,
+          "design_corpus_preflight": 1,
+          "start": 1,
+          "baseline_screenshot_capture": 1,
+          "checkout_existing_app": 1,
+          "remote_environment_preflight": 1
+        }
+      },
+      "diff": {
+        "summary": {
+          "files_changed": 1,
+          "additions": 1,
+          "deletions": 0
+        }
+      }
+    },
+    {
+      "seq": 0,
+      "checkpoint": {
+        "timestamp": "2026-05-17T09:40:30.819833289Z",
+        "current_node": "reference_gap_analysis",
+        "completed_nodes": [
+          "start",
+          "remote_environment_preflight",
+          "checkout_existing_app",
+          "existing_app_intake",
+          "baseline_screenshot_capture",
+          "design_corpus_preflight",
+          "retrieve_existing_references",
+          "reference_gap_analysis"
+        ],
+        "node_retries": {},
+        "context_values": {
           "graph.persona": "iphone-app-ux-studio",
           "internal.retry_count.retrieve_existing_references": 0,
-          "current_node": "retrieve_existing_references",
-          "internal.thread_id": "design_corpus_preflight",
+          "thread.retrieve_existing_references.current_node": "reference_gap_analysis",
+          "current_node": "reference_gap_analysis",
+          "internal.thread_id": "retrieve_existing_references",
           "graph.fallback_retry_target": "implement_screen_flows",
           "internal.retry_count.baseline_screenshot_capture": 0,
           "internal.node_visit_count": 1,
           "graph.retry_target": "design_tournament_consensus",
           "graph.rankdir": "LR",
+          "internal.retry_count.reference_gap_analysis": 0,
           "thread.checkout_existing_app.current_node": "existing_app_intake",
           "graph.goal": "Run the WakeTask existing-app UX Studio implementation workflow through Railway Fabro with durable research, implementation evidence, hosted-runtime blocker capture, and postmortem learning.",
           "graph.secret_policy": "never print environment variables or credential values; credential checks must be presence-only true/false checks; do not run environment dump commands; Mobbin and competitor screenshots are private research references only.",
@@ -3342,7 +3469,7 @@
           "graph.inputs": "repo_url,base_branch,run_branch,app_name,bundle_id,app_dir,app_domain,target_audience,design_goal,max_competitors,use_mobbin_mcp,use_design_corpus,design_corpus_write_mode,selected_direction_mode,ios_validation_mode,allow_macos_deferred,fabro_server",
           "thread.remote_environment_preflight.current_node": "checkout_existing_app",
           "internal.fidelity": "compact",
-          "command.output": "blob://sha256/12ae32cb1ec02d01eda3581b127c1fee3b0dc53572ed6baf239721a03d82e126",
+          "command.output": "blob://sha256/a252d411bb1d61370d48a00887187b1bb6fa11b2c6759066f40c915211c1cca2",
           "thread.start.current_node": "remote_environment_preflight",
           "internal.retry_count.checkout_existing_app": 0,
           "internal.work_dir": "/home/daytona/workspace",
@@ -3391,6 +3518,14 @@
             "notes": "Script completed: mkdir -p .workflow/iphone-app-ux-studio/research; node scripts/iphone-app-factory/design-corpus.mjs reference-pack --db .workflow/iphone-app-ux-studio/design-corpus.sqlite > .workflow/iphone-app-ux-studio/research/reference-pack.json",
             "usage": null
           },
+          "reference_gap_analysis": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/a252d411bb1d61370d48a00887187b1bb6fa11b2c6759066f40c915211c1cca2"
+            },
+            "notes": "Script completed: mkdir -p .workflow/iphone-app-ux-studio/research; node -e \"const fs=require('fs'); const path='.workflow/iphone-app-ux-studio/research/reference-pack.json'; const pack=fs.existsSync(path)?JSON.parse(fs.readFileSync(path,'utf8')):{}; const refs=pack.references||pack.reference_pack?.references||[]; const report={ok:true,total_references:refs.length,needs_live_research:refs.length<12,missing:['competitor_flow_research','app_store_review_mining','mobbin_mcp_research','pageflows_research','apple_hig_research','behavioral_ux_research'],railway_fabro_required:true}; fs.writeFileSync('.workflow/iphone-app-ux-studio/research/reference-gap-analysis.json', JSON.stringify(report,null,2)+'\\n'); console.log(JSON.stringify(report));\"",
+            "usage": null
+          },
           "baseline_screenshot_capture": {
             "status": "succeeded",
             "context_updates": {
@@ -3412,14 +3547,15 @@
             "usage": null
           }
         },
-        "next_node_id": "reference_gap_analysis",
+        "next_node_id": "research_fanout",
         "node_visits": {
-          "baseline_screenshot_capture": 1,
           "checkout_existing_app": 1,
           "design_corpus_preflight": 1,
-          "start": 1,
           "retrieve_existing_references": 1,
+          "reference_gap_analysis": 1,
+          "baseline_screenshot_capture": 1,
           "existing_app_intake": 1,
+          "start": 1,
           "remote_environment_preflight": 1
         }
       },
@@ -3487,50 +3623,6 @@
       },
       "state": "succeeded"
     },
-    "existing_app_intake@1": {
-      "first_event_seq": 43,
-      "prompt": null,
-      "response": null,
-      "completion": {
-        "outcome": "succeeded",
-        "notes": "Script completed: node scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/ux-existing-app-intake.md --stage existing-app-intake --out .workflow/iphone-app-ux-studio/codex/existing-app-intake.json",
-        "failure_reason": null,
-        "timestamp": "2026-05-17T09:39:32.915533097Z"
-      },
-      "provider_used": null,
-      "diff": null,
-      "script_invocation": {
-        "script": "node scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/ux-existing-app-intake.md --stage existing-app-intake --out .workflow/iphone-app-ux-studio/codex/existing-app-intake.json",
-        "command": "exec 2>&1\nnode scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/ux-existing-app-intake.md --stage existing-app-intake --out .workflow/iphone-app-ux-studio/codex/existing-app-intake.json",
-        "language": "shell",
-        "timeout_ms": 3600000
-      },
-      "script_timing": {
-        "output": "blob://sha256/543a40a3734bf08312d9ad4fcfdf3992bd996a2e9986ef3df1e4b42bdef5e2a5",
-        "exit_code": 0,
-        "duration_ms": 161940,
-        "termination": "exited",
-        "output_bytes": 4368,
-        "live_streaming": true
-      },
-      "parallel_results": null,
-      "output": null,
-      "output_bytes": 4368,
-      "live_streaming": true,
-      "termination": "exited",
-      "started_at": "2026-05-17T09:36:50.739906406Z",
-      "handler": "command",
-      "duration_ms": 161944,
-      "usage": {
-        "input_tokens": 0,
-        "output_tokens": 0,
-        "total_tokens": 0,
-        "reasoning_tokens": 0,
-        "cache_read_tokens": 0,
-        "cache_write_tokens": 0
-      },
-      "state": "succeeded"
-    },
     "design_corpus_preflight@1": {
       "first_event_seq": 71,
       "prompt": null,
@@ -3574,43 +3666,6 @@
       },
       "state": "succeeded"
     },
-    "retrieve_existing_references@1": {
-      "first_event_seq": 82,
-      "prompt": null,
-      "response": null,
-      "completion": null,
-      "provider_used": null,
-      "diff": null,
-      "script_invocation": {
-        "script": "mkdir -p .workflow/iphone-app-ux-studio/research; node scripts/iphone-app-factory/design-corpus.mjs reference-pack --db .workflow/iphone-app-ux-studio/design-corpus.sqlite > .workflow/iphone-app-ux-studio/research/reference-pack.json",
-        "command": "exec 2>&1\nmkdir -p .workflow/iphone-app-ux-studio/research; node scripts/iphone-app-factory/design-corpus.mjs reference-pack --db .workflow/iphone-app-ux-studio/design-corpus.sqlite > .workflow/iphone-app-ux-studio/research/reference-pack.json",
-        "language": "shell"
-      },
-      "script_timing": {
-        "output": "blob://sha256/12ae32cb1ec02d01eda3581b127c1fee3b0dc53572ed6baf239721a03d82e126",
-        "exit_code": 0,
-        "duration_ms": 1317,
-        "termination": "exited",
-        "output_bytes": 0,
-        "live_streaming": false
-      },
-      "parallel_results": null,
-      "output": null,
-      "output_bytes": 0,
-      "live_streaming": false,
-      "termination": "exited",
-      "started_at": "2026-05-17T09:40:26.275028661Z",
-      "handler": "command",
-      "usage": {
-        "input_tokens": 0,
-        "output_tokens": 0,
-        "total_tokens": 0,
-        "reasoning_tokens": 0,
-        "cache_read_tokens": 0,
-        "cache_write_tokens": 0
-      },
-      "state": "running"
-    },
     "remote_environment_preflight@1": {
       "first_event_seq": 20,
       "prompt": null,
@@ -3644,6 +3699,93 @@
       "started_at": "2026-05-17T09:36:40.554944610Z",
       "handler": "command",
       "duration_ms": 4654,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "total_tokens": 0,
+        "reasoning_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "state": "succeeded"
+    },
+    "retrieve_existing_references@1": {
+      "first_event_seq": 82,
+      "prompt": null,
+      "response": null,
+      "completion": {
+        "outcome": "succeeded",
+        "notes": "Script completed: mkdir -p .workflow/iphone-app-ux-studio/research; node scripts/iphone-app-factory/design-corpus.mjs reference-pack --db .workflow/iphone-app-ux-studio/design-corpus.sqlite > .workflow/iphone-app-ux-studio/research/reference-pack.json",
+        "failure_reason": null,
+        "timestamp": "2026-05-17T09:40:27.705524060Z"
+      },
+      "provider_used": null,
+      "diff": null,
+      "script_invocation": {
+        "script": "mkdir -p .workflow/iphone-app-ux-studio/research; node scripts/iphone-app-factory/design-corpus.mjs reference-pack --db .workflow/iphone-app-ux-studio/design-corpus.sqlite > .workflow/iphone-app-ux-studio/research/reference-pack.json",
+        "command": "exec 2>&1\nmkdir -p .workflow/iphone-app-ux-studio/research; node scripts/iphone-app-factory/design-corpus.mjs reference-pack --db .workflow/iphone-app-ux-studio/design-corpus.sqlite > .workflow/iphone-app-ux-studio/research/reference-pack.json",
+        "language": "shell"
+      },
+      "script_timing": {
+        "output": "blob://sha256/12ae32cb1ec02d01eda3581b127c1fee3b0dc53572ed6baf239721a03d82e126",
+        "exit_code": 0,
+        "duration_ms": 1317,
+        "termination": "exited",
+        "output_bytes": 0,
+        "live_streaming": false
+      },
+      "parallel_results": null,
+      "output": null,
+      "output_bytes": 0,
+      "live_streaming": false,
+      "termination": "exited",
+      "started_at": "2026-05-17T09:40:26.275028661Z",
+      "handler": "command",
+      "duration_ms": 1322,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "total_tokens": 0,
+        "reasoning_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "state": "succeeded"
+    },
+    "existing_app_intake@1": {
+      "first_event_seq": 43,
+      "prompt": null,
+      "response": null,
+      "completion": {
+        "outcome": "succeeded",
+        "notes": "Script completed: node scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/ux-existing-app-intake.md --stage existing-app-intake --out .workflow/iphone-app-ux-studio/codex/existing-app-intake.json",
+        "failure_reason": null,
+        "timestamp": "2026-05-17T09:39:32.915533097Z"
+      },
+      "provider_used": null,
+      "diff": null,
+      "script_invocation": {
+        "script": "node scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/ux-existing-app-intake.md --stage existing-app-intake --out .workflow/iphone-app-ux-studio/codex/existing-app-intake.json",
+        "command": "exec 2>&1\nnode scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/ux-existing-app-intake.md --stage existing-app-intake --out .workflow/iphone-app-ux-studio/codex/existing-app-intake.json",
+        "language": "shell",
+        "timeout_ms": 3600000
+      },
+      "script_timing": {
+        "output": "blob://sha256/543a40a3734bf08312d9ad4fcfdf3992bd996a2e9986ef3df1e4b42bdef5e2a5",
+        "exit_code": 0,
+        "duration_ms": 161940,
+        "termination": "exited",
+        "output_bytes": 4368,
+        "live_streaming": true
+      },
+      "parallel_results": null,
+      "output": null,
+      "output_bytes": 4368,
+      "live_streaming": true,
+      "termination": "exited",
+      "started_at": "2026-05-17T09:36:50.739906406Z",
+      "handler": "command",
+      "duration_ms": 161944,
       "usage": {
         "input_tokens": 0,
         "output_tokens": 0,
@@ -3696,6 +3838,43 @@
         "cache_write_tokens": 0
       },
       "state": "succeeded"
+    },
+    "reference_gap_analysis@1": {
+      "first_event_seq": 94,
+      "prompt": null,
+      "response": null,
+      "completion": null,
+      "provider_used": null,
+      "diff": null,
+      "script_invocation": {
+        "script": "mkdir -p .workflow/iphone-app-ux-studio/research; node -e \"const fs=require('fs'); const path='.workflow/iphone-app-ux-studio/research/reference-pack.json'; const pack=fs.existsSync(path)?JSON.parse(fs.readFileSync(path,'utf8')):{}; const refs=pack.references||pack.reference_pack?.references||[]; const report={ok:true,total_references:refs.length,needs_live_research:refs.length<12,missing:['competitor_flow_research','app_store_review_mining','mobbin_mcp_research','pageflows_research','apple_hig_research','behavioral_ux_research'],railway_fabro_required:true}; fs.writeFileSync('.workflow/iphone-app-ux-studio/research/reference-gap-analysis.json', JSON.stringify(report,null,2)+'\\n'); console.log(JSON.stringify(report));\"",
+        "command": "exec 2>&1\nmkdir -p .workflow/iphone-app-ux-studio/research; node -e \"const fs=require('fs'); const path='.workflow/iphone-app-ux-studio/research/reference-pack.json'; const pack=fs.existsSync(path)?JSON.parse(fs.readFileSync(path,'utf8')):{}; const refs=pack.references||pack.reference_pack?.references||[]; const report={ok:true,total_references:refs.length,needs_live_research:refs.length<12,missing:['competitor_flow_research','app_store_review_mining','mobbin_mcp_research','pageflows_research','apple_hig_research','behavioral_ux_research'],railway_fabro_required:true}; fs.writeFileSync('.workflow/iphone-app-ux-studio/research/reference-gap-analysis.json', JSON.stringify(report,null,2)+'\\n'); console.log(JSON.stringify(report));\"",
+        "language": "shell"
+      },
+      "script_timing": {
+        "output": "blob://sha256/a252d411bb1d61370d48a00887187b1bb6fa11b2c6759066f40c915211c1cca2",
+        "exit_code": 0,
+        "duration_ms": 1314,
+        "termination": "exited",
+        "output_bytes": 244,
+        "live_streaming": true
+      },
+      "parallel_results": null,
+      "output": null,
+      "output_bytes": 244,
+      "live_streaming": true,
+      "termination": "exited",
+      "started_at": "2026-05-17T09:40:29.442744118Z",
+      "handler": "command",
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "total_tokens": 0,
+        "reasoning_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "state": "running"
     },
     "start@1": {
       "first_event_seq": 16,
