@@ -7,13 +7,14 @@ The image installs:
 
 - Hermes Agent from upstream.
 - Fabro latest upstream nightly release artifact, verified with `fabro mcp`.
-- The `maestro-operator`, Smith, Johann, and Quill profiles.
+- The `maestro-operator`, Smith, Johann, Quill, Quincy, and Joni profiles.
 - The SQLite Fabro run ledger schema.
 
 Runtime variables:
 
 ```dotenv
 HERMES_HOME=/data/.hermes
+HERMES_GATEWAY_PROFILE=maestro-operator
 FABRO_SERVER=https://fabro-maestro-production.up.railway.app/api/v1
 FABRO_DEV_TOKEN=
 SLACK_BOT_TOKEN=
@@ -31,6 +32,7 @@ HONCHO_API_KEY=
 HONCHO_ENVIRONMENT=production
 HONCHO_WORKSPACE=maestro
 HONCHO_RECALL_MODE=hybrid
+HARVEST_API_KEY=
 ```
 
 For the smoke period, `GATEWAY_ALLOW_ALL_USERS=true` is acceptable. Before
@@ -46,3 +48,9 @@ Build context:
 hermes/scripts/prepare-railway-gateway-context.sh /tmp/maestro-hermes-railway
 railway up /tmp/maestro-hermes-railway --path-as-root --service maestro-hermes-gateway
 ```
+
+Dedicated specialist bots should use the same image with a separate Railway
+service, separate Slack app tokens, and `HERMES_GATEWAY_PROFILE=<profile>`.
+For Joni, use `HERMES_GATEWAY_PROFILE=joni`; the gateway preserves her
+profile-specific SOUL and loads the `linkedin-operator` skill into her Slack
+home channel.

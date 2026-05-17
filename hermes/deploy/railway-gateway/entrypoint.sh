@@ -34,7 +34,15 @@ if [ "${GATEWAY_ALLOW_ALL_USERS}" = "true" ] && [ "${HERMES_GATEWAY_SMOKE:-}" !=
   exit 1
 fi
 
-profile_name="maestro-operator"
+profile_name="${HERMES_GATEWAY_PROFILE:-maestro-operator}"
+case "$profile_name" in
+  maestro-operator|smith|johann|quill|quincy|joni)
+    ;;
+  *)
+    printf 'unsupported HERMES_GATEWAY_PROFILE: %s\n' "$profile_name" >&2
+    exit 1
+    ;;
+esac
 export HERMES_PROFILE="$profile_name"
 profile_dir="$HERMES_HOME/profiles/$profile_name"
 env_file="$profile_dir/.env"
@@ -76,8 +84,11 @@ fi
 mkdir -p "$profile_dir/state" "$profile_dir/memories"
 chmod 700 "$profile_dir" "$profile_dir/state" "$profile_dir/memories" 2>/dev/null || true
 
-if [ -f "$distribution_dir/SOUL.md" ]; then
+profile_soul_src="/app/hermes/profiles/$profile_name/SOUL.md"
+if [ "$profile_name" = "maestro-operator" ] && [ -f "$distribution_dir/SOUL.md" ]; then
   cp "$distribution_dir/SOUL.md" "$profile_dir/SOUL.md"
+elif [ -f "$profile_soul_src" ]; then
+  cp "$profile_soul_src" "$profile_dir/SOUL.md"
 fi
 
 # config.yaml policy: copy from the distribution template only on first
@@ -248,6 +259,7 @@ persist_env_key HONCHO_API_KEY
 persist_env_key HONCHO_ENVIRONMENT
 persist_env_key HONCHO_WORKSPACE
 persist_env_key HONCHO_RECALL_MODE
+persist_env_key HARVEST_API_KEY
 persist_env_key MOBBIN_MCP_URL
 persist_env_key MOBBIN_MCP_ENABLED
 persist_env_key STITCH_API_KEY
@@ -457,6 +469,7 @@ def merge_binding(channel_id, required_skills):
 
 
 home_channel = os.environ.get("SLACK_HOME_CHANNEL", "").strip() or "C0AHCRH4EP4"
+profile_name = os.environ.get("HERMES_PROFILE", "maestro-operator").strip() or "maestro-operator"
 operator_skills = [
     "maestro-memory",
     "maestro-skill-governance",
@@ -464,9 +477,25 @@ operator_skills = [
     "maestro-spec-planning",
     "fabro-babysitter",
 ]
+specialist_skills = {
+    "joni": [
+        "linkedin-operator",
+        "maestro-memory",
+        "maestro-skill-governance",
+        "maestro-spec-planning",
+    ],
+    "quincy": [
+        "fabro-babysitter",
+        "maestro-memory",
+        "maestro-skill-governance",
+        "maestro-spec-planning",
+    ],
+}
+gateway_skills = specialist_skills.get(profile_name, operator_skills)
 for channel_id in (home_channel, "C_AGENT_CONTROL", "C_MAESTRO"):
-    merge_binding(channel_id, operator_skills)
-merge_binding("C_CODE", ["maestro-skill-governance", "maestro-integrations", "maestro-spec-planning", "fabro-babysitter"])
+    merge_binding(channel_id, gateway_skills)
+if profile_name == "maestro-operator":
+    merge_binding("C_CODE", ["maestro-skill-governance", "maestro-integrations", "maestro-spec-planning", "fabro-babysitter"])
 
 mcp_servers = mapping("mcp_servers")
 mobbin = mcp_servers.get("mobbin")

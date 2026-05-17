@@ -60,6 +60,20 @@ test("joni has a LinkedIn operator skill with safe capture and no-publish bounda
   assert.match(ledger, /Publishing, commenting, DMs, connection requests/);
 });
 
+test("Railway gateway can run Joni as a dedicated specialist Slack profile", async () => {
+  const entrypoint = await readFile(
+    path.join(repoRoot, "hermes/deploy/railway-gateway/entrypoint.sh"),
+    "utf8",
+  );
+
+  assert.match(entrypoint, /HERMES_GATEWAY_PROFILE/);
+  assert.match(entrypoint, /profile_name="\$\{HERMES_GATEWAY_PROFILE:-maestro-operator\}"/);
+  assert.match(entrypoint, /profile_soul_src="\/app\/hermes\/profiles\/\$profile_name\/SOUL\.md"/);
+  assert.match(entrypoint, /HARVEST_API_KEY/);
+  assert.match(entrypoint, /linkedin-operator/);
+  assert.match(entrypoint, /exec hermes -p "\$profile_name" gateway run/);
+});
+
 test("Honcho renderer creates separate AI peers without persisting the API key", async () => {
   const tmp = await mkdtemp(path.join(os.tmpdir(), "maestro-honcho-"));
   const home = path.join(tmp, ".hermes");

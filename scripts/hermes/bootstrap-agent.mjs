@@ -198,6 +198,48 @@ function slackManifest(request) {
   };
 }
 
+async function writeSlackArtifacts(request) {
+  const manifestPath = path.join(request.root, "hermes/agents/slack", `${request.profile}-manifest.json`);
+  await writeJson(manifestPath, slackManifest(request));
+  const setupPath = path.join(request.root, "docs/operator/agent-slack", `${request.profile}-setup.md`);
+  await mkdir(path.dirname(setupPath), { recursive: true });
+  await writeFile(setupPath, `# ${request.name} Slack Bot Setup
+
+Status: generated, not installed.
+
+Use the manifest at \`hermes/agents/slack/${request.profile}-manifest.json\`.
+
+Required human/admin steps:
+
+1. Create a separate Slack app for ${request.name}.
+2. Import or mirror the generated manifest.
+3. Enable Socket Mode.
+4. Install the app to the workspace.
+5. Create or clone a separate Railway service for the ${request.profile} gateway.
+6. Store the ${request.name}-specific bot token and app-level token in that service.
+7. Restrict allowed users and channels before making it live.
+
+Minimum Railway variables for the dedicated bot service:
+
+\`\`\`dotenv
+HERMES_GATEWAY_PROFILE=${request.profile}
+HERMES_HOME=/data/.hermes
+SLACK_BOT_TOKEN=
+SLACK_APP_TOKEN=
+SLACK_HOME_CHANNEL=
+SLACK_ALLOWED_USERS=
+GATEWAY_ALLOW_ALL_USERS=false
+HARVEST_API_KEY=
+FABRO_SERVER=https://fabro-maestro-production.up.railway.app/api/v1
+HONCHO_WORKSPACE=maestro
+HONCHO_ENVIRONMENT=production
+HONCHO_RECALL_MODE=hybrid
+\`\`\`
+
+Do not reuse Miles' Slack app identity for ${request.name}.
+`);
+}
+
 async function updateNamePool(request) {
   const file = path.join(request.root, "hermes/agents/name-pool.md");
   let text = await readFile(file, "utf8");
@@ -247,6 +289,19 @@ async function updateRegistry(request) {
   await writeJson(file, registry);
 }
 
+async function writeSlackPack(request) {
+  await validateRequest({ ...request, slack_bot: true });
+
+  const soulPath = path.join(request.root, "hermes/profiles", request.profile, "SOUL.md");
+  if (!existsSync(soulPath)) {
+    throw new Error(`missing existing profile SOUL for ${request.profile}; run materialize before slack-pack`);
+  }
+
+  await updateRegistry({ ...request, slack_bot: true });
+  await writeSlackArtifacts({ ...request, slack_bot: true });
+  console.log(`agent_slack_pack_written ${request.name} (${request.profile})`);
+}
+
 async function materialize(request) {
   await validateRequest(request);
 
@@ -259,27 +314,7 @@ async function materialize(request) {
   await updateInstaller(request);
 
   if (request.slack_bot) {
-    const manifestPath = path.join(request.root, "hermes/agents/slack", `${request.profile}-manifest.json`);
-    await writeJson(manifestPath, slackManifest(request));
-    const setupPath = path.join(request.root, "docs/operator/agent-slack", `${request.profile}-setup.md`);
-    await mkdir(path.dirname(setupPath), { recursive: true });
-    await writeFile(setupPath, `# ${request.name} Slack Bot Setup
-
-Status: generated, not installed.
-
-Use the manifest at \`hermes/agents/slack/${request.profile}-manifest.json\`.
-
-Required human/admin steps:
-
-1. Create a separate Slack app for ${request.name}.
-2. Import or mirror the generated manifest.
-3. Enable Socket Mode.
-4. Install the app to the workspace.
-5. Store the bot token and app-level token in a separate Railway service for the ${request.profile} gateway.
-6. Restrict allowed users and channels before making it live.
-
-Do not reuse Miles' Slack app identity for ${request.name}.
-`);
+    await writeSlackArtifacts(request);
   }
 
   console.log(`agent_materialized ${request.name} (${request.profile})`);
@@ -362,10 +397,11 @@ try {
   if (command === "validate") await validateRequest(request);
   else if (command === "plan") await writePlan(request);
   else if (command === "materialize") await materialize(request);
+  else if (command === "slack-pack") await writeSlackPack(request);
   else if (command === "verify") await verify(request);
   else if (command === "handoff") await writeHandoff(request);
   else {
-    console.error("usage: bootstrap-agent.mjs <validate|plan|materialize|verify|handoff> --name <Name> --role <role> --owns <a,b> --current-focus <text> [--slack-bot true]");
+    console.error("usage: bootstrap-agent.mjs <validate|plan|materialize|slack-pack|verify|handoff> --name <Name> --role <role> --owns <a,b> --current-focus <text> [--slack-bot true]");
     process.exit(2);
   }
 } catch (error) {
