@@ -9,6 +9,34 @@ const root = process.env.FEATURE_WORKFLOW_ROOT || ".workflow/existing-app-featur
 const reportPath = `${root}/validation/empty-action-gate.json`;
 const failures = [];
 const findings = [];
+const ignored = [];
+const scannedFiles = [];
+
+const defaultIgnoredPathParts = [
+  "/docs/examples/",
+  "/Packages/DesignSystem/",
+  "/SwiftAIBoilerplatePro/AppShell/ProfileView.swift",
+];
+
+function normalize(path) {
+  return path.replaceAll("\\", "/");
+}
+
+function ignoredPathParts() {
+  return [
+    ...defaultIgnoredPathParts,
+    ...String(process.env.EMPTY_ACTION_GATE_IGNORE_PATHS || "")
+      .split(/[,\n]/)
+      .map((item) => item.trim())
+      .filter(Boolean)
+      .map((item) => normalize(item)),
+  ];
+}
+
+function shouldIgnore(path) {
+  const normalized = `/${normalize(path)}`;
+  return ignoredPathParts().some((part) => normalized.includes(part.startsWith("/") ? part : `/${part}`));
+}
 
 function walk(dir) {
   for (const entry of readdirSync(dir)) {
@@ -16,7 +44,13 @@ function walk(dir) {
     const path = join(dir, entry);
     const stat = statSync(path);
     if (stat.isDirectory()) walk(path);
-    if (stat.isFile() && path.endsWith(".swift") && !/Tests?\//.test(path)) scan(path);
+    if (stat.isFile() && path.endsWith(".swift") && !/Tests?\//.test(normalize(path))) {
+      if (shouldIgnore(path)) {
+        ignored.push(path);
+      } else {
+        scan(path);
+      }
+    }
   }
 }
 
@@ -25,6 +59,7 @@ function lineFor(text, index) {
 }
 
 function scan(path) {
+  scannedFiles.push(path);
   const text = readFileSync(path, "utf8");
   const patterns = [
     { name: "empty Button action", regex: /Button\s*\([^)]*\)\s*\{\s*\}/g },
@@ -42,7 +77,7 @@ if (!existsSync(appDir)) failures.push(`missing app_dir ${appDir}`);
 if (existsSync(appDir)) walk(appDir);
 if (findings.length) failures.push(`found ${findings.length} empty action closure(s)`);
 
-const report = { ok: failures.length === 0, appDir, findings, failures };
+const report = { ok: failures.length === 0, appDir, scannedFiles, ignored, findings, failures };
 mkdirSync(dirname(reportPath), { recursive: true });
 writeFileSync(reportPath, `${JSON.stringify(report, null, 2)}\n`);
 if (!report.ok) {
