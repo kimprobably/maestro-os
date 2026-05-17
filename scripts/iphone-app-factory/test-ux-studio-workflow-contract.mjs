@@ -129,6 +129,27 @@ test("UX studio fanouts wait for all branches", () => {
   }
 });
 
+test("UX studio fanouts use useful parallelism", () => {
+  const graph = readRequiredFile(workflowPath);
+  const fanoutParallelism = {
+    research_fanout: 6,
+    design_direction_fanout: 4,
+    final_review_fanout: 6,
+  };
+
+  for (const [fanout, expectedMaxParallel] of Object.entries(fanoutParallelism)) {
+    const fanoutNodePattern = new RegExp(
+      `${fanout}\\s*\\[[^\\]]*join_policy="wait_all"[^\\]]*max_parallel=${expectedMaxParallel}`,
+      "s",
+    );
+    assert.match(
+      graph,
+      fanoutNodePattern,
+      `Expected ${fanout} in ${workflowPath} to run useful parallel branches`,
+    );
+  }
+});
+
 test("UX studio Daytona config allows network access", () => {
   const config = readRequiredFile(daytonaPath);
   assert.match(

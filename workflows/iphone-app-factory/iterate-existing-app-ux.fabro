@@ -76,7 +76,7 @@ digraph IterateExistingAppUX {
         script="mkdir -p .workflow/iphone-app-ux-studio/research; node -e \"const fs=require('fs'); const path='.workflow/iphone-app-ux-studio/research/reference-pack.json'; const pack=fs.existsSync(path)?JSON.parse(fs.readFileSync(path,'utf8')):{}; const refs=pack.references||pack.reference_pack?.references||[]; const report={ok:true,total_references:refs.length,needs_live_research:refs.length<12,missing:['competitor_flow_research','app_store_review_mining','mobbin_mcp_research','pageflows_research','apple_hig_research','behavioral_ux_research'],railway_fabro_required:true}; fs.writeFileSync('.workflow/iphone-app-ux-studio/research/reference-gap-analysis.json', JSON.stringify(report,null,2)+'\\n'); console.log(JSON.stringify(report));\""
     ]
 
-    research_fanout [label="Research Fan-Out", shape=component, join_policy="wait_all", max_parallel=1]
+    research_fanout [label="Research Fan-Out", shape=component, join_policy="wait_all", max_parallel=6]
     competitor_flow_research [
         label="Competitor Flow Research",
         shape=parallelogram,
@@ -131,7 +131,7 @@ digraph IterateExistingAppUX {
         script="node scripts/iphone-app-factory/reference-pack-gate.mjs"
     ]
 
-    design_direction_fanout [label="Design Direction Fan-Out", shape=component, join_policy="wait_all", max_parallel=1]
+    design_direction_fanout [label="Design Direction Fan-Out", shape=component, join_policy="wait_all", max_parallel=4]
     calm_accountability_direction [
         label="Calm Accountability Direction",
         shape=parallelogram,
@@ -278,7 +278,7 @@ digraph IterateExistingAppUX {
         script="node scripts/iphone-app-factory/prompt-context-budget-gate.mjs --root .workflow/iphone-app-ux-studio --out .workflow/iphone-app-ux-studio/prompt-context-budget.json"
     ]
 
-    final_review_fanout [label="Final Review Fan-Out", shape=component, join_policy="wait_all", max_parallel=1]
+    final_review_fanout [label="Final Review Fan-Out", shape=component, join_policy="wait_all", max_parallel=6]
     ux_quality_review [
         label="UX Quality Review",
         shape=parallelogram,
