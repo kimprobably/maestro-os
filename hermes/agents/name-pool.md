@@ -4,6 +4,7 @@ Naming rule: Maestro agents use first names of musicians from history. Prefer re
 
 ## Active
 
+- Joni - LinkedIn content and performance specialist
 - Miles - general Maestro operator.
 - Quincy - Fabro and DevOps specialist.
 - Johann - email/content drafting worker.
@@ -36,7 +37,6 @@ Naming rule: Maestro agents use first names of musicians from history. Prefer re
 - Aretha
 - Etta
 - Dolly
-- Joni
 - Carole
 - Roberta
 - Mavis

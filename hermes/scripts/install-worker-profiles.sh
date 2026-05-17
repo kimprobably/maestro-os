@@ -71,6 +71,7 @@ install_worker smith
 install_worker johann
 install_worker quill
 install_worker quincy
+install_worker joni
 retire_legacy_profile fabro-operator quincy
 
 printf 'worker profiles installed\n'
