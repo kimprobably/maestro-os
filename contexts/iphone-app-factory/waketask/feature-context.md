@@ -38,6 +38,6 @@ Winning short-form patterns:
 
 - User-provided Social Growth Engineers trend notes.
 - Mobbin MCP UI references.
-- Local screenshots under `/Users/timlife/Documents/Screenshots`.
+- Repo-relative user screenshots under `contexts/iphone-app-factory/waketask/screenshots` with source mapping in `contexts/iphone-app-factory/waketask/screenshots/manifest.json`.
 - WakeTask repo: `https://github.com/kimprobably/waketask-ios.git`.
 - Previous Fabro UX run artifacts and postmortems.
