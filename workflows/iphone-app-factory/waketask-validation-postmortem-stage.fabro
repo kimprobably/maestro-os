@@ -1,0 +1,33 @@
+digraph WakeTaskValidationPostmortemStage {
+    graph [
+        goal="Validate WakeTask UX iteration evidence and capture postmortem learning",
+        persona="waketask-validation-postmortem",
+        inputs="fabro_server,run_branch,app_dir",
+        outputs="contract.artifact,contract.gate,contract.next_action,contract.failure_classification,waketask.postmortem",
+        secret_policy="no secrets; do not print environment variables or credential values",
+        model_stylesheet="
+            *       { backend: cli; provider: openai; model: gpt-5.3-codex-spark; reasoning_effort: low; }
+            .review { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }
+        "
+    ]
+    rankdir=LR
+
+    start [shape=Mdiamond, label="Start"]
+    exit  [shape=Msquare, label="Exit"]
+
+    write_validation_postmortem [
+        label="Write Validation Postmortem",
+        class="review",
+        retry_target="write_validation_postmortem",
+        prompt="Inspect available artifacts from `.workflow/iphone-app-ux-studio/**`, `.workflow/waketask-product-iteration/**`, `reports/ios/**`, and Fabro run context. Write `.workflow/waketask-product-iteration/validation-postmortem.md` and `.workflow/waketask-product-iteration/validation-postmortem.json`. Classify blockers as infra, prompt/context, quality gate, git/metadata, app build/test, or product-spec issue. Required Markdown sections: Source List, What Worked, What Failed, Manual Versus Fabro Executed, Workflow Changes Needed, Product Backlog, Next Operator Action, No Secrets. If evidence is absent, say evidence is absent and identify the retry target. End your response with JSON only containing context_updates for contract.artifact, contract.gate, contract.next_action, contract.failure_classification, and waketask.postmortem."
+    ]
+
+    validate_postmortem_contract [
+        label="Validate Postmortem Contract",
+        shape=parallelogram,
+        retry_target="write_validation_postmortem",
+        script="test -s .workflow/waketask-product-iteration/validation-postmortem.md && test -s .workflow/waketask-product-iteration/validation-postmortem.json && rg -q \"What Worked|What Failed|Manual Versus Fabro Executed|Workflow Changes Needed|Product Backlog|Next Operator Action|No Secrets\" .workflow/waketask-product-iteration/validation-postmortem.md && node -e \"const fs=require('fs'); JSON.parse(fs.readFileSync('.workflow/waketask-product-iteration/validation-postmortem.json','utf8')); console.log(JSON.stringify({ok:true,artifact:'.workflow/waketask-product-iteration/validation-postmortem.md'}));\""
+    ]
+
+    start -> write_validation_postmortem -> validate_postmortem_contract -> exit
+}

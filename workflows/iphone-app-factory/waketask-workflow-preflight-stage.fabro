@@ -1,0 +1,34 @@
+digraph WakeTaskWorkflowPreflightStage {
+    graph [
+        goal="Validate WakeTask staged workflow definitions before any product implementation run starts",
+        persona="waketask-workflow-preflight",
+        inputs="fabro_server",
+        outputs="contract.artifact,contract.gate,contract.next_action,contract.failure_classification",
+        secret_policy="no secrets; do not print environment variables or credential values",
+        model_stylesheet="
+            *       { backend: cli; provider: openai; model: gpt-5.3-codex-spark; reasoning_effort: low; }
+            .review { backend: cli; provider: openai; model: gpt-5.3-codex-spark; reasoning_effort: medium; }
+        "
+    ]
+    rankdir=LR
+
+    start [shape=Mdiamond, label="Start"]
+    exit  [shape=Msquare, label="Exit"]
+
+    validate_workflow_contract [
+        label="Validate Workflow Contracts",
+        shape=parallelogram,
+        retry_target="validate_workflow_contract",
+        script="mkdir -p .workflow/waketask-product-iteration; node --test scripts/iphone-app-factory/test-waketask-product-iteration-workflows.mjs && node --test scripts/iphone-app-factory/test-ux-studio-workflow-contract.mjs && node -e \"const fs=require('fs'); const report={ok:true, artifact:'.workflow/waketask-product-iteration/workflow-preflight.json', gate:'workflow-contract', next_action:'product-spec-child', failure_classification:'none'}; fs.writeFileSync(report.artifact, JSON.stringify(report,null,2)+'\\n'); console.log(JSON.stringify(report));\""
+    ]
+
+    emit_contract [
+        label="Emit Contract",
+        class="review",
+        project_memory=false,
+        max_tokens=256,
+        prompt="Read `.workflow/waketask-product-iteration/workflow-preflight.json`. Respond with JSON only: {\"context_updates\":{\"contract.artifact\":\".workflow/waketask-product-iteration/workflow-preflight.json\",\"contract.gate\":\"workflow-contract\",\"contract.next_action\":\"product-spec-child\",\"contract.failure_classification\":\"none\"}}"
+    ]
+
+    start -> validate_workflow_contract -> emit_contract -> exit
+}

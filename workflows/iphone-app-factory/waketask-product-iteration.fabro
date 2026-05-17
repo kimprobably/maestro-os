@@ -1,0 +1,62 @@
+digraph WakeTaskProductIteration {
+    graph [
+        goal="Create or update staged WakeTask product-iteration workflows, then run the existing-app UX Studio implementation workflow through Railway Fabro",
+        persona="waketask-product-iteration-orchestrator",
+        inputs="repo_url,base_branch,run_branch,app_name,bundle_id,app_dir,app_domain,target_audience,design_goal,max_competitors,use_mobbin_mcp,use_design_corpus,design_corpus_write_mode,selected_direction_mode,ios_validation_mode,allow_macos_deferred,fabro_server",
+        outputs="workflow_contract,product_spec,ux_iteration,validation_postmortem",
+        secret_policy="no secrets; credential checks are presence-only; do not print environment variables or credential values",
+        default_max_retries=1,
+        retry_target="workflow_definition_preflight",
+        model_stylesheet="
+            *       { backend: cli; provider: openai; model: gpt-5.3-codex-spark; reasoning_effort: low; }
+            .design { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }
+            .review { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }
+        "
+    ]
+    rankdir=LR
+
+    start [shape=Mdiamond, label="Start"]
+    exit  [shape=Msquare, label="Exit"]
+
+    workflow_definition_preflight [
+        label="Workflow Definition Preflight",
+        type="stack.manager_loop",
+        stack.child_workflow="./waketask-workflow-preflight-stage.fabro",
+        manager.max_cycles=120,
+        manager.poll_interval="1s"
+    ]
+
+    product_spec_child [
+        label="Product Spec Child",
+        type="stack.manager_loop",
+        stack.child_workflow="./waketask-product-spec-stage.fabro",
+        manager.max_cycles=120,
+        manager.poll_interval="1s"
+    ]
+
+    ux_iteration_child [
+        label="UX Studio Iteration Child",
+        type="stack.manager_loop",
+        stack.child_workflow="./iterate-existing-app-ux.fabro",
+        manager.max_cycles=1000,
+        manager.poll_interval="10s"
+    ]
+
+    validation_postmortem_child [
+        label="Validation And Postmortem Child",
+        type="stack.manager_loop",
+        stack.child_workflow="./waketask-validation-postmortem-stage.fabro",
+        manager.max_cycles=180,
+        manager.poll_interval="2s"
+    ]
+
+    start -> workflow_definition_preflight
+    workflow_definition_preflight -> product_spec_child [condition="outcome=succeeded"]
+    workflow_definition_preflight -> workflow_definition_preflight [label="Fix Workflow Definitions"]
+    product_spec_child -> ux_iteration_child [condition="outcome=succeeded"]
+    product_spec_child -> product_spec_child [label="Fix Product Spec"]
+    ux_iteration_child -> validation_postmortem_child [condition="outcome=succeeded"]
+    ux_iteration_child -> product_spec_child [label="Spec Or Workflow Fix"]
+    validation_postmortem_child -> exit [condition="outcome=succeeded"]
+    validation_postmortem_child -> validation_postmortem_child [label="Complete Postmortem"]
+}
