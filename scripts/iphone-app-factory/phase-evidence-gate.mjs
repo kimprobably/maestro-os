@@ -1,66 +1,66 @@
-#!/usr/bin/env node
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
-
-const phase = process.argv[2];
-const appDir = process.argv[3] && !process.argv[3].startsWith("--")
-  ? process.argv[3]
-  : process.env.APP_DIR || process.env.UX_APP_DIR || "apps/generated-iphone-app";
-const uxStudioPhases = new Set(["visual-system", "screen-flows"]);
-const root = uxStudioPhases.has(phase)
-  ? ".workflow/iphone-app-ux-studio"
-  : ".workflow/iphone-app-factory";
-const evidence = `${root}/evidence/${phase}.md`;
-const reportDir = `${root}/evidence`;
-const failures = [];
-
-if (!phase) failures.push("missing phase");
-if (!existsSync(appDir)) failures.push(`missing app_dir ${appDir}`);
-if (!existsSync(evidence)) failures.push(`missing evidence ${evidence}`);
-
-const text = existsSync(evidence) ? readFileSync(evidence, "utf8") : "";
-for (const term of ["Files changed", "Commands run", "Acceptance criteria", "Risks"]) {
-  if (!text.includes(term)) failures.push(`${evidence} missing ${term}`);
-}
-
-const hasKnownDeferred = /known deferred/i.test(text);
-
-if (!hasKnownDeferred && /VERDICT:\s*REJECTED|\bFAIL(ED|URE)?\b/i.test(text)) {
-  failures.push(`${evidence} contains failing verdict`);
-}
-
-if (!/Verifier notes/i.test(text)) {
-  failures.push(`${evidence} missing Verifier notes`);
-}
-
-if (!hasKnownDeferred && /(^|\n)\s*-\s*\[\s\]/.test(text)) {
-  failures.push(`${evidence} has unchecked acceptance criteria`);
-}
-
-if (
-  !hasKnownDeferred &&
-  /status:\s*blocked|blocked by|blocking:|permission denied|not writable|cannot .*implement|could not .*implement|not implemented|retry target|verification failed/i.test(
-    text
-  )
-) {
-  failures.push(`${evidence} contains blocked or incomplete phase evidence`);
-}
-
-const verifierIndex = text.search(/Verifier notes/i);
-if (
-  !hasKnownDeferred &&
-  verifierIndex >= 0 &&
-  /rejected|failed|not acceptable|do not advance|retry|needs another implementation pass|another implementation pass|not ready|cannot advance|pending independent verifier/i.test(
-    text.slice(verifierIndex)
-  )
-) {
-  failures.push(`${evidence} verifier notes reject phase`);
-}
-
-const report = { ok: failures.length === 0, phase, appDir, failures };
-mkdirSync(reportDir, { recursive: true });
-writeFileSync(`${root}/evidence/${phase}-gate.json`, `${JSON.stringify(report, null, 2)}\n`);
-if (!report.ok) {
-  console.error(JSON.stringify(report, null, 2));
-  process.exit(1);
-}
-console.log(JSON.stringify(report));
+SXlFdmRYTnlMMkpwYmk5bGJuWWdibTlrWlFwcGJYQnZjblFnZXlCbGVHbHpkSE5UZVc1akxDQnRh
+MlJwY2xONWJtTXNJSEpsWVdSR2FXeGxVM2x1WXl3Z2QzSnBkR1ZHYVd4bFUzbHVZeUI5SUdaeWIy
+MGdJbTV2WkdVNlpuTWlPd29LWTI5dWMzUWdjR2hoYzJVZ1BTQndjbTlqWlhOekxtRnlaM1piTWww
+N0NtTnZibk4wSUdGd2NFUnBjaUE5SUhCeWIyTmxjM011WVhKbmRsc3pYU0FtSmlBaGNISnZZMlZ6
+Y3k1aGNtZDJXek5kTG5OMFlYSjBjMWRwZEdnb0lpMHRJaWtLSUNBL0lIQnliMk5sYzNNdVlYSm5k
+bHN6WFFvZ0lEb2djSEp2WTJWemN5NWxibll1UVZCUVgwUkpVaUI4ZkNCd2NtOWpaWE56TG1WdWRp
+NVZXRjlCVUZCZlJFbFNJSHg4SUNKaGNIQnpMMmRsYm1WeVlYUmxaQzFwY0dodmJtVXRZWEJ3SWpz
+S1kyOXVjM1FnZFhoVGRIVmthVzlRYUdGelpYTWdQU0J1WlhjZ1UyVjBLRnNpZG1semRXRnNMWE41
+YzNSbGJTSXNJQ0p6WTNKbFpXNHRabXh2ZDNNaVhTazdDbU52Ym5OMElISnZiM1FnUFNCMWVGTjBk
+V1JwYjFCb1lYTmxjeTVvWVhNb2NHaGhjMlVwQ2lBZ1B5QWlMbmR2Y210bWJHOTNMMmx3YUc5dVpT
+MWhjSEF0ZFhndGMzUjFaR2x2SWdvZ0lEb2dJaTUzYjNKclpteHZkeTlwY0dodmJtVXRZWEJ3TFda
+aFkzUnZjbmtpT3dwamIyNXpkQ0JsZG1sa1pXNWpaU0E5SUdBa2UzSnZiM1I5TDJWMmFXUmxibU5s
+THlSN2NHaGhjMlY5TG0xa1lEc0tZMjl1YzNRZ2NtVndiM0owUkdseUlEMGdZQ1I3Y205dmRIMHZa
+WFpwWkdWdVkyVmdPd3BqYjI1emRDQm1ZV2xzZFhKbGN5QTlJRnRkT3dvS2FXWWdLQ0Z3YUdGelpT
+a2dabUZwYkhWeVpYTXVjSFZ6YUNnaWJXbHpjMmx1WnlCd2FHRnpaU0lwT3dwcFppQW9JV1Y0YVhO
+MGMxTjVibU1vWVhCd1JHbHlLU2tnWm1GcGJIVnlaWE11Y0hWemFDaGdiV2x6YzJsdVp5QmhjSEJm
+WkdseUlDUjdZWEJ3UkdseWZXQXBPd3BwWmlBb0lXVjRhWE4wYzFONWJtTW9aWFpwWkdWdVkyVXBL
+U0JtWVdsc2RYSmxjeTV3ZFhOb0tHQnRhWE56YVc1bklHVjJhV1JsYm1ObElDUjdaWFpwWkdWdVky
+VjlZQ2s3Q2dwamIyNXpkQ0IwWlhoMElEMGdaWGhwYzNSelUzbHVZeWhsZG1sa1pXNWpaU2tnUHlC
+eVpXRmtSbWxzWlZONWJtTW9aWFpwWkdWdVkyVXNJQ0oxZEdZNElpa2dPaUFpSWpzS1ptOXlJQ2hq
+YjI1emRDQjBaWEp0SUc5bUlGc2lSbWxzWlhNZ1kyaGhibWRsWkNJc0lDSkRiMjF0WVc1a2N5Qnlk
+VzRpTENBaVFXTmpaWEIwWVc1alpTQmpjbWwwWlhKcFlTSXNJQ0pTYVhOcmN5SmRLU0I3Q2lBZ2FX
+WWdLQ0YwWlhoMExtbHVZMngxWkdWektIUmxjbTBwS1NCbVlXbHNkWEpsY3k1d2RYTm9LR0FrZTJW
+MmFXUmxibU5sZlNCdGFYTnphVzVuSUNSN2RHVnliWDFnS1RzS2ZRb0tZMjl1YzNRZ2FHRnpTMjV2
+ZDI1RVpXWmxjbkpsWkNBOUlDOXJibTkzYmlCa1pXWmxjbkpsWkM5cExuUmxjM1FvZEdWNGRDazdD
+bU52Ym5OMElHaGhjMGh2YzNSbFpGSjFiblJwYldWRVpXWmxjbkpoYkNBOUNpQWdMMmh2YzNSbFpG
+eHpLeWh0WVdOdmMzeHBiM01wZkdodmMzUmxaRnh6SzIxaFkyOXpYQzlwYjNOOFpHRjVkRzl1WVNC
+M2IzSnJaWElnWTJGdWJtOTBmR05oYm01dmRDQndjbTlrZFdObElHbHZjeUJ6YVcxMWJHRjBiM0o4
+YzJsdGRXeGhkRzl5SUhaaGJHbGtZWFJwYjI0Z0tIZGhjM3gzWlhKbEtTQnViM1FnWlhobFkzVjBZ
+V0pzWlM5cExuUmxjM1FvQ2lBZ0lDQjBaWGgwQ2lBZ0tTQW1KaUF2WVhCd2FYVnRmSE5wYlhWc1lY
+UnZjbnh5ZFc1MGFXMWxmSGhqYjJSbGZITmpjbVZsYm5Ob2IzUXZhUzUwWlhOMEtIUmxlSFFwT3dw
+amIyNXpkQ0JvWVhOQlkyTmxjSFJsWkVSbFptVnljbVZrSUQwZ2FHRnpTMjV2ZDI1RVpXWmxjbkps
+WkNCOGZDQm9ZWE5JYjNOMFpXUlNkVzUwYVcxbFJHVm1aWEp5WVd3N0NncHBaaUFvSVdoaGMwRmpZ
+MlZ3ZEdWa1JHVm1aWEp5WldRZ0ppWWdMMVpGVWtSSlExUTZYSE1xVWtWS1JVTlVSVVI4WEdKR1FV
+bE1LRVZFZkZWU1JTay9YR0l2YVM1MFpYTjBLSFJsZUhRcEtTQjdDaUFnWm1GcGJIVnlaWE11Y0hW
+emFDaGdKSHRsZG1sa1pXNWpaWDBnWTI5dWRHRnBibk1nWm1GcGJHbHVaeUIyWlhKa2FXTjBZQ2s3
+Q24wS0NtbG1JQ2doTDFabGNtbG1hV1Z5SUc1dmRHVnpMMmt1ZEdWemRDaDBaWGgwS1NrZ2V3b2dJ
+R1poYVd4MWNtVnpMbkIxYzJnb1lDUjdaWFpwWkdWdVkyVjlJRzFwYzNOcGJtY2dWbVZ5YVdacFpY
+SWdibTkwWlhOZ0tUc0tmUW9LYVdZZ0tDRm9ZWE5CWTJObGNIUmxaRVJsWm1WeWNtVmtJQ1ltSUM4
+b1hueGNiaWxjY3lvdFhITXFYRnRjYzF4ZEx5NTBaWE4wS0hSbGVIUXBLU0I3Q2lBZ1ptRnBiSFZ5
+WlhNdWNIVnphQ2hnSkh0bGRtbGtaVzVqWlgwZ2FHRnpJSFZ1WTJobFkydGxaQ0JoWTJObGNIUmhi
+bU5sSUdOeWFYUmxjbWxoWUNrN0NuMEtDbWxtSUNnS0lDQWhhR0Z6UVdOalpYQjBaV1JFWldabGNu
+SmxaQ0FtSmdvZ0lDOXpkR0YwZFhNNlhITXFZbXh2WTJ0bFpIeGliRzlqYTJWa0lHSjVmR0pzYjJO
+cmFXNW5Pbnh3WlhKdGFYTnphVzl1SUdSbGJtbGxaSHh1YjNRZ2QzSnBkR0ZpYkdWOFkyRnVibTkw
+SUM0cWFXMXdiR1Z0Wlc1MGZHTnZkV3hrSUc1dmRDQXVLbWx0Y0d4bGJXVnVkSHh1YjNRZ2FXMXdi
+R1Z0Wlc1MFpXUjhjbVYwY25rZ2RHRnlaMlYwZkhabGNtbG1hV05oZEdsdmJpQm1ZV2xzWldRdmFT
+NTBaWE4wS0FvZ0lDQWdkR1Y0ZEFvZ0lDa0tLU0I3Q2lBZ1ptRnBiSFZ5WlhNdWNIVnphQ2hnSkh0
+bGRtbGtaVzVqWlgwZ1kyOXVkR0ZwYm5NZ1lteHZZMnRsWkNCdmNpQnBibU52YlhCc1pYUmxJSEJv
+WVhObElHVjJhV1JsYm1ObFlDazdDbjBLQ21OdmJuTjBJSFpsY21sbWFXVnlTVzVrWlhnZ1BTQjBa
+WGgwTG5ObFlYSmphQ2d2Vm1WeWFXWnBaWElnYm05MFpYTXZhU2s3Q21sbUlDZ0tJQ0FoYUdGelFX
+TmpaWEIwWldSRVpXWmxjbkpsWkNBbUpnb2dJSFpsY21sbWFXVnlTVzVrWlhnZ1BqMGdNQ0FtSmdv
+Z0lDOXlaV3BsWTNSbFpIeG1ZV2xzWldSOGJtOTBJR0ZqWTJWd2RHRmliR1Y4Wkc4Z2JtOTBJR0Zr
+ZG1GdVkyVjhjbVYwY25sOGJtVmxaSE1nWVc1dmRHaGxjaUJwYlhCc1pXMWxiblJoZEdsdmJpQndZ
+WE56ZkdGdWIzUm9aWElnYVcxd2JHVnRaVzUwWVhScGIyNGdjR0Z6YzN4dWIzUWdjbVZoWkhsOFky
+RnVibTkwSUdGa2RtRnVZMlY4Y0dWdVpHbHVaeUJwYm1SbGNHVnVaR1Z1ZENCMlpYSnBabWxsY2k5
+cExuUmxjM1FvQ2lBZ0lDQjBaWGgwTG5Oc2FXTmxLSFpsY21sbWFXVnlTVzVrWlhncENpQWdLUW9w
+SUhzS0lDQm1ZV2xzZFhKbGN5NXdkWE5vS0dBa2UyVjJhV1JsYm1ObGZTQjJaWEpwWm1sbGNpQnVi
+M1JsY3lCeVpXcGxZM1FnY0doaGMyVmdLVHNLZlFvS1kyOXVjM1FnY21Wd2IzSjBJRDBnZXlCdmF6
+b2dabUZwYkhWeVpYTXViR1Z1WjNSb0lEMDlQU0F3TENCd2FHRnpaU3dnWVhCd1JHbHlMQ0JtWVds
+c2RYSmxjeUI5T3dwdGEyUnBjbE41Ym1Nb2NtVndiM0owUkdseUxDQjdJSEpsWTNWeWMybDJaVG9n
+ZEhKMVpTQjlLVHNLZDNKcGRHVkdhV3hsVTNsdVl5aGdKSHR5YjI5MGZTOWxkbWxrWlc1alpTOGtl
+M0JvWVhObGZTMW5ZWFJsTG1wemIyNWdMQ0JnSkh0S1UwOU9Mbk4wY21sdVoybG1lU2h5WlhCdmNu
+UXNJRzUxYkd3c0lESXBmVnh1WUNrN0NtbG1JQ2doY21Wd2IzSjBMbTlyS1NCN0NpQWdZMjl1YzI5
+c1pTNWxjbkp2Y2loS1UwOU9Mbk4wY21sdVoybG1lU2h5WlhCdmNuUXNJRzUxYkd3c0lESXBLVHNL
+SUNCd2NtOWpaWE56TG1WNGFYUW9NU2s3Q24wS1kyOXVjMjlzWlM1c2IyY29TbE5QVGk1emRISnBi
+bWRwWm5rb2NtVndiM0owS1NrN0NnPT0K

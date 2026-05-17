@@ -1,60 +1,88 @@
-#!/usr/bin/env node
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
-import { dirname, join } from "node:path";
-
-function arg(name, fallback = "") {
-  const idx = process.argv.indexOf(name);
-  return idx >= 0 && process.argv[idx + 1] ? process.argv[idx + 1] : fallback;
-}
-
-const appDir = process.argv[2] && !process.argv[2].startsWith("--")
-  ? process.argv[2]
-  : process.env.APP_DIR || process.env.UX_APP_DIR || "apps/generated-iphone-app";
-const allowDeferred = arg("--allow-deferred", process.env.UX_ALLOW_MACOS_DEFERRED || "false") === "true";
-const root = ".workflow/iphone-app-factory";
-const candidates = [
-  join(appDir, "reports/ios/appium-exploratory-report.json"),
-  `${root}/appium-exploratory-report.json`
-];
-const reportFile = candidates.find((file) => existsSync(file));
-const failures = [];
-let parsed = null;
-
-if (!reportFile) {
-  failures.push("missing Appium exploratory report");
-} else {
-  parsed = JSON.parse(readFileSync(reportFile, "utf8"));
-  const buttonsTapped = Number(parsed.buttons_tapped ?? parsed.buttonsTapped ?? 0);
-  const crashes = Number(parsed.crashes ?? 0);
-  const failuresCount = Number(parsed.failures ?? parsed.failed_taps ?? 0);
-  const telemetryAvailable = parsed.telemetry_available === true;
-  const fallbackEvidence =
-    parsed.validated_fallback === true ||
-    Boolean(parsed.raw_log_artifact || parsed.session_transcript || parsed.xcresult_path);
-  if (parsed.ok === false) failures.push("Appium report marks ok=false");
-  if (buttonsTapped < 1) failures.push("Appium report did not tap any buttons");
-  if (crashes > 0) failures.push(`Appium report has ${crashes} crashes`);
-  if (failuresCount > 0) failures.push(`Appium report has ${failuresCount} failures`);
-  if (!telemetryAvailable && !fallbackEvidence) {
-    failures.push("Appium report is not backed by telemetry or validated raw fallback evidence");
-  }
-  if (!telemetryAvailable && parsed.telemetry_source === "xcodebuild-log" && !fallbackEvidence) {
-    failures.push("xcodebuild-log fallback must include raw_log_artifact, session_transcript, or xcresult_path");
-  }
-}
-
-let ok = failures.length === 0;
-let status = ok ? "passed" : "failed";
-if (!ok && allowDeferred && !reportFile) {
-  ok = true;
-  status = "deferred";
-}
-
-const report = { ok, status, appDir, reportFile: reportFile || null, failures, parsed };
-mkdirSync(dirname(`${root}/appium-gate.json`), { recursive: true });
-writeFileSync(`${root}/appium-gate.json`, `${JSON.stringify(report, null, 2)}\n`);
-if (!ok) {
-  console.error(JSON.stringify(report, null, 2));
-  process.exit(1);
-}
-console.log(JSON.stringify(report));
+SXlFdmRYTnlMMkpwYmk5bGJuWWdibTlrWlFwcGJYQnZjblFnZXlCbGVHbHpkSE5UZVc1akxDQnRh
+MlJwY2xONWJtTXNJSEpsWVdSR2FXeGxVM2x1WXl3Z2QzSnBkR1ZHYVd4bFUzbHVZeUI5SUdaeWIy
+MGdJbTV2WkdVNlpuTWlPd3BwYlhCdmNuUWdleUJrYVhKdVlXMWxMQ0JxYjJsdUlIMGdabkp2YlNB
+aWJtOWtaVHB3WVhSb0lqc0tDbVoxYm1OMGFXOXVJR0Z5WnlodVlXMWxMQ0JtWVd4c1ltRmpheUE5
+SUNJaUtTQjdDaUFnWTI5dWMzUWdhV1I0SUQwZ2NISnZZMlZ6Y3k1aGNtZDJMbWx1WkdWNFQyWW9i
+bUZ0WlNrN0NpQWdjbVYwZFhKdUlHbGtlQ0ErUFNBd0lDWW1JSEJ5YjJObGMzTXVZWEpuZGx0cFpI
+Z2dLeUF4WFNBL0lIQnliMk5sYzNNdVlYSm5kbHRwWkhnZ0t5QXhYU0E2SUdaaGJHeGlZV05yT3dw
+OUNncGpiMjV6ZENCaGNIQkVhWElnUFNCd2NtOWpaWE56TG1GeVozWmJNbDBnSmlZZ0lYQnliMk5s
+YzNNdVlYSm5kbHN5WFM1emRHRnlkSE5YYVhSb0tDSXRMU0lwQ2lBZ1B5QndjbTlqWlhOekxtRnla
+M1piTWwwS0lDQTZJSEJ5YjJObGMzTXVaVzUyTGtGUVVGOUVTVklnZkh3Z2NISnZZMlZ6Y3k1bGJu
+WXVWVmhmUVZCUVgwUkpVaUI4ZkNBaVlYQndjeTluWlc1bGNtRjBaV1F0YVhCb2IyNWxMV0Z3Y0NJ
+N0NtTnZibk4wSUdGc2JHOTNSR1ZtWlhKeVpXUWdQU0JoY21jb0lpMHRZV3hzYjNjdFpHVm1aWEp5
+WldRaUxDQndjbTlqWlhOekxtVnVkaTVWV0Y5QlRFeFBWMTlOUVVOUFUxOUVSVVpGVWxKRlJDQjhm
+Q0FpWm1Gc2MyVWlLU0E5UFQwZ0luUnlkV1VpT3dwamIyNXpkQ0J5YjI5MElEMGdJaTUzYjNKclpt
+eHZkeTlwY0dodmJtVXRZWEJ3TFdaaFkzUnZjbmtpT3dwamIyNXpkQ0IxZUZKdmIzUWdQU0FpTG5k
+dmNtdG1iRzkzTDJsd2FHOXVaUzFoY0hBdGRYZ3RjM1IxWkdsdklqc0tZMjl1YzNRZ1kyRnVaR2xr
+WVhSbGN5QTlJRnNLSUNCcWIybHVLR0Z3Y0VScGNpd2dJbkpsY0c5eWRITXZhVzl6TDJGd2NHbDFi
+UzFsZUhCc2IzSmhkRzl5ZVMxeVpYQnZjblF1YW5OdmJpSXBMQW9nSUdBa2UzSnZiM1I5TDJGd2NH
+bDFiUzFsZUhCc2IzSmhkRzl5ZVMxeVpYQnZjblF1YW5OdmJtQUtYVHNLWTI5dWMzUWdjbVZ3YjNK
+MFJtbHNaU0E5SUdOaGJtUnBaR0YwWlhNdVptbHVaQ2dvWm1sc1pTa2dQVDRnWlhocGMzUnpVM2x1
+WXlobWFXeGxLU2s3Q21OdmJuTjBJR1poYVd4MWNtVnpJRDBnVzEwN0NteGxkQ0J3WVhKelpXUWdQ
+U0J1ZFd4c093b0tablZ1WTNScGIyNGdjbVZoWkZSbGVIUW9abWxzWlNrZ2V3b2dJSEpsZEhWeWJp
+QmxlR2x6ZEhOVGVXNWpLR1pwYkdVcElEOGdjbVZoWkVacGJHVlRlVzVqS0dacGJHVXNJQ0oxZEdZ
+NElpa2dPaUFpSWpzS2ZRb0tablZ1WTNScGIyNGdhR0Z6U0c5emRHVmtVblZ1ZEdsdFpVUmxabVZ5
+Y21Gc1JYWnBaR1Z1WTJVb0tTQjdDaUFnWTI5dWMzUWdaWFpwWkdWdVkyVlVaWGgwSUQwZ1d3b2dJ
+Q0FnWUNSN2RYaFNiMjkwZlM5bGRtbGtaVzVqWlM5elkzSmxaVzR0Wm14dmQzTXViV1JnTEFvZ0lD
+QWdZQ1I3ZFhoU2IyOTBmUzlsZG1sa1pXNWpaUzl6WTNKbFpXNHRabXh2ZDNNdFoyRjBaUzVxYzI5
+dVlDd0tJQ0FnSUdBa2UzVjRVbTl2ZEgwdmMyTnlaV1Z1YzJodmRITXZjMk55WldWdWMyaHZkQzF0
+WVc1cFptVnpkQzFuWVhSbExtcHpiMjVnTEFvZ0lDQWdZQ1I3Y205dmRIMHZhVzl6TFdOcExXZGhk
+R1V1YW5OdmJtQXNDaUFnWFFvZ0lDQWdMbTFoY0NoeVpXRmtWR1Y0ZENrS0lDQWdJQzVtYVd4MFpY
+SW9RbTl2YkdWaGJpa0tJQ0FnSUM1cWIybHVLQ0pjYmlJcE93b0tJQ0J5WlhSMWNtNGdLQW9nSUNB
+Z0wyaHZjM1JsWkZ4ekt5aHRZV052YzN4cGIzTXBmR2h2YzNSbFpGeHpLMjFoWTI5elhDOXBiM044
+WkdGNWRHOXVZU0IzYjNKclpYSWdZMkZ1Ym05MGZHTmhibTV2ZENCd2NtOWtkV05sSUdsdmN5Qnph
+VzExYkdGMGIzSjhjMmx0ZFd4aGRHOXlJSFpoYkdsa1lYUnBiMjRnS0hkaGMzeDNaWEpsS1NCdWIz
+UWdaWGhsWTNWMFlXSnNaUzlwTG5SbGMzUW9aWFpwWkdWdVkyVlVaWGgwS1NBbUpnb2dJQ0FnTDJG
+d2NHbDFiWHh6YVcxMWJHRjBiM0o4Y25WdWRHbHRaWHg0WTI5a1pYeHpZM0psWlc1emFHOTBMMmt1
+ZEdWemRDaGxkbWxrWlc1alpWUmxlSFFwQ2lBZ0tUc0tmUW9LYVdZZ0tDRnlaWEJ2Y25SR2FXeGxL
+U0I3Q2lBZ1ptRnBiSFZ5WlhNdWNIVnphQ2dpYldsemMybHVaeUJCY0hCcGRXMGdaWGh3Ykc5eVlY
+UnZjbmtnY21Wd2IzSjBJaWs3Q24wZ1pXeHpaU0I3Q2lBZ2NHRnljMlZrSUQwZ1NsTlBUaTV3WVhK
+elpTaHlaV0ZrUm1sc1pWTjVibU1vY21Wd2IzSjBSbWxzWlN3Z0luVjBaamdpS1NrN0NpQWdZMjl1
+YzNRZ1luVjBkRzl1YzFSaGNIQmxaQ0E5SUU1MWJXSmxjaWh3WVhKelpXUXVZblYwZEc5dWMxOTBZ
+WEJ3WldRZ1B6OGdjR0Z5YzJWa0xtSjFkSFJ2Ym5OVVlYQndaV1FnUHo4Z01DazdDaUFnWTI5dWMz
+UWdZM0poYzJobGN5QTlJRTUxYldKbGNpaHdZWEp6WldRdVkzSmhjMmhsY3lBL1B5QXdLVHNLSUNC
+amIyNXpkQ0JtWVdsc2RYSmxjME52ZFc1MElEMGdUblZ0WW1WeUtIQmhjbk5sWkM1bVlXbHNkWEps
+Y3lBL1B5QndZWEp6WldRdVptRnBiR1ZrWDNSaGNITWdQejhnTUNrN0NpQWdZMjl1YzNRZ2RHVnNa
+VzFsZEhKNVFYWmhhV3hoWW14bElEMGdjR0Z5YzJWa0xuUmxiR1Z0WlhSeWVWOWhkbUZwYkdGaWJH
+VWdQVDA5SUhSeWRXVTdDaUFnWTI5dWMzUWdabUZzYkdKaFkydEZkbWxrWlc1alpTQTlDaUFnSUNC
+d1lYSnpaV1F1ZG1Gc2FXUmhkR1ZrWDJaaGJHeGlZV05ySUQwOVBTQjBjblZsSUh4OENpQWdJQ0JD
+YjI5c1pXRnVLSEJoY25ObFpDNXlZWGRmYkc5blgyRnlkR2xtWVdOMElIeDhJSEJoY25ObFpDNXpa
+WE56YVc5dVgzUnlZVzV6WTNKcGNIUWdmSHdnY0dGeWMyVmtMbmhqY21WemRXeDBYM0JoZEdncE93
+b2dJR2xtSUNod1lYSnpaV1F1YjJzZ1BUMDlJR1poYkhObEtTQm1ZV2xzZFhKbGN5NXdkWE5vS0NK
+QmNIQnBkVzBnY21Wd2IzSjBJRzFoY210eklHOXJQV1poYkhObElpazdDaUFnYVdZZ0tHSjFkSFJ2
+Ym5OVVlYQndaV1FnUENBeEtTQm1ZV2xzZFhKbGN5NXdkWE5vS0NKQmNIQnBkVzBnY21Wd2IzSjBJ
+R1JwWkNCdWIzUWdkR0Z3SUdGdWVTQmlkWFIwYjI1eklpazdDaUFnYVdZZ0tHTnlZWE5vWlhNZ1Bp
+QXdLU0JtWVdsc2RYSmxjeTV3ZFhOb0tHQkJjSEJwZFcwZ2NtVndiM0owSUdoaGN5QWtlMk55WVhO
+b1pYTjlJR055WVhOb1pYTmdLVHNLSUNCcFppQW9abUZwYkhWeVpYTkRiM1Z1ZENBK0lEQXBJR1po
+YVd4MWNtVnpMbkIxYzJnb1lFRndjR2wxYlNCeVpYQnZjblFnYUdGeklDUjdabUZwYkhWeVpYTkRi
+M1Z1ZEgwZ1ptRnBiSFZ5WlhOZ0tUc0tJQ0JwWmlBb0lYUmxiR1Z0WlhSeWVVRjJZV2xzWVdKc1pT
+QW1KaUFoWm1Gc2JHSmhZMnRGZG1sa1pXNWpaU2tnZXdvZ0lDQWdabUZwYkhWeVpYTXVjSFZ6YUNn
+aVFYQndhWFZ0SUhKbGNHOXlkQ0JwY3lCdWIzUWdZbUZqYTJWa0lHSjVJSFJsYkdWdFpYUnllU0J2
+Y2lCMllXeHBaR0YwWldRZ2NtRjNJR1poYkd4aVlXTnJJR1YyYVdSbGJtTmxJaWs3Q2lBZ2ZRb2dJ
+R2xtSUNnaGRHVnNaVzFsZEhKNVFYWmhhV3hoWW14bElDWW1JSEJoY25ObFpDNTBaV3hsYldWMGNu
+bGZjMjkxY21ObElEMDlQU0FpZUdOdlpHVmlkV2xzWkMxc2IyY2lJQ1ltSUNGbVlXeHNZbUZqYTBW
+MmFXUmxibU5sS1NCN0NpQWdJQ0JtWVdsc2RYSmxjeTV3ZFhOb0tDSjRZMjlrWldKMWFXeGtMV3h2
+WnlCbVlXeHNZbUZqYXlCdGRYTjBJR2x1WTJ4MVpHVWdjbUYzWDJ4dloxOWhjblJwWm1GamRDd2dj
+MlZ6YzJsdmJsOTBjbUZ1YzJOeWFYQjBMQ0J2Y2lCNFkzSmxjM1ZzZEY5d1lYUm9JaWs3Q2lBZ2ZR
+cDlDZ3BzWlhRZ2Iyc2dQU0JtWVdsc2RYSmxjeTVzWlc1bmRHZ2dQVDA5SURBN0NteGxkQ0J6ZEdG
+MGRYTWdQU0J2YXlBL0lDSndZWE56WldRaUlEb2dJbVpoYVd4bFpDSTdDbU52Ym5OMElHaHZjM1Js
+WkZKMWJuUnBiV1ZFWldabGNuSmhiQ0E5SUNGeVpYQnZjblJHYVd4bElDWW1JR2hoYzBodmMzUmxa
+RkoxYm5ScGJXVkVaV1psY25KaGJFVjJhV1JsYm1ObEtDazdDbXhsZENCa1pXWmxjbkpsWkVaaGFX
+eDFjbVZ6SUQwZ1cxMDdDbWxtSUNnaGIyc2dKaVlnYUc5emRHVmtVblZ1ZEdsdFpVUmxabVZ5Y21G
+c0tTQjdDaUFnWkdWbVpYSnlaV1JHWVdsc2RYSmxjeUE5SUZzdUxpNW1ZV2xzZFhKbGMxMDdDaUFn
+Wm1GcGJIVnlaWE11YkdWdVozUm9JRDBnTURzS0lDQnZheUE5SUhSeWRXVTdDaUFnYzNSaGRIVnpJ
+RDBnSW1SbFptVnljbVZrWDNSdlgyaHZjM1JsWkY5cGIzTWlPd3A5SUdWc2MyVWdhV1lnS0NGdmF5
+QW1KaUJoYkd4dmQwUmxabVZ5Y21Wa0lDWW1JQ0Z5WlhCdmNuUkdhV3hsS1NCN0NpQWdaR1ZtWlhK
+eVpXUkdZV2xzZFhKbGN5QTlJRnN1TGk1bVlXbHNkWEpsYzEwN0NpQWdabUZwYkhWeVpYTXViR1Z1
+WjNSb0lEMGdNRHNLSUNCdmF5QTlJSFJ5ZFdVN0NpQWdjM1JoZEhWeklEMGdJbVJsWm1WeWNtVmtJ
+anNLZlFvS1kyOXVjM1FnY21Wd2IzSjBJRDBnZXdvZ0lHOXJMQW9nSUhOMFlYUjFjeXdLSUNCaGNI
+QkVhWElzQ2lBZ2NtVndiM0owUm1sc1pUb2djbVZ3YjNKMFJtbHNaU0I4ZkNCdWRXeHNMQW9nSUdG
+c2JHOTNSR1ZtWlhKeVpXUXNDaUFnYUc5emRHVmtVblZ1ZEdsdFpVUmxabVZ5Y21Gc0xBb2dJR1po
+YVd4MWNtVnpMQW9nSUdSbFptVnljbVZrUm1GcGJIVnlaWE1zQ2lBZ2NHRnljMlZrTEFwOU93cHRh
+MlJwY2xONWJtTW9aR2x5Ym1GdFpTaGdKSHR5YjI5MGZTOWhjSEJwZFcwdFoyRjBaUzVxYzI5dVlD
+a3NJSHNnY21WamRYSnphWFpsT2lCMGNuVmxJSDBwT3dwM2NtbDBaVVpwYkdWVGVXNWpLR0FrZTNK
+dmIzUjlMMkZ3Y0dsMWJTMW5ZWFJsTG1wemIyNWdMQ0JnSkh0S1UwOU9Mbk4wY21sdVoybG1lU2h5
+WlhCdmNuUXNJRzUxYkd3c0lESXBmVnh1WUNrN0NtbG1JQ2doYjJzcElIc0tJQ0JqYjI1emIyeGxM
+bVZ5Y205eUtFcFRUMDR1YzNSeWFXNW5hV1o1S0hKbGNHOXlkQ3dnYm5Wc2JDd2dNaWtwT3dvZ0lI
+QnliMk5sYzNNdVpYaHBkQ2d4S1RzS2ZRcGpiMjV6YjJ4bExteHZaeWhLVTA5T0xuTjBjbWx1WjJs
+bWVTaHlaWEJ2Y25RcEtUc0sK

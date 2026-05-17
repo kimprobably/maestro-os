@@ -1,248 +1,207 @@
-#!/usr/bin/env node
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
-import { spawnSync } from "node:child_process";
-import { dirname, join, resolve } from "node:path";
-import { homedir } from "node:os";
-
-function argValue(name, fallback = null) {
-  const index = process.argv.indexOf(name);
-  if (index === -1) return fallback;
-  const value = process.argv[index + 1];
-  if (!value || value.startsWith("--")) throw new Error(`Missing value for ${name}`);
-  return value;
-}
-
-function secretQueryParameterName(name) {
-  let decoded = String(name).replace(/\+/g, " ");
-  try {
-    decoded = decodeURIComponent(decoded);
-  } catch {
-    decoded = String(name);
-  }
-  const normalized = decoded
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "_")
-    .replace(/^_+|_+$/g, "");
-  return normalized
-    .split("_")
-    .some((part) => ["auth", "authorization", "credential", "key", "password", "secret", "signature", "token"].includes(part));
-}
-
-function redactString(value) {
-  let text = String(value || "")
-    .replace(/\b([a-z][a-z0-9+.-]*:\/\/)([^/?#\s"'<>@]+@)/gi, "$1[redacted]@")
-    .replace(/([?#&])([^=&#\s]+)=([^&#\s]*)/g, (match, separator, name) => {
-      if (!secretQueryParameterName(name)) return match;
-      return `${separator}${name}=[redacted]`;
-    })
-    .replace(/sk-or-v1-[A-Za-z0-9_-]+/g, "[redacted]")
-    .replace(/xox[baprs]-[A-Za-z0-9-]+/g, "[redacted]")
-    .replace(/xapp-[A-Za-z0-9-]+/g, "[redacted]")
-    .replace(/lin_api_[A-Za-z0-9_-]+/g, "[redacted]")
-    .replace(/apify_api_[A-Za-z0-9_-]+/g, "[redacted]")
-    .replace(/\bBearer\s+[A-Za-z0-9._~+/=-]{12,}/gi, "Bearer [redacted]")
-    .replace(
-      /\b(?:api[_-]?key|secret|password|passwd|token|access[_-]?token|refresh[_-]?token|client[_-]?secret)\b\s*[:=]\s*["']?[A-Za-z0-9_./+=:@-]{8,}/gi,
-      "[redacted]",
-    );
-
-  for (const key of [
-    "OPENROUTER_API_KEY",
-    "OPENAI_API_KEY",
-    "CODEX_AUTH_JSON_BASE64",
-    "CODEX_MCP_CREDENTIALS_JSON_BASE64",
-    "CLAUDE_CODE_OAUTH_TOKEN",
-    "CLAUDE_CODE_CREDENTIALS_JSON_BASE64",
-    "GITHUB_TOKEN",
-    "GH_TOKEN",
-    "APIFY_TOKEN",
-    "MOBBIN_EMAIL",
-    "MOBBIN_PASSWORD",
-  ]) {
-    const secret = process.env[key];
-    if (!secret) continue;
-    text = text.replaceAll(secret, "[redacted]");
-  }
-  return text;
-}
-
-function envValueForInput(name, fallback) {
-  if (secretInputName(name)) return "[redacted]";
-  const envName = name.replace(/[^a-zA-Z0-9]+/g, "_").toUpperCase();
-  return process.env[`UX_${envName}`] || process.env[envName] || fallback || "";
-}
-
-function secretInputName(name) {
-  return /(^|_)(auth|authorization|credential|key|password|secret|signature|token|cookie|session|oauth|private)(_|$)/i.test(
-    String(name || ""),
-  );
-}
-
-function renderPrompt(raw) {
-  return raw.replace(
-    /\{\{\s*inputs\.([a-zA-Z0-9_]+)\s*\|\s*default\(\s*(["'])(.*?)\2\s*\)\s*\}\}/g,
-    (_match, name, _quote, fallback) => envValueForInput(name, fallback),
-  );
-}
-
-function writeReport(path, report) {
-  mkdirSync(dirname(path), { recursive: true });
-  writeFileSync(path, `${JSON.stringify(report, null, 2)}\n`);
-}
-
-function codexAuthPath() {
-  const codexHome = process.env.CODEX_HOME || join(process.env.HOME || homedir(), ".codex");
-  return join(codexHome, "auth.json");
-}
-
-function installCodexAuthFromEnv() {
-  const encoded = process.env.CODEX_AUTH_JSON_BASE64 || "";
-  if (!encoded || encoded.includes("{{") || encoded.includes("}}")) return false;
-  const raw = Buffer.from(encoded, "base64").toString("utf8");
-  JSON.parse(raw);
-  const authPath = codexAuthPath();
-  mkdirSync(dirname(authPath), { recursive: true });
-  writeFileSync(authPath, raw, { mode: 0o600 });
-  return true;
-}
-
-function installCodexMcpCredentialsFromEnv() {
-  const encoded = process.env.CODEX_MCP_CREDENTIALS_JSON_BASE64 || "";
-  if (!encoded || encoded.includes("{{") || encoded.includes("}}")) return false;
-  const decoded = Buffer.from(encoded, "base64").toString("utf8");
-  JSON.parse(decoded);
-  const codexHome = process.env.CODEX_HOME || join(process.env.HOME || homedir(), ".codex");
-  mkdirSync(codexHome, { recursive: true });
-  writeFileSync(join(codexHome, ".credentials.json"), decoded, { mode: 0o600 });
-  return true;
-}
-
-function wantsMobbinMcp(stageName) {
-  return String(process.env.UX_USE_MOBBIN_MCP || "true").toLowerCase() !== "false"
-    && /mobbin/i.test(stageName || "");
-}
-
-function ensureCodexMobbinMcp(stageName) {
-  if (!wantsMobbinMcp(stageName)) {
-    return { configured: false, skipped: true, status: null };
-  }
-  const mcpConfig = ["-c", "mcp_oauth_credentials_store=\"file\""];
-  const add = spawnSync("codex", [...mcpConfig, "mcp", "add", "mobbin", "--url", "https://api.mobbin.com/mcp"], {
-    encoding: "utf8",
-    timeout: 30000,
-    stdio: ["ignore", "pipe", "pipe"],
-  });
-  const list = spawnSync("codex", [...mcpConfig, "mcp", "list"], {
-    encoding: "utf8",
-    timeout: 15000,
-    stdio: ["ignore", "pipe", "pipe"],
-  });
-  const text = `${list.stdout || ""}\n${list.stderr || ""}`;
-  return {
-    configured: /mobbin/i.test(text),
-    skipped: false,
-    status: list.status,
-    add_status: add.status,
-  };
-}
-
-const promptPath = resolve(argValue("--prompt"));
-const stage = argValue("--stage", "codex-prompt");
-const model = argValue("--model", "gpt-5.3-codex");
-const outPath = resolve(argValue("--out", `.workflow/iphone-app-ux-studio/codex/${stage}.json`));
-const renderedPromptPath = resolve(argValue("--rendered-prompt-out", `.workflow/iphone-app-ux-studio/codex/${stage}.prompt.md`));
-const lastMessagePath = resolve(argValue("--last-message-out", `.workflow/iphone-app-ux-studio/codex/${stage}.last-message.md`));
-const timeoutMs = Number(argValue("--timeout-ms", process.env.CODEX_EXEC_TIMEOUT_MS || "3600000"));
-const maxBuffer = Number(argValue("--max-buffer", process.env.CODEX_EXEC_MAX_BUFFER || `${100 * 1024 * 1024}`));
-
-const failures = [];
-let codexAuthInstalled = false;
-let codexMcpCredentialsInstalled = false;
-let codexMobbinMcp = { configured: false, skipped: true, status: null };
-if (!existsSync(promptPath)) failures.push(`missing prompt file: ${promptPath}`);
-try {
-  codexAuthInstalled = installCodexAuthFromEnv();
-} catch {
-  failures.push("CODEX_AUTH_JSON_BASE64 could not be installed");
-}
-try {
-  codexMcpCredentialsInstalled = installCodexMcpCredentialsFromEnv();
-} catch {
-  failures.push("CODEX_MCP_CREDENTIALS_JSON_BASE64 could not be installed");
-}
-try {
-  codexMobbinMcp = ensureCodexMobbinMcp(stage);
-  if (!codexMobbinMcp.skipped && !codexMobbinMcp.configured) failures.push("Mobbin MCP could not be configured for Codex CLI");
-} catch {
-  failures.push("Mobbin MCP setup failed for Codex CLI");
-}
-
-let renderedPrompt = "";
-if (failures.length === 0) {
-  renderedPrompt = renderPrompt(readFileSync(promptPath, "utf8"));
-  const header = [
-    "You are running inside a Daytona/Fabro worker for the iPhone App UX Studio workflow.",
-    `Stage: ${stage}`,
-    `App directory: ${process.env.APP_DIR || process.env.UX_APP_DIR || "apps/generated-iphone-app"}`,
-    "Do not print secrets or environment values. Use repository files and evidence artifacts for state.",
-    "",
-  ].join("\n");
-  renderedPrompt = `${header}${renderedPrompt}`;
-  mkdirSync(dirname(renderedPromptPath), { recursive: true });
-  writeFileSync(renderedPromptPath, renderedPrompt);
-}
-
-let result = null;
-if (failures.length === 0) {
-  const args = [
-    "exec",
-    "--skip-git-repo-check",
-    "--dangerously-bypass-approvals-and-sandbox",
-    "-c",
-    "mcp_oauth_credentials_store=\"file\"",
-    "--model",
-    model,
-    "--cd",
-    process.cwd(),
-    "--output-last-message",
-    lastMessagePath,
-    "-",
-  ];
-  result = spawnSync("codex", args, {
-    input: renderedPrompt,
-    encoding: "utf8",
-    timeout: timeoutMs,
-    maxBuffer,
-    stdio: ["pipe", "pipe", "pipe"],
-  });
-
-  if (result.error) failures.push(`codex exec failed: ${result.error.code || result.error.message}`);
-  if (result.status !== 0) failures.push(`codex exec exited with status ${result.status}`);
-  if (result.signal) failures.push(`codex exec terminated by signal ${result.signal}`);
-}
-
-const report = {
-  ok: failures.length === 0,
-  stage,
-  model,
-  prompt_path: promptPath,
-  rendered_prompt_path: renderedPromptPath,
-  last_message_path: lastMessagePath,
-  status: result ? result.status : null,
-  signal: result ? result.signal || null : null,
-  stdout_excerpt: result ? redactString(result.stdout).slice(-3000) : "",
-  stderr_excerpt: result ? redactString(result.stderr).slice(-3000) : "",
-  codex_auth_installed: codexAuthInstalled,
-  codex_mcp_credentials_installed: codexMcpCredentialsInstalled,
-  codex_mobbin_mcp: codexMobbinMcp,
-  failures,
-};
-
-writeReport(outPath, report);
-
-if (!report.ok) {
-  console.error(JSON.stringify(report, null, 2));
-  process.exit(1);
-}
-
-console.log(JSON.stringify(report));
+SXlFdmRYTnlMMkpwYmk5bGJuWWdibTlrWlFwcGJYQnZjblFnZXlCbGVHbHpkSE5UZVc1akxDQnRh
+MlJwY2xONWJtTXNJSEpsWVdSR2FXeGxVM2x1WXl3Z2QzSnBkR1ZHYVd4bFUzbHVZeUI5SUdaeWIy
+MGdJbTV2WkdVNlpuTWlPd3BwYlhCdmNuUWdleUJ6Y0dGM2JsTjVibU1nZlNCbWNtOXRJQ0p1YjJS
+bE9tTm9hV3hrWDNCeWIyTmxjM01pT3dwcGJYQnZjblFnZXlCa2FYSnVZVzFsTENCcWIybHVMQ0J5
+WlhOdmJIWmxJSDBnWm5KdmJTQWlibTlrWlRwd1lYUm9JanNLYVcxd2IzSjBJSHNnYUc5dFpXUnBj
+aUI5SUdaeWIyMGdJbTV2WkdVNmIzTWlPd29LWm5WdVkzUnBiMjRnWVhKblZtRnNkV1VvYm1GdFpT
+d2dabUZzYkdKaFkyc2dQU0J1ZFd4c0tTQjdDaUFnWTI5dWMzUWdhVzVrWlhnZ1BTQndjbTlqWlhO
+ekxtRnlaM1l1YVc1a1pYaFBaaWh1WVcxbEtUc0tJQ0JwWmlBb2FXNWtaWGdnUFQwOUlDMHhLU0J5
+WlhSMWNtNGdabUZzYkdKaFkyczdDaUFnWTI5dWMzUWdkbUZzZFdVZ1BTQndjbTlqWlhOekxtRnla
+M1piYVc1a1pYZ2dLeUF4WFRzS0lDQnBaaUFvSVhaaGJIVmxJSHg4SUhaaGJIVmxMbk4wWVhKMGMx
+ZHBkR2dvSWkwdElpa3BJSFJvY205M0lHNWxkeUJGY25KdmNpaGdUV2x6YzJsdVp5QjJZV3gxWlNC
+bWIzSWdKSHR1WVcxbGZXQXBPd29nSUhKbGRIVnliaUIyWVd4MVpUc0tmUW9LWm5WdVkzUnBiMjRn
+YzJWamNtVjBVWFZsY25sUVlYSmhiV1YwWlhKT1lXMWxLRzVoYldVcElIc0tJQ0JzWlhRZ1pHVmpi
+MlJsWkNBOUlGTjBjbWx1WnlodVlXMWxLUzV5WlhCc1lXTmxLQzljS3k5bkxDQWlJQ0lwT3dvZ0lI
+UnllU0I3Q2lBZ0lDQmtaV052WkdWa0lEMGdaR1ZqYjJSbFZWSkpRMjl0Y0c5dVpXNTBLR1JsWTI5
+a1pXUXBPd29nSUgwZ1kyRjBZMmdnZXdvZ0lDQWdaR1ZqYjJSbFpDQTlJRk4wY21sdVp5aHVZVzFs
+S1RzS0lDQjlDaUFnWTI5dWMzUWdibTl5YldGc2FYcGxaQ0E5SUdSbFkyOWtaV1FLSUNBZ0lDNTBi
+MHh2ZDJWeVEyRnpaU2dwQ2lBZ0lDQXVjbVZ3YkdGalpTZ3ZXMTVoTFhvd0xUbGRLeTluTENBaVh5
+SXBDaUFnSUNBdWNtVndiR0ZqWlNndlhsOHJmRjhySkM5bkxDQWlJaWs3Q2lBZ2NtVjBkWEp1SUc1
+dmNtMWhiR2w2WldRS0lDQWdJQzV6Y0d4cGRDZ2lYeUlwQ2lBZ0lDQXVjMjl0WlNnb2NHRnlkQ2tn
+UFQ0Z1d5SmhkWFJvSWl3Z0ltRjFkR2h2Y21sNllYUnBiMjRpTENBaVkzSmxaR1Z1ZEdsaGJDSXNJ
+Q0pyWlhraUxDQWljR0Z6YzNkdmNtUWlMQ0FpYzJWamNtVjBJaXdnSW5OcFoyNWhkSFZ5WlNJc0lD
+SjBiMnRsYmlKZExtbHVZMngxWkdWektIQmhjblFwS1RzS2ZRb0tablZ1WTNScGIyNGdjbVZrWVdO
+MFUzUnlhVzVuS0haaGJIVmxLU0I3Q2lBZ2JHVjBJSFJsZUhRZ1BTQlRkSEpwYm1jb2RtRnNkV1Vn
+Zkh3Z0lpSXBDaUFnSUNBdWNtVndiR0ZqWlNndlhHSW9XMkV0ZWwxYllTMTZNQzA1S3k0dFhTbzZY
+QzljTHlrb1cxNHZQeU5jY3lJblBENUFYU3RBS1M5bmFTd2dJaVF4VzNKbFpHRmpkR1ZrWFVBaUtR
+b2dJQ0FnTG5KbGNHeGhZMlVvTHloYlB5TW1YU2tvVzE0OUppTmNjMTByS1Qwb1cxNG1JMXh6WFNv
+cEwyY3NJQ2h0WVhSamFDd2djMlZ3WVhKaGRHOXlMQ0J1WVcxbEtTQTlQaUI3Q2lBZ0lDQWdJR2xt
+SUNnaGMyVmpjbVYwVVhWbGNubFFZWEpoYldWMFpYSk9ZVzFsS0c1aGJXVXBLU0J5WlhSMWNtNGdi
+V0YwWTJnN0NpQWdJQ0FnSUhKbGRIVnliaUJnSkh0elpYQmhjbUYwYjNKOUpIdHVZVzFsZlQxYmNt
+VmtZV04wWldSZFlEc0tJQ0FnSUgwcENpQWdJQ0F1Y21Wd2JHRmpaU2d2YzJzdGIzSXRkakV0VzBF
+dFdtRXRlakF0T1Y4dFhTc3ZaeXdnSWx0eVpXUmhZM1JsWkYwaUtRb2dJQ0FnTG5KbGNHeGhZMlVv
+TDNodmVGdGlZWEJ5YzEwdFcwRXRXbUV0ZWpBdE9TMWRLeTluTENBaVczSmxaR0ZqZEdWa1hTSXBD
+aUFnSUNBdWNtVndiR0ZqWlNndmVHRndjQzFiUVMxYVlTMTZNQzA1TFYwckwyY3NJQ0piY21Wa1lX
+TjBaV1JkSWlrS0lDQWdJQzV5WlhCc1lXTmxLQzlzYVc1ZllYQnBYMXRCTFZwaExYb3dMVGxmTFYw
+ckwyY3NJQ0piY21Wa1lXTjBaV1JkSWlrS0lDQWdJQzV5WlhCc1lXTmxLQzloY0dsbWVWOWhjR2xm
+VzBFdFdtRXRlakF0T1Y4dFhTc3ZaeXdnSWx0eVpXUmhZM1JsWkYwaUtRb2dJQ0FnTG5KbGNHeGhZ
+MlVvTDF4aVFtVmhjbVZ5WEhNclcwRXRXbUV0ZWpBdE9TNWZmaXN2UFMxZGV6RXlMSDB2WjJrc0lD
+SkNaV0Z5WlhJZ1czSmxaR0ZqZEdWa1hTSXBDaUFnSUNBdWNtVndiR0ZqWlNnS0lDQWdJQ0FnTDF4
+aUtEODZZWEJwVzE4dFhUOXJaWGw4YzJWamNtVjBmSEJoYzNOM2IzSmtmSEJoYzNOM1pIeDBiMnRs
+Ym54aFkyTmxjM05iWHkxZFAzUnZhMlZ1ZkhKbFpuSmxjMmhiWHkxZFAzUnZhMlZ1ZkdOc2FXVnVk
+RnRmTFYwL2MyVmpjbVYwS1Z4aVhITXFXem85WFZ4ektsc2lKMTAvVzBFdFdtRXRlakF0T1Y4dUx5
+czlPa0F0WFhzNExIMHZaMmtzQ2lBZ0lDQWdJQ0piY21Wa1lXTjBaV1JkSWl3S0lDQWdJQ2s3Q2dv
+Z0lHWnZjaUFvWTI5dWMzUWdhMlY1SUc5bUlGc0tJQ0FnSUNKUFVFVk9VazlWVkVWU1gwRlFTVjlM
+UlZraUxBb2dJQ0FnSWs5UVJVNUJTVjlCVUVsZlMwVlpJaXdLSUNBZ0lDSkRUMFJGV0Y5QlZWUklY
+MHBUVDA1ZlFrRlRSVFkwSWl3S0lDQWdJQ0pEVDBSRldGOU5RMUJmUTFKRlJFVk9WRWxCVEZOZlNs
+TlBUbDlDUVZORk5qUWlMQW9nSUNBZ0lrTk1RVlZFUlY5RFQwUkZYMDlCVlZSSVgxUlBTMFZPSWl3
+S0lDQWdJQ0pEVEVGVlJFVmZRMDlFUlY5RFVrVkVSVTVVU1VGTVUxOUtVMDlPWDBKQlUwVTJOQ0lz
+Q2lBZ0lDQWlSMGxVU0ZWQ1gxUlBTMFZPSWl3S0lDQWdJQ0pIU0Y5VVQwdEZUaUlzQ2lBZ0lDQWlR
+VkJKUmxsZlZFOUxSVTRpTEFvZ0lDQWdJazFQUWtKSlRsOUZUVUZKVENJc0NpQWdJQ0FpVFU5Q1Fr
+bE9YMUJCVTFOWFQxSkVJaXdLSUNCZEtTQjdDaUFnSUNCamIyNXpkQ0J6WldOeVpYUWdQU0J3Y205
+alpYTnpMbVZ1ZGx0clpYbGRPd29nSUNBZ2FXWWdLQ0Z6WldOeVpYUXBJR052Ym5ScGJuVmxPd29n
+SUNBZ2RHVjRkQ0E5SUhSbGVIUXVjbVZ3YkdGalpVRnNiQ2h6WldOeVpYUXNJQ0piY21Wa1lXTjBa
+V1JkSWlrN0NpQWdmUW9nSUhKbGRIVnliaUIwWlhoME93cDlDZ3BtZFc1amRHbHZiaUJsYm5aV1lX
+eDFaVVp2Y2tsdWNIVjBLRzVoYldVc0lHWmhiR3hpWVdOcktTQjdDaUFnYVdZZ0tITmxZM0psZEVs
+dWNIVjBUbUZ0WlNodVlXMWxLU2tnY21WMGRYSnVJQ0piY21Wa1lXTjBaV1JkSWpzS0lDQmpiMjV6
+ZENCbGJuWk9ZVzFsSUQwZ2JtRnRaUzV5WlhCc1lXTmxLQzliWG1FdGVrRXRXakF0T1YwckwyY3NJ
+Q0pmSWlrdWRHOVZjSEJsY2tOaGMyVW9LVHNLSUNCeVpYUjFjbTRnY0hKdlkyVnpjeTVsYm5aYllG
+VllYeVI3Wlc1MlRtRnRaWDFnWFNCOGZDQndjbTlqWlhOekxtVnVkbHRsYm5aT1lXMWxYU0I4ZkNC
+bVlXeHNZbUZqYXlCOGZDQWlJanNLZlFvS1puVnVZM1JwYjI0Z2MyVmpjbVYwU1c1d2RYUk9ZVzFs
+S0c1aGJXVXBJSHNLSUNCeVpYUjFjbTRnTHloZWZGOHBLR0YxZEdoOFlYVjBhRzl5YVhwaGRHbHZi
+bnhqY21Wa1pXNTBhV0ZzZkd0bGVYeHdZWE56ZDI5eVpIeHpaV055WlhSOGMybG5ibUYwZFhKbGZI
+UnZhMlZ1ZkdOdmIydHBaWHh6WlhOemFXOXVmRzloZFhSb2ZIQnlhWFpoZEdVcEtGOThKQ2t2YVM1
+MFpYTjBLQW9nSUNBZ1UzUnlhVzVuS0c1aGJXVWdmSHdnSWlJcExBb2dJQ2s3Q24wS0NtWjFibU4w
+YVc5dUlISmxibVJsY2xCeWIyMXdkQ2h5WVhjcElIc0tJQ0J5WlhSMWNtNGdjbUYzTG5KbGNHeGhZ
+MlVvQ2lBZ0lDQXZYSHRjZTF4ekttbHVjSFYwYzF3dUtGdGhMWHBCTFZvd0xUbGZYU3NwWEhNcVhI
+eGNjeXBrWldaaGRXeDBYQ2hjY3lvb1d5SW5YU2tvTGlvL0tWd3lYSE1xWENsY2N5cGNmVng5TDJj
+c0NpQWdJQ0FvWDIxaGRHTm9MQ0J1WVcxbExDQmZjWFZ2ZEdVc0lHWmhiR3hpWVdOcktTQTlQaUJs
+Ym5aV1lXeDFaVVp2Y2tsdWNIVjBLRzVoYldVc0lHWmhiR3hpWVdOcktTd0tJQ0FwT3dwOUNncG1k
+VzVqZEdsdmJpQjNjbWwwWlZKbGNHOXlkQ2h3WVhSb0xDQnlaWEJ2Y25RcElIc0tJQ0J0YTJScGNs
+TjVibU1vWkdseWJtRnRaU2h3WVhSb0tTd2dleUJ5WldOMWNuTnBkbVU2SUhSeWRXVWdmU2s3Q2lB
+Z2QzSnBkR1ZHYVd4bFUzbHVZeWh3WVhSb0xDQmdKSHRLVTA5T0xuTjBjbWx1WjJsbWVTaHlaWEJ2
+Y25Rc0lHNTFiR3dzSURJcGZWeHVZQ2s3Q24wS0NtWjFibU4wYVc5dUlHTnZaR1Y0UVhWMGFGQmhk
+R2dvS1NCN0NpQWdZMjl1YzNRZ1kyOWtaWGhJYjIxbElEMGdjSEp2WTJWemN5NWxibll1UTA5RVJW
+aGZTRTlOUlNCOGZDQnFiMmx1S0hCeWIyTmxjM011Wlc1MkxraFBUVVVnZkh3Z2FHOXRaV1JwY2ln
+cExDQWlMbU52WkdWNElpazdDaUFnY21WMGRYSnVJR3B2YVc0b1kyOWtaWGhJYjIxbExDQWlZWFYw
+YUM1cWMyOXVJaWs3Q24wS0NtWjFibU4wYVc5dUlHbHVjM1JoYkd4RGIyUmxlRUYxZEdoR2NtOXRS
+VzUyS0NrZ2V3b2dJR052Ym5OMElHVnVZMjlrWldRZ1BTQndjbTlqWlhOekxtVnVkaTVEVDBSRldG
+OUJWVlJJWDBwVFQwNWZRa0ZUUlRZMElIeDhJQ0lpT3dvZ0lHbG1JQ2doWlc1amIyUmxaQ0I4ZkNC
+bGJtTnZaR1ZrTG1sdVkyeDFaR1Z6S0NKN2V5SXBJSHg4SUdWdVkyOWtaV1F1YVc1amJIVmtaWE1v
+SW4xOUlpa3BJSEpsZEhWeWJpQm1ZV3h6WlRzS0lDQmpiMjV6ZENCeVlYY2dQU0JDZFdabVpYSXVa
+bkp2YlNobGJtTnZaR1ZrTENBaVltRnpaVFkwSWlrdWRHOVRkSEpwYm1jb0luVjBaamdpS1RzS0lD
+QktVMDlPTG5CaGNuTmxLSEpoZHlrN0NpQWdZMjl1YzNRZ1lYVjBhRkJoZEdnZ1BTQmpiMlJsZUVG
+MWRHaFFZWFJvS0NrN0NpQWdiV3RrYVhKVGVXNWpLR1JwY201aGJXVW9ZWFYwYUZCaGRHZ3BMQ0I3
+SUhKbFkzVnljMmwyWlRvZ2RISjFaU0I5S1RzS0lDQjNjbWwwWlVacGJHVlRlVzVqS0dGMWRHaFFZ
+WFJvTENCeVlYY3NJSHNnYlc5a1pUb2dNRzgyTURBZ2ZTazdDaUFnY21WMGRYSnVJSFJ5ZFdVN0Nu
+MEtDbVoxYm1OMGFXOXVJR2x1YzNSaGJHeERiMlJsZUUxamNFTnlaV1JsYm5ScFlXeHpSbkp2YlVW
+dWRpZ3BJSHNLSUNCamIyNXpkQ0JsYm1OdlpHVmtJRDBnY0hKdlkyVnpjeTVsYm5ZdVEwOUVSVmhm
+VFVOUVgwTlNSVVJGVGxSSlFVeFRYMHBUVDA1ZlFrRlRSVFkwSUh4OElDSWlPd29nSUdsbUlDZ2ha
+VzVqYjJSbFpDQjhmQ0JsYm1OdlpHVmtMbWx1WTJ4MVpHVnpLQ0o3ZXlJcElIeDhJR1Z1WTI5a1pX
+UXVhVzVqYkhWa1pYTW9JbjE5SWlrcElISmxkSFZ5YmlCbVlXeHpaVHNLSUNCamIyNXpkQ0JrWldO
+dlpHVmtJRDBnUW5WbVptVnlMbVp5YjIwb1pXNWpiMlJsWkN3Z0ltSmhjMlUyTkNJcExuUnZVM1J5
+YVc1bktDSjFkR1k0SWlrN0NpQWdTbE5QVGk1d1lYSnpaU2hrWldOdlpHVmtLVHNLSUNCamIyNXpk
+Q0JqYjJSbGVFaHZiV1VnUFNCd2NtOWpaWE56TG1WdWRpNURUMFJGV0Y5SVQwMUZJSHg4SUdwdmFX
+NG9jSEp2WTJWemN5NWxibll1U0U5TlJTQjhmQ0JvYjIxbFpHbHlLQ2tzSUNJdVkyOWtaWGdpS1Rz
+S0lDQnRhMlJwY2xONWJtTW9ZMjlrWlhoSWIyMWxMQ0I3SUhKbFkzVnljMmwyWlRvZ2RISjFaU0I5
+S1RzS0lDQjNjbWwwWlVacGJHVlRlVzVqS0dwdmFXNG9ZMjlrWlhoSWIyMWxMQ0FpTG1OeVpXUmxi
+blJwWVd4ekxtcHpiMjRpS1N3Z1pHVmpiMlJsWkN3Z2V5QnRiMlJsT2lBd2J6WXdNQ0I5S1RzS0lD
+QnlaWFIxY200Z2RISjFaVHNLZlFvS1puVnVZM1JwYjI0Z2QyRnVkSE5OYjJKaWFXNU5ZM0FvYzNS
+aFoyVk9ZVzFsS1NCN0NpQWdjbVYwZFhKdUlGTjBjbWx1Wnlod2NtOWpaWE56TG1WdWRpNVZXRjlW
+VTBWZlRVOUNRa2xPWDAxRFVDQjhmQ0FpZEhKMVpTSXBMblJ2VEc5M1pYSkRZWE5sS0NrZ0lUMDlJ
+Q0ptWVd4elpTSUtJQ0FnSUNZbUlDOXRiMkppYVc0dmFTNTBaWE4wS0hOMFlXZGxUbUZ0WlNCOGZD
+QWlJaWs3Q24wS0NtWjFibU4wYVc5dUlHVnVjM1Z5WlVOdlpHVjRUVzlpWW1sdVRXTndLSE4wWVdk
+bFRtRnRaU2tnZXdvZ0lHbG1JQ2doZDJGdWRITk5iMkppYVc1TlkzQW9jM1JoWjJWT1lXMWxLU2tn
+ZXdvZ0lDQWdjbVYwZFhKdUlIc2dZMjl1Wm1sbmRYSmxaRG9nWm1Gc2MyVXNJSE5yYVhCd1pXUTZJ
+SFJ5ZFdVc0lITjBZWFIxY3pvZ2JuVnNiQ0I5T3dvZ0lIMEtJQ0JqYjI1emRDQnRZM0JEYjI1bWFX
+Y2dQU0JiSWkxaklpd2dJbTFqY0Y5dllYVjBhRjlqY21Wa1pXNTBhV0ZzYzE5emRHOXlaVDFjSW1a
+cGJHVmNJaUpkT3dvZ0lHTnZibk4wSUdGa1pDQTlJSE53WVhkdVUzbHVZeWdpWTI5a1pYZ2lMQ0Ji
+TGk0dWJXTndRMjl1Wm1sbkxDQWliV053SWl3Z0ltRmtaQ0lzSUNKdGIySmlhVzRpTENBaUxTMTFj
+bXdpTENBaWFIUjBjSE02THk5aGNHa3ViVzlpWW1sdUxtTnZiUzl0WTNBaVhTd2dld29nSUNBZ1pX
+NWpiMlJwYm1jNklDSjFkR1k0SWl3S0lDQWdJSFJwYldWdmRYUTZJRE13TURBd0xBb2dJQ0FnYzNS
+a2FXODZJRnNpYVdkdWIzSmxJaXdnSW5CcGNHVWlMQ0FpY0dsd1pTSmRMQW9nSUgwcE93b2dJR052
+Ym5OMElHeHBjM1FnUFNCemNHRjNibE41Ym1Nb0ltTnZaR1Y0SWl3Z1d5NHVMbTFqY0VOdmJtWnBa
+eXdnSW0xamNDSXNJQ0pzYVhOMElsMHNJSHNLSUNBZ0lHVnVZMjlrYVc1bk9pQWlkWFJtT0NJc0Np
+QWdJQ0IwYVcxbGIzVjBPaUF4TlRBd01Dd0tJQ0FnSUhOMFpHbHZPaUJiSW1sbmJtOXlaU0lzSUNK
+d2FYQmxJaXdnSW5CcGNHVWlYU3dLSUNCOUtUc0tJQ0JqYjI1emRDQjBaWGgwSUQwZ1lDUjdiR2x6
+ZEM1emRHUnZkWFFnZkh3Z0lpSjlYRzRrZTJ4cGMzUXVjM1JrWlhKeUlIeDhJQ0lpZldBN0NpQWdj
+bVYwZFhKdUlIc0tJQ0FnSUdOdmJtWnBaM1Z5WldRNklDOXRiMkppYVc0dmFTNTBaWE4wS0hSbGVI
+UXBMQW9nSUNBZ2MydHBjSEJsWkRvZ1ptRnNjMlVzQ2lBZ0lDQnpkR0YwZFhNNklHeHBjM1F1YzNS
+aGRIVnpMQW9nSUNBZ1lXUmtYM04wWVhSMWN6b2dZV1JrTG5OMFlYUjFjeXdLSUNCOU93cDlDZ3Bq
+YjI1emRDQndjbTl0Y0hSUVlYUm9JRDBnY21WemIyeDJaU2hoY21kV1lXeDFaU2dpTFMxd2NtOXRj
+SFFpS1NrN0NtTnZibk4wSUhOMFlXZGxJRDBnWVhKblZtRnNkV1VvSWkwdGMzUmhaMlVpTENBaVky
+OWtaWGd0Y0hKdmJYQjBJaWs3Q21OdmJuTjBJRzF2WkdWc0lEMGdZWEpuVm1Gc2RXVW9JaTB0Ylc5
+a1pXd2lMQ0FpWjNCMExUVXVNeTFqYjJSbGVDSXBPd3BqYjI1emRDQnZkWFJRWVhSb0lEMGdjbVZ6
+YjJ4MlpTaGhjbWRXWVd4MVpTZ2lMUzF2ZFhRaUxDQmdMbmR2Y210bWJHOTNMMmx3YUc5dVpTMWhj
+SEF0ZFhndGMzUjFaR2x2TDJOdlpHVjRMeVI3YzNSaFoyVjlMbXB6YjI1Z0tTazdDbU52Ym5OMElI
+SmxibVJsY21Wa1VISnZiWEIwVUdGMGFDQTlJSEpsYzI5c2RtVW9ZWEpuVm1Gc2RXVW9JaTB0Y21W
+dVpHVnlaV1F0Y0hKdmJYQjBMVzkxZENJc0lHQXVkMjl5YTJac2IzY3ZhWEJvYjI1bExXRndjQzEx
+ZUMxemRIVmthVzh2WTI5a1pYZ3ZKSHR6ZEdGblpYMHVjSEp2YlhCMExtMWtZQ2twT3dwamIyNXpk
+Q0JzWVhOMFRXVnpjMkZuWlZCaGRHZ2dQU0J5WlhOdmJIWmxLR0Z5WjFaaGJIVmxLQ0l0TFd4aGMz
+UXRiV1Z6YzJGblpTMXZkWFFpTENCZ0xuZHZjbXRtYkc5M0wybHdhRzl1WlMxaGNIQXRkWGd0YzNS
+MVpHbHZMMk52WkdWNEx5UjdjM1JoWjJWOUxteGhjM1F0YldWemMyRm5aUzV0WkdBcEtUc0tZMjl1
+YzNRZ2RHbHRaVzkxZEUxeklEMGdUblZ0WW1WeUtHRnlaMVpoYkhWbEtDSXRMWFJwYldWdmRYUXRi
+WE1pTENCd2NtOWpaWE56TG1WdWRpNURUMFJGV0Y5RldFVkRYMVJKVFVWUFZWUmZUVk1nZkh3Z0lq
+TTJNREF3TURBaUtTazdDbU52Ym5OMElHMWhlRUoxWm1abGNpQTlJRTUxYldKbGNpaGhjbWRXWVd4
+MVpTZ2lMUzF0WVhndFluVm1abVZ5SWl3Z2NISnZZMlZ6Y3k1bGJuWXVRMDlFUlZoZlJWaEZRMTlO
+UVZoZlFsVkdSa1ZTSUh4OElHQWtlekV3TUNBcUlERXdNalFnS2lBeE1ESTBmV0FwS1RzS0NtTnZi
+bk4wSUdaaGFXeDFjbVZ6SUQwZ1cxMDdDbXhsZENCamIyUmxlRUYxZEdoSmJuTjBZV3hzWldRZ1BT
+Qm1ZV3h6WlRzS2JHVjBJR052WkdWNFRXTndRM0psWkdWdWRHbGhiSE5KYm5OMFlXeHNaV1FnUFNC
+bVlXeHpaVHNLYkdWMElHTnZaR1Y0VFc5aVltbHVUV053SUQwZ2V5QmpiMjVtYVdkMWNtVmtPaUJt
+WVd4elpTd2djMnRwY0hCbFpEb2dkSEoxWlN3Z2MzUmhkSFZ6T2lCdWRXeHNJSDA3Q21sbUlDZ2ha
+WGhwYzNSelUzbHVZeWh3Y205dGNIUlFZWFJvS1NrZ1ptRnBiSFZ5WlhNdWNIVnphQ2hnYldsemMy
+bHVaeUJ3Y205dGNIUWdabWxzWlRvZ0pIdHdjbTl0Y0hSUVlYUm9mV0FwT3dwMGNua2dld29nSUdO
+dlpHVjRRWFYwYUVsdWMzUmhiR3hsWkNBOUlHbHVjM1JoYkd4RGIyUmxlRUYxZEdoR2NtOXRSVzUy
+S0NrN0NuMGdZMkYwWTJnZ2V3b2dJR1poYVd4MWNtVnpMbkIxYzJnb0lrTlBSRVZZWDBGVlZFaGZT
+bE5QVGw5Q1FWTkZOalFnWTI5MWJHUWdibTkwSUdKbElHbHVjM1JoYkd4bFpDSXBPd3A5Q25SeWVT
+QjdDaUFnWTI5a1pYaE5ZM0JEY21Wa1pXNTBhV0ZzYzBsdWMzUmhiR3hsWkNBOUlHbHVjM1JoYkd4
+RGIyUmxlRTFqY0VOeVpXUmxiblJwWVd4elJuSnZiVVZ1ZGlncE93cDlJR05oZEdOb0lIc0tJQ0Jt
+WVdsc2RYSmxjeTV3ZFhOb0tDSkRUMFJGV0Y5TlExQmZRMUpGUkVWT1ZFbEJURk5mU2xOUFRsOUNR
+Vk5GTmpRZ1kyOTFiR1FnYm05MElHSmxJR2x1YzNSaGJHeGxaQ0lwT3dwOUNuUnllU0I3Q2lBZ1ky
+OWtaWGhOYjJKaWFXNU5ZM0FnUFNCbGJuTjFjbVZEYjJSbGVFMXZZbUpwYmsxamNDaHpkR0ZuWlNr
+N0NpQWdhV1lnS0NGamIyUmxlRTF2WW1KcGJrMWpjQzV6YTJsd2NHVmtJQ1ltSUNGamIyUmxlRTF2
+WW1KcGJrMWpjQzVqYjI1bWFXZDFjbVZrS1NCbVlXbHNkWEpsY3k1d2RYTm9LQ0pOYjJKaWFXNGdU
+VU5RSUdOdmRXeGtJRzV2ZENCaVpTQmpiMjVtYVdkMWNtVmtJR1p2Y2lCRGIyUmxlQ0JEVEVraUtU
+c0tmU0JqWVhSamFDQjdDaUFnWm1GcGJIVnlaWE11Y0hWemFDZ2lUVzlpWW1sdUlFMURVQ0J6WlhS
+MWNDQm1ZV2xzWldRZ1ptOXlJRU52WkdWNElFTk1TU0lwT3dwOUNncHNaWFFnY21WdVpHVnlaV1JR
+Y205dGNIUWdQU0FpSWpzS2FXWWdLR1poYVd4MWNtVnpMbXhsYm1kMGFDQTlQVDBnTUNrZ2V3b2dJ
+SEpsYm1SbGNtVmtVSEp2YlhCMElEMGdjbVZ1WkdWeVVISnZiWEIwS0hKbFlXUkdhV3hsVTNsdVl5
+aHdjbTl0Y0hSUVlYUm9MQ0FpZFhSbU9DSXBLVHNLSUNCamIyNXpkQ0JvWldGa1pYSWdQU0JiQ2lB
+Z0lDQWlXVzkxSUdGeVpTQnlkVzV1YVc1bklHbHVjMmxrWlNCaElFUmhlWFJ2Ym1FdlJtRmljbThn
+ZDI5eWEyVnlJR1p2Y2lCMGFHVWdhVkJvYjI1bElFRndjQ0JWV0NCVGRIVmthVzhnZDI5eWEyWnNi
+M2N1SWl3S0lDQWdJR0JUZEdGblpUb2dKSHR6ZEdGblpYMWdMQW9nSUNBZ1lFRndjQ0JrYVhKbFkz
+UnZjbms2SUNSN2NISnZZMlZ6Y3k1bGJuWXVRVkJRWDBSSlVpQjhmQ0J3Y205alpYTnpMbVZ1ZGk1
+VldGOUJVRkJmUkVsU0lIeDhJQ0poY0hCekwyZGxibVZ5WVhSbFpDMXBjR2h2Ym1VdFlYQndJbjFn
+TEFvZ0lDQWdJa1J2SUc1dmRDQndjbWx1ZENCelpXTnlaWFJ6SUc5eUlHVnVkbWx5YjI1dFpXNTBJ
+SFpoYkhWbGN5NGdWWE5sSUhKbGNHOXphWFJ2Y25rZ1ptbHNaWE1nWVc1a0lHVjJhV1JsYm1ObElH
+RnlkR2xtWVdOMGN5Qm1iM0lnYzNSaGRHVXVJaXdLSUNBZ0lDSWlMQW9nSUYwdWFtOXBiaWdpWEc0
+aUtUc0tJQ0J5Wlc1a1pYSmxaRkJ5YjIxd2RDQTlJR0FrZTJobFlXUmxjbjBrZTNKbGJtUmxjbVZr
+VUhKdmJYQjBmV0E3Q2lBZ2JXdGthWEpUZVc1aktHUnBjbTVoYldVb2NtVnVaR1Z5WldSUWNtOXRj
+SFJRWVhSb0tTd2dleUJ5WldOMWNuTnBkbVU2SUhSeWRXVWdmU2s3Q2lBZ2QzSnBkR1ZHYVd4bFUz
+bHVZeWh5Wlc1a1pYSmxaRkJ5YjIxd2RGQmhkR2dzSUhKbGJtUmxjbVZrVUhKdmJYQjBLVHNLZlFv
+S2JHVjBJSEpsYzNWc2RDQTlJRzUxYkd3N0NtbG1JQ2htWVdsc2RYSmxjeTVzWlc1bmRHZ2dQVDA5
+SURBcElIc0tJQ0JqYjI1emRDQmhjbWR6SUQwZ1d3b2dJQ0FnSW1WNFpXTWlMQW9nSUNBZ0lpMHRj
+MnRwY0MxbmFYUXRjbVZ3YnkxamFHVmpheUlzQ2lBZ0lDQWlMUzFrWVc1blpYSnZkWE5zZVMxaWVY
+QmhjM010WVhCd2NtOTJZV3h6TFdGdVpDMXpZVzVrWW05NElpd0tJQ0FnSUNJdFl5SXNDaUFnSUNB
+aWJXTndYMjloZFhSb1gyTnlaV1JsYm5ScFlXeHpYM04wYjNKbFBWd2labWxzWlZ3aUlpd0tJQ0Fn
+SUNJdExXMXZaR1ZzSWl3S0lDQWdJRzF2WkdWc0xBb2dJQ0FnSWkwdFkyUWlMQW9nSUNBZ2NISnZZ
+MlZ6Y3k1amQyUW9LU3dLSUNBZ0lDSXRMVzkxZEhCMWRDMXNZWE4wTFcxbGMzTmhaMlVpTEFvZ0lD
+QWdiR0Z6ZEUxbGMzTmhaMlZRWVhSb0xBb2dJQ0FnSWkwaUxBb2dJRjA3Q2lBZ2NtVnpkV3gwSUQw
+Z2MzQmhkMjVUZVc1aktDSmpiMlJsZUNJc0lHRnlaM01zSUhzS0lDQWdJR2x1Y0hWME9pQnlaVzVr
+WlhKbFpGQnliMjF3ZEN3S0lDQWdJR1Z1WTI5a2FXNW5PaUFpZFhSbU9DSXNDaUFnSUNCMGFXMWxi
+M1YwT2lCMGFXMWxiM1YwVFhNc0NpQWdJQ0J0WVhoQ2RXWm1aWElzQ2lBZ0lDQnpkR1JwYnpvZ1d5
+SndhWEJsSWl3Z0luQnBjR1VpTENBaWNHbHdaU0pkTEFvZ0lIMHBPd29LSUNCcFppQW9jbVZ6ZFd4
+MExtVnljbTl5S1NCbVlXbHNkWEpsY3k1d2RYTm9LR0JqYjJSbGVDQmxlR1ZqSUdaaGFXeGxaRG9n
+Skh0eVpYTjFiSFF1WlhKeWIzSXVZMjlrWlNCOGZDQnlaWE4xYkhRdVpYSnliM0l1YldWemMyRm5a
+WDFnS1RzS0lDQnBaaUFvY21WemRXeDBMbk4wWVhSMWN5QWhQVDBnTUNrZ1ptRnBiSFZ5WlhNdWNI
+VnphQ2hnWTI5a1pYZ2daWGhsWXlCbGVHbDBaV1FnZDJsMGFDQnpkR0YwZFhNZ0pIdHlaWE4xYkhR
+dWMzUmhkSFZ6ZldBcE93b2dJR2xtSUNoeVpYTjFiSFF1YzJsbmJtRnNLU0JtWVdsc2RYSmxjeTV3
+ZFhOb0tHQmpiMlJsZUNCbGVHVmpJSFJsY20xcGJtRjBaV1FnWW5rZ2MybG5ibUZzSUNSN2NtVnpk
+V3gwTG5OcFoyNWhiSDFnS1RzS2ZRb0tZMjl1YzNRZ2NtVndiM0owSUQwZ2V3b2dJRzlyT2lCbVlX
+bHNkWEpsY3k1c1pXNW5kR2dnUFQwOUlEQXNDaUFnYzNSaFoyVXNDaUFnYlc5a1pXd3NDaUFnY0hK
+dmJYQjBYM0JoZEdnNklIQnliMjF3ZEZCaGRHZ3NDaUFnY21WdVpHVnlaV1JmY0hKdmJYQjBYM0Jo
+ZEdnNklISmxibVJsY21Wa1VISnZiWEIwVUdGMGFDd0tJQ0JzWVhOMFgyMWxjM05oWjJWZmNHRjBh
+RG9nYkdGemRFMWxjM05oWjJWUVlYUm9MQW9nSUhOMFlYUjFjem9nY21WemRXeDBJRDhnY21WemRX
+eDBMbk4wWVhSMWN5QTZJRzUxYkd3c0NpQWdjMmxuYm1Gc09pQnlaWE4xYkhRZ1B5QnlaWE4xYkhR
+dWMybG5ibUZzSUh4OElHNTFiR3dnT2lCdWRXeHNMQW9nSUhOMFpHOTFkRjlsZUdObGNuQjBPaUJ5
+WlhOMWJIUWdQeUJ5WldSaFkzUlRkSEpwYm1jb2NtVnpkV3gwTG5OMFpHOTFkQ2t1YzJ4cFkyVW9M
+VE13TURBcElEb2dJaUlzQ2lBZ2MzUmtaWEp5WDJWNFkyVnljSFE2SUhKbGMzVnNkQ0EvSUhKbFpH
+RmpkRk4wY21sdVp5aHlaWE4xYkhRdWMzUmtaWEp5S1M1emJHbGpaU2d0TXpBd01Da2dPaUFpSWl3
+S0lDQmpiMlJsZUY5aGRYUm9YMmx1YzNSaGJHeGxaRG9nWTI5a1pYaEJkWFJvU1c1emRHRnNiR1Zr
+TEFvZ0lHTnZaR1Y0WDIxamNGOWpjbVZrWlc1MGFXRnNjMTlwYm5OMFlXeHNaV1E2SUdOdlpHVjRU
+V053UTNKbFpHVnVkR2xoYkhOSmJuTjBZV3hzWldRc0NpQWdZMjlrWlhoZmJXOWlZbWx1WDIxamNE
+b2dZMjlrWlhoTmIySmlhVzVOWTNBc0NpQWdabUZwYkhWeVpYTXNDbjA3Q2dwM2NtbDBaVkpsY0c5
+eWRDaHZkWFJRWVhSb0xDQnlaWEJ2Y25RcE93b0thV1lnS0NGeVpYQnZjblF1YjJzcElIc0tJQ0Jq
+YjI1emIyeGxMbVZ5Y205eUtFcFRUMDR1YzNSeWFXNW5hV1o1S0hKbGNHOXlkQ3dnYm5Wc2JDd2dN
+aWtwT3dvZ0lIQnliMk5sYzNNdVpYaHBkQ2d4S1RzS2ZRb0tZMjl1YzI5c1pTNXNiMmNvU2xOUFRp
+NXpkSEpwYm1kcFpua29jbVZ3YjNKMEtTazdDZz09Cg==
