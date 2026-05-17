@@ -40,10 +40,11 @@ digraph IterateExistingAppUX {
 
     existing_app_intake [
         label="Existing App Intake",
-        class="ux-research",
+        shape=parallelogram,
         goal_gate=true,
         retry_target="existing_app_intake",
-        prompt="@../../prompts/iphone-app-factory/ux-existing-app-intake.md"
+        timeout="3600s",
+        script="node scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/ux-existing-app-intake.md --stage existing-app-intake --out .workflow/iphone-app-ux-studio/codex/existing-app-intake.json"
     ]
     baseline_screenshot_capture [
         label="Baseline Screenshot Capture",
@@ -76,8 +77,18 @@ digraph IterateExistingAppUX {
     ]
 
     research_fanout [label="Research Fan-Out", shape=component, join_policy="wait_all", max_parallel=1]
-    competitor_flow_research [label="Competitor Flow Research", class="ux-research", prompt="@../../prompts/iphone-app-factory/ux-competitor-flow-research.md"]
-    app_store_review_mining [label="App Store Review Mining", class="ux-research", prompt="@../../prompts/iphone-app-factory/ux-app-store-review-mining.md"]
+    competitor_flow_research [
+        label="Competitor Flow Research",
+        shape=parallelogram,
+        timeout="3600s",
+        script="node scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/ux-competitor-flow-research.md --stage competitor-flow-research --out .workflow/iphone-app-ux-studio/codex/competitor-flow-research.json"
+    ]
+    app_store_review_mining [
+        label="App Store Review Mining",
+        shape=parallelogram,
+        timeout="3600s",
+        script="node scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/ux-app-store-review-mining.md --stage app-store-review-mining --out .workflow/iphone-app-ux-studio/codex/app-store-review-mining.json"
+    ]
     mobbin_mcp_research [
         label="Mobbin MCP Research",
         shape=parallelogram,
@@ -85,16 +96,32 @@ digraph IterateExistingAppUX {
         retry_target="mobbin_mcp_research",
         script="node scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/ux-mobbin-mcp-research.md --stage mobbin-mcp-research --out .workflow/iphone-app-ux-studio/codex/mobbin-mcp-research.json && node scripts/iphone-app-factory/ensure-mobbin-research-artifact.mjs"
     ]
-    pageflows_research [label="Pageflows Research", class="ux-research", prompt="@../../prompts/iphone-app-factory/ux-pageflows-research.md"]
-    apple_hig_research [label="Apple HIG Research", class="ux-research", prompt="@../../prompts/iphone-app-factory/ux-apple-hig-research.md"]
-    behavioral_ux_research [label="Behavioral UX Research", class="ux-research", prompt="@../../prompts/iphone-app-factory/ux-behavioral-research.md"]
+    pageflows_research [
+        label="Pageflows Research",
+        shape=parallelogram,
+        timeout="3600s",
+        script="node scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/ux-pageflows-research.md --stage pageflows-research --out .workflow/iphone-app-ux-studio/codex/pageflows-research.json"
+    ]
+    apple_hig_research [
+        label="Apple HIG Research",
+        shape=parallelogram,
+        timeout="3600s",
+        script="node scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/ux-apple-hig-research.md --stage apple-hig-research --out .workflow/iphone-app-ux-studio/codex/apple-hig-research.json"
+    ]
+    behavioral_ux_research [
+        label="Behavioral UX Research",
+        shape=parallelogram,
+        timeout="3600s",
+        script="node scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/ux-behavioral-research.md --stage behavioral-ux-research --out .workflow/iphone-app-ux-studio/codex/behavioral-ux-research.json"
+    ]
     research_join [label="Research Join", shape=tripleoctagon, join_policy="wait_all"]
     design_opportunity_synthesis [
         label="Design Opportunity Synthesis",
-        class="ux-research",
+        shape=parallelogram,
         goal_gate=true,
         retry_target="research_fanout",
-        prompt="@../../prompts/iphone-app-factory/ux-design-opportunity-synthesis.md"
+        timeout="3600s",
+        script="node scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/ux-design-opportunity-synthesis.md --stage design-opportunity-synthesis --out .workflow/iphone-app-ux-studio/codex/design-opportunity-synthesis.json"
     ]
     reference_pack_gate [
         label="Reference Pack Gate",
@@ -105,24 +132,46 @@ digraph IterateExistingAppUX {
     ]
 
     design_direction_fanout [label="Design Direction Fan-Out", shape=component, join_policy="wait_all", max_parallel=1]
-    calm_accountability_direction [label="Calm Accountability Direction", class="design", prompt="@../../prompts/iphone-app-factory/ux-design-direction-candidate.md"]
-    hard_wake_direction [label="Hard Wake Direction", class="design", prompt="@../../prompts/iphone-app-factory/ux-design-direction-candidate.md"]
-    gamified_streak_direction [label="Gamified Streak Direction", class="design", prompt="@../../prompts/iphone-app-factory/ux-design-direction-candidate.md"]
-    minimal_native_direction [label="Minimal Native Direction", class="design", prompt="@../../prompts/iphone-app-factory/ux-design-direction-candidate.md"]
+    calm_accountability_direction [
+        label="Calm Accountability Direction",
+        shape=parallelogram,
+        timeout="3600s",
+        script="node scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/ux-design-direction-candidate.md --stage calm_accountability_direction --out .workflow/iphone-app-ux-studio/codex/calm-accountability-direction.json"
+    ]
+    hard_wake_direction [
+        label="Hard Wake Direction",
+        shape=parallelogram,
+        timeout="3600s",
+        script="node scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/ux-design-direction-candidate.md --stage hard_wake_direction --out .workflow/iphone-app-ux-studio/codex/hard-wake-direction.json"
+    ]
+    gamified_streak_direction [
+        label="Gamified Streak Direction",
+        shape=parallelogram,
+        timeout="3600s",
+        script="node scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/ux-design-direction-candidate.md --stage gamified_streak_direction --out .workflow/iphone-app-ux-studio/codex/gamified-streak-direction.json"
+    ]
+    minimal_native_direction [
+        label="Minimal Native Direction",
+        shape=parallelogram,
+        timeout="3600s",
+        script="node scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/ux-design-direction-candidate.md --stage minimal_native_direction --out .workflow/iphone-app-ux-studio/codex/minimal-native-direction.json"
+    ]
     design_direction_join [label="Design Direction Join", shape=tripleoctagon, join_policy="wait_all"]
     design_cross_critique [
         label="Design Cross Critique",
-        class="critique",
+        shape=parallelogram,
         goal_gate=true,
         retry_target="design_direction_fanout",
-        prompt="@../../prompts/iphone-app-factory/ux-design-cross-critique.md"
+        timeout="3600s",
+        script="node scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/ux-design-cross-critique.md --stage design-cross-critique --out .workflow/iphone-app-ux-studio/codex/design-cross-critique.json"
     ]
     design_tournament_consensus [
         label="Design Tournament Consensus",
-        class="critique",
+        shape=parallelogram,
         goal_gate=true,
         retry_target="design_direction_fanout",
-        prompt="@../../prompts/iphone-app-factory/ux-design-tournament-consensus.md"
+        timeout="3600s",
+        script="node scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/ux-design-tournament-consensus.md --stage design-tournament-consensus --out .workflow/iphone-app-ux-studio/codex/design-tournament-consensus.json"
     ]
     design_tournament_gate [
         label="Design Tournament Gate",
@@ -133,17 +182,19 @@ digraph IterateExistingAppUX {
     ]
     screen_ux_spec [
         label="Screen UX Spec",
-        class="design",
+        shape=parallelogram,
         goal_gate=true,
         retry_target="design_tournament_consensus",
-        prompt="@../../prompts/iphone-app-factory/ux-screen-spec.md"
+        timeout="3600s",
+        script="node scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/ux-screen-spec.md --stage screen-ux-spec --out .workflow/iphone-app-ux-studio/codex/screen-ux-spec.json"
     ]
     implementation_plan_gate [
         label="Implementation Plan Gate",
-        class="review",
+        shape=parallelogram,
         goal_gate=true,
         retry_target="screen_ux_spec",
-        prompt="@../../prompts/iphone-app-factory/ux-implementation-plan.md"
+        timeout="3600s",
+        script="node scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/ux-implementation-plan.md --stage implementation-plan --out .workflow/iphone-app-ux-studio/codex/implementation-plan.json"
     ]
 
     implement_visual_system [
@@ -154,7 +205,14 @@ digraph IterateExistingAppUX {
         timeout="3600s",
         script="node scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/ux-implement-visual-system.md --stage visual-system --out .workflow/iphone-app-ux-studio/codex/visual-system.json"
     ]
-    verify_visual_system [label="Verify Visual System", class="verify", goal_gate=true, retry_target="implement_visual_system", prompt="@../../prompts/iphone-app-factory/ux-verify-phase.md"]
+    verify_visual_system [
+        label="Verify Visual System",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="implement_visual_system",
+        timeout="3600s",
+        script="node scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/ux-verify-phase.md --stage verify-visual-system --out .workflow/iphone-app-ux-studio/codex/verify-visual-system.json"
+    ]
     gate_visual_system [label="Visual System Gate", shape=parallelogram, goal_gate=true, retry_target="implement_visual_system", script="node scripts/iphone-app-factory/phase-evidence-gate.mjs visual-system"]
 
     implement_screen_flows [
@@ -165,15 +223,23 @@ digraph IterateExistingAppUX {
         timeout="3600s",
         script="node scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/ux-implement-screen-flows.md --stage screen-flows --out .workflow/iphone-app-ux-studio/codex/screen-flows.json"
     ]
-    verify_screen_flows [label="Verify Screen Flows", class="verify", goal_gate=true, retry_target="implement_screen_flows", prompt="@../../prompts/iphone-app-factory/ux-verify-phase.md"]
+    verify_screen_flows [
+        label="Verify Screen Flows",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="implement_screen_flows",
+        timeout="3600s",
+        script="node scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/ux-verify-phase.md --stage verify-screen-flows --out .workflow/iphone-app-ux-studio/codex/verify-screen-flows.json"
+    ]
     gate_screen_flows [label="Screen Flows Gate", shape=parallelogram, goal_gate=true, retry_target="implement_screen_flows", script="node scripts/iphone-app-factory/phase-evidence-gate.mjs screen-flows"]
 
     screenshot_evidence_review [
         label="Screenshot Evidence Review",
-        class="review",
+        shape=parallelogram,
         goal_gate=true,
         retry_target="implement_screen_flows",
-        prompt="@../../prompts/iphone-app-factory/ux-screenshot-evidence-review.md"
+        timeout="3600s",
+        script="node scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/ux-screenshot-evidence-review.md --stage screenshot-evidence-review --out .workflow/iphone-app-ux-studio/codex/screenshot-evidence-review.json"
     ]
     screenshot_evidence_gate [
         label="Screenshot Evidence Gate",
@@ -206,12 +272,42 @@ digraph IterateExistingAppUX {
     ]
 
     final_review_fanout [label="Final Review Fan-Out", shape=component, join_policy="wait_all", max_parallel=1]
-    ux_quality_review [label="UX Quality Review", class="review", prompt="@../../prompts/iphone-app-factory/ux-review-ux-quality.md"]
-    product_fidelity_review [label="Product Fidelity Review", class="review", prompt="@../../prompts/iphone-app-factory/review-product-fidelity.md"]
-    ios_architecture_review [label="iOS Architecture Review", class="review", prompt="@../../prompts/iphone-app-factory/review-ios-architecture.md"]
-    accessibility_review [label="Accessibility Review", class="review", prompt="@../../prompts/iphone-app-factory/ux-review-accessibility.md"]
-    security_privacy_review [label="Security Privacy Review", class="security", prompt="@../../prompts/iphone-app-factory/review-security-privacy.md"]
-    release_readiness_review [label="Release Readiness Review", class="review", prompt="@../../prompts/iphone-app-factory/review-release-readiness.md"]
+    ux_quality_review [
+        label="UX Quality Review",
+        shape=parallelogram,
+        timeout="3600s",
+        script="node scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/ux-review-ux-quality.md --stage ux-quality-review --out .workflow/iphone-app-ux-studio/codex/ux-quality-review.json"
+    ]
+    product_fidelity_review [
+        label="Product Fidelity Review",
+        shape=parallelogram,
+        timeout="3600s",
+        script="node scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/review-product-fidelity.md --stage product-fidelity-review --out .workflow/iphone-app-ux-studio/codex/product-fidelity-review.json"
+    ]
+    ios_architecture_review [
+        label="iOS Architecture Review",
+        shape=parallelogram,
+        timeout="3600s",
+        script="node scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/review-ios-architecture.md --stage ios-architecture-review --out .workflow/iphone-app-ux-studio/codex/ios-architecture-review.json"
+    ]
+    accessibility_review [
+        label="Accessibility Review",
+        shape=parallelogram,
+        timeout="3600s",
+        script="node scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/ux-review-accessibility.md --stage accessibility-review --out .workflow/iphone-app-ux-studio/codex/accessibility-review.json"
+    ]
+    security_privacy_review [
+        label="Security Privacy Review",
+        shape=parallelogram,
+        timeout="3600s",
+        script="node scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/review-security-privacy.md --stage security-privacy-review --out .workflow/iphone-app-ux-studio/codex/security-privacy-review.json"
+    ]
+    release_readiness_review [
+        label="Release Readiness Review",
+        shape=parallelogram,
+        timeout="3600s",
+        script="node scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/review-release-readiness.md --stage release-readiness-review --out .workflow/iphone-app-ux-studio/codex/release-readiness-review.json"
+    ]
     final_review_join [label="Final Review Join", shape=tripleoctagon, join_policy="wait_all"]
     ux_final_review_gate [
         label="UX Final Review Gate",
@@ -222,10 +318,11 @@ digraph IterateExistingAppUX {
     ]
     final_consensus [
         label="Final Consensus",
-        class="review",
+        shape=parallelogram,
         goal_gate=true,
         retry_target="final_review_fanout",
-        prompt="@../../prompts/iphone-app-factory/ux-final-consensus.md"
+        timeout="3600s",
+        script="node scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/ux-final-consensus.md --stage final-consensus --out .workflow/iphone-app-ux-studio/codex/final-consensus.json"
     ]
     publish_handoff [
         label="Publish Handoff",
@@ -236,10 +333,11 @@ digraph IterateExistingAppUX {
     ]
     postmortem_learning_capture [
         label="Postmortem Learning Capture",
-        class="review",
+        shape=parallelogram,
         goal_gate=true,
         retry_target="postmortem_learning_capture",
-        prompt="@../../prompts/iphone-app-factory/ux-postmortem-learning-capture.md"
+        timeout="3600s",
+        script="node scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/ux-postmortem-learning-capture.md --stage postmortem-learning-capture --out .workflow/iphone-app-ux-studio/codex/postmortem-learning-capture.json"
     ]
     postmortem_gate [
         label="Postmortem Gate",

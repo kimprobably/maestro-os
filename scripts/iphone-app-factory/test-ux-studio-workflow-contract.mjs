@@ -158,6 +158,7 @@ test("UX studio prompt stages route through CLI agents to avoid OpenRouter credi
   assert.match(graph, /\.design\s+\{\s*backend:\s*cli;\s*provider:\s*openai;/);
   assert.match(graph, /\.review\s+\{\s*backend:\s*cli;\s*provider:\s*openai;/);
   assert.doesNotMatch(graph, /provider:\s*openrouter/);
+  assert.doesNotMatch(graph, /prompt="@\.\.\/\.\.\/prompts\/iphone-app-factory\//);
 });
 
 test("UX studio implementation stages use CLI file-writing agents", () => {
