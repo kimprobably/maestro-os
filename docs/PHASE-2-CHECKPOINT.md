@@ -59,8 +59,10 @@ Status: in progress
   workspace without writing viewer email into artifacts.
 - Added shared Fabro project defaults in `.fabro/project.toml` for Daytona
   code-factory runs: v5 snapshot, full agent permissions, GitHub write
-  permissions, artifact capture, allow-all network, and secret-vault sandbox
-  env injection for OpenRouter, Apify, Daytona, Linear, Slack, and Fabro.
+  permissions, artifact capture, allow-all network, upstream-compatible
+  OpenRouter `openai_compatible` provider/model catalog, and sandbox env
+  injection for OpenRouter, Codex, Claude Code, Apify, Daytona, Linear, Slack,
+  and Fabro.
 - Created active Daytona snapshot `maestro-code-factory-v5` with Node 22, Bun,
   Fabro CLI, Qlty, Promptfoo, Spec Kitty, Claude Code, Codex, ShellCheck, Git,
   jq, ripgrep, Python/pipx, and unzip. Snapshot v5 installs the public Fabro
@@ -68,7 +70,9 @@ Status: in progress
   calls work inside remote sandboxes without GHCR auth. Fabro smoke run
   `01KRGS58K3WTD480RKW55KCWD4` confirmed v5 boots, `fabro --version`,
   Claude Code, Codex, GitHub egress, secret-backed env flags, and the writable
-  agent-state volume all work in a fresh Daytona sandbox.
+  agent-state volume all work in a fresh Daytona sandbox. The current upstream
+  path no longer requires that volume for baseline auth; use env/vault auth
+  first.
 - Captured useful Fabro tutorial/example patterns in
   `knowledge/fabro-workflow-patterns.md`: fanout/fan-in review, model routing,
   ensembles, sub-workflows, Clone Substack quality loops, and vague-goal
@@ -111,13 +115,19 @@ Status: in progress
   run `01KRGSV3XBHVD54Z5S7VMPQ46Q` validated, quality-checked, and registered
   all 27 workflows with zero failures inside the v5 code-factory sandbox.
 - Added Daytona persistent volume support to the Fabro fork and rebuilt the
-  local `fabro` binary. `.fabro/project.toml` now mounts the
-  `maestro-agent-auth` volume at `/home/daytona/agent-state` and sets
-  `MAESTRO_AGENT_STATE_DIR` for sandbox-side Claude/Codex auth bootstrap.
-  Daytona environment smoke run `01KRGQSYTMGFWS1SQDA0W952Q8` succeeded and the
-  created sandbox reported the mounted volume. The run also wrote
-  `volume-ready` into the mounted agent-state directory, proving the volume is
-  writable from Fabro-created Daytona sandboxes.
+  local `fabro` binary as an experiment. That PR is now optional rather than
+  blocking: upstream main supports configurable providers for OpenRouter, Codex
+  can use API-key/vault auth, and Claude Code can use
+  `CLAUDE_CODE_CREDENTIALS_JSON_BASE64`. Keep the volume work parked for workflows that
+  explicitly need persistent interactive CLI home/config state.
+- Switched the local Fabro server/path back to upstream main at
+  `1b6189ee3` and moved Maestro's OpenRouter setup onto upstream's
+  `[llm.providers.<id>] adapter = "openai_compatible"` catalog shape. The
+  server lists/tests the curated OpenRouter models, and
+  `workflows/fabro/openrouter-model-smoke.fabro` now avoids the current CLI
+  `--provider` built-in-enum filter by listing all models and testing explicit
+  model IDs. Smoke run `01KRHY5V33VHFZK74Q9HK3EMQS` passed with 7 tested, 0
+  failures, and 0 skipped.
 - Ran the full Consumer App Radar build through Fabro in Daytona. Run
   `01KRGV5B0Q9FPY3QECK79DJ7X0` completed end-to-end from spec bootstrap through
   Spec Kitty verification, live-source smoke, app generation, native checks,

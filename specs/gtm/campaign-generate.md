@@ -1,0 +1,231 @@
+# Campaign Generation Spec (Spec 4)
+
+## Purpose
+
+From a client's brain and a chosen offer, generate a **whole campaign**:
+promotional posts that drive traffic, an opt-in page, a lead magnet web
+object, a delivery email, a nurture sequence, and brand-consistent visuals.
+Each piece is a reusable **object** (a grounded node, layer 2, citing brain
+claims); a **campaign manifest** (layer 3) binds them. Every unit is grounded;
+uncited units are dropped. No review gate.
+
+This is half the buyable outcome — Spec 4 generates a campaign, Spec 5 runs
+it.
+
+## Context
+
+Depends on Specs 1–3 — objects and the campaign manifest are grounded nodes
+(Spec 1 schema, validator, index, `trace`); they cite brain claims (Spec 2/3).
+
+The product unit is the **campaign**: posts, page, magnet, emails, and visuals
+are generated *together*, around one offer and one brain, so they are
+coherent. But each piece is a **reusable object** — one object can be bound by
+several campaigns; the campaign is a manifest of citations. Generation does
+not template the artifact — 2026 models generate coherent whole artifacts;
+the structure that replaces templates is grounding (the quality floor) plus
+the fixed node container.
+
+## Non-Goals
+
+- Do not host, send, or track — Spec 5. This spec writes nodes only.
+- Do not template/archetype-constrain the lead magnet.
+- Do not personalize per prospect; campaigns are brain-level.
+- Do not publish posts to social — v0 generates post content; auto-publishing
+  is a later spec.
+- Do not gate on review; do not invent facts.
+
+## Objects
+
+An object is a grounded node — `clients/<slug>/objects/<id>.md` — with the
+Spec 1 frontmatter plus:
+
+```yaml
+type: object
+subtype: lead_magnet | optin_page | email | post | visual
+offer: "Fractional RevOps for seed-stage fintech"
+# citations[] point at brain claim ids (layer 1)
+```
+
+Id prefixes: `lm-` lead_magnet, `pg-` optin_page, `em-` email, `po-` post,
+`vi-` visual. One flat `<id>.md` per object; derived renders are same-stem
+siblings (`lm-….web.json`, `lm-….pdf`, `vi-….png`). Every distinct unit in the
+body carries an inline `<!-- grounds: cl-… -->`; the union equals
+`citations[].ref`.
+
+Subtype bodies:
+
+- **lead_magnet** — the grounded markdown content (title, promise, target
+  reader, sections). `lm-….web.json` is the rendered web object,
+  `lm-….pdf`/`.pptx` the export.
+- **optin_page** — frontmatter `headline`, `subheadline`, `og_title`,
+  `og_description`, `capture_schema`; MDX body. Owned format; Spec 5 renders
+  it. Not a thesys artifact.
+- **email** — frontmatter `role` (`delivery | nurture`), `subject`,
+  `preheader`, and for nurture `delay_hours`, `stage`
+  (`build_trust | educate | pitch`); body.
+- **post** — frontmatter `channel` (`linkedin | x | other`), `hook`, `angle`;
+  body. Drives traffic to the opt-in page.
+- **visual** — frontmatter `for` (the object id it illustrates), `prompt`;
+  `vi-….png` is the rendered image. See Visuals.
+
+## The Campaign Manifest
+
+A campaign is a grounded node — `clients/<slug>/campaigns/camp-….md` — whose
+citations are **object ids** (layer 2):
+
+```yaml
+id: camp-2026-05-16-a1b2c3
+type: campaign
+offer: "Fractional RevOps for seed-stage fintech"
+status: active               # node status — active | archived (Spec 1)
+lifecycle: generated         # campaign lifecycle — generated | live | paused
+lead_magnet_title: "The Seed-Stage Fintech RevOps Audit"
+citations:
+  - { ref: po-2026-05-16-aa11 }   # posts
+  - { ref: pg-2026-05-16-bb22 }   # opt-in page
+  - { ref: lm-2026-05-16-cc33 }   # lead magnet
+  - { ref: em-2026-05-16-dd44 }   # delivery email
+  - { ref: em-2026-05-16-ee55 }   # nurture …
+  - { ref: vi-2026-05-16-ff66 }   # visuals
+```
+
+`status` is the grounded-node status (`active`/`archived`, per Spec 1);
+`lifecycle` is the campaign-specific operational state, advanced by Spec 5
+(`live` on publish, `paused` on pause). They are distinct axes — a campaign
+can be `active` + `paused`. `campaign.toml` does not exist — the manifest is a
+markdown grounded node like everything else. Editing a bound object changes it
+for every campaign that cites it (that is reuse).
+
+## The Lead Magnet Web Object
+
+The lead magnet is a hosted interactive web object; export is a feature.
+
+- `lm-….md` (the grounded content) is generated first.
+- It is rendered to an interactive web object via the **thesys** generator,
+  persisted as `lm-….web.json`. A build-time spike (recorded in this spec's
+  ADR) decides whether thesys's SDK renders the persisted object on the live
+  page or we render an owned format. The PDF/PPTX **export** (`lm-….pdf`) is
+  produced too — a feature, the lock-in escape hatch.
+- thesys is isolated behind `integrations/thesys.ts`. On a thesys outage the
+  run still completes: `lm-….md` is written, the renders are skipped,
+  frontmatter records `render_status: pending`, the completion event flags it.
+
+## Visuals
+
+Brand-consistent images for posts, the opt-in page, and the lead magnet.
+
+- A `visual` object is generated by an image model (routed via the
+  `model_stylesheet` `.visual` class) against `knowledge/design.md` — the
+  brand file (colors, fonts, logo, imagery style) seeded in Spec 3.
+- A visual object cites the claims and the `for` object it supports; its
+  prompt must reflect `design.md`. The render is `vi-….png`.
+- Visuals are objects like any other — reusable, grounded, edited, traced.
+
+## Generation Workflow
+
+`workflows/gtm/campaign-generate.fabro` — validator-first; declares `tenant`;
+every filesystem node references `{{ inputs.tenant }}`.
+
+1. **Load** — brain claims + topic summaries, `voice.md`/`icp.md`/`design.md`;
+   resolve `offer` (input, or the top-confidence `offer` claim); resolve any
+   `reuse_objects`. Append `campaign.generate.started`.
+2. **Skip if no brain** — `campaign.generate.skipped`, exit clean.
+3. **Select** (LLM judge) — rank claims by relevance to the offer; carry the
+   offer claim plus top `icp`/`objection`/`proof`/`positioning` claims, and
+   `internal` claims about what has worked.
+4. **Plan the campaign** (LLM) — design the coherent campaign: lead magnet
+   concept, opt-in page, the email plan, the posts, and the visuals plan. The
+   step that makes every piece serve one offer.
+5. **Generate objects** (LLM, fanout) — generate each non-reused object's
+   `.md`, every unit tagged `<!-- grounds: cl-… -->`. Prompt forbids uncited
+   units and invented facts.
+6. **Validate shape**; **validate grounding** (Spec 1 validator — drop uncited
+   units; if a required object — lead magnet, opt-in page, delivery email —
+   loses all units, fail `CampaignGroundingFailed`; > 30% drop fails).
+7. **Voice check** (LLM judge, advisory — recorded, non-blocking).
+8. **Render the lead magnet web object** (thesys) + export.
+9. **Generate visuals** (image model, against `design.md`).
+10. **Write** object nodes + the campaign manifest node; respect
+    `human_edited`. Regenerate `objects/` and `campaigns/` indexes.
+11. **Emit** `campaign.generate.completed`.
+
+## Commands
+
+- `campaign.generate` — `{ tenant, offer?, leadMagnetFormat?, nurtureLength?,
+  postCount?, reuseObjects?, force?, detach? }`.
+- `campaign.list` / `campaign.show` / `campaign.remove` — remove archives the
+  manifest; bound objects are not deleted (they may be cited elsewhere);
+  refuses a `live` campaign without `--confirm`.
+- `object.list` — `{ tenant, subtype? }` — shows each object and the campaigns
+  citing it (the reverse index).
+- `object.show` / `object.remove` — `remove` refuses an object cited by a
+  `live` campaign without `--confirm`.
+
+## Fingerprint And Regeneration
+
+Campaign identity is `sha256(offer)` — re-running for the same offer
+regenerates that campaign in place. A `human_edited` object with `force=false`
+is preserved; otherwise overwritten. The index marks `grounding_stale` on any
+object/campaign citing a since-changed or archived claim.
+
+## Acceptance Criteria
+
+- `campaign.generate` for the reference tenant produces post, opt-in page,
+  lead magnet, delivery + nurture email, and visual objects, plus a campaign
+  manifest citing them — all grounded nodes.
+- Every unit carries an inline `<!-- grounds: cl-… -->`; per-object and
+  manifest citation unions are consistent; `trace.node` on the campaign walks
+  down to brain claims and their artifacts.
+- An adversarial ungrounded "social proof" unit is dropped at grounding.
+- `reuse_objects` binds an existing object without regenerating it;
+  `object.list` shows it cited by two campaigns.
+- `human_edited` is preserved across regeneration; `force` overwrites.
+- With `THESYS_API_KEY` set, the lead magnet has `.web.json` + `.pdf`; with
+  thesys unreachable the run completes and records `render_status: pending`.
+- Visual objects render against `design.md`.
+- `maestro verify workflow-quality` passes; a leaks-tenant fixture fails.
+- `evals/campaign-generate-quality.yaml` passes.
+
+## Definition Of Done
+
+- `workflows/gtm/campaign-generate.fabro` + toml runner; prompts at
+  `prompts/gtm/` (generation, campaign-plan, brand-aware visual prompt).
+- `integrations/thesys.ts` (`generateWebObject`, `exportArtifact`) with mocked
+  tests including the outage-degradation path.
+- The build-time thesys render-path spike completed; result in the ADR.
+- Commands `campaign.*`, `object.*` in the command core, tested.
+- `evals/campaign-generate-quality.yaml` covers grounding validity, campaign
+  coherence, a no-invention check, voice match, run-to-run stability, the
+  lead-magnet web object (structure + faithfulness to `lm-….md`), and visual
+  brand-consistency against `design.md`.
+- A leaks-tenant negative fixture; the reference tenant has a committed
+  example campaign.
+- `knowledge/known-gotchas.md` updated.
+- `maestro verify spec-quality specs/gtm/campaign-generate.md` passes.
+
+## Risks
+
+- **Ungrounded units.** Mitigation: the Spec 1 grounding validator,
+  required-object hard-fail, > 30%-drop fail, adversarial eval.
+- **Incoherent campaigns.** Mitigation: the explicit campaign-plan step before
+  generation; an eval coherence check.
+- **thesys dependency / pricing.** Mitigation: isolated integration, graceful
+  degradation, the export as escape hatch; pricing is due diligence.
+- **Visual quality / brand drift.** Mitigation: visuals generate against
+  `design.md`; the voice/brand check covers them; visuals are `human_edited`-
+  protectable like any object.
+- **Regeneration churn.** Mitigation: `sha256(offer)` identity; a two-run
+  stability eval.
+
+## Spec Kitty
+
+Work packages: object/campaign schemas, the campaign-plan step, generation
+prompts, the grounding integration, thesys integration + render spike, visual
+generation, fingerprint/regeneration, command-core commands, eval dataset.
+
+## ADR
+
+No ADR required for v0. The lead-magnet render-path spike result is recorded
+here. A future ADR is required before a paying tenant, covering cold-outbound
+campaign types, per-prospect personalization, and a `campaign.compose` command
+to assemble a campaign purely from existing objects.

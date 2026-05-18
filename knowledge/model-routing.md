@@ -2,16 +2,17 @@
 
 ## OpenRouter coding test set
 
-Source of truth for live model metadata is OpenRouter's `/api/v1/models` endpoint. These entries were refreshed on 2026-05-13 and added to Fabro's curated catalog so `fabro model list/test` can target them by ID or alias.
+Source of truth for live model metadata is OpenRouter's `/api/v1/models` endpoint. These entries were refreshed on 2026-05-13/14 and are defined in `.fabro/project.toml` using upstream Fabro's configurable `openai_compatible` provider support.
 
 | Role | Model ID | Alias | Context | Max Output | Input / Output $ per MTok | Notes |
 | --- | --- | --- | ---: | ---: | ---: | --- |
+| Cheap control | `anthropic/claude-haiku-4-5` | `openrouter-haiku` | 200000 | 64000 | 1.00 / 5.00 | Local Fabro ID maps to OpenRouter API ID `anthropic/claude-haiku-4.5` |
 | Kimi coding | `moonshotai/kimi-k2.6` | `openrouter-kimi` | 262142 | 262142 | 0.74 / 3.50 | Vision, tools, reasoning, reasoning effort |
 | Fast Gemini | `google/gemini-3.1-flash-lite` | `openrouter-gemini-flash-lite` | 1048576 | 65536 | 0.25 / 1.50 | Multimodal, tools, reasoning |
 | Gemini review | `google/gemini-3.1-pro-preview` | `openrouter-gemini-pro` | 1048576 | 65536 | 2.00 / 12.00 | Multimodal, tools, reasoning |
 | Qwen coding | `qwen/qwen3.6-plus` | `openrouter-qwen-plus` | 1000000 | 65536 | 0.325 / 1.95 | Multimodal, tools, reasoning |
 | DeepSeek heavy | `deepseek/deepseek-v4-pro` | `openrouter-deepseek-v4-pro` | 1048576 | 384000 | 0.435 / 0.87 | Tools, reasoning |
-| DeepSeek fast | `deepseek/deepseek-v4-flash` | `openrouter-deepseek-v4-flash` | 1048576 | 384000 | 0.14 / 0.28 | Tools, reasoning |
+| DeepSeek fast | `deepseek/deepseek-v4-flash` | `openrouter-deepseek-v4-flash` | 1048576 | 131072 | 0.126 / 0.252 | Tools, reasoning |
 
 ## Routing defaults
 
@@ -129,4 +130,4 @@ Run:
 fabro run workflows/fabro/openrouter-model-smoke.toml --no-upgrade-check
 ```
 
-The smoke workflow checks that the local Fabro server lists the curated OpenRouter set and that `fabro model test --provider openrouter` returns zero failures.
+The smoke workflow checks that the local Fabro server lists the curated OpenRouter set and tests each curated model by explicit model ID. Upstream main supports custom providers in the catalog, but the current CLI provider filter still validates against built-in provider IDs, so use `--query` or explicit `--model` for OpenRouter checks.

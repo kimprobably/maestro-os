@@ -30,14 +30,14 @@ Start with boring connectivity checks.
 
 ```bash
 curl -fsS "$FABRO_WEB_URL/health"
-fabro model list --server "$FABRO_SERVER" --provider openrouter
+fabro model list --server "$FABRO_SERVER" --query qwen
+fabro model list --server "$FABRO_SERVER" --query deepseek
 ```
 
 Expected:
 
 - `/health` returns `{"status":"ok"}`.
-- `fabro model list --provider openrouter` includes Kimi, Gemini, Qwen, and
-  DeepSeek models.
+- The queried model lists include OpenRouter Qwen and DeepSeek models.
 - The listed OpenRouter models show `configured: true`.
 
 Then run a cheap single-model test before bulk testing credits:
@@ -45,7 +45,6 @@ Then run a cheap single-model test before bulk testing credits:
 ```bash
 fabro model test \
   --server "$FABRO_SERVER" \
-  --provider openrouter \
   --model moonshotai/kimi-k2.6 \
   --no-upgrade-check
 ```

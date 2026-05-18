@@ -26,6 +26,21 @@ function runLedger(args, cwd) {
   });
 }
 
+function sqliteAvailable() {
+  return spawnSync("sqlite3", ["--version"], { encoding: "utf8" }).status === 0;
+}
+
+function sqlite(home, sql) {
+  const db = join(home, "profiles/maestro-operator/state/operator-ledger.sqlite");
+  const result = spawnSync("sqlite3", [db, sql], {
+    cwd: repoRoot,
+    encoding: "utf8",
+    stdio: ["ignore", "pipe", "pipe"],
+  });
+  assert.equal(result.status, 0, result.stderr);
+  return result.stdout.trim();
+}
+
 test("run-ledger initializes JSONL fallback and appends redacted event", () => {
   withTempHome((home) => {
     const fakeSecret = ["sk-or-v1", "secret"].join("-");
@@ -65,5 +80,37 @@ test("run-ledger initializes JSONL fallback and appends redacted event", () => {
     assert.equal(summary.status, 0, summary.stderr);
     const summaryReport = JSON.parse(summary.stdout);
     assert.equal(summaryReport.summary.failure_class, "transient_infra");
+  });
+});
+
+test("run-ledger mirrors Fabro append events into operator ledger", (t) => {
+  if (!sqliteAvailable()) t.skip("sqlite3 unavailable");
+  withTempHome((home) => {
+    const fakeSecret = ["sk-or-v1", "secret"].join("-");
+    const append = runLedger(
+      [
+        "append-event",
+        "--home",
+        home,
+        "--run-id",
+        "01MIRROR",
+        "--event-kind",
+        "status_changed",
+        "--current-status",
+        "running",
+        "--next-action",
+        "poll",
+        "--payload-json",
+        JSON.stringify({ OPENROUTER_API_KEY: fakeSecret, note: "started" }),
+      ],
+      repoRoot,
+    );
+    assert.equal(append.status, 0, append.stderr);
+
+    assert.equal(sqlite(home, "SELECT subject_type || ':' || subject_key FROM ledger_subjects WHERE subject_type='fabro_run';"), "fabro_run:01MIRROR");
+    assert.equal(sqlite(home, "SELECT event_type FROM ledger_events WHERE subject_type='fabro_run' AND subject_key='01MIRROR';"), "fabro.status_changed");
+    const payload = sqlite(home, "SELECT payload_json FROM ledger_events WHERE subject_type='fabro_run' AND subject_key='01MIRROR';");
+    assert.match(payload, /\[redacted\]/);
+    assert.doesNotMatch(payload, new RegExp(fakeSecret));
   });
 });

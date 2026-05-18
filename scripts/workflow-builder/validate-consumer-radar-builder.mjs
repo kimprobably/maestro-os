@@ -37,11 +37,14 @@ const hasMarkers = [
 );
 const hasProjectEnv =
   project.includes("[run.sandbox.env]") &&
-  project.includes("${{ secrets.APIFY_TOKEN }}") &&
-  project.includes("${{ secrets.OPENROUTER_API_KEY }}") &&
+  project.includes("{{ env.APIFY_TOKEN }}") &&
+  project.includes("{{ env.OPENROUTER_API_KEY }}") &&
+  project.includes("{{ env.OPENAI_API_KEY }}") &&
+  project.includes("{{ env.CLAUDE_CODE_OAUTH_TOKEN }}") &&
+  project.includes("{{ env.CLAUDE_CODE_CREDENTIALS_JSON_BASE64 }}") &&
   project.includes('network = "allow_all"') &&
-  project.includes('MAESTRO_AGENT_STATE_DIR = "/home/daytona/agent-state"') &&
-  project.includes("[[run.sandbox.daytona.volumes]]");
+  project.includes("[llm.providers.openrouter]") &&
+  project.includes('adapter = "openai_compatible"');
 const leaks = /apify_api_|sk-or-v1-|xoxb-|xapp-/.test(
   project + workflow + toml,
 );

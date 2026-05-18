@@ -235,3 +235,51 @@ test("run-codex-prompt installs Codex MCP credentials without printing them", ()
     assert.doesNotMatch(JSON.stringify(report), /codex-mcp-secret-value/);
   });
 });
+
+test("run-codex-prompt evaluates call artifacts when launched outside repo cwd", () => {
+  withTempDir((dir) => {
+    const promptPath = join(dir, "prompt.md");
+    const lastMessagePath = join(dir, ".workflow/codex/eval.last-message.md");
+    const evalOutPath = join(dir, "reports/evals/local/test.call.json");
+    writeFileSync(promptPath, "Evaluate this model call.");
+    mkdirSync(dirname(lastMessagePath), { recursive: true });
+    const fakeBin = writeFakeCodex(
+      dir,
+      [
+        "while [ \"$#\" -gt 0 ]; do",
+        "  if [ \"$1\" = \"--output-last-message\" ]; then shift; printf '%s\\n' 'Implemented the requested feature and wrote verification artifacts.' > \"$1\"; fi",
+        "  shift",
+        "done",
+        "cat >/dev/null; printf 'codex ok\\n'",
+      ].join("\n"),
+    );
+
+    const result = run(
+      dir,
+      [
+        "--prompt",
+        promptPath,
+        "--stage",
+        "eval-hook",
+        "--out",
+        ".workflow/codex/eval.json",
+        "--last-message-out",
+        lastMessagePath,
+        "--eval-id",
+        "iphone-feature.implementation.call",
+        "--eval-out",
+        evalOutPath,
+      ],
+      {
+        PATH: `${fakeBin}${delimiter}${process.env.PATH}`,
+      },
+    );
+
+    assert.equal(result.status, 0, result.stderr || result.stdout);
+    const report = JSON.parse(readFileSync(join(dir, ".workflow/codex/eval.json"), "utf8"));
+    const evalResult = JSON.parse(readFileSync(evalOutPath, "utf8"));
+    assert.equal(report.eval_id, "iphone-feature.implementation.call");
+    assert.equal(report.normalized_eval_result_path, evalOutPath);
+    assert.equal(evalResult.gate_status, "passed");
+  });
+});

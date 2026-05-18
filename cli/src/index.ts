@@ -450,6 +450,23 @@ async function verifySpecQuality(args: string[]) {
   if (!existsSync(path)) throw new CliError(`File not found: ${pathArg}`);
 
   const content = readFileSync(path, "utf8");
+
+  const placeholderPatterns: Array<[string, RegExp]> = [
+    ["placeholder_spec", /placeholder spec generated/i],
+    ["placeholder_purpose", /^[-\s*]*placeholder purpose\b/im],
+    ["placeholder_criterion", /^[-\s*]*placeholder criterion\b/im],
+    ["placeholder_task", /^[-\s*]*placeholder task\b/im]
+  ];
+  const placeholderHits = placeholderPatterns
+    .filter(([, pattern]) => pattern.test(content))
+    .map(([name]) => name);
+  if (placeholderHits.length > 0) {
+    throw new CliError(
+      `Spec contains placeholder text and is not commit-ready: ${placeholderHits.join(", ")}`,
+      { exitCode: 1, code: "spec_placeholder_detected", retryable: false }
+    );
+  }
+
   const required = [
     ["purpose", /^#{1,4}\s+(purpose|goal|overview)\b/im],
     ["context", /^#{1,4}\s+context\b/im],
@@ -1524,7 +1541,7 @@ function fabroGithubCheck(): DoctorCheck {
 }
 
 function openRouterModelsCheck(): DoctorCheck {
-  const result = runCheck("fabro", ["model", "list", "--provider", "openrouter", "--json"]);
+  const result = runCheck("fabro", ["model", "list", "--json", "--no-upgrade-check"]);
   if (!result.ok) return { id: "openrouter_models", status: "fail", detail: result.detail };
 
   const parsed = tryParseJson(result.stdout);
@@ -1535,6 +1552,7 @@ function openRouterModelsCheck(): DoctorCheck {
   const models = new Map(
     parsed
       .filter((item): item is JsonObject => Boolean(item) && typeof item === "object" && !Array.isArray(item))
+      .filter((item) => item.provider === "openrouter")
       .map((item) => [String(item.id), item])
   );
   const missing = OPENROUTER_TEST_MODELS.filter((id) => !models.has(id));

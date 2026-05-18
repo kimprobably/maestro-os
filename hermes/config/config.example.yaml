@@ -1,0 +1,237 @@
+# Replace placeholder Slack channel IDs before starting the gateway.
+
+model:
+  provider: openai-codex
+  default: openai-codex/gpt-5.5
+
+agent:
+  max_turns: 30
+  reasoning_effort: xhigh
+
+compression:
+  enabled: true
+  threshold: 0.50
+  target_ratio: 0.10
+  protect_last_n: 10
+  hygiene_hard_message_limit: 150
+
+auxiliary:
+  compression:
+    provider: auto
+    model: ""
+    timeout: 60
+    extra_body: {}
+  session_search:
+    provider: auto
+    model: ""
+    timeout: 20
+    extra_body: {}
+    max_concurrency: 1
+
+memory:
+  memory_enabled: true
+  user_profile_enabled: true
+  memory_char_limit: 2200
+  user_char_limit: 1375
+  nudge_interval: 4
+  provider: ""
+
+skills:
+  external_dirs: []
+  template_vars: true
+  inline_shell: false
+  inline_shell_timeout: 10
+  guard_agent_created: true
+  creation_nudge_interval: 4
+
+curator:
+  enabled: true
+  interval_hours: 24
+  min_idle_hours: 1
+  stale_after_days: 30
+  archive_after_days: 90
+  backup:
+    enabled: true
+    keep: 5
+
+delegation:
+  reasoning_effort: xhigh
+  max_iterations: 30
+  child_timeout_seconds: 900
+  inherit_mcp_toolsets: true
+
+terminal:
+  backend: local
+  cwd: /app
+  timeout: 180
+
+toolsets:
+  - hermes-cli
+  - skills
+  - memory
+  - todo
+  - cronjob
+  - delegation
+
+group_sessions_per_user: true
+unauthorized_dm_behavior: pair
+
+slack:
+  require_mention: true
+  strict_mention: false
+  channel_prompts:
+    "C0AHCRH4EP4": |
+      You are in Maestro operator home. Prefer status, decisions, exceptions, and approval requests.
+      Route durable work to Kanban or Fabro. Keep process lightweight. Do not dump logs or secrets.
+    "C_AGENT_CONTROL": |
+      You are in Maestro agent control. Prefer status, decisions, exceptions, and approval requests.
+      Do not dump logs or secrets.
+    "C_MAESTRO": |
+      You are the Maestro business operator. Route durable work to Kanban or Fabro. Keep process lightweight.
+    "C_FABRO_RUNS": |
+      You are operating Fabro runs. Use the run ledger. Inspect evidence before acting.
+    "C_EMAIL_DRAFTS": |
+      You are Johann. Draft only unless an explicit send approval exists.
+    "C_DEPLOYS": |
+      You are Smith. Deploys require evidence and production approval.
+    "C_PAYMENTS": |
+      Payments channel. Default to read-only Stripe actions. Mutations require explicit approval.
+    "C_OUTBOUND": |
+      You are Quill. Draft and inspect by default. Sends/imports require explicit approval.
+    "C_CODE": |
+      You are Smith in code mode. Use Daytona/Codex worker lanes for code changes and require review/test evidence.
+  channel_skill_bindings:
+    - id: "C0AHCRH4EP4"
+      skills:
+        - maestro-memory
+        - maestro-skill-governance
+        - maestro-integrations
+        - maestro-spec-planning
+        - fabro-babysitter
+    - id: "C_AGENT_CONTROL"
+      skills:
+        - maestro-memory
+        - maestro-skill-governance
+        - maestro-integrations
+        - maestro-spec-planning
+        - fabro-babysitter
+    - id: "C_MAESTRO"
+      skills:
+        - maestro-memory
+        - maestro-skill-governance
+        - maestro-integrations
+        - maestro-spec-planning
+        - fabro-babysitter
+    - id: "C_FABRO_RUNS"
+      skills:
+        - fabro-babysitter
+    - id: "C_EMAIL_DRAFTS"
+      skills:
+        - maestro-memory
+    - id: "C_DEPLOYS"
+      skills:
+        - fabro-babysitter
+    - id: "C_OUTBOUND"
+      skills:
+        - maestro-memory
+    - id: "C_CODE"
+      skills:
+        - maestro-skill-governance
+        - maestro-integrations
+        - maestro-spec-planning
+        - fabro-babysitter
+
+platforms:
+  slack:
+    reply_to_mode: first
+    extra:
+      reply_in_thread: true
+      reply_broadcast: false
+
+mcp_servers:
+  fabro:
+    # Fabro's MCP server is stdio-based; the CLI process talks to the
+    # hosted Railway Fabro API through the normal authenticated CLI store.
+    command: fabro
+    args:
+      - mcp
+      - start
+      - --server
+      - "${FABRO_SERVER}"
+    timeout: 300
+    connect_timeout: 60
+    tools:
+      include:
+        - fabro_run_create
+        - fabro_run_search
+        - fabro_run_interact
+        - fabro_run_events
+        - fabro_run_gather
+      resources: false
+      prompts: false
+
+  linear:
+    enabled: false
+    command: linear-mcp
+    args: []
+    tools:
+      include:
+        - list_issues
+        - get_issue
+        - create_issue
+        - update_issue
+      resources: false
+      prompts: false
+
+  mobbin:
+    enabled: false
+    url: "${MOBBIN_MCP_URL}"
+    auth: oauth
+    connect_timeout: 300
+    timeout: 180
+    tools:
+      resources: false
+      prompts: false
+
+  stitch:
+    enabled: false
+    url: "${STITCH_MCP_URL}"
+    headers:
+      X-Goog-Api-Key: "${STITCH_API_KEY}"
+    connect_timeout: 300
+    timeout: 180
+    tools:
+      resources: false
+      prompts: false
+
+  stripe:
+    enabled: false
+    url: "https://stripe-mcp.example.com/mcp"
+    tools:
+      exclude:
+        - create_refund
+        - create_payment
+        - delete_customer
+      resources: false
+      prompts: false
+
+  beehiiv:
+    enabled: false
+    url: "https://beehiiv-mcp.example.com/mcp"
+    tools:
+      exclude:
+        - send_campaign
+        - publish_post
+      resources: false
+      prompts: false
+
+  outbound:
+    enabled: false
+    url: "https://outbound-mcp.example.com/mcp"
+    tools:
+      exclude:
+        - send_email
+        - start_campaign
+        - import_contacts
+      resources: false
+      prompts: false

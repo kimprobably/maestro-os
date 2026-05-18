@@ -2,6 +2,7 @@
 import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { spawnSync } from "node:child_process";
 import { dirname, resolve } from "node:path";
+import { writeNormalizedResult } from "../evals/eval-lib.mjs";
 
 function argValue(name, fallback) {
   const index = process.argv.indexOf(name);
@@ -18,6 +19,10 @@ function booleanArg(name, fallback) {
 const config = argValue("--config", "evals/iphone-app-factory/prompt-quality.yaml");
 const registryPath = argValue("--registry", "evals/iphone-app-factory/prompt-registry.json");
 const outPath = resolve(argValue("--out", ".workflow/iphone-app-factory/evals/prompt-quality.json"));
+const normalizedOutPath = resolve(argValue(
+  "--normalized-out",
+  `reports/evals/${process.env.FABRO_RUN_ID || "local"}/iphone-factory.prompt-quality.json`,
+));
 const allowFallback = booleanArg("--allow-fallback", true);
 const acceptedRiskPromptfooFailure = booleanArg("--accepted-risk-promptfoo-failure", false);
 const legacyAllowPromptfooFallbackRequested = booleanArg("--allow-promptfoo-fallback", false);
@@ -188,11 +193,9 @@ for (const entry of registry.prompts || []) {
   }
 }
 
-const workflowText = [
-  "workflows/iphone-app-factory/build-iphone-app.fabro",
-  "workflows/iphone-app-factory/iterate-existing-app-ux.fabro",
-]
-  .filter((path) => existsSync(path))
+const workflowText = readdirSync("workflows/iphone-app-factory")
+  .filter((name) => name.endsWith(".fabro"))
+  .map((name) => `workflows/iphone-app-factory/${name}`)
   .map((path) => readFileSync(path, "utf8"))
   .join("\n");
 for (const entry of registry.prompts || []) {
@@ -229,6 +232,17 @@ const promptfooUnavailableReason = promptfooMissingEnv.length > 0
     : promptfooCheck.reason;
 const promptfooSummary = promptfooResult ? readPromptfooSummary() : { promptfoo_failures: [], critical_gaps: [] };
 const ok = fallbackOk && (promptfooOk || allowPromptfooFallback);
+const promptfooWaiverAccepted = !promptfooOk && fallbackOk && acceptedRiskPromptfooFailure;
+const promptfooWaiver = promptfooWaiverAccepted
+  ? {
+      waiver_id: `iphone-factory.prompt-quality:${process.env.FABRO_RUN_ID || "local"}:accepted-risk-promptfoo-failure`,
+      accepted_by: process.env.USER || process.env.LOGNAME || "operator",
+      reason: "--accepted-risk-promptfoo-failure was supplied for this run",
+      risk_statement: "The primary Promptfoo runner did not pass, so prompt quality is accepted only with explicit risk.",
+      review_by: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
+      compensating_control: "Deterministic prompt registry, marker coverage, and golden dataset fallback checks passed.",
+    }
+  : null;
 const report = {
   ok,
   registry_path: registryPath,
@@ -258,4 +272,22 @@ const report = {
 };
 
 writeReport(report);
+writeNormalizedResult(normalizedOutPath, {
+  eval_id: "iphone-factory.prompt-quality",
+  level: "workflow",
+  runner: "promptfoo",
+  workflow: "iphone-app-factory",
+  runner_status: promptfooOk ? "passed" : promptfooFailed ? "failed" : "skipped",
+  fallback_status: promptfooOk ? "not_used" : fallbackOk ? "passed" : "failed",
+  waiver_status: promptfooWaiverAccepted ? "accepted" : "none",
+  score: promptfooOk ? 1 : promptfooFailed ? 0 : null,
+  artifact_uris: [outPath, config],
+  metadata: {
+    promptfoo_status: report.promptfoo_status,
+    fallback_failures: fallbackFailures,
+    promptfoo_missing_env: promptfooMissingEnv,
+    accepted_risk_promptfoo_failure: acceptedRiskPromptfooFailure,
+    ...(promptfooWaiver ? { waiver: promptfooWaiver } : {}),
+  },
+});
 if (!ok) process.exit(1);

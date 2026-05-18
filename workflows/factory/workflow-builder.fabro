@@ -58,6 +58,14 @@ digraph WorkflowBuilder {
         script="for i in $(seq 1 90); do if [ -f scripts/workflow-builder/materialize-consumer-radar.mjs ] && [ -f scripts/workflow-builder/materialize-app-feedback-enhancement.mjs ] && [ -f scripts/workflow-builder/materialize-enhancement-discovery.mjs ]; then echo builder-files-ready; exit 0; fi; sleep 2; done; echo 'missing builder support files' >&2; exit 1"
     ]
 
+    eval_registry_gate [
+        label="Eval Registry Gate",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="define_quality_bar",
+        script="node scripts/evals/validate-registry.mjs && node scripts/evals/verify-workflow-eval-coverage.mjs --registry evals/registry.yaml --workflow workflows/factory/workflow-builder.fabro"
+    ]
+
     validate_generated [
         label="Validate Generated Workflow",
         shape=parallelogram,
@@ -101,8 +109,10 @@ digraph WorkflowBuilder {
     start -> define_quality_bar
     define_quality_bar -> wait_for_builder_files [condition="outcome=succeeded"]
     define_quality_bar -> define_quality_bar [label="Retry", loop_restart=true]
-    wait_for_builder_files -> materialize_consumer_radar [condition="outcome=succeeded"]
+    wait_for_builder_files -> eval_registry_gate [condition="outcome=succeeded"]
     wait_for_builder_files -> wait_for_builder_files [label="Retry", loop_restart=true]
+    eval_registry_gate -> materialize_consumer_radar [condition="outcome=succeeded"]
+    eval_registry_gate -> define_quality_bar [label="Fix"]
     materialize_consumer_radar -> materialize_app_feedback_enhancement [condition="outcome=succeeded"]
     materialize_consumer_radar -> materialize_consumer_radar [label="Retry", loop_restart=true]
     materialize_app_feedback_enhancement -> materialize_enhancement_discovery [condition="outcome=succeeded"]

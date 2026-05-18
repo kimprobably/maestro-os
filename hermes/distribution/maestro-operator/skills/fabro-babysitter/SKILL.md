@@ -30,6 +30,18 @@ Fabro is eventually consistent. Do not trust any single surface. The source of t
 - Do not discard a failed Daytona sandbox until sandbox state and `git status` have been inspected through an approved recovery path.
 - Do not call code work done without review and tests/gates.
 
+## Eval Accounting Checklist
+
+For every Fabro run or workflow-building task:
+
+1. Run or inspect `node scripts/evals/validate-registry.mjs`.
+2. Run or inspect workflow coverage for touched `.fabro` files.
+3. Collect normalized eval results into `reports/eval-index.json`.
+4. Report missing blocking evals.
+5. Report fallback-only evals separately from passing evals.
+6. Require an accepted-risk waiver before treating a fallback-only eval as complete.
+7. For changed evals, require a counterexample or meta-eval.
+
 ## Ledger Fields
 
 Maintain these fields for each active run:

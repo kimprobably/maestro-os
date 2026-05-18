@@ -128,22 +128,26 @@ if (/apify_api_|sk-or-v1-|xoxb-|xapp-/.test(workflow + toml + project + spec)) {
 }
 if (
   !project.includes("[run.sandbox.env]") ||
-  !project.includes("${{ secrets.APIFY_TOKEN }}") ||
-  !project.includes("${{ secrets.OPENROUTER_API_KEY }}")
+  !project.includes("{{ env.APIFY_TOKEN }}") ||
+  !project.includes("{{ env.OPENROUTER_API_KEY }}") ||
+  !project.includes("{{ env.OPENAI_API_KEY }}") ||
+  !project.includes("{{ env.CLAUDE_CODE_OAUTH_TOKEN }}") ||
+  !project.includes("{{ env.CLAUDE_CODE_CREDENTIALS_JSON_BASE64 }}")
 ) {
   throw new Error(
-    "generated project config must inject sandbox secrets by vault reference",
+    "generated project config must inject sandbox auth through upstream env references",
   );
 }
 if (
   !project.includes('network = "allow_all"') ||
-  !project.includes('name = "maestro-code-factory-v5"') ||
-  !project.includes('MAESTRO_AGENT_STATE_DIR = "/home/daytona/agent-state"') ||
-  !project.includes("[[run.sandbox.daytona.volumes]]") ||
+  !project.includes('name = "maestro-code-factory-v6"') ||
+  !project.includes("[llm.providers.openrouter]") ||
+  !project.includes('adapter = "openai_compatible"') ||
+  !project.includes('api_id = "anthropic/claude-haiku-4.5"') ||
   !project.includes("fabro --version")
 ) {
   throw new Error(
-    "generated project config must define the shared Daytona code-factory environment",
+    "generated project config must define the upstream-compatible Daytona/OpenRouter environment",
   );
 }
 if (toml.includes("[run.sandbox.daytona.snapshot]")) {

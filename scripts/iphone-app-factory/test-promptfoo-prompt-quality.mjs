@@ -21,6 +21,7 @@ function withTempDir(fn) {
 test("promptfoo prompt quality fallback requires structured JSON config and WakeTask golden cases", () => {
   withTempDir((dir) => {
     const out = join(dir, "prompt-quality.json");
+    const normalizedOut = join(dir, "normalized-prompt-quality.json");
     const result = spawnSync(process.execPath, [
       script,
       "--skip-promptfoo",
@@ -29,6 +30,8 @@ test("promptfoo prompt quality fallback requires structured JSON config and Wake
       "true",
       "--out",
       out,
+      "--normalized-out",
+      normalizedOut,
     ], {
       cwd: repoRoot,
       encoding: "utf8",
@@ -54,12 +57,15 @@ test("promptfoo prompt quality fallback requires structured JSON config and Wake
 test("promptfoo prompt quality fails closed when promptfoo is skipped without accepted risk", () => {
   withTempDir((dir) => {
     const out = join(dir, "prompt-quality.json");
+    const normalizedOut = join(dir, "normalized-prompt-quality.json");
     const result = spawnSync(process.execPath, [
       script,
       "--skip-promptfoo",
       "true",
       "--out",
       out,
+      "--normalized-out",
+      normalizedOut,
     ], {
       cwd: repoRoot,
       encoding: "utf8",

@@ -3,6 +3,7 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { spawnSync } from "node:child_process";
 import { dirname, join, resolve } from "node:path";
 import { homedir } from "node:os";
+import { fileURLToPath } from "node:url";
 
 function argValue(name, fallback = null) {
   const index = process.argv.indexOf(name);
@@ -11,6 +12,10 @@ function argValue(name, fallback = null) {
   if (!value || value.startsWith("--")) throw new Error(`Missing value for ${name}`);
   return value;
 }
+
+const here = dirname(fileURLToPath(import.meta.url));
+const repoRoot = resolve(here, "../..");
+const callArtifactEvaluatorPath = join(repoRoot, "scripts/evals/evaluate-call-artifact.mjs");
 
 function secretQueryParameterName(name) {
   let decoded = String(name).replace(/\+/g, " ");
@@ -148,8 +153,10 @@ function ensureCodexMobbinMcp(stageName) {
 
 const promptPath = resolve(argValue("--prompt"));
 const stage = argValue("--stage", "codex-prompt");
+const evalId = argValue("--eval-id", process.env.EVAL_ID || null);
 const model = argValue("--model", "gpt-5.3-codex");
 const outPath = resolve(argValue("--out", `.workflow/iphone-app-ux-studio/codex/${stage}.json`));
+const evalOutPath = resolve(argValue("--eval-out", `reports/evals/${process.env.FABRO_RUN_ID || "local"}/${evalId || stage}.json`));
 const renderedPromptPath = resolve(argValue("--rendered-prompt-out", `.workflow/iphone-app-ux-studio/codex/${stage}.prompt.md`));
 const lastMessagePath = resolve(argValue("--last-message-out", `.workflow/iphone-app-ux-studio/codex/${stage}.last-message.md`));
 const timeoutMs = Number(argValue("--timeout-ms", process.env.CODEX_EXEC_TIMEOUT_MS || "3600000"));
@@ -232,6 +239,8 @@ const report = {
   signal: result ? result.signal || null : null,
   stdout_excerpt: result ? redactString(result.stdout).slice(-3000) : "",
   stderr_excerpt: result ? redactString(result.stderr).slice(-3000) : "",
+  eval_id: evalId,
+  normalized_eval_result_path: evalId ? evalOutPath : null,
   codex_auth_installed: codexAuthInstalled,
   codex_mcp_credentials_installed: codexMcpCredentialsInstalled,
   codex_mobbin_mcp: codexMobbinMcp,
@@ -239,6 +248,25 @@ const report = {
 };
 
 writeReport(outPath, report);
+
+if (evalId) {
+  const evalResult = spawnSync(process.execPath, [
+    callArtifactEvaluatorPath,
+    "--eval-id",
+    evalId,
+    "--call-report",
+    outPath,
+    "--last-message",
+    lastMessagePath,
+    "--out",
+    evalOutPath,
+  ], { encoding: "utf8", stdio: "inherit" });
+
+  if (evalResult.status !== 0) {
+    if (!report.ok) console.error(JSON.stringify(report, null, 2));
+    process.exit(evalResult.status || 1);
+  }
+}
 
 if (!report.ok) {
   console.error(JSON.stringify(report, null, 2));

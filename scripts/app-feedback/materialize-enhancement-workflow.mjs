@@ -278,11 +278,11 @@ preserve = true
 stop_on_terminal = true
 
 [run.sandbox.env]
-APIFY_TOKEN = "\${{ secrets.APIFY_TOKEN }}"
+APIFY_TOKEN = "{{ env.APIFY_TOKEN }}"
 APIFY_APPSTORE_ACTOR = "crawlerbros/appstore-scraper"
 APIFY_TIKTOK_ACTOR = "clockworks/tiktok-scraper"
 APIFY_INSTAGRAM_ACTOR = "apify/instagram-scraper"
-OPENROUTER_API_KEY = "\${{ secrets.OPENROUTER_API_KEY }}"
+OPENROUTER_API_KEY = "{{ env.OPENROUTER_API_KEY }}"
 
 [run.sandbox.daytona]
 auto_stop_interval = 60

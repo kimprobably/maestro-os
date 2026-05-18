@@ -15,7 +15,7 @@ const modelCosts = {
   "moonshotai/kimi-k2.6": { input: 0.74, output: 3.5 },
   "qwen/qwen3.6-plus": { input: 0.325, output: 1.95 },
   "deepseek/deepseek-v4-pro": { input: 0.435, output: 0.87 },
-  "deepseek/deepseek-v4-flash": { input: 0.14, output: 0.28 }
+  "deepseek/deepseek-v4-flash": { input: 0.126, output: 0.252 }
 };
 
 function loadDotEnv() {

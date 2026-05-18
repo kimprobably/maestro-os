@@ -1,5 +1,183 @@
 _version = 1
 
+[llm.providers.openrouter]
+display_name = "OpenRouter"
+adapter = "openai_compatible"
+base_url = "https://openrouter.ai/api/v1"
+credentials = ["env:OPENROUTER_API_KEY"]
+priority = 10
+aliases = ["or"]
+
+[llm.models."anthropic/claude-haiku-4-5"]
+provider = "openrouter"
+api_id = "anthropic/claude-haiku-4.5"
+display_name = "OpenRouter Claude Haiku 4.5"
+family = "claude-haiku"
+default = true
+aliases = ["openrouter-haiku"]
+estimated_output_tps = 100
+
+[llm.models."anthropic/claude-haiku-4-5".limits]
+context_window = 200000
+max_output = 64000
+
+[llm.models."anthropic/claude-haiku-4-5".features]
+tools = true
+vision = false
+reasoning = true
+reasoning_effort = "levels"
+
+[llm.models."anthropic/claude-haiku-4-5".controls]
+reasoning_effort = ["low", "medium", "high"]
+
+[llm.models."anthropic/claude-haiku-4-5".costs]
+input_cost_per_mtok = 1.00
+output_cost_per_mtok = 5.00
+
+[llm.models."moonshotai/kimi-k2.6"]
+provider = "openrouter"
+display_name = "OpenRouter Kimi K2.6"
+family = "kimi"
+aliases = ["openrouter-kimi"]
+estimated_output_tps = 60
+
+[llm.models."moonshotai/kimi-k2.6".limits]
+context_window = 262142
+max_output = 262142
+
+[llm.models."moonshotai/kimi-k2.6".features]
+tools = true
+vision = true
+reasoning = true
+reasoning_effort = "levels"
+
+[llm.models."moonshotai/kimi-k2.6".controls]
+reasoning_effort = ["low", "medium", "high"]
+
+[llm.models."moonshotai/kimi-k2.6".costs]
+input_cost_per_mtok = 0.74
+output_cost_per_mtok = 3.50
+
+[llm.models."google/gemini-3.1-flash-lite"]
+provider = "openrouter"
+display_name = "OpenRouter Gemini 3.1 Flash Lite"
+family = "gemini"
+aliases = ["openrouter-gemini-flash-lite"]
+estimated_output_tps = 200
+
+[llm.models."google/gemini-3.1-flash-lite".limits]
+context_window = 1048576
+max_output = 65536
+
+[llm.models."google/gemini-3.1-flash-lite".features]
+tools = true
+vision = true
+reasoning = true
+reasoning_effort = "levels"
+
+[llm.models."google/gemini-3.1-flash-lite".controls]
+reasoning_effort = ["low", "medium", "high"]
+
+[llm.models."google/gemini-3.1-flash-lite".costs]
+input_cost_per_mtok = 0.25
+output_cost_per_mtok = 1.50
+
+[llm.models."google/gemini-3.1-pro-preview"]
+provider = "openrouter"
+display_name = "OpenRouter Gemini 3.1 Pro Preview"
+family = "gemini"
+aliases = ["openrouter-gemini-pro"]
+estimated_output_tps = 85
+
+[llm.models."google/gemini-3.1-pro-preview".limits]
+context_window = 1048576
+max_output = 65536
+
+[llm.models."google/gemini-3.1-pro-preview".features]
+tools = true
+vision = true
+reasoning = true
+reasoning_effort = "levels"
+
+[llm.models."google/gemini-3.1-pro-preview".controls]
+reasoning_effort = ["low", "medium", "high"]
+
+[llm.models."google/gemini-3.1-pro-preview".costs]
+input_cost_per_mtok = 2.00
+output_cost_per_mtok = 12.00
+
+[llm.models."qwen/qwen3.6-plus"]
+provider = "openrouter"
+display_name = "OpenRouter Qwen3.6 Plus"
+family = "qwen"
+aliases = ["openrouter-qwen-plus"]
+estimated_output_tps = 100
+
+[llm.models."qwen/qwen3.6-plus".limits]
+context_window = 1000000
+max_output = 65536
+
+[llm.models."qwen/qwen3.6-plus".features]
+tools = true
+vision = true
+reasoning = true
+reasoning_effort = "levels"
+
+[llm.models."qwen/qwen3.6-plus".controls]
+reasoning_effort = ["low", "medium", "high"]
+
+[llm.models."qwen/qwen3.6-plus".costs]
+input_cost_per_mtok = 0.325
+output_cost_per_mtok = 1.95
+
+[llm.models."deepseek/deepseek-v4-pro"]
+provider = "openrouter"
+display_name = "OpenRouter DeepSeek V4 Pro"
+family = "deepseek"
+aliases = ["openrouter-deepseek-v4-pro"]
+estimated_output_tps = 100
+
+[llm.models."deepseek/deepseek-v4-pro".limits]
+context_window = 1048576
+max_output = 384000
+
+[llm.models."deepseek/deepseek-v4-pro".features]
+tools = true
+vision = false
+reasoning = true
+reasoning_effort = "levels"
+
+[llm.models."deepseek/deepseek-v4-pro".controls]
+reasoning_effort = ["low", "medium", "high"]
+
+[llm.models."deepseek/deepseek-v4-pro".costs]
+input_cost_per_mtok = 0.435
+output_cost_per_mtok = 0.87
+
+[llm.models."deepseek/deepseek-v4-flash"]
+provider = "openrouter"
+display_name = "OpenRouter DeepSeek V4 Flash"
+family = "deepseek"
+aliases = ["openrouter-deepseek-v4-flash"]
+estimated_output_tps = 150
+
+[llm.models."deepseek/deepseek-v4-flash".limits]
+context_window = 1048576
+max_output = 131072
+
+[llm.models."deepseek/deepseek-v4-flash".features]
+tools = true
+vision = false
+reasoning = true
+reasoning_effort = "levels"
+
+[llm.models."deepseek/deepseek-v4-flash".controls]
+reasoning_effort = ["low", "medium", "high"]
+
+[llm.models."deepseek/deepseek-v4-flash".costs]
+input_cost_per_mtok = 0.126
+output_cost_per_mtok = 0.252
+
 [server.web]
 enabled = true
 url = "{{ env.FABRO_WEB_URL }}"

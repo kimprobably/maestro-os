@@ -35,10 +35,10 @@ ghcr.io/modernagencysales/fabro-maestro@sha256:922abef2bfbbc0e64c1cb1756938df9ca
 ```
 
 Current access note: anonymous GHCR pull returned `403`, so Railway could not
-pull the private GHCR image directly. The live Railway deployment was created by
-uploading a minimal Docker source context that contains the Maestro Linux binary
-extracted from the authenticated GHCR image. Keep using that path until the GHCR
-package is made public or Railway private registry credentials are configured.
+pull the private GHCR image directly. The current live deployment was created by
+uploading a Docker source context from the patched upstream Fabro worktree and
+building on Railway. That build runs the Fabro web SPA build before compiling
+`fabro-cli`, so the dashboard assets are embedded into the release binary.
 
 Live Railway service:
 
@@ -47,19 +47,49 @@ Project: maestro-fabro (ff0c7d8c-ae9b-40a5-a1e1-3574961f971a)
 Service: fabro-maestro (05455cb4-4d37-4e32-abf5-ff4b8665bffd)
 URL: https://fabro-maestro-production.up.railway.app
 Volume: fabro-maestro-volume mounted at /storage
-Deployment: 2074ed44-da1f-4d4a-8de1-4f58ad9ec825
+Deployment: 6157f5df-e595-41ea-aea2-7e5e23917b0d
 ```
 
 Engineer first-test guide: [`ENGINEER-TESTING.md`](./ENGINEER-TESTING.md).
 
 ## Required Railway Setup
 
-1. Create a Railway service from a Docker image or upload the minimal Docker
-   source context while GHCR remains private.
+1. Create a Railway service from a Docker image or upload the Docker source
+   context while GHCR remains private.
 2. Attach a Railway Volume mounted at `/storage`.
 3. Keep a single replica. Fabro currently assumes one process owns `/storage`.
 4. Let Railway provide `$PORT`; the Fabro image honors it.
 5. Add environment variables in Railway's Variables tab or raw editor.
+
+## Source Context Deploy
+
+Use this path while the Maestro image is private or while testing local patches
+that have not been published as an image.
+
+```bash
+WORKTREE="/path/to/fabro-upstream-main-or-maestro-worktree"
+CONTEXT="/tmp/fabro-railway-source"
+
+rm -rf "$CONTEXT"
+mkdir -p "$CONTEXT/source" "$CONTEXT/app"
+rsync -a --delete \
+  --exclude target \
+  --exclude node_modules \
+  --exclude .git \
+  --exclude tmp \
+  --exclude .DS_Store \
+  --exclude .direnv \
+  --exclude .cache \
+  "$WORKTREE/" "$CONTEXT/source/"
+cp deploy/fabro-server/settings.server.toml "$CONTEXT/app/settings.server.toml"
+cp deploy/railway/source-build.Dockerfile "$CONTEXT/Dockerfile"
+cp deploy/railway/railway-entrypoint.sh "$CONTEXT/railway-entrypoint.sh"
+
+railway up "$CONTEXT" --path-as-root --message "Deploy Fabro with embedded web dashboard assets"
+```
+
+Do not add a Docker `VOLUME` instruction. Railway rejects it; attach the
+Railway Volume through the Railway service settings instead.
 
 ## Environment Variables
 
@@ -73,9 +103,12 @@ FABRO_DEV_TOKEN=<fabro_dev_generated_for_engineer_access>
 OPENROUTER_API_KEY=<openrouter-dev-key>
 DAYTONA_API_KEY=<daytona-dev-key>
 DAYTONA_API_URL=https://app.daytona.io/api
+CODEX_AUTH_JSON_BASE64=<base64-of-codex-auth-json-for-cli-backend>
+CLAUDE_CODE_CREDENTIALS_JSON_BASE64=<base64-of-claude-code-.credentials.json>
 
-ANTHROPIC_API_KEY=<optional-if-using-api-backend>
-OPENAI_API_KEY=<optional-if-using-api-backend>
+OPENAI_API_KEY=<optional-for-codex-cli-api-key-auth>
+CLAUDE_CODE_OAUTH_TOKEN=<optional-legacy-token; not sufficient by itself for fresh sandboxes>
+ANTHROPIC_API_KEY=<optional-if-using-anthropic-api-backend>
 GEMINI_API_KEY=<optional-if-using-api-backend>
 
 FABRO_SLACK_APP_TOKEN=<xapp-token-if-slack-socket-mode-is-enabled>
@@ -87,6 +120,15 @@ LINEAR_API_KEY=<linear-dev-key>
 GITHUB_APP_CLIENT_SECRET=<only-if-github-oauth-is-enabled>
 GITHUB_APP_WEBHOOK_SECRET=<only-if-github-app-is-enabled>
 GITHUB_APP_PRIVATE_KEY=<only-if-github-app-is-enabled>
+```
+
+For Claude Code subscription auth, the portable artifact is the Claude Code
+credentials JSON, not the `setup-token` bearer string alone. On macOS, export it
+without printing the contents:
+
+```sh
+security find-generic-password -s 'Claude Code-credentials' -w \
+  | base64 | tr -d '\n'
 ```
 
 ## Engineer Access
@@ -117,6 +159,15 @@ up. After Railway is healthy, update `~/.fabro/settings.toml` locally and rerun:
 ```bash
 fabro model list --server https://<railway-service>.up.railway.app/api/v1
 fabro run workflows/fabro/quality-stack-smoke.toml --server https://<railway-service>.up.railway.app/api/v1
+```
+
+When using `railway run` with the local CLI, unset the server-only config path
+so the local machine does not try to read `/app/settings.server.toml`:
+
+```bash
+railway run -- env -u FABRO_CONFIG fabro version \
+  --server https://<railway-service>.up.railway.app/api/v1 \
+  --no-upgrade-check
 ```
 
 ## Open Questions

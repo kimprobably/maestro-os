@@ -2,6 +2,7 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { spawnSync } from "node:child_process";
 import { dirname, resolve } from "node:path";
+import { writeNormalizedResult } from "../evals/eval-lib.mjs";
 
 function argValue(name, fallback) {
   const index = process.argv.indexOf(name);
@@ -17,6 +18,10 @@ function booleanArg(name, fallback) {
 
 const config = argValue("--config", "evals/workflow-quality/enhancement-discovery.yaml");
 const outPath = resolve(argValue("--out", ".workflow/enhancement-discovery/evals/promptfoo-workflow-quality.json"));
+const normalizedOutPath = resolve(argValue(
+  "--normalized-out",
+  `reports/evals/${process.env.FABRO_RUN_ID || "local"}/enhancement-discovery.workflow-quality.json`,
+));
 const allowFallback = booleanArg("--allow-fallback", true);
 const timeoutMs = Number(process.env.PROMPTFOO_MAX_EVAL_TIME_MS || "120000");
 
@@ -56,11 +61,12 @@ if (promptfooAvailable) {
   );
 }
 
-const contractReports = [
-  readJson(".workflow/enhancement-discovery/evals/spec-contract.json"),
-  readJson(".workflow/enhancement-discovery/evals/architecture-contract.json"),
-  readJson(".workflow/enhancement-discovery/evals/workflow-contract.json"),
-].filter(Boolean);
+const contractReportPaths = [
+  ".workflow/enhancement-discovery/evals/spec-contract.json",
+  ".workflow/enhancement-discovery/evals/architecture-contract.json",
+  ".workflow/enhancement-discovery/evals/workflow-contract.json",
+];
+const contractReports = contractReportPaths.map((path) => readJson(path)).filter(Boolean);
 const generatedValidation = readJson(".workflow/enhancement-discovery/generated-workflow-validation.json");
 
 const fallbackFailures = [];
@@ -75,6 +81,7 @@ for (const report of contractReports) {
 if (!generatedValidation?.ok) fallbackFailures.push("generated workflow validation did not pass");
 
 const promptfooOk = Boolean(promptfooResult && promptfooResult.status === 0);
+const promptfooFailed = Boolean(promptfooResult && promptfooResult.status !== 0);
 const fallbackOk = fallbackFailures.length === 0;
 const ok = promptfooOk || (allowFallback && fallbackOk);
 const report = {
@@ -97,4 +104,19 @@ const report = {
 };
 
 writeReport(report);
+writeNormalizedResult(normalizedOutPath, {
+  eval_id: "enhancement-discovery.workflow-quality",
+  level: "workflow",
+  runner: "promptfoo",
+  workflow: "enhancement-discovery",
+  runner_status: promptfooOk ? "passed" : promptfooFailed ? "failed" : "skipped",
+  fallback_status: promptfooOk ? "not_used" : fallbackOk ? "passed" : "failed",
+  waiver_status: "none",
+  score: promptfooOk ? 1 : promptfooFailed ? 0 : null,
+  artifact_uris: [outPath, ...contractReportPaths],
+  metadata: {
+    promptfoo_status: report.promptfoo_status,
+    fallback_failures: fallbackFailures,
+  },
+});
 if (!ok) process.exit(1);

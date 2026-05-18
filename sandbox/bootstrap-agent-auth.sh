@@ -136,6 +136,22 @@ install_codex_auth_from_env() {
   log "codex_auth_file=installed"
 }
 
+configure_mobbin_mcp() {
+  if ! need_command claude; then
+    warn "claude is missing; cannot configure Mobbin MCP"
+    return 0
+  fi
+  if claude mcp list 2>/dev/null | grep -qi 'mobbin'; then
+    log "mobbin_mcp=configured"
+    return 0
+  fi
+  claude mcp add mobbin --transport http https://api.mobbin.com/mcp >/dev/null 2>&1 || {
+    warn "Mobbin MCP registration failed; run: claude mcp add mobbin --transport http https://api.mobbin.com/mcp"
+    return 0
+  }
+  log "mobbin_mcp=configured"
+}
+
 install_codex_if_missing() {
   if need_command codex; then
     return 0
@@ -160,12 +176,12 @@ check_claude() {
     return 1
   }
   if command -v timeout >/dev/null 2>&1; then
-    timeout 45 claude -p "$claude_probe" >/tmp/maestro-claude-probe.out 2>/tmp/maestro-claude-probe.err || {
+    timeout 45 claude -p "$claude_probe" >/dev/null 2>&1 || {
       warn "claude subscription auth is missing or invalid. Run claude and complete /login, then rerun this script."
       return 1
     }
   else
-    claude -p "$claude_probe" >/tmp/maestro-claude-probe.out 2>/tmp/maestro-claude-probe.err || {
+    claude -p "$claude_probe" >/dev/null 2>&1 || {
       warn "claude subscription auth is missing or invalid. Run claude and complete /login, then rerun this script."
       return 1
     }
@@ -178,16 +194,16 @@ check_codex() {
     warn "codex exists but --version failed"
     return 1
   }
-  if codex login status >/tmp/maestro-codex-login-status.out 2>/tmp/maestro-codex-login-status.err; then
+  if codex login status >/dev/null 2>&1; then
     return 0
   fi
   if command -v timeout >/dev/null 2>&1; then
-    timeout 45 codex exec --skip-git-repo-check "$codex_probe" >/tmp/maestro-codex-probe.out 2>/tmp/maestro-codex-probe.err || {
+    timeout 45 codex exec --skip-git-repo-check "$codex_probe" >/dev/null 2>&1 || {
       warn "codex auth is missing or invalid. Run codex login, then rerun this script."
       return 1
     }
   else
-    codex exec --skip-git-repo-check "$codex_probe" >/tmp/maestro-codex-probe.out 2>/tmp/maestro-codex-probe.err || {
+    codex exec --skip-git-repo-check "$codex_probe" >/dev/null 2>&1 || {
       warn "codex auth is missing or invalid. Run codex login, then rerun this script."
       return 1
     }
@@ -204,6 +220,9 @@ esac
 setup_persistent_agent_state
 install_claude_credentials_from_env || true
 install_codex_auth_from_env || true
+if [ "$mode" = "install" ]; then
+  configure_mobbin_mcp
+fi
 
 claude_ok=0
 codex_ok=0

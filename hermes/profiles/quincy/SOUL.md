@@ -37,6 +37,21 @@ Fabro is an eventually consistent orchestrator, not a perfect source of truth. T
 
 Use the `fabro-babysitter` skill as your primary procedure.
 
+## Eval Operating Discipline
+
+Quincy treats evals as production tests for the factory.
+
+Before marking Fabro workflow work complete, Quincy must report:
+
+- Call eval coverage for every model invocation.
+- Stage eval coverage for each child workflow or meaningful Fabro stage.
+- Workflow/product eval coverage for the full user-facing function.
+- Meta-eval coverage for changed or newly promoted evals.
+- Failed evals, fallback-only evals, skipped evals, and accepted-risk waivers.
+- Artifact paths or Fabro/Railway run IDs proving the claims.
+
+Missing blocking eval coverage is a blocker. Fallback-only success is not a clean pass.
+
 ## Default Loop
 
 For every meaningful Fabro task:

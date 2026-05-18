@@ -4,6 +4,9 @@ import { spawnSync } from "node:child_process";
 import { dirname, join, resolve } from "node:path";
 import { homedir } from "node:os";
 
+const repoRoot = resolve(import.meta.dirname, "..", "..");
+const operatorLedgerScript = join(repoRoot, "scripts/operator-ledger/operator-ledger.mjs");
+
 function argValue(name, fallback = null) {
   const index = process.argv.indexOf(name);
   if (index === -1) return fallback;
@@ -160,6 +163,66 @@ INSERT OR IGNORE INTO fabro_run_events (
   execSql(storage.dbPath, sql);
 }
 
+function mirrorOperatorLedger(storage, event, initializedStorage) {
+  if (hasFlag("--skip-operator-ledger")) return;
+  if (!existsSync(operatorLedgerScript)) return;
+
+  const externalId = event.fabro_event_id
+    || (event.fabro_event_cursor !== null && event.fabro_event_cursor !== undefined
+      ? `cursor:${event.fabro_event_cursor}`
+      : `${event.event_kind}:${event.recorded_at}`);
+  const payload = {
+    run_id: event.run_id,
+    workflow_file: event.workflow_file,
+    event_kind: event.event_kind,
+    fabro_event_cursor: event.fabro_event_cursor,
+    fabro_event_id: event.fabro_event_id,
+    current_status: event.current_status,
+    current_node: event.current_node,
+    next_node_id: event.next_node_id,
+    failure_class: event.failure_class,
+    latest_git_sha: event.latest_git_sha,
+    run_branch: event.run_branch,
+    sandbox_name: event.sandbox_name,
+    sandbox_id: event.sandbox_id,
+    next_action: event.next_action,
+    summary: event.summary,
+    payload: event.payload || {},
+  };
+  const args = [
+    operatorLedgerScript,
+    "append-event",
+    "--home",
+    storage.hermesHome,
+    "--profile",
+    storage.profile,
+    "--subject-type",
+    "fabro_run",
+    "--subject-key",
+    event.run_id,
+    "--event-type",
+    `fabro.${event.event_kind}`,
+    "--source",
+    "fabro",
+    "--external-id",
+    externalId,
+    "--summary",
+    event.summary || event.next_action || event.current_status || event.event_kind,
+    "--payload-json",
+    JSON.stringify(payload),
+  ];
+  if (initializedStorage === "jsonl") args.push("--force-jsonl");
+
+  const result = spawnSync(process.execPath, args, {
+    cwd: repoRoot,
+    encoding: "utf8",
+    stdio: ["ignore", "pipe", "pipe"],
+  });
+  if (result.status !== 0) {
+    process.stderr.write(`operator ledger mirror failed: ${result.stderr || result.stdout || "unknown error"}\n`);
+  }
+}
+
 function buildEvent() {
   const payload = redact(readJsonArg("--payload-json", {}));
   return {
@@ -236,6 +299,7 @@ if (command === "init") {
   const event = buildEvent();
   if (initialized.storage === "sqlite") appendSqlite(storage, event);
   else appendJsonl(storage, event);
+  mirrorOperatorLedger(storage, event, initialized.storage);
   console.log(JSON.stringify({ ok: true, storage: initialized.storage, path: initialized.path, run_id: event.run_id }, null, 2));
 } else if (command === "summarize-run") {
   const runId = required("--run-id");
