@@ -1,0 +1,108 @@
+#!/usr/bin/env node
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+
+const phase = process.argv[2];
+const appDir = process.argv[3] && !process.argv[3].startsWith("--")
+  ? process.argv[3]
+  : process.env.APP_DIR || process.env.UX_APP_DIR || "apps/generated-iphone-app";
+const uxStudioPhases = new Set(["visual-system", "screen-flows"]);
+const root = uxStudioPhases.has(phase)
+  ? ".workflow/iphone-app-ux-studio"
+  : ".workflow/iphone-app-factory";
+const evidence = `${root}/evidence/${phase}.md`;
+const reportDir = `${root}/evidence`;
+const failures = [];
+
+function verifierNotesSection(markdown) {
+  const match = markdown.match(/^## Verifier notes\b/im);
+  if (!match) return "";
+  const start = match.index + match[0].length;
+  const rest = markdown.slice(start);
+  const nextHeading = rest.search(/^##\s+/m);
+  return nextHeading >= 0 ? rest.slice(0, nextHeading) : rest;
+}
+
+function latestVerifierDecision(notes) {
+  const decisions = [];
+  const lines = notes.split(/\r?\n/);
+  lines.forEach((line, index) => {
+    if (/accepted by independent verifier|scope is acceptable(?: and complete)?|acceptable to advance/i.test(line)) {
+      decisions.push({ index, status: "accepted" });
+    }
+    if (
+      /rejected by independent verifier|needs another implementation pass|not acceptable|do not advance|cannot advance|not ready|pending independent verifier/i.test(
+        line
+      )
+    ) {
+      decisions.push({ index, status: "rejected" });
+    }
+  });
+  return decisions.at(-1)?.status || null;
+}
+
+if (!phase) failures.push("missing phase");
+if (!existsSync(appDir)) failures.push(`missing app_dir ${appDir}`);
+if (!existsSync(evidence)) failures.push(`missing evidence ${evidence}`);
+
+const text = existsSync(evidence) ? readFileSync(evidence, "utf8") : "";
+for (const term of ["Files changed", "Commands run", "Acceptance criteria", "Risks"]) {
+  if (!text.includes(term)) failures.push(`${evidence} missing ${term}`);
+}
+
+const hasKnownDeferred = /known deferred/i.test(text);
+const hasHostedRuntimeDeferral =
+  /hosted\s+(macos|ios)|hosted\s+macos\/ios|daytona worker cannot|cannot produce ios simulator|simulator validation (was|were) not executable/i.test(
+    text
+  ) && /appium|simulator|runtime|xcode|screenshot/i.test(text);
+const hasAcceptedDeferred = hasKnownDeferred || hasHostedRuntimeDeferral;
+
+if (
+  !hasAcceptedDeferred &&
+  /(^|\n)\s*VERDICT\s*:\s*(REJECTED|FAIL(ED|URE)?|BLOCKED|NOT ACCEPTABLE)\b/i.test(text)
+) {
+  failures.push(`${evidence} contains failing verdict`);
+}
+
+if (!/Verifier notes/i.test(text)) {
+  failures.push(`${evidence} missing Verifier notes`);
+}
+
+if (!hasAcceptedDeferred && /(^|\n)\s*-\s*\[\s\]/.test(text)) {
+  failures.push(`${evidence} has unchecked acceptance criteria`);
+}
+
+if (
+  !hasAcceptedDeferred &&
+  /status:\s*blocked|blocked by|blocking:|permission denied|not writable|cannot .*implement|could not .*implement|not implemented|retry target|verification failed/i.test(
+    text
+  )
+) {
+  failures.push(`${evidence} contains blocked or incomplete phase evidence`);
+}
+
+const verifierIndex = text.search(/Verifier notes/i);
+const verifierNotes = verifierNotesSection(text);
+const latestDecision = latestVerifierDecision(verifierNotes);
+if (
+  verifierIndex >= 0 &&
+  (
+    latestDecision === "rejected" ||
+    (
+      latestDecision !== "accepted" &&
+      /rejected|failed|not acceptable|do not advance|retry|needs another implementation pass|another implementation pass|not ready|cannot advance|pending independent verifier/i.test(
+        verifierNotes
+      )
+    )
+  )
+) {
+  failures.push(`${evidence} verifier notes reject phase`);
+}
+
+const report = { ok: failures.length === 0, phase, appDir, failures };
+mkdirSync(reportDir, { recursive: true });
+writeFileSync(`${root}/evidence/${phase}-gate.json`, `${JSON.stringify(report, null, 2)}\n`);
+if (!report.ok) {
+  console.error(JSON.stringify(report, null, 2));
+  process.exit(1);
+}
+console.log(JSON.stringify(report));

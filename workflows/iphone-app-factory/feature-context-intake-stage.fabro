@@ -1,0 +1,34 @@
+digraph FeatureContextIntakeStage {
+    graph [
+        goal="Turn run-specific app context into a reusable feature context pack",
+        persona="existing-app-feature-context",
+        inputs="app_name,target_audience,feature_goal,required_capabilities,context_paths",
+        outputs="contract.artifact,contract.gate,contract.next_action,contract.failure_classification,context_pack",
+        secret_policy="no secrets; do not print environment variables or credential values",
+        model_stylesheet="* { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }"
+    ]
+    rankdir=LR
+
+    start [shape=Mdiamond, label="Start"]
+    exit  [shape=Msquare, label="Exit"]
+
+    write_context_pack [
+        label="Write Context Pack",
+        shape=parallelogram,
+        retry_target="write_context_pack",
+        timeout="3600s",
+        script="node scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/feature-context-intake.md --stage feature-context-intake --out .workflow/existing-app-feature/codex/feature-context-intake.json"
+    ]
+    validate_context_pack [
+        label="Validate Context Pack",
+        shape=parallelogram,
+        retry_target="write_context_pack",
+        script="node scripts/iphone-app-factory/feature-context-gate.mjs"
+    ]
+
+    start -> write_context_pack
+    write_context_pack -> validate_context_pack [condition="outcome=succeeded"]
+    write_context_pack -> write_context_pack [label="Rewrite Context"]
+    validate_context_pack -> exit [condition="outcome=succeeded"]
+    validate_context_pack -> write_context_pack [label="Fix Context Contract"]
+}

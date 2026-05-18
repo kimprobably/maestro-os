@@ -1,22 +1,106 @@
 <!doctype html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Consumer App Radar</title>
-  <link rel="stylesheet" href="/styles.css">
-</head>
-<body>
-  <main>
-    <header class="topbar">
-      <div><h1>Consumer App Radar</h1><p>Fast-growing iPhone app opportunities</p></div>
-      <button id="refresh">Refresh</button>
-    </header>
-    <section class="layout">
-      <div class="panel"><h2>Growth Signals</h2><div id="apps" class="apps"></div></div>
-      <aside class="panel detail"><h2>Opportunity</h2><div id="detail"></div></aside>
-    </section>
-  </main>
-  <script type="module" src="/app.js"></script>
-</body>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Consumer App Radar</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <main>
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">Consumer app factory intelligence</p>
+          <h1>Consumer App Radar</h1>
+          <p>
+            Find emerging iPhone apps with accelerating growth, inspect the
+            evidence quality, and collect product gaps worth building.
+          </p>
+        </div>
+        <div class="refresh-controls">
+          <select id="refresh-mode" aria-label="Refresh mode">
+            <option value="fixture">Fixture refresh</option>
+            <option value="live-smoke">Live smoke refresh</option>
+          </select>
+          <button id="refresh" type="button">Refresh data</button>
+        </div>
+      </header>
+
+      <section
+        id="summary"
+        class="kpi-grid"
+        aria-label="Radar summary"
+      ></section>
+
+      <section class="toolbar" aria-label="Radar controls">
+        <label>
+          Search
+          <input
+            id="search"
+            type="search"
+            placeholder="App, category, request, strategy"
+          />
+        </label>
+        <label>
+          Category
+          <select id="category">
+            <option value="all">All categories</option>
+          </select>
+        </label>
+        <label>
+          Sort
+          <select id="sort">
+            <option value="opportunityScore">Opportunity score</option>
+            <option value="rankDelta4w">Rank velocity</option>
+            <option value="reviewDelta4w">Review growth</option>
+            <option value="socialDelta4w">Social growth</option>
+            <option value="currentRank">Emerging rank</option>
+          </select>
+        </label>
+        <label class="checkbox-label">
+          <input id="hide-leaders" type="checkbox" checked />
+          Hide category leaders
+        </label>
+      </section>
+
+      <section class="add-panel panel" aria-label="Add app research seed">
+        <form id="add-app-form" class="add-app-form">
+          <label
+            >App name
+            <input name="name" required placeholder="Jomo, Roots, Clearspace"
+          /></label>
+          <label
+            >Category <input name="category" placeholder="Productivity"
+          /></label>
+          <label
+            >App Store ID <input name="appStoreId" placeholder="optional"
+          /></label>
+          <button type="submit">Add app</button>
+        </form>
+      </section>
+
+      <section class="layout">
+        <div class="panel">
+          <div class="section-head">
+            <div>
+              <h2>Growth Signals</h2>
+              <p id="result-count"></p>
+            </div>
+          </div>
+          <div class="app-table" id="apps" role="list"></div>
+        </div>
+        <aside class="detail" aria-live="polite">
+          <div class="panel">
+            <h2>Opportunity Brief</h2>
+            <div id="detail"></div>
+          </div>
+          <div class="panel">
+            <h2>Source Status</h2>
+            <div id="source-status" class="source-list"></div>
+          </div>
+        </aside>
+      </section>
+    </main>
+    <script type="module" src="/app.js"></script>
+  </body>
 </html>

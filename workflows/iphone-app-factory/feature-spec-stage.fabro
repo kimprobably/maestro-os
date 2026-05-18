@@ -1,0 +1,34 @@
+digraph FeatureSpecStage {
+    graph [
+        goal="Write and validate a behavior-focused feature spec for an existing app",
+        persona="existing-app-feature-spec",
+        inputs="app_name,target_audience,feature_goal,required_capabilities",
+        outputs="contract.artifact,contract.gate,contract.next_action,contract.failure_classification,feature_spec",
+        secret_policy="no secrets; do not print environment variables or credential values",
+        model_stylesheet="* { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }"
+    ]
+    rankdir=LR
+
+    start [shape=Mdiamond, label="Start"]
+    exit  [shape=Msquare, label="Exit"]
+
+    write_feature_spec [
+        label="Write Feature Spec",
+        shape=parallelogram,
+        retry_target="write_feature_spec",
+        timeout="3600s",
+        script="node scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/feature-spec.md --stage feature-spec --out .workflow/existing-app-feature/codex/feature-spec.json"
+    ]
+    validate_feature_spec [
+        label="Validate Feature Spec",
+        shape=parallelogram,
+        retry_target="write_feature_spec",
+        script="node scripts/iphone-app-factory/feature-spec-gate.mjs"
+    ]
+
+    start -> write_feature_spec
+    write_feature_spec -> validate_feature_spec [condition="outcome=succeeded"]
+    write_feature_spec -> write_feature_spec [label="Rewrite Feature Spec"]
+    validate_feature_spec -> exit [condition="outcome=succeeded"]
+    validate_feature_spec -> write_feature_spec [label="Fix Feature Spec"]
+}

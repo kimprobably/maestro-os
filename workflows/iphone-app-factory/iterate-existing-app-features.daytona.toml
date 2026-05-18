@@ -1,0 +1,72 @@
+_version = 1
+
+[workflow]
+graph = "iterate-existing-app-features.fabro"
+
+[run]
+goal = "Implement a product feature iteration in an existing iPhone app with context-driven specs, real behavior changes, validation evidence, and postmortem learning"
+
+[run.metadata]
+factory = "iphone-app-feature-iteration"
+control_plane = "railway"
+
+[run.inputs]
+repo_url = "https://github.com/example/example-ios.git"
+base_branch = "main"
+run_branch = "feature/example-iteration"
+app_name = "Example App"
+bundle_id = "com.example.app"
+app_dir = "apps/example-ios"
+app_domain = "consumer_ios"
+target_audience = "Specific target users"
+feature_goal = "Specific behavior change to implement in the existing app"
+required_capabilities = "capability_one,capability_two"
+context_paths = "contexts/iphone-app-factory/example"
+max_competitors = "8"
+use_mobbin_mcp = "true"
+use_design_corpus = "true"
+ios_validation_mode = "github"
+allow_macos_deferred = "false"
+fabro_server = "https://fabro-maestro-production.up.railway.app/api/v1"
+
+[run.sandbox]
+provider = "daytona"
+preserve = false
+stop_on_terminal = true
+
+[run.sandbox.daytona]
+auto_stop_interval = 30
+network = "allow_all"
+
+[run.sandbox.env]
+FABRO_SERVER = "https://fabro-maestro-production.up.railway.app/api/v1"
+FABRO_DEV_TOKEN = "{{ env.FABRO_DEV_TOKEN }}"
+APP_DIR = "apps/example-ios"
+UX_APP_DIR = "apps/example-ios"
+UX_REPO_URL = "https://github.com/example/example-ios.git"
+UX_BASE_BRANCH = "main"
+UX_RUN_BRANCH = "feature/example-iteration"
+UX_RUN_ID = "feature/example-iteration"
+FEATURE_WORKFLOW_ROOT = ".workflow/existing-app-feature"
+FEATURE_CONTEXT_PATHS = "contexts/iphone-app-factory/example"
+FEATURE_REQUIRED_CAPABILITIES = "capability_one,capability_two"
+FEATURE_ALLOW_CI_DEFERRED = "false"
+UX_USE_MOBBIN_MCP = "true"
+UX_IOS_VALIDATION_MODE = "github"
+UX_ALLOW_MACOS_DEFERRED = "false"
+APIFY_TOKEN = "{{ env.APIFY_TOKEN }}"
+GITHUB_TOKEN = "{{ env.GITHUB_TOKEN }}"
+GH_TOKEN = "{{ env.GH_TOKEN }}"
+OPENROUTER_API_KEY = "{{ env.OPENROUTER_API_KEY }}"
+CLAUDE_CODE_OAUTH_TOKEN = "{{ env.CLAUDE_CODE_OAUTH_TOKEN }}"
+CLAUDE_CODE_CREDENTIALS_JSON_BASE64 = "{{ env.CLAUDE_CODE_CREDENTIALS_JSON_BASE64 }}"
+CODEX_AUTH_JSON_BASE64 = "{{ env.CODEX_AUTH_JSON_BASE64 }}"
+CODEX_MCP_CREDENTIALS_JSON_BASE64 = "{{ env.CODEX_MCP_CREDENTIALS_JSON_BASE64 }}"
+
+[run.artifacts]
+include = [
+  ".workflow/existing-app-feature/**",
+  ".workflow/iphone-app-ux-studio/**",
+  "reports/ios/**",
+  ".github/workflows/**",
+]

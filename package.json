@@ -1,0 +1,17 @@
+{
+  "name": "maestro-os",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "maestro": "bun run cli/src/index.ts",
+    "model:evaluate": "node scripts/evaluate-openrouter-models.mjs",
+    "hermes:skill-eval": "node scripts/hermes/validate-skill-governance.mjs",
+    "eval:registry": "node scripts/evals/validate-registry.mjs",
+    "eval:coverage": "node scripts/evals/verify-workflow-eval-coverage.mjs --registry evals/registry.yaml --workflow workflows/factory/workflow-builder.fabro",
+    "eval:index": "node scripts/evals/collect-index.mjs --registry evals/registry.yaml --root . --out reports/eval-index.json",
+    "eval:dashboard": "node scripts/evals/render-dashboard.mjs --index reports/eval-index.json --out reports/eval-dashboard.md",
+    "build": "bun build --compile cli/src/index.ts --outfile dist/maestro",
+    "check": "bun build cli/src/index.ts --outdir tmp/check --target bun"
+  },
+  "devDependencies": {}
+}

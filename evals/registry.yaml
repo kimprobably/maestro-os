@@ -1,0 +1,162 @@
+version: 1
+evals:
+  - id: consumer-radar.product-quality
+    level: product
+    state: blocking
+    runner: promptfoo
+    blocking: true
+    owner: maestro-operator
+    subject_paths:
+      - evals/consumer-app-radar-quality.yaml
+    artifact_patterns:
+      - .workflow/consumer-radar/promptfoo-output.json
+      - apps/generated-consumer-app-radar/fixtures/apps.json
+    counterexamples:
+      - evals/consumer-app-radar-quality.yaml#missing-growth-review-social-feature-signals
+    waiver_policy:
+      owner: maestro-operator
+      review_cadence: per-release
+      requires_expiry: true
+      requires_compensating_control: true
+  - id: enhancement-discovery.workflow-quality
+    level: workflow
+    state: blocking
+    runner: promptfoo
+    blocking: true
+    owner: maestro-operator
+    subject_paths:
+      - evals/workflow-quality/enhancement-discovery.yaml
+    artifact_patterns:
+      - .workflow/enhancement-discovery/evals/promptfoo-output.json
+      - .workflow/enhancement-discovery/evals/*.json
+      - .workflow/enhancement-discovery/generated-workflow-validation.json
+    counterexamples:
+      - evals/workflow-quality/enhancement-discovery.yaml#missing-lineage-baseline-golden-dataset-regression-gate
+    waiver_policy:
+      owner: maestro-operator
+      review_cadence: per-workflow-change
+      requires_expiry: true
+      requires_compensating_control: true
+  - id: iphone-factory.prompt-quality
+    level: workflow
+    state: blocking
+    runner: promptfoo
+    blocking: true
+    owner: iphone-app-factory
+    subject_paths:
+      - evals/iphone-app-factory/prompt-quality.yaml
+      - evals/iphone-app-factory/prompt-registry.json
+    artifact_patterns:
+      - .workflow/iphone-app-factory/evals/prompt-quality.json
+      - reports/evals/*/iphone-factory.prompt-quality.json
+      - .workflow/iphone-app-factory/evals/promptfoo-output.json
+      - evals/iphone-app-factory/datasets/prompt-quality-golden.jsonl
+      - prompts/iphone-app-factory/*.md
+    counterexamples:
+      - evals/iphone-app-factory/prompt-quality.yaml#missing-required-artifacts-or-golden-case-results
+    waiver_policy:
+      owner: iphone-app-factory
+      review_cadence: per-overnight-run
+      requires_expiry: true
+      requires_compensating_control: true
+  - id: hermes.skill-promotion-quality
+    level: workflow
+    state: blocking
+    runner: promptfoo
+    blocking: true
+    owner: hermes
+    subject_paths:
+      - evals/hermes-skill-governance/skill-promotion.yaml
+    artifact_patterns:
+      - .workflow/hermes-skill-governance/promptfoo-output.json
+      - .workflow/hermes-skill-governance/candidate-skill.md
+      - evals/hermes-skill-governance/datasets/skill-promotion-golden.jsonl
+    counterexamples:
+      - evals/hermes-skill-governance/skill-promotion.yaml#missing-external-evidence-or-curated-skill-protection
+    waiver_policy:
+      owner: hermes
+      review_cadence: per-skill-promotion
+      requires_expiry: true
+      requires_compensating_control: true
+  - id: eval.meta.fallback-masking
+    level: meta
+    state: blocking
+    runner: deterministic
+    blocking: true
+    owner: maestro-operator
+    subject_paths:
+      - docs/operator/specs/active/eval-operating-system-v0.md
+      - scripts/evals/eval-lib.mjs
+    artifact_patterns:
+      - .workflow/evals/meta/fallback-masking-*.json
+      - .workflow/**/evals/*.json
+    counterexamples:
+      - runner_status=failed,fallback_status=passed,waiver_status=null must produce gate_status=fallback_only
+      - runner_status=failed,fallback_status=passed,waiver_status=accepted must produce gate_status=waived
+    waiver_policy:
+      owner: maestro-operator
+      review_cadence: per-registry-change
+      requires_expiry: true
+      requires_compensating_control: true
+  - id: workflow-builder.eval-coverage
+    level: workflow
+    state: blocking
+    runner: deterministic
+    blocking: true
+    owner: quincy
+    workflow: workflow-builder
+    subject_paths:
+      - workflows/factory/workflow-builder.fabro
+      - scripts/evals/verify-workflow-eval-coverage.mjs
+    artifact_patterns:
+      - reports/evals/*/workflow-builder.eval-coverage.json
+      - reports/eval-index.json
+    counterexamples:
+      - workflow containing run-codex-prompt.mjs without --eval-id must fail coverage
+    waiver_policy:
+      owner: quincy
+      review_cadence: per-workflow-change
+      requires_expiry: true
+      requires_compensating_control: true
+  - id: iphone-feature.context-intake.call
+    level: call
+    state: blocking
+    runner: deterministic
+    blocking: true
+    owner: quincy
+    workflow: iphone-app-feature-iteration
+    fabro_node: context_intake_child
+    subject_paths:
+      - workflows/iphone-app-factory/feature-context-intake-stage.fabro
+      - scripts/iphone-app-factory/run-codex-prompt.mjs
+    artifact_patterns:
+      - .workflow/iphone-app-ux-studio/codex/*context*.json
+      - .workflow/iphone-app-ux-studio/codex/*context*.last-message.md
+    counterexamples:
+      - missing last-message artifact should fail
+    waiver_policy:
+      owner: quincy
+      review_cadence: per-feature-run
+      requires_expiry: true
+      requires_compensating_control: true
+  - id: iphone-feature.implementation.call
+    level: call
+    state: blocking
+    runner: deterministic
+    blocking: true
+    owner: quincy
+    workflow: iphone-app-feature-iteration
+    fabro_node: implementation_child
+    subject_paths:
+      - workflows/iphone-app-factory/feature-implementation-stage.fabro
+      - scripts/iphone-app-factory/run-codex-prompt.mjs
+    artifact_patterns:
+      - .workflow/iphone-app-ux-studio/codex/*implementation*.json
+      - .workflow/iphone-app-ux-studio/codex/*implementation*.last-message.md
+    counterexamples:
+      - failed Codex status should fail
+    waiver_policy:
+      owner: quincy
+      review_cadence: per-feature-run
+      requires_expiry: true
+      requires_compensating_control: true

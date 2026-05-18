@@ -1,0 +1,123 @@
+digraph OutreachDraft {
+    graph [
+        goal="Draft and validate cold email variants before human approval",
+        persona="quill",
+        inputs="lead_path, campaign_id",
+        outputs="draft_artifact, validation_report, memory_event",
+        default_max_retries=2,
+        retry_target="draft_variants",
+        fallback_retry_target="draft_variants",
+        model_stylesheet="
+            *          { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: low; }
+            .coding    { backend: cli; provider: anthropic; model: claude-sonnet-4-5; reasoning_effort: high; }
+            .drafting  { backend: cli; provider: anthropic; model: claude-sonnet-4-5; reasoning_effort: high; }
+            .judging   { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: low; }
+            .review    { provider: openrouter; model: qwen/qwen3.6-plus; reasoning_effort: high; }
+        "
+    ]
+    rankdir=LR
+
+    start [shape=Mdiamond, label="Start"]
+    exit  [shape=Msquare, label="Exit"]
+
+    load_context [
+        label="Load Outreach Context",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="load_context",
+        script="mkdir -p .maestro/outreach drafts/outreach; test -f '{{ inputs.lead_path|default('evals/datasets/outreach/leads/fintech-cto-series-a.json') }}'; cp '{{ inputs.lead_path|default('evals/datasets/outreach/leads/fintech-cto-series-a.json') }}' .maestro/outreach/lead.json; test -f knowledge/voice.md; test -f knowledge/icp/fintech.md; echo outreach-context-loaded"
+    ]
+
+    draft_variants [
+        label="Draft Variants",
+        class="drafting",
+        goal_gate=true,
+        retry_target="draft_variants",
+        prompt="@../../prompts/gtm/outreach-draft-variants.md"
+    ]
+
+    validate_json [
+        label="Validate Draft JSON",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="draft_variants",
+        script="node -e \"const fs=require('fs'); const data=JSON.parse(fs.readFileSync('.maestro/outreach/variants.json','utf8')); if (!Array.isArray(data.variants) || data.variants.length !== 3) throw new Error('expected exactly three variants'); for (const item of data.variants) { for (const key of ['id','subject','body','angle']) { if (!item[key]) throw new Error('variant missing ' + key); } } console.log(JSON.stringify({variants:data.variants.length}));\""
+    ]
+
+    validate_email [
+        label="Validate Email",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="draft_variants",
+        script="./bin/maestro verify email-deliverable .maestro/outreach/lead.json --allow-reserved-domains > .maestro/outreach/email-validation.json; if [ -n \"${DATABASE_URL:-}\" ]; then ./bin/maestro verify dedup-lead .maestro/outreach/lead.json > .maestro/outreach/dedup-validation.json; else printf '{\"ok\":true,\"data\":{\"skipped\":true,\"reason\":\"missing_database_url\"}}\\n' > .maestro/outreach/dedup-validation.json; fi; echo email-and-dedup-validated"
+    ]
+
+    validate_content [
+        label="Validate Content",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="draft_variants",
+        script="./bin/maestro verify outreach-banned-phrases .maestro/outreach/variants.json --mode any --output .maestro/outreach/banned-validation.json >/dev/null; ./bin/maestro verify outreach-length .maestro/outreach/variants.json --mode any --max-words 80 --max-lines 6 --output .maestro/outreach/length-validation.json >/dev/null; node -e \"const fs=require('fs'); const banned=JSON.parse(fs.readFileSync('.maestro/outreach/banned-validation.json','utf8')); const length=JSON.parse(fs.readFileSync('.maestro/outreach/length-validation.json','utf8')); const clean=new Set(banned.entries.filter((item)=>item.passed).map((item)=>item.id)); const bannedById=new Map(banned.entries.map((item)=>[item.id,item])); const outcomes=length.entries.map((item)=>{ const bannedEntry=bannedById.get(item.id) || {matches:[]}; return {id:item.id, words:item.words, lines:item.lines, banned:bannedEntry.matches || [], passed:item.passed && clean.has(item.id)}; }); if (!outcomes.some((item)=>item.passed)) throw new Error('no variants passed deterministic checks'); fs.writeFileSync('.maestro/outreach/validation.json', JSON.stringify({outcomes,banned,length}, null, 2)+'\\n'); console.log(JSON.stringify({passing:outcomes.filter((item)=>item.passed).length}));\""
+    ]
+
+    voice_review [
+        label="Voice Review",
+        class="judging",
+        goal_gate=true,
+        retry_target="draft_variants",
+        prompt="@../../prompts/gtm/outreach-voice-review.md"
+    ]
+
+    voice_gate [
+        label="Voice Gate",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="draft_variants",
+        script="./bin/maestro verify text-gate .maestro/outreach/voice-review.md --pass 'VERDICT:\\s*APPROVED' --fail 'VERDICT:\\s*REJECTED|\\bREJECTED\\b'"
+    ]
+
+    approve_draft [
+        label="Approve Draft",
+        shape=hexagon,
+        gate_type="STOP",
+        message="Approve one outreach variant before queueing",
+        details="No email is sent in v0. Approval only writes a draft artifact.",
+        options="approve,reject,edit"
+    ]
+
+    publish_draft [
+        label="Publish Draft Artifact",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="draft_variants",
+        script="node -e \"const fs=require('fs'); const variants=JSON.parse(fs.readFileSync('.maestro/outreach/variants.json','utf8')); const validation=JSON.parse(fs.readFileSync('.maestro/outreach/validation.json','utf8')); const lead=JSON.parse(fs.readFileSync('.maestro/outreach/lead.json','utf8')); const passing=validation.outcomes.find((item)=>item.passed); if (!passing) throw new Error('no passing variant'); const chosen=variants.variants.find((item)=>item.id === passing.id); const artifact={lead, campaign_id:variants.campaign_id || '{{ inputs.campaign_id|default('default') }}', status:'approved_artifact_only', chosen_variant:chosen, validation, created_at:new Date().toISOString()}; fs.writeFileSync('drafts/outreach/latest.json', JSON.stringify(artifact,null,2)+'\\n'); console.log(JSON.stringify({draft:'drafts/outreach/latest.json', variant:chosen.id}));\""
+    ]
+
+    memory_summary [
+        label="Memory Summary",
+        shape=parallelogram,
+        script="printf '{\"kind\":\"outreach.draft.approved\",\"payload\":{\"draft_path\":\"drafts/outreach/latest.json\",\"lead_path\":\"{{ inputs.lead_path|default('evals/datasets/outreach/leads/fintech-cto-series-a.json') }}\"}}' | ./bin/maestro memory append 'persona/quill/episodic' >/dev/null; echo memory-updated"
+    ]
+
+    start -> load_context
+    load_context -> draft_variants [condition="outcome=succeeded"]
+    load_context -> load_context [loop_restart=true]
+    draft_variants -> validate_json [condition="outcome=succeeded"]
+    draft_variants -> draft_variants [loop_restart=true]
+    validate_json -> validate_email [condition="outcome=succeeded"]
+    validate_json -> draft_variants [label="Fix"]
+    validate_email -> validate_content [condition="outcome=succeeded"]
+    validate_email -> draft_variants [label="Fix"]
+    validate_content -> voice_review [condition="outcome=succeeded"]
+    validate_content -> draft_variants [label="Fix"]
+    voice_review -> voice_gate [condition="outcome=succeeded"]
+    voice_review -> draft_variants [label="Fix"]
+    voice_gate -> approve_draft [condition="outcome=succeeded"]
+    voice_gate -> draft_variants [label="Fix"]
+    approve_draft -> publish_draft [label="[A] Approve"]
+    approve_draft -> draft_variants [label="[R] Revise"]
+    publish_draft -> memory_summary [condition="outcome=succeeded"]
+    publish_draft -> draft_variants [label="Fix"]
+    memory_summary -> exit [condition="outcome=succeeded"]
+    memory_summary -> publish_draft [label="Fix"]
+}

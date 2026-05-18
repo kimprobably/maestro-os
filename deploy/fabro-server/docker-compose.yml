@@ -1,0 +1,48 @@
+---
+services:
+  fabro:
+    image: ${FABRO_IMAGE:-ghcr.io/fabro-sh/fabro:nightly}
+    restart: unless-stopped
+    env_file:
+      - path: env.server
+        required: false
+    environment:
+      FABRO_CONFIG: /etc/fabro/settings.server.toml
+      FABRO_STORAGE_DIR: /storage
+      FABRO_LOG_DESTINATION: stdout
+      FABRO_SUPPRESS_OPEN_BROWSER: "true"
+      PORT: "32276"
+    volumes:
+      - fabro-storage:/storage
+      - ./settings.server.toml:/etc/fabro/settings.server.toml:ro
+      - /var/run/docker.sock:/var/run/docker.sock
+    expose:
+      - "32276"
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://127.0.0.1:32276/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 20s
+
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    env_file:
+      - path: env.server
+        required: false
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data
+      - caddy-config:/config
+    depends_on:
+      fabro:
+        condition: service_healthy
+
+volumes:
+  fabro-storage:
+  caddy-data:
+  caddy-config:

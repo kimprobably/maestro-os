@@ -1,0 +1,37 @@
+_version = 1
+
+[workflow]
+graph = "joni-linkedin-daily.fabro"
+
+[run]
+goal = "Capture daily LinkedIn signals for Joni and produce evidence-based content ideas"
+
+[run.inputs]
+feed_db = "/data/.hermes/profiles/joni/state/linkedin-feed/joni-linkedin-feed.sqlite"
+capture_mode = "live"
+posted_limit = "24h"
+max_pages = "1"
+source_limit = "300"
+tier_a_percent = "20"
+rotation_limit = "45"
+candidate_limit = "25"
+since_days = "30"
+
+[run.sandbox]
+provider = "daytona"
+preserve = false
+stop_on_terminal = true
+
+[run.sandbox.daytona]
+auto_stop_interval = 30
+
+[run.sandbox.env]
+HARVEST_API_KEY = "{{ env.HARVEST_API_KEY }}"
+OPENAI_API_KEY = "{{ env.OPENAI_API_KEY }}"
+OPENROUTER_API_KEY = "{{ env.OPENROUTER_API_KEY }}"
+
+[run.artifacts]
+include = [
+  ".workflow/joni-linkedin/**",
+  "docs/operator/linkedin/**",
+]

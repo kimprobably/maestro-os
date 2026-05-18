@@ -66,6 +66,14 @@ digraph ConsumerAppRadarBuild {
         script="node scripts/consumer-radar/run-native-checks.mjs '{{ inputs.app_dir|default('apps/generated-consumer-app-radar') }}'"
     ]
 
+    product_surface_gate [
+        label="Product Surface Gate",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="generate_app",
+        script="node scripts/consumer-radar/assert-product-surface.mjs '{{ inputs.app_dir|default('apps/generated-consumer-app-radar') }}'"
+    ]
+
     qlty_gate [
         label="Qlty Gate",
         shape=parallelogram,
@@ -146,8 +154,10 @@ digraph ConsumerAppRadarBuild {
     data_source_smoke -> data_source_smoke [label="Retry", loop_restart=true]
     generate_app -> native_checks [condition="outcome=succeeded"]
     generate_app -> generate_app [label="Retry", loop_restart=true]
-    native_checks -> qlty_gate [condition="outcome=succeeded"]
+    native_checks -> product_surface_gate [condition="outcome=succeeded"]
     native_checks -> generate_app [label="Fix"]
+    product_surface_gate -> qlty_gate [condition="outcome=succeeded"]
+    product_surface_gate -> generate_app [label="Fix"]
     qlty_gate -> promptfoo_gate [condition="outcome=succeeded"]
     qlty_gate -> generate_app [label="Fix"]
     promptfoo_gate -> prepare_review_reports [condition="outcome=succeeded"]

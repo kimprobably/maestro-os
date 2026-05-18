@@ -16,6 +16,7 @@ const minimum_reports = Number(argValue("--minimum-reports", "4"));
 const required = [
   "package.json",
   "src/server.js",
+  "src/summary.js",
   "src/scoring.js",
   "src/snapshots.js",
   "src/evidence.js",
@@ -38,11 +39,28 @@ const reports = [
 const missingReports = reports.filter((file) => !existsSync(file));
 const presentReports = reports.length - missingReports.length;
 const apps = existsSync(resolve(appDir, "fixtures/apps.json")) ? JSON.parse(readFileSync(resolve(appDir, "fixtures/apps.json"), "utf8")) : [];
+const html = existsSync(resolve(appDir, "public/index.html")) ? readFileSync(resolve(appDir, "public/index.html"), "utf8") : "";
+const js = existsSync(resolve(appDir, "public/app.js")) ? readFileSync(resolve(appDir, "public/app.js"), "utf8") : "";
+const css = existsSync(resolve(appDir, "public/styles.css")) ? readFileSync(resolve(appDir, "public/styles.css"), "utf8") : "";
+const server = existsSync(resolve(appDir, "src/server.js")) ? readFileSync(resolve(appDir, "src/server.js"), "utf8") : "";
+const surfaceFailures = [
+  ...["id=\"search\"", "id=\"category\"", "id=\"sort\"", "id=\"summary\"", "id=\"source-status\"", "app-table"].filter((marker) => !html.includes(marker)).map((marker) => `index missing ${marker}`),
+  ...["renderSummary", "renderSourceStatus", "investigationAngles", "weeklySnapshots"].filter((marker) => !js.includes(marker)).map((marker) => `client missing ${marker}`),
+  ...[".kpi-grid", ".toolbar", ".app-table", ".opportunity-grid", ".source-list"].filter((marker) => !css.includes(marker)).map((marker) => `styles missing ${marker}`),
+  ...["/api/summary", "buildSummary"].filter((marker) => !server.includes(marker)).map((marker) => `server missing ${marker}`),
+];
+for (const app of apps) {
+  for (const key of ["weeklySnapshots", "socialStrategy", "reviewThemes", "featureRequests", "investigationAngles", "dataSources"]) {
+    if (!Array.isArray(app[key]) || app[key].length === 0) surfaceFailures.push(`${app.id || app.name || "app"} missing non-empty ${key}`);
+  }
+}
 const report = {
-  ok: missing.length === 0 && missingReports.length === 0 && apps.length >= minimum_apps && presentReports >= minimum_reports,
+  ok: missing.length === 0 && missingReports.length === 0 && apps.length >= minimum_apps && presentReports >= minimum_reports && surfaceFailures.length === 0,
   app_dir: appDir,
   missing,
   missing_reports: missingReports,
+  surface_failures: surfaceFailures,
+  product_surface_ok: surfaceFailures.length === 0,
   reports_present: presentReports,
   minimum_apps,
   minimum_reports,

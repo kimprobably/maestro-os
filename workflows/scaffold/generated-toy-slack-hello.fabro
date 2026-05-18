@@ -1,0 +1,170 @@
+digraph ToySlackHello {
+    graph [
+        goal="Post a simple hello message to Slack with deterministic validation and failure handling",
+        persona="test-bot",
+        inputs="none",
+        outputs="posted_message_ts, run_summary",
+        model_stylesheet="
+            *       { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: low; }
+            .coding { backend: cli; provider: anthropic; model: claude-sonnet-4-5; reasoning_effort: high; }
+            .review { backend: cli; provider: anthropic; model: claude-sonnet-4-5; reasoning_effort: high; }
+        "
+    ]
+    rankdir=LR
+
+    start [shape=Mdiamond, label="Start"]
+    exit  [shape=Msquare, label="Exit"]
+
+    init_workspace [
+        label="Initialize Workspace",
+        shape=parallelogram,
+        script="mkdir -p .maestro/scaffold && echo '{\"stage\":\"init_workspace\",\"status\":\"ready\"}'"
+    ]
+
+    prepare_message [
+        label="Prepare Message",
+        shape=parallelogram,
+        script="printf '%s' 'Hello from Maestro! This toy Fabro workflow validates the spec-to-workflow loop with deterministic gates.' > .maestro/scaffold/prepared-message.txt && cat .maestro/scaffold/prepared-message.txt"
+    ]
+
+    validate_message [
+        label="Validate Message",
+        shape=parallelogram,
+        script="test -f .maestro/scaffold/prepared-message.txt || exit 1; LEN=$(printf %s \"$(cat .maestro/scaffold/prepared-message.txt)\" | wc -c | tr -d ' '); test \"$LEN\" -ge 10 && test \"$LEN\" -le 500 && echo message-valid"
+    ]
+
+    gate_before_post [
+        shape=hexagon,
+        label="Review Before Post",
+        gate_type="STOP",
+        message="About to post the toy hello message to Slack",
+        details="Persona: test-bot. Action: chat.postMessage. Message content in .maestro/scaffold/prepared-message.txt",
+        options="approve,reject,edit"
+    ]
+
+    prompt_for_revision [
+        label="Prompt For Revised Message",
+        shape=tab,
+        prompt="The user chose to revise the Slack message. Current message is in .maestro/scaffold/prepared-message.txt. Provide a revised message (10-500 chars). Output only the revised message text, no markdown formatting, no explanation."
+    ]
+
+    write_revised_message [
+        label="Write Revised Message",
+        shape=parallelogram,
+        script="node -e 'const fs=require(\"fs\"); const stdin=fs.readFileSync(0,\"utf8\").trim(); if(stdin.length<10||stdin.length>500){console.error(\"Revised message must be 10-500 chars\");process.exit(1);} fs.writeFileSync(\".maestro/scaffold/prepared-message.txt\",stdin); console.log(stdin);'"
+    ]
+
+    post_to_slack [
+        label="Post To Slack",
+        shape=parallelogram,
+        script="MSG=$(cat .maestro/scaffold/prepared-message.txt) && ./bin/maestro slack post --persona test-bot --text \"$MSG\" > .maestro/scaffold/post-result.json && cat .maestro/scaffold/post-result.json"
+    ]
+
+    validate_post [
+        label="Validate Post",
+        shape=parallelogram,
+        script="./bin/maestro validate required-fields .maestro/scaffold/post-result.json ok,data"
+    ]
+
+    capture_message_ts [
+        label="Capture Message Timestamp",
+        shape=parallelogram,
+        script="node -e 'const fs=require(\"fs\"); const p=JSON.parse(fs.readFileSync(\".maestro/scaffold/post-result.json\",\"utf8\")); const ts=p.data && p.data.ts; if(!ts){console.error(\"Missing ts in response\"); process.exit(1);} fs.writeFileSync(\".maestro/scaffold/message-ts.txt\", ts); console.log(ts);'"
+    ]
+
+    validate_timestamp [
+        label="Validate Timestamp",
+        shape=parallelogram,
+        script="test -s .maestro/scaffold/message-ts.txt && grep -E '^[0-9]+\\.[0-9]+$' .maestro/scaffold/message-ts.txt > /dev/null && echo timestamp-valid"
+    ]
+
+    write_summary [
+        label="Write Summary",
+        shape=parallelogram,
+        script="node -e 'const fs=require(\"fs\"); const message=fs.readFileSync(\".maestro/scaffold/prepared-message.txt\",\"utf8\").trim(); const ts=fs.readFileSync(\".maestro/scaffold/message-ts.txt\",\"utf8\").trim(); const summary={summary:\"Posted toy hello message\",message:message,success:true,posted_message_ts:ts}; fs.writeFileSync(\".maestro/scaffold/run-summary.json\", JSON.stringify(summary, null, 2)); console.log(JSON.stringify(summary));'"
+    ]
+
+    validate_summary [
+        label="Validate Summary",
+        shape=parallelogram,
+        script="./bin/maestro validate required-fields .maestro/scaffold/run-summary.json summary,success,posted_message_ts"
+    ]
+
+    emit_summary [
+        label="Emit Summary",
+        shape=parallelogram,
+        script="cat .maestro/scaffold/run-summary.json || (echo '{\"error\":\"summary file missing\"}' >&2 && exit 1)"
+    ]
+
+    write_reject_summary [
+        label="Write Reject Summary",
+        shape=parallelogram,
+        script="echo '{\"status\":\"rejected\",\"stage\":\"gate_before_post\",\"success\":false}' | tee .maestro/scaffold/run-summary.json"
+    ]
+
+    notify_message_failure [
+        label="Notify Message Failure",
+        shape=parallelogram,
+        script="./bin/maestro slack post --persona test-bot --text 'Toy Slack Hello failed at message validation (retryable: true). Stage: validate_message. Check .maestro/scaffold/prepared-message.txt length (must be 10-500 chars).'"
+    ]
+
+    notify_post_failure [
+        label="Notify Post Failure",
+        shape=parallelogram,
+        script="./bin/maestro slack post --persona test-bot --text 'Toy Slack Hello failed while posting to Slack or capturing the response (retryable: true). Stage: post_to_slack or capture_message_ts. Check Slack credentials and .maestro/scaffold/post-result.json.'"
+    ]
+
+    notify_summary_failure [
+        label="Notify Summary Failure",
+        shape=parallelogram,
+        script="./bin/maestro slack post --persona test-bot --text 'Toy Slack Hello failed while generating the run summary (retryable: true). Stage: write_summary, validate_summary, or emit_summary. Check .maestro/scaffold/run-summary.json.'"
+    ]
+
+    notify_revision_failure [
+        label="Notify Revision Failure",
+        shape=parallelogram,
+        script="./bin/maestro slack post --persona test-bot --text 'Toy Slack Hello failed during message revision (retryable: true). Stage: write_revised_message. Revised message must be 10-500 chars.'"
+    ]
+
+    start -> init_workspace
+    init_workspace -> prepare_message
+
+    prepare_message -> validate_message
+    validate_message -> gate_before_post [condition="outcome=succeeded"]
+    validate_message -> notify_message_failure [label="Failed"]
+
+    gate_before_post -> post_to_slack [label="[A] Approve"]
+    gate_before_post -> write_reject_summary [label="[R] Reject"]
+    gate_before_post -> prompt_for_revision [label="[E] Edit"]
+
+    prompt_for_revision -> write_revised_message
+    write_revised_message -> validate_message [condition="outcome=succeeded"]
+    write_revised_message -> notify_revision_failure [label="Failed"]
+
+    post_to_slack -> validate_post [condition="outcome=succeeded"]
+    post_to_slack -> notify_post_failure [label="Failed"]
+
+    validate_post -> capture_message_ts [condition="outcome=succeeded"]
+    validate_post -> notify_post_failure [label="Failed"]
+
+    capture_message_ts -> validate_timestamp [condition="outcome=succeeded"]
+    capture_message_ts -> notify_post_failure [label="Failed"]
+
+    validate_timestamp -> write_summary [condition="outcome=succeeded"]
+    validate_timestamp -> notify_post_failure [label="Failed"]
+
+    write_summary -> validate_summary [condition="outcome=succeeded"]
+    write_summary -> notify_summary_failure [label="Failed"]
+
+    validate_summary -> emit_summary [condition="outcome=succeeded"]
+    validate_summary -> notify_summary_failure [label="Failed"]
+
+    emit_summary -> exit [condition="outcome=succeeded"]
+    emit_summary -> notify_summary_failure [label="Failed"]
+
+    write_reject_summary -> exit
+    notify_message_failure -> exit
+    notify_post_failure -> exit
+    notify_summary_failure -> exit
+    notify_revision_failure -> exit
+}

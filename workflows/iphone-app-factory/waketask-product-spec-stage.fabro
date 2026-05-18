@@ -1,0 +1,37 @@
+digraph WakeTaskProductSpecStage {
+    graph [
+        goal="Write the WakeTask product feature spec before implementation starts",
+        persona="waketask-product-spec",
+        inputs="app_name,app_domain,target_audience,design_goal",
+        outputs="contract.artifact,contract.gate,contract.next_action,contract.failure_classification,waketask.product_spec",
+        secret_policy="no secrets; do not print environment variables or credential values",
+        model_stylesheet="
+            *       { backend: cli; provider: openai; model: gpt-5.3-codex-spark; reasoning_effort: low; }
+            .design { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }
+        "
+    ]
+    rankdir=LR
+
+    start [shape=Mdiamond, label="Start"]
+    exit  [shape=Msquare, label="Exit"]
+
+    write_product_spec [
+        label="Write Product Spec",
+        shape=parallelogram,
+        retry_target="write_product_spec",
+        script="node scripts/iphone-app-factory/write-waketask-product-spec.mjs"
+    ]
+
+    validate_product_spec [
+        label="Validate Product Spec",
+        shape=parallelogram,
+        retry_target="write_product_spec",
+        script="test -s .workflow/waketask-product-iteration/product-spec.md && test -s .workflow/waketask-product-iteration/product-spec.json && rg -q \"Apple Clock-like|mission|dismiss|loud|completion|share\" .workflow/waketask-product-iteration/product-spec.md && node -e \"const fs=require('fs'); const spec=JSON.parse(fs.readFileSync('.workflow/waketask-product-iteration/product-spec.json','utf8')); for (const key of ['screens','missions','acceptance_criteria','non_goals','next_action']) if (!(key in spec)) throw new Error('missing '+key);\""
+    ]
+
+    start -> write_product_spec
+    write_product_spec -> validate_product_spec [condition="outcome=succeeded"]
+    write_product_spec -> write_product_spec [label="Rewrite Product Spec"]
+    validate_product_spec -> exit [condition="outcome=succeeded"]
+    validate_product_spec -> write_product_spec [label="Fix Product Spec"]
+}

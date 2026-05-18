@@ -1,0 +1,58 @@
+_version = 1
+
+# Template only. Do not run this file directly for a real app.
+# Use scripts/iphone-app-factory/create-run-config.mjs to create a run-specific
+# TOML under workflows/iphone-app-factory/runs/<slug>.railway.toml.
+
+[workflow]
+graph = "build-iphone-app.cli.fabro"
+
+[run]
+goal = "Build a differentiated iPhone app from a researched app opportunity using SwiftAIBoilerplatePro"
+
+[run.metadata]
+factory = "iphone-app"
+control_plane = "railway"
+template = "true"
+
+[run.inputs]
+app_type = "__REQUIRED_APP_TYPE__"
+target_audience = "__REQUIRED_TARGET_AUDIENCE__"
+app_name = "__REQUIRED_APP_NAME__"
+bundle_id = "__REQUIRED_BUNDLE_ID__"
+app_dir = "__REQUIRED_APP_DIR__"
+spec_kitty_feature = "__REQUIRED_SPEC_KITTY_FEATURE__"
+boilerplate_repo = "SwiftAIBoilerplatePro/SwiftAIBoilerplatePro-Distribution"
+max_competitors = "12"
+use_mobbin = "true"
+ios_validation_mode = "github"
+allow_macos_deferred = "false"
+
+[run.sandbox]
+provider = "daytona"
+preserve = false
+stop_on_terminal = true
+
+[run.sandbox.daytona]
+auto_stop_interval = 30
+
+[run.sandbox.env]
+APIFY_TOKEN = "{{ env.APIFY_TOKEN }}"
+GITHUB_TOKEN = "{{ env.GITHUB_TOKEN }}"
+GH_TOKEN = "{{ env.GH_TOKEN }}"
+OPENROUTER_API_KEY = "{{ env.OPENROUTER_API_KEY }}"
+CLAUDE_CODE_OAUTH_TOKEN = "{{ env.CLAUDE_CODE_OAUTH_TOKEN }}"
+CLAUDE_CODE_CREDENTIALS_JSON_BASE64 = "{{ env.CLAUDE_CODE_CREDENTIALS_JSON_BASE64 }}"
+CODEX_AUTH_JSON_BASE64 = "{{ env.CODEX_AUTH_JSON_BASE64 }}"
+MOBBIN_EMAIL = "{{ env.MOBBIN_EMAIL }}"
+MOBBIN_PASSWORD = "{{ env.MOBBIN_PASSWORD }}"
+FABRO_SERVER = "{{ env.FABRO_SERVER }}"
+FABRO_DEV_TOKEN = "{{ env.FABRO_DEV_TOKEN }}"
+
+[run.artifacts]
+include = [
+  ".workflow/**",
+  "apps/*-iphone/**",
+  ".github/workflows/**",
+  "reports/ios/**",
+]

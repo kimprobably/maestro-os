@@ -1,0 +1,42 @@
+digraph RemoteServerSmoke {
+    graph [
+        goal="Verify a deployed Fabro server, GitHub token integration, Slack integration, and workflow listing",
+        persona="remote-smoke",
+        inputs="FABRO_REMOTE_URL, FABRO_REMOTE_DEV_TOKEN",
+        outputs="remote_server_report",
+        default_max_retries=1,
+        retry_target="probe_remote",
+        fallback_retry_target="probe_remote",
+        model_stylesheet="
+            *       { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: low; }
+            .coding { provider: openrouter; model: qwen/qwen3.6-plus; reasoning_effort: high; }
+            .review { provider: openrouter; model: google/gemini-3.1-pro-preview; reasoning_effort: high; }
+        "
+    ]
+    rankdir=LR
+
+    start [shape=Mdiamond, label="Start"]
+    exit  [shape=Msquare, label="Exit"]
+
+    probe_remote [
+        label="Probe Remote Server",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="probe_remote",
+        script="deploy/fabro-server/remote-smoke.sh"
+    ]
+
+    write_report [
+        label="Write Remote Report",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="probe_remote",
+        script="node -e \"const fs=require('fs'); const result=JSON.parse(fs.readFileSync('.workflow/remote-fabro-server-smoke.json','utf8')); const lines=['# Remote Fabro Server Smoke', '', 'server=' + result.server, 'github_strategy=' + result.github_strategy, 'slack_enabled=' + result.slack_enabled, 'workflow_count=' + result.workflow_count]; fs.writeFileSync('.workflow/remote-fabro-server-smoke.md', lines.join('\\n') + '\\n'); console.log(lines.join('\\n'));\""
+    ]
+
+    start -> probe_remote
+    probe_remote -> write_report [condition="outcome=succeeded"]
+    probe_remote -> probe_remote [label="Retry", loop_restart=true, max_visits=2]
+    write_report -> exit [condition="outcome=succeeded"]
+    write_report -> probe_remote [label="Repair", loop_restart=true]
+}

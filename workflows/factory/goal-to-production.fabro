@@ -1,0 +1,255 @@
+digraph GoalToProduction {
+    graph [
+        goal="Turn a vague goal into an approved, reviewed, simplified implementation handoff",
+        persona="code-factory",
+        inputs="goal_path, spec_path, spec_json_path, spec_kitty_feature, app_dir",
+        outputs="completed_spec, architecture, implementation, ci_report, release_review",
+        default_max_retries=2,
+        retry_target="draft_spec",
+        fallback_retry_target="draft_spec",
+        model_stylesheet="
+            *             { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: low; }
+            .spec         { backend: cli; provider: anthropic; model: claude-sonnet-4-5; reasoning_effort: high; }
+            .architecture { backend: cli; provider: anthropic; model: claude-sonnet-4-5; reasoning_effort: high; }
+            .coding       { backend: cli; provider: anthropic; model: claude-sonnet-4-5; reasoning_effort: high; }
+            .review       { backend: cli; provider: anthropic; model: claude-sonnet-4-5; reasoning_effort: high; }
+            .security     { backend: cli; provider: anthropic; model: claude-sonnet-4-5; reasoning_effort: high; }
+            .simplify     { backend: cli; provider: anthropic; model: claude-sonnet-4-5; reasoning_effort: high; }
+        "
+    ]
+    rankdir=LR
+
+    start [shape=Mdiamond, label="Start"]
+    exit  [shape=Msquare, label="Exit"]
+
+    load_context [
+        label="Load Factory Context",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="load_context",
+        script="mkdir -p .maestro/factory .workflow \"$(dirname '{{ inputs.spec_path|default('specs/factory/goal-to-production-spec.md') }}')\" \"{{ inputs.app_dir|default('apps/generated-from-goal') }}\"; test -f '{{ inputs.goal_path|default('specs/factory/vague-goal.md') }}'; cp '{{ inputs.goal_path|default('specs/factory/vague-goal.md') }}' .maestro/factory/goal.md; ./bin/maestro knowledge get architecture-principles coding-standards workflow-standards cli-conventions known-gotchas validator-library personas voice fabro-workflow-patterns --format text > .maestro/factory/context.md; echo context-loaded"
+    ]
+
+    init_spec_kitty [
+        label="Create Spec Kitty Mission",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="load_context",
+        script="FEATURE='{{ inputs.spec_kitty_feature|default('maestro-goal-to-production') }}'; if command -v spec-kitty >/dev/null 2>&1; then spec-kitty specify \"$FEATURE\" --mission-type software-dev --json > .maestro/factory/spec-kitty.json || spec-kitty verify-setup --json > .maestro/factory/spec-kitty.json; else printf '{\"error\":\"spec-kitty missing\"}\\n' > .maestro/factory/spec-kitty.json; fi; cat .maestro/factory/spec-kitty.json"
+    ]
+
+    draft_spec [
+        label="Draft Spec",
+        class="spec",
+        goal_gate=true,
+        retry_target="draft_spec",
+        prompt="@../../prompts/factory/draft-spec.md"
+    ]
+
+    validate_spec [
+        label="Validate Spec",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="draft_spec",
+        script="./bin/maestro verify spec-quality '{{ inputs.spec_path|default('specs/factory/goal-to-production-spec.md') }}'"
+    ]
+
+    spec_review [
+        label="Spec Review",
+        class="review",
+        goal_gate=true,
+        retry_target="draft_spec",
+        prompt="@../../prompts/factory/spec-review.md"
+    ]
+
+    spec_review_gate [
+        label="Spec Review Gate",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="draft_spec",
+        script="./bin/maestro verify text-gate .maestro/factory/spec-review.md --pass 'VERDICT:\\s*APPROVED' --fail 'VERDICT:\\s*REJECTED|\\bREJECTED\\b'"
+    ]
+
+    approve_spec [shape=hexagon, label="Approve Spec"]
+
+    architecture [
+        label="Architecture And ADR",
+        class="architecture",
+        goal_gate=true,
+        retry_target="architecture",
+        prompt="@../../prompts/factory/architecture.md"
+    ]
+
+    validate_architecture [
+        label="Validate Architecture",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="architecture",
+        script="test -s .maestro/factory/architecture.md; test -s .maestro/factory/adr.md; grep -Eq 'ADR (REQUIRED|NOT REQUIRED)' .maestro/factory/adr.md"
+    ]
+
+    work_packages [
+        label="Create Work Packages",
+        class="spec",
+        goal_gate=true,
+        retry_target="architecture",
+        prompt="@../../prompts/factory/work-packages.md"
+    ]
+
+    validate_packages [
+        label="Validate Work Packages",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="work_packages",
+        script="node -e \"const fs=require('fs'); const data=JSON.parse(fs.readFileSync('.maestro/factory/work-packages.json','utf8')); if (!Array.isArray(data.packages) || data.packages.length === 0) throw new Error('missing packages'); for (const pkg of data.packages) { for (const key of ['id','title','owner','files','requirements','verification','reviewers']) { if (pkg[key] == null) throw new Error('package missing ' + key); } } console.log(JSON.stringify({packages:data.packages.length}));\""
+    ]
+
+    implement [
+        label="Implement",
+        class="coding",
+        goal_gate=true,
+        retry_target="implement",
+        prompt="@../../prompts/factory/implement.md"
+    ]
+
+    native_checks [
+        label="Native Checks",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="implement",
+        script="ROOT='{{ inputs.app_dir|default('apps/generated-from-goal') }}'; test -d \"$ROOT\"; mkdir -p .maestro/factory; find \"$ROOT\" -path '*/node_modules' -prune -o \\( -name package.json -o -name Cargo.toml \\) -print | sort > .maestro/factory/project-manifests.txt; test -s .maestro/factory/project-manifests.txt; while IFS= read -r manifest; do dir=$(dirname \"$manifest\"); name=$(basename \"$manifest\"); if [ \"$name\" = package.json ]; then (cd \"$dir\"; if [ ! -d node_modules ]; then npm install; fi; npm run typecheck --if-present; npm test --if-present; npm run build --if-present); elif [ \"$name\" = Cargo.toml ]; then (cd \"$dir\"; cargo fmt --check && cargo clippy --workspace --all-targets --all-features -- -D warnings && cargo test --workspace); fi; done < .maestro/factory/project-manifests.txt; printf '# CI Report\\n\\nnative_checks=ok\\n' > .maestro/factory/ci-report.md"
+    ]
+
+    review_fanout [shape=component, label="Code Review Fan-Out"]
+    correctness_review [
+        label="Correctness Review",
+        class="review",
+        prompt="@../../prompts/factory/review-code.md"
+    ]
+    test_review [
+        label="Test Review",
+        class="review",
+        prompt="@../../prompts/factory/review-code.md"
+    ]
+    security_review [
+        label="Security Review",
+        class="security",
+        prompt="@../../prompts/factory/review-code.md"
+    ]
+    review_join [shape=tripleoctagon, label="Review Join", join_policy="wait_all"]
+    review_consensus [
+        label="Review Consensus",
+        class="review",
+        goal_gate=true,
+        retry_target="implement",
+        prompt="@../../prompts/factory/review-consensus.md"
+    ]
+    review_gate [
+        label="Review Gate",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="implement",
+        script="./bin/maestro verify text-gate .maestro/factory/review-consensus.md --pass 'VERDICT:\\s*APPROVED' --fail 'VERDICT:\\s*REJECTED|\\bREJECTED\\b'"
+    ]
+
+    simplify [
+        label="Simplify",
+        class="simplify",
+        goal_gate=true,
+        retry_target="simplify",
+        prompt="@../../prompts/factory/simplify.md"
+    ]
+
+    ci_cd_gate [
+        label="CI/CD Gate",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="simplify",
+        script="qlty config validate --no-upgrade-check; qlty check --all --filter actionlint --no-progress --no-fail --summary --no-upgrade-check >> .maestro/factory/ci-report.md; ./bin/maestro workflow register workflows/factory/goal-to-production.fabro >> .maestro/factory/ci-report.md; echo ci-cd-gate-ok"
+    ]
+
+    final_release_review [
+        label="Final Release Review",
+        class="review",
+        goal_gate=true,
+        retry_target="simplify",
+        prompt="@../../prompts/factory/final-release-review.md"
+    ]
+
+    final_gate [
+        label="Final Gate",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="simplify",
+        script="./bin/maestro verify text-gate .maestro/factory/final-release-review.md --pass 'VERDICT:\\s*APPROVED' --fail 'VERDICT:\\s*REJECTED|\\bREJECTED\\b'"
+    ]
+
+    approve_release [shape=hexagon, label="Approve Release Handoff"]
+
+    publish_handoff [
+        label="Publish Handoff",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="final_release_review",
+        script="node -e \"const fs=require('fs'),crypto=require('crypto'); const spec='{{ inputs.spec_path|default('specs/factory/goal-to-production-spec.md') }}'; const json='{{ inputs.spec_json_path|default('specs/factory/goal-to-production-spec.json') }}'; let kitty={}; try{kitty=JSON.parse(fs.readFileSync('.maestro/factory/spec-kitty.json','utf8'));}catch{} const out={spec_path:spec, app_dir:'{{ inputs.app_dir|default('apps/generated-from-goal') }}', spec_kitty:{mission_slug:kitty.mission_slug||null, spec_file:kitty.spec_file||null}, architecture:'.maestro/factory/architecture.md', ci_report:'.maestro/factory/ci-report.md', release_review:'.maestro/factory/final-release-review.md', sha256:fs.existsSync(spec)?crypto.createHash('sha256').update(fs.readFileSync(spec)).digest('hex'):null, status:'approved', updated_at:new Date().toISOString()}; fs.mkdirSync(require('path').dirname(json),{recursive:true}); fs.writeFileSync(json, JSON.stringify(out,null,2)+'\\n'); if (kitty.spec_file && fs.existsSync(kitty.spec_file) && fs.existsSync(spec)) fs.copyFileSync(spec, kitty.spec_file); console.log(JSON.stringify(out));\""
+    ]
+
+    memory_summary [
+        label="Memory Summary",
+        shape=parallelogram,
+        script="printf '{\"kind\":\"factory.goal.completed\",\"payload\":{\"spec_path\":\"{{ inputs.spec_path|default('specs/factory/goal-to-production-spec.md') }}\",\"app_dir\":\"{{ inputs.app_dir|default('apps/generated-from-goal') }}\"}}' | ./bin/maestro memory append 'team/code/factory' >/dev/null; echo memory-updated"
+    ]
+
+    start -> load_context
+    load_context -> init_spec_kitty [condition="outcome=succeeded"]
+    load_context -> load_context [loop_restart=true]
+    init_spec_kitty -> draft_spec [condition="outcome=succeeded"]
+    init_spec_kitty -> load_context [label="Fix"]
+    draft_spec -> validate_spec [condition="outcome=succeeded"]
+    draft_spec -> draft_spec [loop_restart=true]
+    validate_spec -> spec_review [condition="outcome=succeeded"]
+    validate_spec -> draft_spec [label="Fix"]
+    spec_review -> spec_review_gate [condition="outcome=succeeded"]
+    spec_review -> draft_spec [label="Fix"]
+    spec_review_gate -> approve_spec [condition="outcome=succeeded"]
+    spec_review_gate -> draft_spec [label="Fix"]
+    approve_spec -> architecture [label="[A] Approve"]
+    approve_spec -> draft_spec [label="[R] Revise"]
+    architecture -> validate_architecture [condition="outcome=succeeded"]
+    architecture -> architecture [loop_restart=true]
+    validate_architecture -> work_packages [condition="outcome=succeeded"]
+    validate_architecture -> architecture [label="Fix"]
+    work_packages -> validate_packages [condition="outcome=succeeded"]
+    work_packages -> work_packages [loop_restart=true]
+    validate_packages -> implement [condition="outcome=succeeded"]
+    validate_packages -> work_packages [label="Fix"]
+    implement -> native_checks [condition="outcome=succeeded"]
+    implement -> implement [loop_restart=true]
+    native_checks -> review_fanout [condition="outcome=succeeded"]
+    native_checks -> implement [label="Fix"]
+    review_fanout -> correctness_review
+    review_fanout -> test_review
+    review_fanout -> security_review
+    correctness_review -> review_join
+    test_review -> review_join
+    security_review -> review_join
+    review_join -> review_consensus
+    review_consensus -> review_gate [condition="outcome=succeeded"]
+    review_consensus -> implement [label="Fix"]
+    review_gate -> simplify [condition="outcome=succeeded"]
+    review_gate -> implement [label="Fix"]
+    simplify -> ci_cd_gate [condition="outcome=succeeded"]
+    simplify -> simplify [loop_restart=true]
+    ci_cd_gate -> final_release_review [condition="outcome=succeeded"]
+    ci_cd_gate -> simplify [label="Fix"]
+    final_release_review -> final_gate [condition="outcome=succeeded"]
+    final_release_review -> simplify [label="Fix"]
+    final_gate -> approve_release [condition="outcome=succeeded"]
+    final_gate -> simplify [label="Fix"]
+    approve_release -> publish_handoff [label="[A] Approve"]
+    approve_release -> simplify [label="[R] Revise"]
+    publish_handoff -> memory_summary [condition="outcome=succeeded"]
+    publish_handoff -> final_release_review [label="Fix"]
+    memory_summary -> exit [condition="outcome=succeeded"]
+    memory_summary -> publish_handoff [label="Fix"]
+}

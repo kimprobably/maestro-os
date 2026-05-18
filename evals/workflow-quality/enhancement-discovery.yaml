@@ -1,0 +1,60 @@
+description: "Enhancement Discovery workflow-quality eval"
+
+providers:
+  - id: openrouter:anthropic/claude-haiku-4-5
+    config:
+      apiKeyEnvar: OPENROUTER_API_KEY
+      temperature: 0
+      max_tokens: 600
+      maxRetries: 0
+
+evaluateOptions:
+  maxConcurrency: 1
+
+defaultTest:
+  options:
+    provider:
+      id: openrouter:anthropic/claude-haiku-4-5
+      config:
+        apiKeyEnvar: OPENROUTER_API_KEY
+        temperature: 0
+        max_tokens: 600
+
+prompts:
+  - |
+    Evaluate whether this Fabro workflow-quality evidence follows eval-driven development.
+
+    Golden cases:
+    {{golden_cases}}
+
+    Spec eval:
+    {{spec_eval}}
+
+    Architecture eval:
+    {{architecture_eval}}
+
+    Workflow eval:
+    {{workflow_eval}}
+
+    Generated workflow validation:
+    {{generated_validation}}
+
+    Return valid JSON only, no markdown fences:
+    {"verdict":"APPROVE","score":0.0,"covered":["lineage","baseline","golden_dataset","regression_gate","simplification"],"gaps":[]}
+
+tests:
+  - description: "Enhancement discovery has EDD lineage and regression gates"
+    vars:
+      golden_cases: file://datasets/enhancement-discovery-golden.jsonl
+      spec_eval: file://../../.workflow/enhancement-discovery/evals/spec-contract.json
+      architecture_eval: file://../../.workflow/enhancement-discovery/evals/architecture-contract.json
+      workflow_eval: file://../../.workflow/enhancement-discovery/evals/workflow-contract.json
+      generated_validation: file://../../.workflow/enhancement-discovery/generated-workflow-validation.json
+    assert:
+      - type: contains-all
+        value: ["lineage", "baseline", "golden_dataset", "regression_gate", "simplification"]
+      - type: llm-rubric
+        value: "The evidence should make workflow quality reproducible across dataset, prompt, rubric, judge, baseline, and regression threshold versions."
+        threshold: 0.75
+
+outputPath: .workflow/enhancement-discovery/evals/promptfoo-output.json

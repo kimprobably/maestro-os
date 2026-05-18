@@ -1,0 +1,42 @@
+digraph FeatureImplementationStage {
+    graph [
+        goal="Implement the approved existing-app feature plan and prove required capability coverage",
+        persona="existing-app-feature-implementer",
+        inputs="app_dir,required_capabilities",
+        outputs="contract.artifact,contract.gate,contract.next_action,contract.failure_classification,implementation_evidence",
+        secret_policy="no secrets; do not print environment variables or credential values",
+        model_stylesheet="* { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }"
+    ]
+    rankdir=LR
+
+    start [shape=Mdiamond, label="Start"]
+    exit  [shape=Msquare, label="Exit"]
+
+    implement_feature [
+        label="Implement Feature",
+        shape=parallelogram,
+        retry_target="implement_feature",
+        timeout="7200s",
+        script="node scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/feature-implementation.md --stage feature-implementation --out .workflow/existing-app-feature/codex/feature-implementation.json"
+    ]
+    coverage_gate [
+        label="Implementation Coverage Gate",
+        shape=parallelogram,
+        retry_target="implement_feature",
+        script="node scripts/iphone-app-factory/feature-implementation-coverage-gate.mjs"
+    ]
+    empty_action_gate [
+        label="Empty Action Gate",
+        shape=parallelogram,
+        retry_target="implement_feature",
+        script="node scripts/iphone-app-factory/empty-action-gate.mjs"
+    ]
+
+    start -> implement_feature
+    implement_feature -> coverage_gate [condition="outcome=succeeded"]
+    implement_feature -> implement_feature [label="Retry Feature Implementation"]
+    coverage_gate -> empty_action_gate [condition="outcome=succeeded"]
+    coverage_gate -> implement_feature [label="Fix Capability Coverage"]
+    empty_action_gate -> exit [condition="outcome=succeeded"]
+    empty_action_gate -> implement_feature [label="Remove No-Op Actions"]
+}

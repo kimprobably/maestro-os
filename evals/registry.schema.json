@@ -1,0 +1,78 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://maestro.local/evals/registry.schema.json",
+  "title": "Eval Registry v1",
+  "type": "object",
+  "required": ["version", "evals"],
+  "additionalProperties": false,
+  "properties": {
+    "version": {
+      "const": 1
+    },
+    "evals": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "level",
+          "state",
+          "runner",
+          "blocking",
+          "subject_paths",
+          "artifact_patterns",
+          "owner",
+          "waiver_policy"
+        ],
+        "additionalProperties": true,
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "level": {
+            "enum": ["call", "stage", "workflow", "product", "meta"]
+          },
+          "state": {
+            "enum": ["draft", "calibrating", "blocking", "ratcheted", "quarantined", "deprecated"]
+          },
+          "runner": {
+            "enum": ["promptfoo", "deterministic", "custom", "human-review", "ci"]
+          },
+          "blocking": {
+            "type": "boolean"
+          },
+          "subject_paths": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "artifact_patterns": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "owner": {
+            "type": "string",
+            "minLength": 1
+          },
+          "counterexamples": {
+            "type": "array"
+          },
+          "meta_eval_id": {
+            "type": "string"
+          },
+          "waiver_policy": {
+            "type": "object"
+          }
+        }
+      }
+    }
+  }
+}

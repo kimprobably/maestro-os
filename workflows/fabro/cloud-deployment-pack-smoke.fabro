@@ -1,0 +1,42 @@
+digraph CloudDeploymentPackSmoke {
+    graph [
+        goal="Verify the Fabro cloud deployment pack and remote smoke script",
+        persona="deployment-smoke",
+        inputs="",
+        outputs="cloud_deployment_pack_report",
+        default_max_retries=1,
+        retry_target="validate_pack",
+        fallback_retry_target="validate_pack",
+        model_stylesheet="
+            *       { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: low; }
+            .coding { provider: openrouter; model: qwen/qwen3.6-plus; reasoning_effort: high; }
+            .review { provider: openrouter; model: google/gemini-3.1-pro-preview; reasoning_effort: high; }
+        "
+    ]
+    rankdir=LR
+
+    start [shape=Mdiamond, label="Start"]
+    exit  [shape=Msquare, label="Exit"]
+
+    validate_pack [
+        label="Validate Deployment Pack",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="validate_pack",
+        script="mkdir -p .workflow; test -f deploy/fabro-server/docker-compose.yml; test -f deploy/fabro-server/Caddyfile; test -f deploy/fabro-server/settings.server.toml; test -f deploy/fabro-server/env.server.example; test -x deploy/fabro-server/remote-smoke.sh; sh -n deploy/fabro-server/remote-smoke.sh; node -e \"const fs=require('fs'); const files=['docker-compose.yml','Caddyfile','settings.server.toml','env.server.example','README.md']; const base='deploy/fabro-server/'; for (const file of files) { if (!fs.existsSync(base + file)) throw new Error('missing ' + file); } const compose=fs.readFileSync(base + 'docker-compose.yml','utf8'); for (const text of ['fabro-storage','/storage','FABRO_CONFIG','caddy','/var/run/docker.sock']) { if (!compose.includes(text)) throw new Error('compose missing ' + text); } const settings=fs.readFileSync(base + 'settings.server.toml','utf8'); for (const text of ['methods = [\\\"dev-token\\\"]','strategy = \\\"token\\\"','FABRO_SLACK_CHANNEL_ID']) { if (!settings.includes(text)) throw new Error('settings missing ' + text); } const env=fs.readFileSync(base + 'env.server.example','utf8'); for (const text of ['SESSION_SECRET=','FABRO_DEV_TOKEN=','GITHUB_TOKEN=','OPENROUTER_API_KEY=','DAYTONA_API_KEY=']) { if (!env.includes(text)) throw new Error('env example missing ' + text); } console.log(JSON.stringify({deployment_pack:true}));\" > .workflow/cloud-deployment-pack.json"
+    ]
+
+    write_report [
+        label="Write Deployment Pack Report",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="validate_pack",
+        script="node -e \"const lines=['# Cloud Deployment Pack Smoke', '', 'compose=ok', 'settings=ok', 'env_example=ok', 'remote_smoke_script=ok']; require('fs').writeFileSync('.workflow/cloud-deployment-pack-smoke.md', lines.join('\\n') + '\\n'); console.log(lines.join('\\n'));\""
+    ]
+
+    start -> validate_pack
+    validate_pack -> write_report [condition="outcome=succeeded"]
+    validate_pack -> validate_pack [label="Retry", loop_restart=true, max_visits=2]
+    write_report -> exit [condition="outcome=succeeded"]
+    write_report -> validate_pack [label="Repair", loop_restart=true]
+}

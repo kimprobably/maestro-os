@@ -1,0 +1,82 @@
+name: Maestro Quality
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  quality:
+    name: Quality
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Set up Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.3.11
+
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v7
+
+      - name: Install Qlty
+        run: |
+          curl -fsSL https://qlty.sh | sh
+          echo "$HOME/.qlty/bin" >> "$GITHUB_PATH"
+
+      - name: Install Spec Kitty
+        run: uv tool install spec-kitty-cli
+
+      - name: Install Graphviz
+        run: sudo apt-get update && sudo apt-get install -y graphviz
+
+      - name: Bun Tests
+        run: bun test cli/src/index.test.ts apps/generated-consumer-app-radar/tests/*.test.js
+
+      - name: Bun Build Check
+        run: bun run check
+
+      - name: JavaScript Syntax Checks
+        run: find scripts -name '*.mjs' -print0 | xargs -0 -n 1 node --check
+
+      - name: Fabro Workflow Contract Checks
+        run: |
+          node scripts/iphone-app-factory/validate-contract.mjs
+          ./bin/maestro workflow register workflows/iphone-app-factory/build-iphone-app.fabro
+          ./bin/maestro workflow register workflows/fabro/iphone-app-factory-contract-smoke.fabro
+
+      - name: Prompt Quality Gate
+        env:
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+        run: node scripts/iphone-app-factory/promptfoo-prompt-quality.mjs --allow-fallback true --accepted-risk-promptfoo-failure true --normalized-out .workflow/iphone-app-factory/evals/normalized-prompt-quality.json
+
+      - name: Qlty Config
+        run: qlty config validate --no-upgrade-check
+
+      - name: Qlty Tool Install
+        run: qlty check --all --install-only --no-progress --no-upgrade-check
+
+      - name: Qlty Workflow Syntax Gate
+        run: |
+          git fetch origin main --depth=1
+          qlty check .github/workflows/quality.yml --filter actionlint --no-progress --summary --fail-level high --no-upgrade-check
+
+      - name: Qlty Secret Scan
+        run: qlty check --all --filter gitleaks --no-progress --summary --fail-level high --no-upgrade-check
+
+      - name: Qlty Report
+        run: qlty check --all --no-progress --no-fail --summary --no-upgrade-check
+
+      - name: Spec Kitty Setup
+        run: spec-kitty verify-setup --json

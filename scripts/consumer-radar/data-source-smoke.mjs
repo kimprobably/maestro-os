@@ -19,6 +19,27 @@ function usableSecret(value) {
   return Boolean(value && !value.includes("{{") && !value.includes("}}"));
 }
 
+function errorDetails(error) {
+  if (!(error instanceof Error)) return { message: String(error) };
+  return {
+    message: error.message,
+    cause_code: error.cause?.code,
+    cause_message: error.cause?.message
+  };
+}
+
+async function fetchStatus(url, options = {}) {
+  try {
+    const response = await fetch(url, {
+      signal: AbortSignal.timeout(12000),
+      ...options
+    });
+    return { ok: response.ok, status: response.status };
+  } catch (error) {
+    return { ok: false, error: errorDetails(error) };
+  }
+}
+
 const output = argValue("--output", ".workflow/consumer-radar/data-source-smoke.json");
 const realMode = argBool("--real-mode", false);
 const allowFixtureFallback = argBool("--allow-fixture-fallback", true);
@@ -36,40 +57,34 @@ const report = {
     instagram: process.env.APIFY_INSTAGRAM_ACTOR || "apify/instagram-scraper"
   },
   apple_review_rss: null,
-  apify_identity: null
+  apify_identity: null,
+  warnings: []
 };
 
-try {
-  const response = await fetch("https://itunes.apple.com/us/rss/topfreeapplications/limit=25/genre=6007/json", {
-    signal: AbortSignal.timeout(12000)
-  });
-  report.apple_review_rss = { ok: response.ok, status: response.status };
-} catch (error) {
-  report.apple_review_rss = { ok: false, error: error instanceof Error ? error.message : String(error) };
-}
+report.apple_review_rss = await fetchStatus("https://itunes.apple.com/us/rss/topfreeapplications/limit=25/genre=6007/json");
 
 if (report.apify_token_available) {
-  try {
-    const response = await fetch("https://api.apify.com/v2/users/me?token=" + encodeURIComponent(process.env.APIFY_TOKEN), {
-      signal: AbortSignal.timeout(12000)
-    });
-    report.apify_identity = { ok: response.ok, status: response.status };
-  } catch (error) {
-    report.apify_identity = { ok: false, error: error instanceof Error ? error.message : String(error) };
-  }
+  report.apify_identity = await fetchStatus("https://api.apify.com/v2/users/me?token=" + encodeURIComponent(process.env.APIFY_TOKEN));
 } else {
   report.apify_identity = { ok: false, status: "missing_or_unresolved_token" };
 }
 
 const hardFailures = [];
-if (realMode && !allowFixtureFallback) {
+if (realMode) {
   if (!report.apify_token_available) hardFailures.push("APIFY_TOKEN missing or unresolved");
   if (!report.openrouter_key_available) hardFailures.push("OPENROUTER_API_KEY missing or unresolved");
-  if (!report.apple_review_rss?.ok) hardFailures.push("Apple RSS smoke failed");
-  if (!report.apify_identity?.ok) hardFailures.push("Apify identity smoke failed");
+  if (!allowFixtureFallback) {
+    if (!report.apple_review_rss?.ok) hardFailures.push("Apple RSS smoke failed");
+    if (!report.apify_identity?.ok) hardFailures.push("Apify identity smoke failed");
+  } else {
+    if (!report.apple_review_rss?.ok) report.warnings.push("Apple RSS smoke failed; fixture data remains enabled");
+    if (!report.apify_identity?.ok) report.warnings.push("Apify identity smoke failed; fixture data remains enabled");
+  }
 }
 report.hard_failures = hardFailures;
 report.ok = hardFailures.length === 0;
+report.live_egress_available = Boolean(report.apple_review_rss?.ok && report.apify_identity?.ok);
+report.data_mode = report.live_egress_available ? "live_smoke_verified" : "fixture_with_live_adapters";
 mkdirSync(dirname(output), { recursive: true });
 writeFileSync(output, JSON.stringify(report, null, 2) + "\n");
 console.log(JSON.stringify(report, null, 2));

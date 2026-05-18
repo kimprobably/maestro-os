@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { spawnSync } from "node:child_process";
-import { dirname } from "node:path";
+import { dirname, resolve } from "node:path";
+import { writeNormalizedResult } from "../evals/eval-lib.mjs";
 
 function argValue(name, fallback) {
   const index = process.argv.indexOf(name);
@@ -19,12 +20,21 @@ function argBool(name, fallback) {
 const appDir = process.argv[2] || "apps/generated-consumer-app-radar";
 const realMode = argBool("--real-mode", false);
 const allowFallback = argBool("--allow-fallback", true);
+const normalizedOutPath = resolve(argValue(
+  "--normalized-out",
+  `reports/evals/${process.env.FABRO_RUN_ID || "local"}/consumer-radar.product-quality.json`,
+));
 const promptfooEvalTimeoutMs = process.env.PROMPTFOO_EVAL_TIMEOUT_MS || "45000";
 const promptfooMaxEvalTimeMs = process.env.PROMPTFOO_MAX_EVAL_TIME_MS || "120000";
 mkdirSync(".workflow/consumer-radar", { recursive: true });
 
+const reportPaths = [
+  ".workflow/consumer-radar/promptfoo-report.json",
+  "reports/consumer-radar/quality/promptfoo-report.json",
+];
+
 function writeReport(report) {
-  for (const file of [".workflow/consumer-radar/promptfoo-report.json", "reports/consumer-radar/quality/promptfoo-report.json"]) {
+  for (const file of reportPaths) {
     mkdirSync(dirname(file), { recursive: true });
     writeFileSync(file, JSON.stringify(report, null, 2) + "\n");
   }
@@ -54,6 +64,9 @@ const fallbackAssertions = [
   { name: "has_review_themes", passed: apps.every((app) => Array.isArray(app.reviewThemes) && app.reviewThemes.length > 0) },
   { name: "has_feature_requests", passed: apps.every((app) => Array.isArray(app.featureRequests) && app.featureRequests.length > 0) }
 ];
+const promptfooOk = Boolean(promptfooResult && promptfooResult.status === 0);
+const promptfooFailed = Boolean(promptfooResult && promptfooResult.status !== 0);
+const fallbackOk = fallbackAssertions.every((row) => row.passed);
 
 const hardFailures = [];
 if (realMode && !allowFallback && (!promptfooResult || promptfooResult.status !== 0)) {
@@ -71,5 +84,21 @@ const report = {
   fallback_assertions: fallbackAssertions
 };
 writeReport(report);
+writeNormalizedResult(normalizedOutPath, {
+  eval_id: "consumer-radar.product-quality",
+  level: "product",
+  runner: "promptfoo",
+  workflow: "consumer-app-radar",
+  runner_status: promptfooOk ? "passed" : promptfooFailed ? "failed" : "skipped",
+  fallback_status: promptfooOk ? "not_used" : fallbackOk ? "passed" : "failed",
+  waiver_status: "none",
+  score: promptfooOk ? 1 : promptfooFailed ? 0 : null,
+  artifact_uris: [...reportPaths, appsPath],
+  metadata: {
+    promptfoo_status: report.promptfoo_status,
+    fallback_assertions: fallbackAssertions,
+    hard_failures: hardFailures,
+  },
+});
 console.log(JSON.stringify(report, null, 2));
 if (!report.ok) process.exit(1);

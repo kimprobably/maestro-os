@@ -24,10 +24,10 @@ for (const [cmd, args] of commands) {
   const result = spawnSync(cmd, args, { cwd: appDir, encoding: "utf8", timeout: 120000 });
   results.push({ command: [cmd, ...args].join(" "), status: result.status, stdout: result.stdout.slice(-3000), stderr: result.stderr.slice(-3000) });
   if (result.status !== 0) {
-    writeReport({ ok: false, app_dir: resolve(appDir), results });
+    writeReport({ ok: false, app_dir: appDir, results });
     process.stderr.write(result.stderr);
     process.exit(result.status ?? 1);
   }
 }
-writeReport({ ok: true, app_dir: resolve(appDir), results });
+writeReport({ ok: true, app_dir: appDir, results });
 console.log(JSON.stringify({ ok: true, checks: results.length }, null, 2));

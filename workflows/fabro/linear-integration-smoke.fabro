@@ -1,0 +1,42 @@
+digraph LinearIntegrationSmoke {
+    graph [
+        goal="Verify Linear API bridge and connector setup documentation",
+        persona="integration-smoke",
+        inputs="LINEAR_API_KEY",
+        outputs="linear_integration_report",
+        default_max_retries=1,
+        retry_target="probe_linear",
+        fallback_retry_target="probe_linear",
+        model_stylesheet="
+            *       { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: low; }
+            .coding { provider: openrouter; model: qwen/qwen3.6-plus; reasoning_effort: high; }
+            .review { provider: openrouter; model: google/gemini-3.1-pro-preview; reasoning_effort: high; }
+        "
+    ]
+    rankdir=LR
+
+    start [shape=Mdiamond, label="Start"]
+    exit  [shape=Msquare, label="Exit"]
+
+    probe_linear [
+        label="Probe Linear Bridge",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="probe_linear",
+        script="mkdir -p .workflow; test -f docs/LINEAR-INTEGRATION.md; test -n \"${LINEAR_API_KEY:-}\" || { printf '{\"ok\":false,\"error\":{\"code\":\"missing_linear_api_key\",\"message\":\"missing LINEAR_API_KEY\"}}\\n' > .workflow/linear-integration-smoke.json; cat .workflow/linear-integration-smoke.json; exit 1; }; ./bin/maestro linear smoke > .workflow/linear-integration-smoke.json; cat .workflow/linear-integration-smoke.json"
+    ]
+
+    write_report [
+        label="Write Linear Report",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="probe_linear",
+        script="node -e \"const fs=require('fs'); const result=JSON.parse(fs.readFileSync('.workflow/linear-integration-smoke.json','utf8')); const data=result.data || result; const lines=['# Linear Integration Smoke', '', 'status=' + (result.ok === true ? 'pass' : (data.status || 'warn')), 'detail=' + (data.detail || data.provider || 'linear')]; fs.writeFileSync('.workflow/linear-integration-smoke.md', lines.join('\\n') + '\\n'); console.log(lines.join('\\n'));\""
+    ]
+
+    start -> probe_linear
+    probe_linear -> write_report [condition="outcome=succeeded"]
+    probe_linear -> probe_linear [label="Retry", loop_restart=true, max_visits=2]
+    write_report -> exit [condition="outcome=succeeded"]
+    write_report -> probe_linear [label="Repair", loop_restart=true]
+}

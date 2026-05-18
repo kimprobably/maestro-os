@@ -1,0 +1,32 @@
+_version = 1
+
+[workflow]
+graph = "create-agent.fabro"
+
+[run]
+goal = "Bootstrap a new Maestro Hermes specialist agent"
+
+[run.inputs]
+agent_name = "Nina"
+agent_role = "Research specialist"
+agent_owns = "market research,source review,research postmortems"
+agent_current_focus = "Build durable research judgment for Maestro."
+agent_slack_bot = "false"
+agent_reporting_channel = ""
+
+[run.sandbox]
+provider = "daytona"
+preserve = false
+stop_on_terminal = true
+
+[run.sandbox.daytona]
+auto_stop_interval = 30
+
+[run.artifacts]
+include = [
+  ".workflow/hermes-agent-bootstrap/**",
+  "hermes/profiles/**",
+  "hermes/agents/**",
+  "hermes/scripts/install-worker-profiles.sh",
+  "docs/operator/agent-slack/**",
+]

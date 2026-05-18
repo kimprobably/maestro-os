@@ -1,0 +1,104 @@
+---
+description: "Outreach draft quality eval: voice, spam, length, hook, and CTA"
+
+providers:
+  - id: openai-compatible
+    config:
+      apiBaseUrl: https://openrouter.ai/api/v1
+      apiKeyEnvar: OPENROUTER_API_KEY
+      model: anthropic/claude-haiku-4-5
+
+prompts:
+  - file://prompts/outreach/draft-v1.md
+  - file://prompts/outreach/draft-v2.md
+
+tests:
+  - description: "Fintech CTO, Series A, recent funding"
+    vars:
+      lead: file://evals/datasets/outreach/leads/fintech-cto-series-a.json
+      voice: file://knowledge/voice.md
+      icp: file://knowledge/icp/fintech.md
+    assert:
+      - type: javascript
+        value: "output.length <= 600"
+      - type: not-contains-any
+        value: ["leverage", "synergy", "I noticed", "AI-powered", "circle back"]
+      - type: javascript
+        value: "output.split('\\n').length <= 6"
+      - type: llm-rubric
+        value: "Email reads as conversational, not corporate. Tone matches the voice guide. Score 0-1 on voice-match."
+        threshold: 0.75
+      - type: llm-rubric
+        value: "Email has a specific hook tied to the lead's situation, not generic personalization. Score 0-1 on hook-specificity."
+        threshold: 0.70
+      - type: llm-rubric
+        value: "Email asks for one clear thing and does not include multiple CTAs. Score 0-1 on CTA-clarity."
+        threshold: 0.80
+
+  - description: "B2B SaaS founder, bootstrapped, product launch"
+    vars:
+      lead: file://evals/datasets/outreach/leads/saas-founder-bootstrapped.json
+      voice: file://knowledge/voice.md
+      icp: file://knowledge/icp/fintech.md
+    assert:
+      - type: javascript
+        value: "output.length <= 600"
+      - type: not-contains-any
+        value: ["leverage", "synergy", "I noticed", "AI-powered", "circle back"]
+      - type: javascript
+        value: "output.split('\\n').length <= 6"
+      - type: llm-rubric
+        value: "Email reads as conversational, not corporate. Tone matches the voice guide. Score 0-1 on voice-match."
+        threshold: 0.75
+      - type: llm-rubric
+        value: "Email has a specific hook tied to the lead's situation, not generic personalization. Score 0-1 on hook-specificity."
+        threshold: 0.70
+      - type: llm-rubric
+        value: "Email asks for one clear thing and does not include multiple CTAs. Score 0-1 on CTA-clarity."
+        threshold: 0.80
+
+  - description: "Payments VP Sales, new vertical expansion"
+    vars:
+      lead: file://evals/datasets/outreach/leads/payments-vp-sales-expansion.json
+      voice: file://knowledge/voice.md
+      icp: file://knowledge/icp/fintech.md
+    assert:
+      - type: javascript
+        value: "output.length <= 600"
+      - type: not-contains-any
+        value: ["leverage", "synergy", "I noticed", "AI-powered", "circle back"]
+      - type: javascript
+        value: "output.split('\\n').length <= 6"
+      - type: llm-rubric
+        value: "Email reads as conversational, not corporate. Tone matches the voice guide. Score 0-1 on voice-match."
+        threshold: 0.75
+      - type: llm-rubric
+        value: "Email has a specific hook tied to the lead's situation, not generic personalization. Score 0-1 on hook-specificity."
+        threshold: 0.70
+      - type: llm-rubric
+        value: "Email asks for one clear thing and does not include multiple CTAs. Score 0-1 on CTA-clarity."
+        threshold: 0.80
+
+  - description: "Insurtech RevOps, broker channel systems"
+    vars:
+      lead: file://evals/datasets/outreach/leads/insurtech-revops-systems.json
+      voice: file://knowledge/voice.md
+      icp: file://knowledge/icp/fintech.md
+    assert:
+      - type: javascript
+        value: "output.length <= 600"
+      - type: not-contains-any
+        value: ["leverage", "synergy", "I noticed", "AI-powered", "circle back"]
+      - type: javascript
+        value: "output.split('\\n').length <= 6"
+      - type: llm-rubric
+        value: "Email reads as conversational, not corporate. Tone matches the voice guide. Score 0-1 on voice-match."
+        threshold: 0.75
+      - type: llm-rubric
+        value: "Email has a specific hook tied to the lead's situation, not generic personalization. Score 0-1 on hook-specificity."
+        threshold: 0.70
+      - type: llm-rubric
+        value: "Email asks for one clear thing and does not include multiple CTAs. Score 0-1 on CTA-clarity."
+        threshold: 0.80
+
+outputPath: ./evals/output/outreach-quality.json

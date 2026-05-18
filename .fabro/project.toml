@@ -1,0 +1,300 @@
+_version = 1
+
+[project]
+name = "maestro-os"
+
+[llm.providers.openrouter]
+display_name = "OpenRouter"
+adapter = "openai_compatible"
+base_url = "https://openrouter.ai/api/v1"
+credentials = ["env:OPENROUTER_API_KEY"]
+priority = 10
+aliases = ["or"]
+
+[llm.models."anthropic/claude-haiku-4-5"]
+provider = "openrouter"
+api_id = "anthropic/claude-haiku-4.5"
+display_name = "OpenRouter Claude Haiku 4.5"
+family = "claude-haiku"
+default = true
+aliases = ["openrouter-haiku"]
+estimated_output_tps = 100
+
+[llm.models."anthropic/claude-haiku-4-5".limits]
+context_window = 200000
+max_output = 64000
+
+[llm.models."anthropic/claude-haiku-4-5".features]
+tools = true
+vision = false
+reasoning = true
+reasoning_effort = "levels"
+
+[llm.models."anthropic/claude-haiku-4-5".controls]
+reasoning_effort = ["low", "medium", "high"]
+
+[llm.models."anthropic/claude-haiku-4-5".costs]
+input_cost_per_mtok = 1.00
+output_cost_per_mtok = 5.00
+
+[llm.models."moonshotai/kimi-k2.6"]
+provider = "openrouter"
+display_name = "OpenRouter Kimi K2.6"
+family = "kimi"
+aliases = ["openrouter-kimi"]
+estimated_output_tps = 60
+
+[llm.models."moonshotai/kimi-k2.6".limits]
+context_window = 262142
+max_output = 262142
+
+[llm.models."moonshotai/kimi-k2.6".features]
+tools = true
+vision = true
+reasoning = true
+reasoning_effort = "levels"
+
+[llm.models."moonshotai/kimi-k2.6".controls]
+reasoning_effort = ["low", "medium", "high"]
+
+[llm.models."moonshotai/kimi-k2.6".costs]
+input_cost_per_mtok = 0.74
+output_cost_per_mtok = 3.50
+
+[llm.models."google/gemini-3.1-flash-lite"]
+provider = "openrouter"
+display_name = "OpenRouter Gemini 3.1 Flash Lite"
+family = "gemini"
+aliases = ["openrouter-gemini-flash-lite"]
+estimated_output_tps = 200
+
+[llm.models."google/gemini-3.1-flash-lite".limits]
+context_window = 1048576
+max_output = 65536
+
+[llm.models."google/gemini-3.1-flash-lite".features]
+tools = true
+vision = true
+reasoning = true
+reasoning_effort = "levels"
+
+[llm.models."google/gemini-3.1-flash-lite".controls]
+reasoning_effort = ["low", "medium", "high"]
+
+[llm.models."google/gemini-3.1-flash-lite".costs]
+input_cost_per_mtok = 0.25
+output_cost_per_mtok = 1.50
+
+[llm.models."google/gemini-3.1-pro-preview"]
+provider = "openrouter"
+display_name = "OpenRouter Gemini 3.1 Pro Preview"
+family = "gemini"
+aliases = ["openrouter-gemini-pro"]
+estimated_output_tps = 85
+
+[llm.models."google/gemini-3.1-pro-preview".limits]
+context_window = 1048576
+max_output = 65536
+
+[llm.models."google/gemini-3.1-pro-preview".features]
+tools = true
+vision = true
+reasoning = true
+reasoning_effort = "levels"
+
+[llm.models."google/gemini-3.1-pro-preview".controls]
+reasoning_effort = ["low", "medium", "high"]
+
+[llm.models."google/gemini-3.1-pro-preview".costs]
+input_cost_per_mtok = 2.00
+output_cost_per_mtok = 12.00
+
+[llm.models."qwen/qwen3.6-plus"]
+provider = "openrouter"
+display_name = "OpenRouter Qwen3.6 Plus"
+family = "qwen"
+aliases = ["openrouter-qwen-plus"]
+estimated_output_tps = 100
+
+[llm.models."qwen/qwen3.6-plus".limits]
+context_window = 1000000
+max_output = 65536
+
+[llm.models."qwen/qwen3.6-plus".features]
+tools = true
+vision = true
+reasoning = true
+reasoning_effort = "levels"
+
+[llm.models."qwen/qwen3.6-plus".controls]
+reasoning_effort = ["low", "medium", "high"]
+
+[llm.models."qwen/qwen3.6-plus".costs]
+input_cost_per_mtok = 0.325
+output_cost_per_mtok = 1.95
+
+[llm.models."deepseek/deepseek-v4-pro"]
+provider = "openrouter"
+display_name = "OpenRouter DeepSeek V4 Pro"
+family = "deepseek"
+aliases = ["openrouter-deepseek-v4-pro"]
+estimated_output_tps = 100
+
+[llm.models."deepseek/deepseek-v4-pro".limits]
+context_window = 1048576
+max_output = 384000
+
+[llm.models."deepseek/deepseek-v4-pro".features]
+tools = true
+vision = false
+reasoning = true
+reasoning_effort = "levels"
+
+[llm.models."deepseek/deepseek-v4-pro".controls]
+reasoning_effort = ["low", "medium", "high"]
+
+[llm.models."deepseek/deepseek-v4-pro".costs]
+input_cost_per_mtok = 0.435
+output_cost_per_mtok = 0.87
+
+[llm.models."deepseek/deepseek-v4-flash"]
+provider = "openrouter"
+display_name = "OpenRouter DeepSeek V4 Flash"
+family = "deepseek"
+aliases = ["openrouter-deepseek-v4-flash"]
+estimated_output_tps = 150
+
+[llm.models."deepseek/deepseek-v4-flash".limits]
+context_window = 1048576
+max_output = 131072
+
+[llm.models."deepseek/deepseek-v4-flash".features]
+tools = true
+vision = false
+reasoning = true
+reasoning_effort = "levels"
+
+[llm.models."deepseek/deepseek-v4-flash".controls]
+reasoning_effort = ["low", "medium", "high"]
+
+[llm.models."deepseek/deepseek-v4-flash".costs]
+input_cost_per_mtok = 0.126
+output_cost_per_mtok = 0.252
+
+[run.agent]
+permissions = "full"
+
+[run.sandbox]
+preserve = false
+stop_on_terminal = true
+
+[run.sandbox.env]
+OPENROUTER_API_KEY = "{{ env.OPENROUTER_API_KEY }}"
+OPENAI_API_KEY = "{{ env.OPENAI_API_KEY }}"
+CLAUDE_CODE_OAUTH_TOKEN = "{{ env.CLAUDE_CODE_OAUTH_TOKEN }}"
+CLAUDE_CODE_CREDENTIALS_JSON_BASE64 = "{{ env.CLAUDE_CODE_CREDENTIALS_JSON_BASE64 }}"
+CODEX_AUTH_JSON_BASE64 = "{{ env.CODEX_AUTH_JSON_BASE64 }}"
+APIFY_TOKEN = "{{ env.APIFY_TOKEN }}"
+APIFY_APPSTORE_ACTOR = "crawlerbros/appstore-scraper"
+APIFY_TIKTOK_ACTOR = "clockworks/tiktok-scraper"
+APIFY_INSTAGRAM_ACTOR = "apify/instagram-scraper"
+DAYTONA_API_URL = "{{ env.DAYTONA_API_URL }}"
+DAYTONA_API_KEY = "{{ env.DAYTONA_API_KEY }}"
+LINEAR_API_KEY = "{{ env.LINEAR_API_KEY }}"
+LINEAR_API_URL = "{{ env.LINEAR_API_URL }}"
+FABRO_SERVER = "{{ env.FABRO_SERVER }}"
+FABRO_DEV_TOKEN = "{{ env.FABRO_DEV_TOKEN }}"
+FABRO_SLACK_BOT_TOKEN = "{{ env.FABRO_SLACK_BOT_TOKEN }}"
+FABRO_SLACK_CHANNEL_ID = "{{ env.FABRO_SLACK_CHANNEL_ID }}"
+PROMPTFOO_DISABLE_TELEMETRY = "1"
+
+[run.sandbox.daytona]
+auto_stop_interval = 60
+network = "allow_all"
+
+[run.sandbox.daytona.labels]
+project = "maestro-os"
+purpose = "code-factory"
+
+[run.sandbox.daytona.snapshot]
+name = "maestro-code-factory-v8"
+cpu = 2
+memory = "4GB"
+disk = "10GB"
+dockerfile = """
+FROM ubuntu:24.04
+
+ENV DEBIAN_FRONTEND=noninteractive
+ENV BUN_INSTALL=/root/.bun
+ENV PATH="/root/.fabro/bin:/root/.bun/bin:/root/.local/bin:/root/.qlty/bin:${PATH}"
+WORKDIR /home/daytona
+
+RUN apt-get update \
+  && apt-get install -y --no-install-recommends \
+    bash \
+    ca-certificates \
+    curl \
+    gh \
+    git \
+    jq \
+    openssh-client \
+    python3 \
+    python3-pip \
+    pipx \
+    ripgrep \
+    shellcheck \
+    sqlite3 \
+    unzip \
+    xz-utils \
+  && rm -rf /var/lib/apt/lists/*
+
+RUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash - \
+  && apt-get update \
+  && apt-get install -y --no-install-recommends nodejs \
+  && npm install -g @anthropic-ai/claude-code@2.1.141 @openai/codex promptfoo \
+  && npm cache clean --force \
+  && rm -rf /var/lib/apt/lists/*
+
+RUN curl -fsSL https://bun.sh/install | bash -s "bun-v1.2.22" \
+  && ln -sf /root/.bun/bin/bun /usr/local/bin/bun
+
+RUN pipx install spec-kitty-cli==3.1.8 \
+  && curl -fsSL https://qlty.sh | sh \
+  && ln -sf /root/.qlty/bin/qlty /usr/local/bin/qlty
+
+RUN set -eux; \
+  target="x86_64-unknown-linux-gnu"; \
+  asset="fabro-${target}.tar.gz"; \
+  url="$(curl -fsSL https://api.github.com/repos/fabro-sh/fabro/releases/latest | jq -r --arg asset "$asset" '.assets[] | select(.name == $asset) | .browser_download_url')"; \
+  test -n "$url"; \
+  curl -fsSL "$url" -o /tmp/fabro.tar.gz; \
+  tar -xzf /tmp/fabro.tar.gz -C /tmp; \
+  install -m 0755 "/tmp/fabro-${target}/fabro" /usr/local/bin/fabro; \
+  rm -rf /tmp/fabro.tar.gz "/tmp/fabro-${target}"; \
+  fabro --version
+
+CMD ["/bin/bash"]
+"""
+
+[run.integrations.github.permissions]
+metadata = "read"
+contents = "write"
+pull_requests = "write"
+issues = "write"
+actions = "read"
+
+[run.artifacts]
+include = [
+  ".workflow/**",
+  "reports/**",
+  "reports/ios/**",
+  "evals/output/**",
+  ".github/workflows/**",
+  "apps/*-iphone/**",
+  "apps/generated-*/README.md",
+  "apps/generated-*/.workflow-build.json",
+  "apps/generated-*/fixtures/**",
+  "apps/generated-*/public/**",
+  "apps/generated-*/src/**",
+  "apps/generated-*/tests/**",
+]

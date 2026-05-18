@@ -1,0 +1,99 @@
+name: maestro-operator
+version: 0.1.0
+description: "Slack-resident Maestro business operator with Fabro babysitting, Kanban delegation, and bounded memory."
+hermes_requires: ">=0.13.0"
+author: "Maestro"
+license: "Private"
+distribution_owned:
+  - SOUL.md
+  - config.yaml
+  - .env.example
+  - skills/
+  - cron/
+  - home/
+env_requires:
+  - name: SLACK_BOT_TOKEN
+    description: "Slack bot token for the Hermes Slack app."
+    required: true
+  - name: SLACK_APP_TOKEN
+    description: "Slack app-level Socket Mode token."
+    required: true
+  - name: SLACK_ALLOWED_USERS
+    description: "Comma-separated Slack member IDs authorized to operate Hermes."
+    required: false
+    default: ""
+  - name: GATEWAY_ALLOW_ALL_USERS
+    description: "Smoke-only escape hatch when Slack member IDs are not configured."
+    required: false
+    default: "false"
+  - name: SLACK_HOME_CHANNEL
+    description: "Slack channel ID for proactive cron/status messages."
+    required: true
+  - name: FABRO_SERVER
+    description: "Hosted Fabro API URL used by `fabro mcp start --server`."
+    required: true
+    default: "https://fabro-maestro-production.up.railway.app/api/v1"
+  - name: FABRO_DEV_TOKEN
+    description: "Dev token used once by `fabro auth login`; never printed."
+    required: false
+    default: ""
+  - name: DAYTONA_API_KEY
+    description: "Daytona API key for worker sandboxes and recovery."
+    required: false
+    default: ""
+  - name: DAYTONA_ORGANIZATION_ID
+    description: "Daytona organization ID when API calls require it."
+    required: false
+    default: ""
+  - name: OPENROUTER_API_KEY
+    description: "Fallback model provider if Codex subscription limits bite."
+    required: false
+    default: ""
+  - name: GITHUB_TOKEN
+    description: "GitHub token for native Hermes GitHub skills. Prefer fine-grained read-only repo access."
+    required: false
+    default: ""
+  - name: GITHUB_PLANNING_REPO_AUTH
+    description: "Planning repo write transport: ssh deploy key or https token. Use https when org deploy keys are disabled."
+    required: false
+    default: "ssh"
+  - name: LINEAR_API_KEY
+    description: "Linear personal API key for native Hermes Linear skill."
+    required: false
+    default: ""
+  - name: HONCHO_API_KEY
+    description: "Honcho Cloud API key for Hermes long-term memory. Stored in Railway/profile env and never printed."
+    required: false
+    default: ""
+  - name: HONCHO_ENVIRONMENT
+    description: "Honcho environment to use for managed memory."
+    required: false
+    default: "production"
+  - name: HONCHO_WORKSPACE
+    description: "Honcho workspace ID for shared Maestro memory."
+    required: false
+    default: "maestro"
+  - name: HONCHO_RECALL_MODE
+    description: "Honcho recall mode: hybrid, context, or tools. Default hybrid gives auto context plus explicit tools."
+    required: false
+    default: "hybrid"
+  - name: MOBBIN_MCP_URL
+    description: "Mobbin remote MCP endpoint for design research."
+    required: false
+    default: "https://api.mobbin.com/mcp"
+  - name: MOBBIN_MCP_ENABLED
+    description: "Force-enable Mobbin MCP. Default is auto-enable only after OAuth tokens are cached."
+    required: false
+    default: "false"
+  - name: STITCH_API_KEY
+    description: "Google Stitch MCP API key. Stored in Railway/profile env and never printed."
+    required: false
+    default: ""
+  - name: STITCH_MCP_URL
+    description: "Google Stitch remote MCP endpoint for UI generation and design iteration."
+    required: false
+    default: "https://stitch.googleapis.com/mcp"
+  - name: STITCH_MCP_ENABLED
+    description: "Enable Google Stitch MCP when STITCH_API_KEY is present."
+    required: false
+    default: "false"

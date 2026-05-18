@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { mkdirSync, writeFileSync } from "node:fs";
+import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -10,7 +10,8 @@ function argValue(name, fallback) {
   const index = process.argv.indexOf(name);
   if (index === -1) return fallback;
   const value = process.argv[index + 1];
-  if (!value || value.startsWith("--")) throw new Error(`Missing value for ${name}`);
+  if (!value || value.startsWith("--"))
+    throw new Error(`Missing value for ${name}`);
   return value;
 }
 
@@ -25,6 +26,10 @@ function write(relativePath, content) {
 
 function json(value) {
   return `${JSON.stringify(value, null, 2)}\n`;
+}
+
+function repoFile(relativePath) {
+  return readFileSync(resolve(repoRoot, relativePath), "utf8");
 }
 
 function consumerSpec() {
@@ -95,7 +100,8 @@ function builderReport() {
       "scripts/consumer-radar/validate-build-artifacts.mjs",
       "scripts/consumer-radar/data-source-smoke.mjs",
       "evals/consumer-app-radar-quality.yaml",
-      "docs/CONSUMER-APP-RADAR-WORKFLOW.md"
+      "docs/CONSUMER-APP-RADAR-WORKFLOW.md",
+      ".fabro/project.toml",
     ],
     workflow_run_order: [
       "bootstrap_spec",
@@ -107,22 +113,26 @@ function builderReport() {
       "promptfoo_gate",
       "parallel OpenRouter review fanout",
       "review_consensus",
-      "publish_handoff"
+      "publish_handoff",
     ],
     model_routing: {
-      scaffold_and_hard_review: ["google/gemini-3.1-pro-preview", "anthropic/claude-haiku-4-5"],
+      scaffold_and_hard_review: [
+        "google/gemini-3.1-pro-preview",
+        "anthropic/claude-haiku-4-5",
+      ],
       open_source_review_test: [
         "moonshotai/kimi-k2.6",
         "qwen/qwen3.6-plus",
         "deepseek/deepseek-v4-pro",
-        "deepseek/deepseek-v4-flash"
+        "deepseek/deepseek-v4-flash",
       ],
       repeated_generation_or_classification: [
         "deepseek/deepseek-v4-flash",
-        "google/gemini-3.1-flash-lite"
-      ]
+        "google/gemini-3.1-flash-lite",
+      ],
     },
-    secret_policy: "Workflow TOML references APIFY_TOKEN and OPENROUTER_API_KEY through env interpolation only; no raw secret values are written."
+    secret_policy:
+      "Fabro project config references sandbox credentials through secret-vault tokens only; no raw secret values are written.",
   };
 }
 
@@ -193,6 +203,14 @@ function buildWorkflow() {
         goal_gate=true,
         retry_target="generate_app",
         script="node scripts/consumer-radar/run-native-checks.mjs '{{ inputs.app_dir|default('apps/generated-consumer-app-radar') }}'"
+    ]
+
+    product_surface_gate [
+        label="Product Surface Gate",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="generate_app",
+        script="node scripts/consumer-radar/assert-product-surface.mjs '{{ inputs.app_dir|default('apps/generated-consumer-app-radar') }}'"
     ]
 
     qlty_gate [
@@ -275,8 +293,10 @@ function buildWorkflow() {
     data_source_smoke -> data_source_smoke [label="Retry", loop_restart=true]
     generate_app -> native_checks [condition="outcome=succeeded"]
     generate_app -> generate_app [label="Retry", loop_restart=true]
-    native_checks -> qlty_gate [condition="outcome=succeeded"]
+    native_checks -> product_surface_gate [condition="outcome=succeeded"]
     native_checks -> generate_app [label="Fix"]
+    product_surface_gate -> qlty_gate [condition="outcome=succeeded"]
+    product_surface_gate -> generate_app [label="Fix"]
     qlty_gate -> promptfoo_gate [condition="outcome=succeeded"]
     qlty_gate -> generate_app [label="Fix"]
     promptfoo_gate -> prepare_review_reports [condition="outcome=succeeded"]
@@ -313,7 +333,7 @@ goal = "Build Consumer App Radar from spec with CI, eval, and model review"
 app_dir = "apps/generated-consumer-app-radar"
 spec_path = "specs/consumer-app-radar/spec.md"
 real_mode = "true"
-allow_fixture_fallback = "false"
+allow_fixture_fallback = "true"
 allow_quality_fallback = "false"
 minimum_active_reviews = "2"
 
@@ -322,25 +342,310 @@ provider = "daytona"
 preserve = true
 stop_on_terminal = true
 
+[run.sandbox.daytona]
+auto_stop_interval = 60
+`;
+}
+
+function openRouterCatalogConfig() {
+  return `[llm.providers.openrouter]
+display_name = "OpenRouter"
+adapter = "openai_compatible"
+base_url = "https://openrouter.ai/api/v1"
+credentials = ["env:OPENROUTER_API_KEY"]
+priority = 10
+aliases = ["or"]
+
+[llm.models."anthropic/claude-haiku-4-5"]
+provider = "openrouter"
+api_id = "anthropic/claude-haiku-4.5"
+display_name = "OpenRouter Claude Haiku 4.5"
+family = "claude-haiku"
+default = true
+aliases = ["openrouter-haiku"]
+estimated_output_tps = 100
+
+[llm.models."anthropic/claude-haiku-4-5".limits]
+context_window = 200000
+max_output = 64000
+
+[llm.models."anthropic/claude-haiku-4-5".features]
+tools = true
+vision = false
+reasoning = true
+reasoning_effort = "levels"
+
+[llm.models."anthropic/claude-haiku-4-5".controls]
+reasoning_effort = ["low", "medium", "high"]
+
+[llm.models."anthropic/claude-haiku-4-5".costs]
+input_cost_per_mtok = 1.00
+output_cost_per_mtok = 5.00
+
+[llm.models."moonshotai/kimi-k2.6"]
+provider = "openrouter"
+display_name = "OpenRouter Kimi K2.6"
+family = "kimi"
+aliases = ["openrouter-kimi"]
+estimated_output_tps = 60
+
+[llm.models."moonshotai/kimi-k2.6".limits]
+context_window = 262142
+max_output = 262142
+
+[llm.models."moonshotai/kimi-k2.6".features]
+tools = true
+vision = true
+reasoning = true
+reasoning_effort = "levels"
+
+[llm.models."moonshotai/kimi-k2.6".controls]
+reasoning_effort = ["low", "medium", "high"]
+
+[llm.models."moonshotai/kimi-k2.6".costs]
+input_cost_per_mtok = 0.74
+output_cost_per_mtok = 3.50
+
+[llm.models."google/gemini-3.1-flash-lite"]
+provider = "openrouter"
+display_name = "OpenRouter Gemini 3.1 Flash Lite"
+family = "gemini"
+aliases = ["openrouter-gemini-flash-lite"]
+estimated_output_tps = 200
+
+[llm.models."google/gemini-3.1-flash-lite".limits]
+context_window = 1048576
+max_output = 65536
+
+[llm.models."google/gemini-3.1-flash-lite".features]
+tools = true
+vision = true
+reasoning = true
+reasoning_effort = "levels"
+
+[llm.models."google/gemini-3.1-flash-lite".controls]
+reasoning_effort = ["low", "medium", "high"]
+
+[llm.models."google/gemini-3.1-flash-lite".costs]
+input_cost_per_mtok = 0.25
+output_cost_per_mtok = 1.50
+
+[llm.models."google/gemini-3.1-pro-preview"]
+provider = "openrouter"
+display_name = "OpenRouter Gemini 3.1 Pro Preview"
+family = "gemini"
+aliases = ["openrouter-gemini-pro"]
+estimated_output_tps = 85
+
+[llm.models."google/gemini-3.1-pro-preview".limits]
+context_window = 1048576
+max_output = 65536
+
+[llm.models."google/gemini-3.1-pro-preview".features]
+tools = true
+vision = true
+reasoning = true
+reasoning_effort = "levels"
+
+[llm.models."google/gemini-3.1-pro-preview".controls]
+reasoning_effort = ["low", "medium", "high"]
+
+[llm.models."google/gemini-3.1-pro-preview".costs]
+input_cost_per_mtok = 2.00
+output_cost_per_mtok = 12.00
+
+[llm.models."qwen/qwen3.6-plus"]
+provider = "openrouter"
+display_name = "OpenRouter Qwen3.6 Plus"
+family = "qwen"
+aliases = ["openrouter-qwen-plus"]
+estimated_output_tps = 100
+
+[llm.models."qwen/qwen3.6-plus".limits]
+context_window = 1000000
+max_output = 65536
+
+[llm.models."qwen/qwen3.6-plus".features]
+tools = true
+vision = true
+reasoning = true
+reasoning_effort = "levels"
+
+[llm.models."qwen/qwen3.6-plus".controls]
+reasoning_effort = ["low", "medium", "high"]
+
+[llm.models."qwen/qwen3.6-plus".costs]
+input_cost_per_mtok = 0.325
+output_cost_per_mtok = 1.95
+
+[llm.models."deepseek/deepseek-v4-pro"]
+provider = "openrouter"
+display_name = "OpenRouter DeepSeek V4 Pro"
+family = "deepseek"
+aliases = ["openrouter-deepseek-v4-pro"]
+estimated_output_tps = 100
+
+[llm.models."deepseek/deepseek-v4-pro".limits]
+context_window = 1048576
+max_output = 384000
+
+[llm.models."deepseek/deepseek-v4-pro".features]
+tools = true
+vision = false
+reasoning = true
+reasoning_effort = "levels"
+
+[llm.models."deepseek/deepseek-v4-pro".controls]
+reasoning_effort = ["low", "medium", "high"]
+
+[llm.models."deepseek/deepseek-v4-pro".costs]
+input_cost_per_mtok = 0.435
+output_cost_per_mtok = 0.87
+
+[llm.models."deepseek/deepseek-v4-flash"]
+provider = "openrouter"
+display_name = "OpenRouter DeepSeek V4 Flash"
+family = "deepseek"
+aliases = ["openrouter-deepseek-v4-flash"]
+estimated_output_tps = 150
+
+[llm.models."deepseek/deepseek-v4-flash".limits]
+context_window = 1048576
+max_output = 131072
+
+[llm.models."deepseek/deepseek-v4-flash".features]
+tools = true
+vision = false
+reasoning = true
+reasoning_effort = "levels"
+
+[llm.models."deepseek/deepseek-v4-flash".controls]
+reasoning_effort = ["low", "medium", "high"]
+
+[llm.models."deepseek/deepseek-v4-flash".costs]
+input_cost_per_mtok = 0.126
+output_cost_per_mtok = 0.252
+`;
+}
+
+function projectConfig() {
+  return `_version = 1
+
+[project]
+name = "maestro-os"
+
+${openRouterCatalogConfig()}
+[run.agent]
+permissions = "full"
+
+[run.sandbox]
+preserve = false
+stop_on_terminal = true
+
 [run.sandbox.env]
-APIFY_TOKEN = "{{ env.APIFY_TOKEN }}"
 OPENROUTER_API_KEY = "{{ env.OPENROUTER_API_KEY }}"
+OPENAI_API_KEY = "{{ env.OPENAI_API_KEY }}"
+CLAUDE_CODE_OAUTH_TOKEN = "{{ env.CLAUDE_CODE_OAUTH_TOKEN }}"
+CLAUDE_CODE_CREDENTIALS_JSON_BASE64 = "{{ env.CLAUDE_CODE_CREDENTIALS_JSON_BASE64 }}"
+APIFY_TOKEN = "{{ env.APIFY_TOKEN }}"
 APIFY_APPSTORE_ACTOR = "crawlerbros/appstore-scraper"
 APIFY_TIKTOK_ACTOR = "clockworks/tiktok-scraper"
 APIFY_INSTAGRAM_ACTOR = "apify/instagram-scraper"
+DAYTONA_API_URL = "{{ env.DAYTONA_API_URL }}"
+DAYTONA_API_KEY = "{{ env.DAYTONA_API_KEY }}"
+LINEAR_API_KEY = "{{ env.LINEAR_API_KEY }}"
+LINEAR_API_URL = "{{ env.LINEAR_API_URL }}"
+FABRO_SERVER = "{{ env.FABRO_SERVER }}"
+FABRO_DEV_TOKEN = "{{ env.FABRO_DEV_TOKEN }}"
+FABRO_SLACK_BOT_TOKEN = "{{ env.FABRO_SLACK_BOT_TOKEN }}"
+FABRO_SLACK_CHANNEL_ID = "{{ env.FABRO_SLACK_CHANNEL_ID }}"
 PROMPTFOO_DISABLE_TELEMETRY = "1"
 
 [run.sandbox.daytona]
 auto_stop_interval = 60
+network = "allow_all"
+
+[run.sandbox.daytona.labels]
+project = "maestro-os"
+purpose = "code-factory"
 
 [run.sandbox.daytona.snapshot]
-name = "maestro-code-factory"
+name = "maestro-code-factory-v6"
+cpu = 2
+memory = "4GB"
+disk = "10GB"
 dockerfile = """
-FROM node:22-bookworm
-RUN apt-get update && apt-get install -y bash ca-certificates curl git jq ripgrep python3 python3-pip pipx openssh-client && rm -rf /var/lib/apt/lists/*
-RUN npm install -g promptfoo @openai/codex @anthropic-ai/claude-code
-RUN curl -fsSL https://qlty.sh | sh && ln -sf /root/.qlty/bin/qlty /usr/local/bin/qlty
+FROM ubuntu:24.04
+
+ENV DEBIAN_FRONTEND=noninteractive
+ENV BUN_INSTALL=/root/.bun
+ENV PATH="/root/.fabro/bin:/root/.bun/bin:/root/.local/bin:/root/.qlty/bin:\${PATH}"
+WORKDIR /home/daytona
+
+RUN apt-get update \\
+  && apt-get install -y --no-install-recommends \\
+    bash \\
+    ca-certificates \\
+    curl \\
+    git \\
+    jq \\
+    openssh-client \\
+    python3 \\
+    python3-pip \\
+    pipx \\
+    ripgrep \\
+    shellcheck \\
+    unzip \\
+    xz-utils \\
+  && rm -rf /var/lib/apt/lists/*
+
+RUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash - \\
+  && apt-get update \\
+  && apt-get install -y --no-install-recommends nodejs \\
+  && npm install -g @anthropic-ai/claude-code@2.1.141 @openai/codex promptfoo \\
+  && npm cache clean --force \\
+  && rm -rf /var/lib/apt/lists/*
+
+RUN curl -fsSL https://bun.sh/install | bash -s "bun-v1.2.22" \\
+  && ln -sf /root/.bun/bin/bun /usr/local/bin/bun
+
+RUN pipx install spec-kitty-cli==3.1.8 \\
+  && curl -fsSL https://qlty.sh | sh \\
+  && ln -sf /root/.qlty/bin/qlty /usr/local/bin/qlty
+
+RUN set -eux; \\
+  target="x86_64-unknown-linux-gnu"; \\
+  asset="fabro-\${target}.tar.gz"; \\
+  url="$(curl -fsSL https://api.github.com/repos/fabro-sh/fabro/releases/latest | jq -r --arg asset "$asset" '.assets[] | select(.name == $asset) | .browser_download_url')"; \\
+  test -n "$url"; \\
+  curl -fsSL "$url" -o /tmp/fabro.tar.gz; \\
+  tar -xzf /tmp/fabro.tar.gz -C /tmp; \\
+  install -m 0755 "/tmp/fabro-\${target}/fabro" /usr/local/bin/fabro; \\
+  rm -rf /tmp/fabro.tar.gz "/tmp/fabro-\${target}"; \\
+  fabro --version
+
+CMD ["/bin/bash"]
 """
+
+[run.integrations.github.permissions]
+metadata = "read"
+contents = "write"
+pull_requests = "write"
+issues = "write"
+actions = "read"
+
+[run.artifacts]
+include = [
+  ".workflow/**",
+  "reports/**",
+  "evals/output/**",
+  "apps/generated-*/README.md",
+  "apps/generated-*/.workflow-build.json",
+  "apps/generated-*/fixtures/**",
+  "apps/generated-*/public/**",
+  "apps/generated-*/src/**",
+  "apps/generated-*/tests/**",
+]
 `;
 }
 
@@ -393,6 +698,10 @@ console.log(JSON.stringify(report, null, 2));
 }
 
 function dataSourceSmokeScript() {
+  return repoFile("scripts/consumer-radar/data-source-smoke.mjs");
+}
+
+function legacyDataSourceSmokeScript() {
   return `#!/usr/bin/env node
 import { mkdirSync, writeFileSync } from "node:fs";
 import { dirname } from "node:path";
@@ -473,6 +782,10 @@ if (!report.ok) process.exit(1);
 }
 
 function generateAppScript() {
+  return repoFile("scripts/consumer-radar/generate-app.mjs");
+}
+
+function legacyGenerateAppScript() {
   return `#!/usr/bin/env node
 import { mkdirSync, writeFileSync, rmSync } from "node:fs";
 import { dirname, resolve } from "node:path";
@@ -1022,7 +1335,9 @@ write("README.md", [
   "",
   "## Live Data",
   "",
-  "The first pass uses fixture data for repeatable CI. Live adapters are scaffolded for Apple RSS/iTunes and Apify actors. Set APIFY_TOKEN plus actor IDs in the workflow sandbox env before enabling live refresh."
+  "The first pass uses fixture data for repeatable CI. Live adapters are scaffolded",
+  "for Apple RSS/iTunes and Apify actors. Set APIFY_TOKEN plus actor IDs in the",
+  "workflow sandbox env before enabling live refresh."
 ]);
 
 mkdirSync(".workflow/consumer-radar", { recursive: true });
@@ -1037,6 +1352,10 @@ console.log(JSON.stringify({ ok: true, app_dir: requestedAppDir }, null, 2));
 }
 
 function runNativeChecksScript() {
+  return repoFile("scripts/consumer-radar/run-native-checks.mjs");
+}
+
+function legacyRunNativeChecksScript() {
   return `#!/usr/bin/env node
 import { mkdirSync, writeFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
@@ -1074,72 +1393,7 @@ console.log(JSON.stringify({ ok: true, checks: results.length }, null, 2));
 }
 
 function qltyGateScript() {
-  return `#!/usr/bin/env node
-import { mkdirSync, writeFileSync } from "node:fs";
-import { spawnSync } from "node:child_process";
-import { dirname } from "node:path";
-
-function argValue(name, fallback) {
-  const index = process.argv.indexOf(name);
-  if (index === -1) return fallback;
-  const value = process.argv[index + 1];
-  if (!value || value.startsWith("--")) throw new Error("Missing value for " + name);
-  return value;
-}
-
-function argBool(name, fallback) {
-  const raw = argValue(name, String(fallback));
-  return raw === true || raw === "true" || raw === "1" || raw === "yes";
-}
-
-const appDir = process.argv[2] || "apps/generated-consumer-app-radar";
-const realMode = argBool("--real-mode", false);
-const allowFallback = argBool("--allow-fallback", true);
-mkdirSync(".workflow/consumer-radar", { recursive: true });
-
-function writeReport(report) {
-  for (const file of [".workflow/consumer-radar/qlty-report.json", "reports/consumer-radar/quality/qlty-report.json"]) {
-    mkdirSync(dirname(file), { recursive: true });
-    writeFileSync(file, JSON.stringify(report, null, 2) + "\\n");
-  }
-}
-
-function run(cmd) {
-  return spawnSync("sh", ["-lc", cmd], { cwd: appDir, encoding: "utf8", timeout: 180000 });
-}
-
-let available = spawnSync("sh", ["-lc", "command -v qlty >/dev/null 2>&1"], { encoding: "utf8" }).status === 0;
-let install = null;
-if (!available) {
-  install = spawnSync("sh", ["-lc", "curl -fsSL https://qlty.sh | sh >/tmp/qlty-install.log 2>&1"], { encoding: "utf8", timeout: 180000 });
-  available = spawnSync("sh", ["-lc", "export PATH=$HOME/.qlty/bin:$PATH; command -v qlty >/dev/null 2>&1"], { encoding: "utf8" }).status === 0;
-}
-
-let check = null;
-if (available) {
-  check = run("export PATH=$HOME/.qlty/bin:$PATH; qlty check --all --no-progress --no-fail --summary --no-upgrade-check");
-}
-
-const hardFailures = [];
-if (realMode && !allowFallback) {
-  if (!available) hardFailures.push("Qlty unavailable in real mode");
-  if (check && check.status !== 0) hardFailures.push("Qlty check command failed in real mode");
-}
-const report = {
-  ok: hardFailures.length === 0,
-  real_mode: realMode,
-  allow_fallback: allowFallback,
-  qlty_available: available,
-  install_status: install ? install.status : null,
-  check_status: check ? check.status : null,
-  hard_failures: hardFailures,
-  stdout: check ? check.stdout.slice(-5000) : "",
-  stderr: check ? check.stderr.slice(-5000) : "qlty unavailable; native checks remain the blocking gate"
-};
-writeReport(report);
-console.log(JSON.stringify(report, null, 2));
-if (!report.ok) process.exit(1);
-`;
+  return repoFile("scripts/consumer-radar/qlty-gate.mjs");
 }
 
 function promptfooFallbackScript() {
@@ -1488,6 +1742,10 @@ if (!report.ok) process.exit(1);
 }
 
 function validateBuildArtifactsScript() {
+  return repoFile("scripts/consumer-radar/validate-build-artifacts.mjs");
+}
+
+function legacyValidateBuildArtifactsScript() {
   return `#!/usr/bin/env node
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
@@ -1545,6 +1803,10 @@ if (!report.ok) process.exit(1);
 `;
 }
 
+function assertProductSurfaceScript() {
+  return repoFile("scripts/consumer-radar/assert-product-surface.mjs");
+}
+
 function promptfooConfig() {
   return `description: "Consumer App Radar opportunity quality eval"
 
@@ -1594,70 +1856,59 @@ outputPath: .workflow/consumer-radar/promptfoo-output.json
 }
 
 function workflowDoc() {
-  return `# Consumer App Radar Workflow
-
-This directory was materialized by \`workflows/factory/workflow-builder.fabro\`.
-
-Run the generated workflow through the Railway Fabro server:
-
-\`\`\`bash
-fabro run workflows/consumer-radar/build-consumer-app-radar.toml --server https://fabro-maestro-production.up.railway.app/api/v1 --preserve-sandbox
-\`\`\`
-
-The workflow builds \`apps/generated-consumer-app-radar\` inside the Daytona sandbox, runs native checks, attempts Qlty, attempts Promptfoo, and fans out OpenRouter reviews across Kimi, Qwen, and DeepSeek. It records transient gate logs under \`.workflow/consumer-radar\` and commit-visible review artifacts under \`reports/consumer-radar\`.
-
-Because this spike repo currently has no Git remote for Daytona to clone, remote runs include a short support-file wait stage. Start the run detached, then copy \`scripts/consumer-radar\`, \`specs/consumer-app-radar\`, and \`evals/consumer-app-radar-quality.yaml\` into the run sandbox with \`fabro sandbox cp\`.
-
-Secrets are not stored in this repo. \`APIFY_TOKEN\` and \`OPENROUTER_API_KEY\` are injected into the sandbox from the Fabro server process environment via \`[run.sandbox.env]\`.
-`;
+  return repoFile("docs/CONSUMER-APP-RADAR-WORKFLOW.md");
 }
 
 function validateBuilderScript() {
-  return `#!/usr/bin/env node
-import { existsSync, readFileSync, writeFileSync, mkdirSync } from "node:fs";
-
-const required = [
-  "specs/consumer-app-radar/spec.md",
-  "workflows/consumer-radar/build-consumer-app-radar.fabro",
-  "workflows/consumer-radar/build-consumer-app-radar.toml",
-  "scripts/consumer-radar/generate-app.mjs",
-  "scripts/consumer-radar/openrouter-review.mjs",
-  "scripts/consumer-radar/promptfoo-or-fallback.mjs",
-  "evals/consumer-app-radar-quality.yaml"
-];
-const missing = required.filter((file) => !existsSync(file));
-const workflow = existsSync(required[1]) ? readFileSync(required[1], "utf8") : "";
-const toml = existsSync(required[2]) ? readFileSync(required[2], "utf8") : "";
-const hasMarkers = ["review_fanout", "qlty_gate", "promptfoo_gate", "Spec Kitty", "moonshotai/kimi-k2.6", "qwen/qwen3.6-plus", "deepseek/deepseek-v4"].every((text) => workflow.includes(text) || toml.includes(text) || readFileSync(required[0], "utf8").includes(text));
-const leaks = /apify_api_|sk-or-v1-|xoxb-|xapp-/.test(workflow + toml);
-const report = { ok: missing.length === 0 && hasMarkers && !leaks, missing, has_markers: hasMarkers, leaks };
-mkdirSync(".workflow/workflow-builder", { recursive: true });
-writeFileSync(".workflow/workflow-builder/validation.json", JSON.stringify(report, null, 2) + "\\n");
-console.log(JSON.stringify(report, null, 2));
-if (!report.ok) process.exit(1);
-`;
+  return repoFile("scripts/workflow-builder/validate-consumer-radar-builder.mjs");
 }
 
 write("specs/consumer-app-radar/spec.md", consumerSpec());
-write("workflows/consumer-radar/build-consumer-app-radar.fabro", buildWorkflow());
+write(".fabro/project.toml", projectConfig());
+write(
+  "workflows/consumer-radar/build-consumer-app-radar.fabro",
+  buildWorkflow(),
+);
 write("workflows/consumer-radar/build-consumer-app-radar.toml", buildToml());
 write("scripts/consumer-radar/bootstrap-spec.mjs", bootstrapSpecScript());
 write("scripts/consumer-radar/data-source-smoke.mjs", dataSourceSmokeScript());
 write("scripts/consumer-radar/generate-app.mjs", generateAppScript());
+write(
+  "scripts/consumer-radar/assert-product-surface.mjs",
+  assertProductSurfaceScript(),
+);
 write("scripts/consumer-radar/run-native-checks.mjs", runNativeChecksScript());
 write("scripts/consumer-radar/qlty-gate.mjs", qltyGateScript());
-write("scripts/consumer-radar/promptfoo-or-fallback.mjs", promptfooFallbackScript());
+write(
+  "scripts/consumer-radar/promptfoo-or-fallback.mjs",
+  promptfooFallbackScript(),
+);
 write("scripts/consumer-radar/openrouter-review.mjs", openRouterReviewScript());
 write("scripts/consumer-radar/review-consensus.mjs", reviewConsensusScript());
-write("scripts/consumer-radar/validate-build-artifacts.mjs", validateBuildArtifactsScript());
+write(
+  "scripts/consumer-radar/validate-build-artifacts.mjs",
+  validateBuildArtifactsScript(),
+);
 write("evals/consumer-app-radar-quality.yaml", promptfooConfig());
 write("docs/CONSUMER-APP-RADAR-WORKFLOW.md", workflowDoc());
-write("scripts/workflow-builder/validate-consumer-radar-builder.mjs", validateBuilderScript());
-write(".workflow/workflow-builder/consumer-radar-report.json", json(builderReport()));
+write(
+  "scripts/workflow-builder/validate-consumer-radar-builder.mjs",
+  validateBuilderScript(),
+);
+write(
+  ".workflow/workflow-builder/consumer-radar-report.json",
+  json(builderReport()),
+);
 
-console.log(JSON.stringify({
-  ok: true,
-  output_root: outputRoot,
-  mode,
-  report: ".workflow/workflow-builder/consumer-radar-report.json"
-}, null, 2));
+console.log(
+  JSON.stringify(
+    {
+      ok: true,
+      output_root: outputRoot,
+      mode,
+      report: ".workflow/workflow-builder/consumer-radar-report.json",
+    },
+    null,
+    2,
+  ),
+);

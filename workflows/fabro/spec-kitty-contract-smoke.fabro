@@ -1,0 +1,42 @@
+digraph SpecKittyContractSmoke {
+    graph [
+        goal="Verify Spec Kitty mission command contracts in an isolated repo",
+        persona="spec-kitty-smoke",
+        inputs="",
+        outputs="spec_kitty_contract_report",
+        default_max_retries=1,
+        retry_target="probe_spec_kitty",
+        fallback_retry_target="probe_spec_kitty",
+        model_stylesheet="
+            *       { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: low; }
+            .coding { provider: openrouter; model: qwen/qwen3.6-plus; reasoning_effort: high; }
+            .review { provider: openrouter; model: google/gemini-3.1-pro-preview; reasoning_effort: high; }
+        "
+    ]
+    rankdir=LR
+
+    start [shape=Mdiamond, label="Start"]
+    exit  [shape=Msquare, label="Exit"]
+
+    probe_spec_kitty [
+        label="Probe Spec Kitty",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="probe_spec_kitty",
+        script="mkdir -p .workflow; ROOT=\"$PWD\"; rm -rf /tmp/maestro-spec-kitty-contract; mkdir -p /tmp/maestro-spec-kitty-contract; cd /tmp/maestro-spec-kitty-contract; git init -q; spec-kitty init --ai codex,claude --non-interactive >/tmp/maestro-spec-kitty-init.log; spec-kitty specify fabro-contract-smoke --mission-type software-dev --json > /tmp/maestro-spec-kitty-specify.json; spec-kitty verify-setup --json > /tmp/maestro-spec-kitty-verify.json; MAESTRO_ROOT=\"$ROOT\" node -e \"const fs=require('fs'); const path=require('path'); const created=JSON.parse(fs.readFileSync('/tmp/maestro-spec-kitty-specify.json','utf8')); const verify=JSON.parse(fs.readFileSync('/tmp/maestro-spec-kitty-verify.json','utf8')); if (created.result !== 'success') throw new Error('specify failed'); for (const key of ['mission_slug','mission_id','feature_dir','spec_file','meta_file']) { if (!created[key]) throw new Error('missing ' + key); } if (!fs.existsSync(created.spec_file)) throw new Error('missing spec file'); if (!fs.existsSync(created.meta_file)) throw new Error('missing meta file'); if (verify.managed_skills && verify.managed_skills.status !== 'ok') throw new Error('managed skills not ok'); fs.copyFileSync('/tmp/maestro-spec-kitty-specify.json', path.join(process.env.MAESTRO_ROOT,'.workflow/spec-kitty-contract.json')); console.log(JSON.stringify({mission_slug: created.mission_slug, managed_skills: verify.managed_skills && verify.managed_skills.status}));\""
+    ]
+
+    write_report [
+        label="Write Contract Report",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="probe_spec_kitty",
+        script="node -e \"const fs=require('fs'); const created=JSON.parse(fs.readFileSync('.workflow/spec-kitty-contract.json','utf8')); const lines=['# Spec Kitty Contract Smoke', '', 'mission_slug=' + created.mission_slug, 'mission_type=' + created.mission_type, 'spec_file=' + created.spec_file, 'meta_file=' + created.meta_file]; fs.writeFileSync('.workflow/spec-kitty-contract-smoke.md', lines.join('\\n') + '\\n'); console.log(lines.join('\\n'));\""
+    ]
+
+    start -> probe_spec_kitty
+    probe_spec_kitty -> write_report [condition="outcome=succeeded"]
+    probe_spec_kitty -> probe_spec_kitty [label="Retry", loop_restart=true, max_visits=2]
+    write_report -> exit [condition="outcome=succeeded"]
+    write_report -> probe_spec_kitty [label="Repair", loop_restart=true]
+}
