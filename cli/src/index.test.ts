@@ -81,6 +81,33 @@ describe("workflow-quality routing checks", () => {
 
     expect(result.status).toBe(0);
   });
+
+  test("falls back to dot validation for Fabro workflows when fabro CLI is unavailable", () => {
+    const binDir = join(repoRoot, "tmp", "workflow-quality-dot-bin");
+    mkdirSync(binDir, { recursive: true });
+    writeExecutable(
+      join(binDir, "dot"),
+      `#!/usr/bin/env sh
+if [ "$1" = "-Tdot" ] && [ -n "$2" ]; then
+  printf 'digraph ok {}\\n'
+  exit 0
+fi
+exit 1
+`
+    );
+    const path = writeWorkflow("DotFallbackRouting", `
+    start -> validate_post
+    validate_post -> exit [condition="outcome=succeeded"]
+`);
+
+    const result = runMaestroWithEnv(["verify", "workflow-quality", path, "--json"], {
+      PATH: `${binDir}:/usr/bin:/bin`
+    });
+
+    expect(result.status).toBe(0);
+    const payload = JSON.parse(result.stdout);
+    expect(payload.data.validation.validator).toBe("dot");
+  });
 });
 
 describe("quality stack doctor", () => {

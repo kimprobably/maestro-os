@@ -1278,26 +1278,46 @@ function runWorkflowValidation(pathArg: string) {
   if (!existsSync(path)) throw new CliError(`File not found: ${pathArg}`);
 
   const isFabro = path.endsWith(".fabro");
-  const command = isFabro ? "fabro" : existsSync(GRAPHVIZ_DOT) ? GRAPHVIZ_DOT : "dot";
-  const commandArgs = isFabro ? ["validate", path] : ["-Tdot", path];
-  const result = spawnSync(command, commandArgs, { encoding: "utf8" });
+  const dotCommand = existsSync(GRAPHVIZ_DOT) ? GRAPHVIZ_DOT : "dot";
+  const validators = isFabro
+    ? [
+        { command: "fabro", args: ["validate", path] },
+        { command: dotCommand, args: ["-Tdot", path] }
+      ]
+    : [{ command: dotCommand, args: ["-Tdot", path] }];
 
-  if (result.error) {
-    throw new CliError(`${basename(command)} failed to start: ${result.error.message}`, {
-      exitCode: 2,
-      code: "validator_unavailable",
-      retryable: false
-    });
-  }
-  if (result.status !== 0) {
-    throw new CliError(`${basename(command)} validation failed: ${result.stderr || result.stdout}`, {
-      exitCode: 1,
-      code: "dot_validation_failed",
-      retryable: false
-    });
+  for (const [index, validator] of validators.entries()) {
+    const result = spawnSync(validator.command, validator.args, { encoding: "utf8" });
+    const canFallback = index < validators.length - 1;
+
+    if (result.error) {
+      if (canFallback && result.error.code === "ENOENT") continue;
+      throw new CliError(`${basename(validator.command)} failed to start: ${result.error.message}`, {
+        exitCode: 2,
+        code: "validator_unavailable",
+        retryable: false
+      });
+    }
+    if (result.status !== 0) {
+      throw new CliError(`${basename(validator.command)} validation failed: ${result.stderr || result.stdout}`, {
+        exitCode: 1,
+        code: "dot_validation_failed",
+        retryable: false
+      });
+    }
+
+    return {
+      path: relative(REPO_ROOT, path),
+      validator: basename(validator.command),
+      stdout: result.stdout.trim()
+    };
   }
 
-  return { path: relative(REPO_ROOT, path), validator: basename(command), stdout: result.stdout.trim() };
+  throw new CliError("No workflow validator was available", {
+    exitCode: 2,
+    code: "validator_unavailable",
+    retryable: false
+  });
 }
 
 async function workflowRegister(args: string[]) {
