@@ -99,9 +99,32 @@ function promptfooCommandCheck() {
     env: minimalPromptfooEnv(),
     timeout: 15000,
   });
+  if (!result.error && result.status === 0) {
+    return {
+      available: true,
+      command: "promptfoo",
+      args_prefix: [],
+      version: redactString(result.stdout || result.stderr).trim().split("\n")[0],
+    };
+  }
+
+  const npxResult = spawnSync("sh", ["-lc", "command -v npx >/dev/null 2>&1"], {
+    encoding: "utf8",
+    env: minimalPromptfooEnv(),
+    timeout: 15000,
+  });
+  if (npxResult.status === 0) {
+    return {
+      available: true,
+      command: "npx",
+      args_prefix: ["-y", "promptfoo@latest"],
+      version: "npx promptfoo@latest",
+    };
+  }
+
   if (result.error) return { available: false, reason: result.error.code || result.error.message };
   if (result.status !== 0) return { available: false, reason: "promptfoo --version failed" };
-  return { available: true, version: redactString(result.stdout || result.stderr).trim().split("\n")[0] };
+  return { available: false, reason: "promptfoo and npx unavailable" };
 }
 
 function readPromptfooSummary() {
@@ -211,8 +234,8 @@ if (!skipPromptfoo && !process.env.OPENROUTER_API_KEY) promptfooMissingEnv.push(
 const promptfooCheck = promptfooCommandCheck();
 if (promptfooCheck.available && promptfooMissingEnv.length === 0) {
   promptfooResult = spawnSync(
-    "promptfoo",
-    ["eval", "-c", config, "--no-progress-bar"],
+    promptfooCheck.command,
+    [...(promptfooCheck.args_prefix || []), "eval", "-c", config, "--no-progress-bar"],
     {
       encoding: "utf8",
       env: minimalPromptfooEnv(),
