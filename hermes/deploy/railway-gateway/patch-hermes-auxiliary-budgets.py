@@ -38,13 +38,21 @@ def patch_session_search() -> None:
     if marker in text:
         print(f"Hermes session_search budgets already patched: {path}")
         return
-    text = replace_once(text, "MAX_SESSION_CHARS = 100_000", "MAX_SESSION_CHARS = 32_000", path)
-    text = replace_once(text, "MAX_SUMMARY_TOKENS = 10000", "MAX_SUMMARY_TOKENS = 3000", path)
-    text = text.replace(
-        "MAX_SUMMARY_TOKENS = 3000",
-        "MAX_SUMMARY_TOKENS = 3000\n" + marker,
-        1,
+    changed = False
+    replacements = (
+        ("MAX_SESSION_CHARS = 100_000", "MAX_SESSION_CHARS = 32_000"),
+        ("MAX_SUMMARY_TOKENS = 10000", "MAX_SUMMARY_TOKENS = 3000"),
     )
+    for old, new in replacements:
+        if old in text:
+            text = text.replace(old, new, 1)
+            changed = True
+
+    if not changed:
+        print(f"Hermes session_search has no auxiliary summary budget constants; skipping: {path}")
+        return
+
+    text = text.rstrip() + "\n" + marker + "\n"
     path.write_text(text)
     print(f"Patched Hermes session_search auxiliary budgets: {path}")
 
