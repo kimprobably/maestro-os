@@ -1,5 +1,9 @@
 # Eval Operating Runbook
 
+## Team One-Pager
+
+Open `docs/operator/evals/eval-operating-system-one-pager.html` in a browser for the team-facing overview.
+
 ## Local Commands
 
 - `npm run eval:registry`
