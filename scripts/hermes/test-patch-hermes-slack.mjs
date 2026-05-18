@@ -9,9 +9,26 @@ import test from "node:test";
 const repoRoot = resolve(import.meta.dirname, "..", "..");
 const patchScript = join(repoRoot, "hermes/deploy/railway-gateway/patch-hermes-slack.py");
 
-const upstreamSlackFixture = `import os
+const upstreamSlackFixture = `import asyncio
+import os
 
 class SlackGateway:
+    async def connect(self):
+        try:
+            self._socket_mode_task = asyncio.create_task(self._handler.start_async())
+            self._running = True
+            return True
+        except Exception:
+            return False
+
+    async def disconnect(self):
+        if self._handler:
+            try:
+                await self._handler.close_async()
+            except Exception as e:  # pragma: no cover - defensive logging
+                logger.warning("[Slack] Error while closing Socket Mode handler: %s", e, exc_info=True)
+        self._running = False
+
     async def _resolve_user_name(self, user_id, chat_id=""):
         return user_id
 
@@ -170,5 +187,25 @@ test("Slack patch upgrades the prior v3 ledger call without failing on bounded c
     runPatch(dir);
     compile(slackPath);
     assertSafeLedgerPlacement(readFileSync(slackPath, "utf8"));
+  });
+});
+
+test("Slack patch installs missed mention recovery sweeper", () => {
+  withTempPythonPackage(({ dir, slackPath }) => {
+    runPatch(dir);
+    compile(slackPath);
+
+    const patched = readFileSync(slackPath, "utf8");
+    assert.match(patched, /Maestro patch v5: missed mention recovery sweeper/);
+    assert.match(patched, /async def _maestro_sweep_missed_mentions/);
+    assert.match(patched, /conversations_history/);
+    assert.match(patched, /self\._maestro_mention_sweeper_task = asyncio\.create_task/);
+
+    runPatch(dir);
+    const twicePatched = readFileSync(slackPath, "utf8");
+    assert.equal(
+      (twicePatched.match(/Maestro patch v5: missed mention recovery sweeper/g) || []).length,
+      1,
+    );
   });
 });

@@ -227,6 +227,221 @@ def main() -> None:
     if ledger_marker not in text:
         raise SystemExit(f"Failed to apply Slack ledger patch marker in {path}.")
 
+    sweeper_marker = "Maestro patch v5: missed mention recovery sweeper"
+
+    connect_needle = """            self._socket_mode_task = asyncio.create_task(self._handler.start_async())
+"""
+    connect_patch = """            self._socket_mode_task = asyncio.create_task(self._handler.start_async())
+
+            # Maestro patch v5: missed mention recovery sweeper.
+            # Socket Mode remains the primary ingress path, but Slack can
+            # occasionally fail to deliver an app_mention/message event even
+            # though the message is visible through Web API history. Sweep only
+            # configured channels for recent direct bot mentions and hand them
+            # to the normal handler. MessageDeduplicator suppresses anything
+            # Socket Mode already delivered.
+            _old_sweeper = getattr(self, "_maestro_mention_sweeper_task", None)
+            if _old_sweeper and not _old_sweeper.done():
+                _old_sweeper.cancel()
+            _sweep_interval = self._maestro_mention_sweep_interval()
+            if _sweep_interval > 0:
+                self._maestro_mention_sweeper_task = asyncio.create_task(
+                    self._maestro_sweep_missed_mentions()
+                )
+"""
+    if sweeper_marker not in text:
+        if connect_needle not in text:
+            raise SystemExit(
+                f"Expected Slack adapter Socket Mode task block not found in {path}. "
+                "Upstream may have moved; re-derive the mention sweeper connect patch."
+            )
+        text = text.replace(connect_needle, connect_patch, 1)
+
+    disconnect_needle = """        if self._handler:
+            try:
+                await self._handler.close_async()
+            except Exception as e:  # pragma: no cover - defensive logging
+                logger.warning("[Slack] Error while closing Socket Mode handler: %s", e, exc_info=True)
+        self._running = False
+"""
+    disconnect_patch = """        _sweeper_task = getattr(self, "_maestro_mention_sweeper_task", None)
+        if _sweeper_task and not _sweeper_task.done():
+            _sweeper_task.cancel()
+            try:
+                await _sweeper_task
+            except asyncio.CancelledError:
+                pass
+            except Exception:
+                logger.debug("[Slack] mention sweeper shutdown failed", exc_info=True)
+        self._maestro_mention_sweeper_task = None
+
+        if self._handler:
+            try:
+                await self._handler.close_async()
+            except Exception as e:  # pragma: no cover - defensive logging
+                logger.warning("[Slack] Error while closing Socket Mode handler: %s", e, exc_info=True)
+        self._running = False
+"""
+    if "self._maestro_mention_sweeper_task = None" not in text:
+        if disconnect_needle not in text:
+            raise SystemExit(
+                f"Expected Slack adapter disconnect block not found in {path}. "
+                "Upstream may have moved; re-derive the mention sweeper disconnect patch."
+            )
+        text = text.replace(disconnect_needle, disconnect_patch, 1)
+
+    sweeper_helper = r'''    # ----- Maestro missed-mention recovery -----
+
+    def _maestro_mention_sweep_interval(self) -> float:
+        """Return poll interval for recovering direct mentions missed by Socket Mode."""
+        raw = os.getenv("SLACK_MENTION_SWEEP_INTERVAL", "")
+        if not raw:
+            raw = str((self.config.extra or {}).get("mention_sweep_interval", "20"))
+        try:
+            interval = float(raw)
+        except (TypeError, ValueError):
+            interval = 20.0
+        return max(0.0, interval)
+
+    def _maestro_mention_sweep_lookback(self) -> float:
+        raw = os.getenv("SLACK_MENTION_SWEEP_LOOKBACK", "")
+        if not raw:
+            raw = str((self.config.extra or {}).get("mention_sweep_lookback", "300"))
+        try:
+            lookback = float(raw)
+        except (TypeError, ValueError):
+            lookback = 300.0
+        return max(30.0, min(lookback, 900.0))
+
+    def _maestro_mention_sweep_channels(self) -> list[str]:
+        """Return configured Slack channels worth polling for missed mentions."""
+        raw = os.getenv("SLACK_MENTION_SWEEP_CHANNELS", "")
+        channels: set[str] = set()
+        if raw.strip():
+            channels.update(part.strip() for part in raw.split(",") if part.strip())
+        else:
+            channels.update(self._slack_allowed_channels())
+            extra = self.config.extra or {}
+            prompts = extra.get("channel_prompts") or {}
+            if isinstance(prompts, dict):
+                channels.update(str(key).strip() for key in prompts if str(key).strip())
+            bindings = extra.get("channel_skill_bindings") or []
+            if isinstance(bindings, list):
+                for binding in bindings:
+                    if isinstance(binding, dict) and binding.get("id"):
+                        channels.add(str(binding["id"]).strip())
+
+        # Real Slack channel IDs are alphanumeric and start with C/G/D. This
+        # filters placeholders like C_AGENT_CONTROL from the distribution config.
+        return sorted(
+            channel
+            for channel in channels
+            if re.match(r"^[CGD][A-Z0-9]{8,}$", channel or "")
+        )
+
+    def _maestro_bot_mentions_in_text(self, text: str) -> bool:
+        bot_ids = set(self._team_bot_user_ids.values())
+        if self._bot_user_id:
+            bot_ids.add(self._bot_user_id)
+        return any(bot_id and f"<@{bot_id}>" in (text or "") for bot_id in bot_ids)
+
+    async def _maestro_consider_polled_message(self, channel_id: str, message: dict) -> None:
+        ts = str((message or {}).get("ts") or "")
+        if not ts:
+            return
+        seen = getattr(getattr(self, "_dedup", None), "_seen", {})
+        if ts in seen:
+            return
+        if message.get("bot_id") or message.get("subtype") == "bot_message":
+            return
+        bot_ids = set(self._team_bot_user_ids.values())
+        if self._bot_user_id:
+            bot_ids.add(self._bot_user_id)
+        for reaction in message.get("reactions", []) or []:
+            if reaction.get("name") not in {"eyes", "white_check_mark", "x"}:
+                continue
+            if any(user in bot_ids for user in reaction.get("users", []) or []):
+                return
+        if message.get("user") in bot_ids:
+            return
+        if not self._maestro_bot_mentions_in_text(str(message.get("text") or "")):
+            return
+
+        event = dict(message)
+        event.setdefault("channel", channel_id)
+        event.setdefault("channel_type", "channel")
+        logger.warning(
+            "[Slack] Mention sweeper recovered missed mention: channel=%s ts=%s thread_ts=%s",
+            channel_id,
+            ts,
+            event.get("thread_ts") or "",
+        )
+        await self._handle_slack_message(event)
+
+    async def _maestro_sweep_missed_mentions(self) -> None:
+        """Best-effort recovery for direct @mentions that Socket Mode did not deliver."""
+        interval = self._maestro_mention_sweep_interval()
+        if interval <= 0:
+            return
+        logger.info("[Slack] Mention sweeper enabled (interval=%.1fs)", interval)
+
+        while self._running:
+            await asyncio.sleep(interval)
+            channels = self._maestro_mention_sweep_channels()
+            if not channels:
+                continue
+            oldest = str(max(0.0, time.time() - self._maestro_mention_sweep_lookback()))
+
+            for channel_id in channels:
+                try:
+                    client = self._get_client(channel_id)
+                    history = await client.conversations_history(
+                        channel=channel_id,
+                        oldest=oldest,
+                        inclusive=True,
+                        limit=20,
+                    )
+                    messages = history.get("messages", []) if isinstance(history, dict) else []
+                    for message in reversed(messages):
+                        await self._maestro_consider_polled_message(channel_id, message)
+
+                        reply_count = int(message.get("reply_count") or 0)
+                        thread_ts = str(message.get("thread_ts") or message.get("ts") or "")
+                        latest_reply = float(message.get("latest_reply") or 0.0)
+                        if not reply_count or not thread_ts or latest_reply < float(oldest):
+                            continue
+
+                        replies = await client.conversations_replies(
+                            channel=channel_id,
+                            ts=thread_ts,
+                            oldest=oldest,
+                            inclusive=True,
+                            limit=50,
+                        )
+                        reply_messages = replies.get("messages", []) if isinstance(replies, dict) else []
+                        for reply in reversed(reply_messages):
+                            await self._maestro_consider_polled_message(channel_id, reply)
+                except asyncio.CancelledError:
+                    raise
+                except Exception as exc:
+                    logger.debug(
+                        "[Slack] Mention sweeper scan failed for %s: %s",
+                        channel_id,
+                        exc,
+                        exc_info=True,
+                    )
+
+'''
+    if "async def _maestro_sweep_missed_mentions" not in text:
+        helper_insert_needle = """    # ----- Thread context fetching -----
+"""
+        if helper_insert_needle not in text:
+            raise SystemExit(
+                f"Expected Slack adapter thread-context section marker not found in {path}. "
+                "Upstream may have moved; re-derive the mention sweeper helper patch."
+            )
+        text = text.replace(helper_insert_needle, sweeper_helper + helper_insert_needle, 1)
+
     helper_needle = """    # ----- Thread context fetching -----
 """
     helper = r'''    # ----- Maestro operator ledger -----
