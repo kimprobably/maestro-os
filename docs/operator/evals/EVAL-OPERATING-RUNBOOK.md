@@ -10,10 +10,13 @@ Open `docs/operator/evals/eval-operating-system-one-pager.html` in a browser for
 - `npm run eval:coverage`
 - `npm run eval:index`
 - `npm run eval:dashboard`
+- `npm run factory:dashboard`
 
 ## Reading The Dashboard
 
 `reports/eval-dashboard.md` is the quick operator view. Missing blocking evals and fallback-only evals are action items, not informational notes.
+
+`reports/factory-dashboard.md` is the central factory rollup. It answers four operator questions: whether the factory is working, how much it produced, what quality evidence exists, and what needs attention. The v0 dashboard is file-backed: it reads `reports/eval-index.json`, generated files under `reports/`, and an optional Hermes Fabro run ledger JSONL via `--run-ledger`.
 
 ## Promptfoo
 
