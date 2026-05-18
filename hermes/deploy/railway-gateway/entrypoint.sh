@@ -8,6 +8,8 @@ export GATEWAY_ALLOW_ALL_USERS="${GATEWAY_ALLOW_ALL_USERS:-false}"
 export HERMES_TERMINAL_CWD="${HERMES_TERMINAL_CWD:-/app}"
 export HERMES_REASONING_EFFORT="${HERMES_REASONING_EFFORT:-xhigh}"
 export HERMES_GATEWAY_MAX_TURNS="${HERMES_GATEWAY_MAX_TURNS:-30}"
+export HERMES_AGENT_NOTIFY_INTERVAL="${HERMES_AGENT_NOTIFY_INTERVAL:-45}"
+export HERMES_AGENT_TIMEOUT_WARNING="${HERMES_AGENT_TIMEOUT_WARNING:-180}"
 export HERMES_DELEGATION_MAX_ITERATIONS="${HERMES_DELEGATION_MAX_ITERATIONS:-30}"
 export HERMES_MEMORY_NUDGE_INTERVAL="${HERMES_MEMORY_NUDGE_INTERVAL:-4}"
 export HERMES_SKILL_NUDGE_INTERVAL="${HERMES_SKILL_NUDGE_INTERVAL:-4}"
@@ -383,6 +385,8 @@ def env_float(name, default):
 agent = mapping("agent")
 agent["max_turns"] = env_int("HERMES_GATEWAY_MAX_TURNS", int(agent.get("max_turns") or 30))
 agent["reasoning_effort"] = os.environ.get("HERMES_REASONING_EFFORT", "xhigh").strip() or "xhigh"
+agent["gateway_notify_interval"] = env_int("HERMES_AGENT_NOTIFY_INTERVAL", int(agent.get("gateway_notify_interval") or 45))
+agent["gateway_timeout_warning"] = env_int("HERMES_AGENT_TIMEOUT_WARNING", int(agent.get("gateway_timeout_warning") or 180))
 
 compression = mapping("compression")
 compression["enabled"] = True
