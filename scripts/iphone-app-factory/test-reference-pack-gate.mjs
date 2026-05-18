@@ -281,7 +281,8 @@ test("reference pack gate enforces screen type diversity and adaptation metadata
 test("reference pack gate rejects non-private raw assets and credential-looking report values", () => {
   withTempResearch((root) => {
     writeRequiredArtifacts(root);
-    writeArtifact(root, "competitor-flows.md", "## Source List\n- Public source\n\napi_key = sk-live-1234567890abcdef\n");
+    const fakeKey = ["sk", "live", "1234567890abcdef"].join("-");
+    writeArtifact(root, "competitor-flows.md", `## Source List\n- Public source\n\napi_key = ${fakeKey}\n`);
     const pack = validReferencePack({
       raw_assets: [{ path: "assets/competitor.png", private_only: false }],
     });

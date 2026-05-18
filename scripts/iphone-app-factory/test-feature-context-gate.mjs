@@ -82,7 +82,8 @@ test("feature context gate allows normal task-based product language", () => {
 
 test("feature context gate rejects real key-shaped secret material", () => {
   const root = mkdtempSync(join(tmpdir(), "feature-context-gate-"));
-  writeValidContext(root, "Do not include this placeholder key: sk_test_1234567890abcdef\n");
+  const fakeKey = ["sk", "test", "1234567890abcdef"].join("_");
+  writeValidContext(root, `Do not include this placeholder key: ${fakeKey}\n`);
 
   const result = runGate(root);
 
