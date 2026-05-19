@@ -15,6 +15,19 @@ function requireFile(path) {
 const graph = requireFile(workflow);
 const openrouterGraph = requireFile("workflows/iphone-app-factory/build-iphone-app.openrouter.fabro");
 const buildHaystack = `${graph}\n${openrouterGraph}\n${requireFile("workflows/iphone-app-factory/build-iphone-app.toml")}\n${requireFile("workflows/iphone-app-factory/build-iphone-app.daytona.toml")}`;
+
+function requireNodeMaxTokens(path, body, node, expected) {
+  const escapedNode = node.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const match = body.match(new RegExp(`(?:^|\\n)\\s*${escapedNode}\\s*\\[([\\s\\S]*?)\\]`, "m"));
+  if (!match) {
+    failures.push(`${path} missing node ${node}`);
+    return;
+  }
+  if (!new RegExp(`\\bmax_tokens\\s*=\\s*${expected}\\b`).test(match[1])) {
+    failures.push(`${path} node ${node} missing max_tokens=${expected}`);
+  }
+}
+
 for (const token of [
   "research_fanout",
   "run_input_gate",
@@ -66,6 +79,55 @@ for (const [name, body] of [
 ]) {
   if (/#spec_kimi\s+\{[^}]*moonshotai\/kimi-k2\.6/.test(body)) {
     failures.push(`${name} must not route spec_kimi to Kimi; Joni Capture exceeded Kimi context during spec fanout`);
+  }
+  for (const node of [
+    "app_store_research",
+    "reddit_research",
+    "competitor_research",
+    "design_pattern_research",
+    "research_synthesis",
+    "boilerplate_setup",
+    "implement_foundation",
+    "implement_core",
+    "implement_interface",
+    "implement_integration",
+    "simplification",
+  ]) {
+    requireNodeMaxTokens(name, body, node, 12000);
+  }
+  for (const node of [
+    "spec_codex",
+    "spec_claude",
+    "spec_kimi",
+    "spec_deepseek",
+    "arch_codex",
+    "arch_claude",
+    "architecture_consensus",
+    "ai_ui_explorer",
+  ]) {
+    requireNodeMaxTokens(name, body, node, 8192);
+  }
+  for (const node of [
+    "spec_cross_critique",
+    "spec_red_team",
+    "implementation_correctness_review",
+    "implementation_test_review",
+    "implementation_security_review",
+    "implementation_boilerplate_review",
+    "implementation_review_consensus",
+    "app_store_hardening",
+    "product_fidelity_review",
+    "ios_architecture_review",
+    "security_privacy_review",
+    "code_quality_review",
+    "release_readiness_review",
+    "qa_review",
+    "final_consensus",
+  ]) {
+    requireNodeMaxTokens(name, body, node, 4096);
+  }
+  for (const node of ["verify_foundation", "verify_core", "verify_interface", "verify_integration"]) {
+    requireNodeMaxTokens(name, body, node, 2048);
   }
 }
 

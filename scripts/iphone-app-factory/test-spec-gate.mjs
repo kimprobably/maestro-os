@@ -54,7 +54,11 @@ The exploratory pass must launch the iOS app, traverse tabs and reachable contro
 The app differentiates as a private Joni-linked creator workflow rather than a generic recorder or AI wrapper. It must not include copied competitor visuals, misleading live LinkedIn claims, unsafe account mutation, or template legal/release copy.
 
 ## Definition of Done
-Release readiness requires implemented capture and dashboard flows, honest analytics labeling, no LinkedIn mutation, SwiftAIBoilerplatePro reuse evidence, Swift 6 build/test evidence, lint/format/quality checks, secret scan, Appium/XCUITest report, App Store hardening report, and final review approval.
+Release readiness checklist:
+- Implemented capture and dashboard flows.
+- Honest analytics labeling and no LinkedIn mutation.
+- SwiftAIBoilerplatePro reuse evidence and Swift 6 build/test evidence.
+- Lint, format, quality, credential-leak scan, Appium/XCUITest, App Store hardening, and final review evidence.
 
 ${specExtra}
 `.repeat(2),
@@ -67,7 +71,7 @@ ${specExtra}
 - Joni ingestion has fixture and hosted-configurable clients, with no committed secrets.
 - Local persistence survives app restart and failed submission retry.
 - SwiftAIBoilerplatePro app shell, design system, networking, persistence, and settings remain in use.
-- SwiftFormat, SwiftLint, Qlty, xcodebuild build, xcodebuild test, and secret scanning are recorded as blocking evidence.
+- SwiftFormat, SwiftLint, Qlty, xcodebuild build, xcodebuild test, and credential-leak scanning are recorded as blocking evidence.
 - Appium or XCUITest exploratory automation taps every reachable enabled control and records no crashes.
 - App Store 4.3 hardening verifies differentiated copy, no template strings, and no fake live LinkedIn claims.
 - Final reviews approve product fidelity, architecture, security/privacy, code quality, QA evidence, and release readiness.
