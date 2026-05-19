@@ -117,6 +117,75 @@ if [ -d "$distribution_dir/skills" ]; then
   cp -R "$distribution_dir/skills/." "$profile_dir/skills/"
 fi
 
+sync_distribution_cron_templates() {
+  if [ "$profile_name" != "maestro-operator" ] || [ ! -d "$distribution_dir/cron" ]; then
+    return 0
+  fi
+
+  python3 - "$profile_dir" "$distribution_dir" <<'PY'
+import json
+import os
+import shutil
+import subprocess
+import sys
+from pathlib import Path
+
+profile_dir = Path(sys.argv[1])
+distribution_dir = Path(sys.argv[2])
+source_dir = distribution_dir / "cron"
+target_dir = profile_dir / "cron"
+target_dir.mkdir(parents=True, exist_ok=True)
+cron_env = {**os.environ, "HERMES_HOME": str(profile_dir)}
+
+jobs_path = target_dir / "jobs.json"
+try:
+    jobs = json.loads(jobs_path.read_text()).get("jobs", []) if jobs_path.exists() else []
+except Exception:
+    jobs = []
+existing_names = {job.get("name") for job in jobs if isinstance(job, dict)}
+
+for source in sorted(source_dir.glob("*.json")):
+    target = target_dir / source.name
+    if not target.exists():
+        shutil.copy2(source, target)
+    try:
+        template = json.loads(source.read_text())
+    except Exception as exc:
+        print(f"WARN: could not read cron template {source.name}: {exc}", file=sys.stderr)
+        continue
+    if template.get("paused", True):
+        continue
+    name = template.get("name") or source.stem
+    if name in existing_names:
+        continue
+    schedule = template.get("schedule")
+    prompt = template.get("prompt", "")
+    if not schedule or not prompt:
+        print(f"WARN: cron template {source.name} missing schedule or prompt", file=sys.stderr)
+        continue
+    command = [
+        "hermes",
+        "cron",
+        "create",
+        str(schedule),
+        str(prompt),
+        "--name",
+        str(name),
+        "--deliver",
+        str(template.get("deliver", "local")),
+    ]
+    for skill in template.get("skills", []):
+        command.extend(["--skill", str(skill)])
+    repeat = template.get("repeat")
+    if repeat:
+        command.extend(["--repeat", str(repeat)])
+    result = subprocess.run(command, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, env=cron_env)
+    if result.returncode != 0:
+        print(f"WARN: could not create cron job from {source.name}: {result.stderr or result.stdout}", file=sys.stderr)
+PY
+}
+sync_distribution_cron_templates
+
 sync_managed_memory() {
   local src="$1"
   local dst="$2"

@@ -42,6 +42,16 @@ test("Fabro runs channel is mapped through env and has compact reporting guidanc
   }
 });
 
+test("Railway gateway installs active distribution cron templates once", () => {
+  assert.match(entrypoint, /sync_distribution_cron_templates/);
+  assert.match(entrypoint, /distribution_dir \/ "cron"/);
+  assert.match(entrypoint, /template\.get\("paused", True\)/);
+  assert.match(entrypoint, /"cron",\s*"create"/);
+  assert.match(entrypoint, /"HERMES_HOME": str\(profile_dir\)/);
+  assert.match(entrypoint, /env=cron_env/);
+  assert.match(entrypoint, /existing_names/);
+});
+
 test("Railway gateway applies runtime model and MCP safety overrides to worker profiles", () => {
   assert.match(entrypoint, /apply_profile_runtime_overrides/);
   assert.match(entrypoint, /profiles_dir\.glob\("\*\/config\.yaml"\)/);

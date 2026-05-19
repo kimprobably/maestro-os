@@ -49,8 +49,8 @@ function setRailwayVariable({ key, value, service, environment, skipDeploys }) {
   }
 }
 
-function redeployService({ service }) {
-  const result = spawnSync("railway", ["service", "redeploy", "--service", service, "--yes"], {
+function redeployService({ service, environment }) {
+  const result = spawnSync("railway", ["service", "redeploy", "--service", service, "--environment", environment, "--yes"], {
     encoding: "utf8",
     stdio: ["ignore", "pipe", "pipe"],
   });
@@ -87,7 +87,7 @@ function main() {
         skipDeploys: true,
       });
     }
-    if (redeploy) redeployService({ service });
+    if (redeploy) redeployService({ service, environment });
   }
 
   console.log(
