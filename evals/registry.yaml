@@ -160,3 +160,1440 @@ evals:
       review_cadence: per-feature-run
       requires_expiry: true
       requires_compensating_control: true
+  - id: active-workflows.eval-coverage
+    level: meta
+    state: blocking
+    runner: deterministic
+    blocking: true
+    owner: quincy
+    subject_paths:
+      - evals/active-workflows.yaml
+      - scripts/evals/verify-workflow-eval-coverage.mjs
+      - scripts/evals/active-workflow-lib.mjs
+    artifact_patterns:
+      - reports/evals/factory-health/active-workflows.eval-coverage.json
+      - reports/eval-index.json
+    counterexamples:
+      - active workflow with missing call eval or untracked native prompt must fail coverage
+    waiver_policy:
+      owner: quincy
+      review_cadence: per-workflow-change
+      requires_expiry: true
+      requires_compensating_control: true
+  - id: iphone-object-proof.program.outcome
+    level: product
+    state: blocking
+    runner: deterministic
+    blocking: true
+    owner: quincy
+    subject_paths:
+      - workflows/iphone-app-factory/waketask-object-proof-program.fabro
+    artifact_patterns:
+      - .workflow/object-proof-program/**
+    counterexamples:
+      - iphone-object-proof.program.outcome missing active workflow evidence should fail
+    waiver_policy:
+      owner: quincy
+      review_cadence: per-workflow-change
+      requires_expiry: true
+      requires_compensating_control: true
+  - id: iphone-object-proof.program.workflow
+    level: workflow
+    state: blocking
+    runner: deterministic
+    blocking: true
+    owner: quincy
+    subject_paths:
+      - workflows/iphone-app-factory/waketask-object-proof-program.fabro
+    artifact_patterns:
+      - .workflow/object-proof-program/**
+    counterexamples:
+      - iphone-object-proof.program.workflow missing active workflow evidence should fail
+    waiver_policy:
+      owner: quincy
+      review_cadence: per-workflow-change
+      requires_expiry: true
+      requires_compensating_control: true
+  - id: iphone-object-proof.preflight.workflow
+    level: workflow
+    state: blocking
+    runner: deterministic
+    blocking: true
+    owner: quincy
+    subject_paths:
+      - workflows/iphone-app-factory/object-proof-program-preflight-stage.fabro
+    artifact_patterns:
+      - .workflow/object-proof-program/**
+    counterexamples:
+      - iphone-object-proof.preflight.workflow missing active workflow evidence should fail
+    waiver_policy:
+      owner: quincy
+      review_cadence: per-workflow-change
+      requires_expiry: true
+      requires_compensating_control: true
+  - id: iphone-object-proof.program-spec.workflow
+    level: workflow
+    state: blocking
+    runner: deterministic
+    blocking: true
+    owner: quincy
+    subject_paths:
+      - workflows/iphone-app-factory/object-proof-program-spec-stage.fabro
+    artifact_patterns:
+      - .workflow/object-proof-program/**
+    counterexamples:
+      - iphone-object-proof.program-spec.workflow missing active workflow evidence should fail
+    waiver_policy:
+      owner: quincy
+      review_cadence: per-workflow-change
+      requires_expiry: true
+      requires_compensating_control: true
+  - id: iphone-object-proof.program-spec.call
+    level: call
+    state: blocking
+    runner: deterministic
+    blocking: true
+    owner: quincy
+    subject_paths:
+      - workflows/iphone-app-factory/object-proof-program-spec-stage.fabro
+    artifact_patterns:
+      - .workflow/object-proof-program/**
+    counterexamples:
+      - iphone-object-proof.program-spec.call missing active workflow evidence should fail
+    waiver_policy:
+      owner: quincy
+      review_cadence: per-workflow-change
+      requires_expiry: true
+      requires_compensating_control: true
+  - id: iphone-object-proof.barcode.workflow
+    level: workflow
+    state: blocking
+    runner: deterministic
+    blocking: true
+    owner: quincy
+    subject_paths:
+      - workflows/iphone-app-factory/object-proof-barcode-stage.fabro
+    artifact_patterns:
+      - .workflow/object-proof-program/**
+    counterexamples:
+      - iphone-object-proof.barcode.workflow missing active workflow evidence should fail
+    waiver_policy:
+      owner: quincy
+      review_cadence: per-workflow-change
+      requires_expiry: true
+      requires_compensating_control: true
+  - id: iphone-object-proof.barcode.implementation.call
+    level: call
+    state: blocking
+    runner: deterministic
+    blocking: true
+    owner: quincy
+    subject_paths:
+      - workflows/iphone-app-factory/object-proof-barcode-stage.fabro
+    artifact_patterns:
+      - .workflow/object-proof-program/**
+    counterexamples:
+      - iphone-object-proof.barcode.implementation.call missing active workflow evidence should fail
+    waiver_policy:
+      owner: quincy
+      review_cadence: per-workflow-change
+      requires_expiry: true
+      requires_compensating_control: true
+  - id: iphone-object-proof.barcode-learning.workflow
+    level: workflow
+    state: blocking
+    runner: deterministic
+    blocking: true
+    owner: quincy
+    subject_paths:
+      - workflows/iphone-app-factory/object-proof-barcode-learning-stage.fabro
+    artifact_patterns:
+      - .workflow/object-proof-program/**
+    counterexamples:
+      - iphone-object-proof.barcode-learning.workflow missing active workflow evidence should fail
+    waiver_policy:
+      owner: quincy
+      review_cadence: per-workflow-change
+      requires_expiry: true
+      requires_compensating_control: true
+  - id: iphone-object-proof.barcode.learning.call
+    level: call
+    state: blocking
+    runner: deterministic
+    blocking: true
+    owner: quincy
+    subject_paths:
+      - workflows/iphone-app-factory/object-proof-barcode-learning-stage.fabro
+    artifact_patterns:
+      - .workflow/object-proof-program/**
+    counterexamples:
+      - iphone-object-proof.barcode.learning.call missing active workflow evidence should fail
+    waiver_policy:
+      owner: quincy
+      review_cadence: per-workflow-change
+      requires_expiry: true
+      requires_compensating_control: true
+  - id: iphone-object-proof.preset-vision.workflow
+    level: workflow
+    state: blocking
+    runner: deterministic
+    blocking: true
+    owner: quincy
+    subject_paths:
+      - workflows/iphone-app-factory/object-proof-preset-vision-stage.fabro
+    artifact_patterns:
+      - .workflow/object-proof-program/**
+    counterexamples:
+      - iphone-object-proof.preset-vision.workflow missing active workflow evidence should fail
+    waiver_policy:
+      owner: quincy
+      review_cadence: per-workflow-change
+      requires_expiry: true
+      requires_compensating_control: true
+  - id: iphone-object-proof.preset-vision.implementation.call
+    level: call
+    state: blocking
+    runner: deterministic
+    blocking: true
+    owner: quincy
+    subject_paths:
+      - workflows/iphone-app-factory/object-proof-preset-vision-stage.fabro
+    artifact_patterns:
+      - .workflow/object-proof-program/**
+    counterexamples:
+      - iphone-object-proof.preset-vision.implementation.call missing active workflow evidence should fail
+    waiver_policy:
+      owner: quincy
+      review_cadence: per-workflow-change
+      requires_expiry: true
+      requires_compensating_control: true
+  - id: iphone-object-proof.preset-vision-learning.workflow
+    level: workflow
+    state: blocking
+    runner: deterministic
+    blocking: true
+    owner: quincy
+    subject_paths:
+      - workflows/iphone-app-factory/object-proof-preset-vision-learning-stage.fabro
+    artifact_patterns:
+      - .workflow/object-proof-program/**
+    counterexamples:
+      - iphone-object-proof.preset-vision-learning.workflow missing active workflow evidence should fail
+    waiver_policy:
+      owner: quincy
+      review_cadence: per-workflow-change
+      requires_expiry: true
+      requires_compensating_control: true
+  - id: iphone-object-proof.preset-vision.learning.call
+    level: call
+    state: blocking
+    runner: deterministic
+    blocking: true
+    owner: quincy
+    subject_paths:
+      - workflows/iphone-app-factory/object-proof-preset-vision-learning-stage.fabro
+    artifact_patterns:
+      - .workflow/object-proof-program/**
+    counterexamples:
+      - iphone-object-proof.preset-vision.learning.call missing active workflow evidence should fail
+    waiver_policy:
+      owner: quincy
+      review_cadence: per-workflow-change
+      requires_expiry: true
+      requires_compensating_control: true
+  - id: iphone-object-proof.same-object.workflow
+    level: workflow
+    state: blocking
+    runner: deterministic
+    blocking: true
+    owner: quincy
+    subject_paths:
+      - workflows/iphone-app-factory/object-proof-same-object-stage.fabro
+    artifact_patterns:
+      - .workflow/object-proof-program/**
+    counterexamples:
+      - iphone-object-proof.same-object.workflow missing active workflow evidence should fail
+    waiver_policy:
+      owner: quincy
+      review_cadence: per-workflow-change
+      requires_expiry: true
+      requires_compensating_control: true
+  - id: iphone-object-proof.same-object.implementation.call
+    level: call
+    state: blocking
+    runner: deterministic
+    blocking: true
+    owner: quincy
+    subject_paths:
+      - workflows/iphone-app-factory/object-proof-same-object-stage.fabro
+    artifact_patterns:
+      - .workflow/object-proof-program/**
+    counterexamples:
+      - iphone-object-proof.same-object.implementation.call missing active workflow evidence should fail
+    waiver_policy:
+      owner: quincy
+      review_cadence: per-workflow-change
+      requires_expiry: true
+      requires_compensating_control: true
+  - id: iphone-object-proof.same-object-learning.workflow
+    level: workflow
+    state: blocking
+    runner: deterministic
+    blocking: true
+    owner: quincy
+    subject_paths:
+      - workflows/iphone-app-factory/object-proof-same-object-learning-stage.fabro
+    artifact_patterns:
+      - .workflow/object-proof-program/**
+    counterexamples:
+      - iphone-object-proof.same-object-learning.workflow missing active workflow evidence should fail
+    waiver_policy:
+      owner: quincy
+      review_cadence: per-workflow-change
+      requires_expiry: true
+      requires_compensating_control: true
+  - id: iphone-object-proof.same-object.learning.call
+    level: call
+    state: blocking
+    runner: deterministic
+    blocking: true
+    owner: quincy
+    subject_paths:
+      - workflows/iphone-app-factory/object-proof-same-object-learning-stage.fabro
+    artifact_patterns:
+      - .workflow/object-proof-program/**
+    counterexamples:
+      - iphone-object-proof.same-object.learning.call missing active workflow evidence should fail
+    waiver_policy:
+      owner: quincy
+      review_cadence: per-workflow-change
+      requires_expiry: true
+      requires_compensating_control: true
+  - id: iphone-object-proof.postmortem.workflow
+    level: workflow
+    state: blocking
+    runner: deterministic
+    blocking: true
+    owner: quincy
+    subject_paths:
+      - workflows/iphone-app-factory/object-proof-publish-postmortem-stage.fabro
+    artifact_patterns:
+      - .workflow/object-proof-program/**
+    counterexamples:
+      - iphone-object-proof.postmortem.workflow missing active workflow evidence should fail
+    waiver_policy:
+      owner: quincy
+      review_cadence: per-workflow-change
+      requires_expiry: true
+      requires_compensating_control: true
+  - id: iphone-object-proof.program-postmortem.call
+    level: call
+    state: blocking
+    runner: deterministic
+    blocking: true
+    owner: quincy
+    subject_paths:
+      - workflows/iphone-app-factory/object-proof-publish-postmortem-stage.fabro
+    artifact_patterns:
+      - .workflow/object-proof-program/**
+    counterexamples:
+      - iphone-object-proof.program-postmortem.call missing active workflow evidence should fail
+    waiver_policy:
+      owner: quincy
+      review_cadence: per-workflow-change
+      requires_expiry: true
+      requires_compensating_control: true
+  - id: iphone-feature.iteration.outcome
+    level: product
+    state: blocking
+    runner: deterministic
+    blocking: true
+    owner: quincy
+    subject_paths:
+      - workflows/iphone-app-factory/iterate-existing-app-features.fabro
+    artifact_patterns:
+      - .workflow/existing-app-feature/**
+    counterexamples:
+      - iphone-feature.iteration.outcome missing active workflow evidence should fail
+    waiver_policy:
+      owner: quincy
+      review_cadence: per-workflow-change
+      requires_expiry: true
+      requires_compensating_control: true
+  - id: iphone-feature.iteration.workflow
+    level: workflow
+    state: blocking
+    runner: deterministic
+    blocking: true
+    owner: quincy
+    subject_paths:
+      - workflows/iphone-app-factory/iterate-existing-app-features.fabro
+    artifact_patterns:
+      - .workflow/existing-app-feature/**
+    counterexamples:
+      - iphone-feature.iteration.workflow missing active workflow evidence should fail
+    waiver_policy:
+      owner: quincy
+      review_cadence: per-workflow-change
+      requires_expiry: true
+      requires_compensating_control: true
+  - id: iphone-feature.workflow-preflight.workflow
+    level: workflow
+    state: blocking
+    runner: deterministic
+    blocking: true
+    owner: quincy
+    subject_paths:
+      - workflows/iphone-app-factory/feature-workflow-preflight-stage.fabro
+    artifact_patterns:
+      - .workflow/existing-app-feature/**
+    counterexamples:
+      - iphone-feature.workflow-preflight.workflow missing active workflow evidence should fail
+    waiver_policy:
+      owner: quincy
+      review_cadence: per-workflow-change
+      requires_expiry: true
+      requires_compensating_control: true
+  - id: iphone-feature.context-intake.workflow
+    level: workflow
+    state: blocking
+    runner: deterministic
+    blocking: true
+    owner: quincy
+    subject_paths:
+      - workflows/iphone-app-factory/feature-context-intake-stage.fabro
+    artifact_patterns:
+      - .workflow/existing-app-feature/**
+    counterexamples:
+      - iphone-feature.context-intake.workflow missing active workflow evidence should fail
+    waiver_policy:
+      owner: quincy
+      review_cadence: per-workflow-change
+      requires_expiry: true
+      requires_compensating_control: true
+  - id: iphone-feature.existing-app-audit.workflow
+    level: workflow
+    state: blocking
+    runner: deterministic
+    blocking: true
+    owner: quincy
+    subject_paths:
+      - workflows/iphone-app-factory/feature-existing-app-audit-stage.fabro
+    artifact_patterns:
+      - .workflow/existing-app-feature/**
+    counterexamples:
+      - iphone-feature.existing-app-audit.workflow missing active workflow evidence should fail
+    waiver_policy:
+      owner: quincy
+      review_cadence: per-workflow-change
+      requires_expiry: true
+      requires_compensating_control: true
+  - id: iphone-feature.research.workflow
+    level: workflow
+    state: blocking
+    runner: deterministic
+    blocking: true
+    owner: quincy
+    subject_paths:
+      - workflows/iphone-app-factory/feature-research-stage.fabro
+    artifact_patterns:
+      - .workflow/existing-app-feature/**
+    counterexamples:
+      - iphone-feature.research.workflow missing active workflow evidence should fail
+    waiver_policy:
+      owner: quincy
+      review_cadence: per-workflow-change
+      requires_expiry: true
+      requires_compensating_control: true
+  - id: iphone-feature.spec.workflow
+    level: workflow
+    state: blocking
+    runner: deterministic
+    blocking: true
+    owner: quincy
+    subject_paths:
+      - workflows/iphone-app-factory/feature-spec-stage.fabro
+    artifact_patterns:
+      - .workflow/existing-app-feature/**
+    counterexamples:
+      - iphone-feature.spec.workflow missing active workflow evidence should fail
+    waiver_policy:
+      owner: quincy
+      review_cadence: per-workflow-change
+      requires_expiry: true
+      requires_compensating_control: true
+  - id: iphone-feature.implementation-plan.workflow
+    level: workflow
+    state: blocking
+    runner: deterministic
+    blocking: true
+    owner: quincy
+    subject_paths:
+      - workflows/iphone-app-factory/feature-implementation-plan-stage.fabro
+    artifact_patterns:
+      - .workflow/existing-app-feature/**
+    counterexamples:
+      - iphone-feature.implementation-plan.workflow missing active workflow evidence should fail
+    waiver_policy:
+      owner: quincy
+      review_cadence: per-workflow-change
+      requires_expiry: true
+      requires_compensating_control: true
+  - id: iphone-feature.implementation.workflow
+    level: workflow
+    state: blocking
+    runner: deterministic
+    blocking: true
+    owner: quincy
+    subject_paths:
+      - workflows/iphone-app-factory/feature-implementation-stage.fabro
+    artifact_patterns:
+      - .workflow/existing-app-feature/**
+    counterexamples:
+      - iphone-feature.implementation.workflow missing active workflow evidence should fail
+    waiver_policy:
+      owner: quincy
+      review_cadence: per-workflow-change
+      requires_expiry: true
+      requires_compensating_control: true
+  - id: iphone-feature.validation.workflow
+    level: workflow
+    state: blocking
+    runner: deterministic
+    blocking: true
+    owner: quincy
+    subject_paths:
+      - workflows/iphone-app-factory/feature-validation-stage.fabro
+    artifact_patterns:
+      - .workflow/existing-app-feature/**
+    counterexamples:
+      - iphone-feature.validation.workflow missing active workflow evidence should fail
+    waiver_policy:
+      owner: quincy
+      review_cadence: per-workflow-change
+      requires_expiry: true
+      requires_compensating_control: true
+  - id: iphone-feature.postmortem.workflow
+    level: workflow
+    state: blocking
+    runner: deterministic
+    blocking: true
+    owner: quincy
+    subject_paths:
+      - workflows/iphone-app-factory/feature-publish-postmortem-stage.fabro
+    artifact_patterns:
+      - .workflow/existing-app-feature/**
+    counterexamples:
+      - iphone-feature.postmortem.workflow missing active workflow evidence should fail
+    waiver_policy:
+      owner: quincy
+      review_cadence: per-workflow-change
+      requires_expiry: true
+      requires_compensating_control: true
+  - id: iphone-feature.existing-app-audit.call
+    level: call
+    state: blocking
+    runner: deterministic
+    blocking: true
+    owner: quincy
+    subject_paths:
+      - workflows/iphone-app-factory/feature-existing-app-audit-stage.fabro
+    artifact_patterns:
+      - .workflow/existing-app-feature/codex/*.json
+      - .workflow/existing-app-feature/codex/*.last-message.md
+    counterexamples:
+      - iphone-feature.existing-app-audit.call missing active workflow evidence should fail
+    waiver_policy:
+      owner: quincy
+      review_cadence: per-workflow-change
+      requires_expiry: true
+      requires_compensating_control: true
+  - id: iphone-feature.trend-context-research.call
+    level: call
+    state: blocking
+    runner: deterministic
+    blocking: true
+    owner: quincy
+    subject_paths:
+      - workflows/iphone-app-factory/feature-research-stage.fabro
+    artifact_patterns:
+      - .workflow/existing-app-feature/codex/*.json
+      - .workflow/existing-app-feature/codex/*.last-message.md
+    counterexamples:
+      - iphone-feature.trend-context-research.call missing active workflow evidence should fail
+    waiver_policy:
+      owner: quincy
+      review_cadence: per-workflow-change
+      requires_expiry: true
+      requires_compensating_control: true
+  - id: iphone-feature.mobbin-competitor-research.call
+    level: call
+    state: blocking
+    runner: deterministic
+    blocking: true
+    owner: quincy
+    subject_paths:
+      - workflows/iphone-app-factory/feature-research-stage.fabro
+    artifact_patterns:
+      - .workflow/existing-app-feature/codex/*.json
+      - .workflow/existing-app-feature/codex/*.last-message.md
+    counterexamples:
+      - iphone-feature.mobbin-competitor-research.call missing active workflow evidence should fail
+    waiver_policy:
+      owner: quincy
+      review_cadence: per-workflow-change
+      requires_expiry: true
+      requires_compensating_control: true
+  - id: iphone-feature.app-store-research.call
+    level: call
+    state: blocking
+    runner: deterministic
+    blocking: true
+    owner: quincy
+    subject_paths:
+      - workflows/iphone-app-factory/feature-research-stage.fabro
+    artifact_patterns:
+      - .workflow/existing-app-feature/codex/*.json
+      - .workflow/existing-app-feature/codex/*.last-message.md
+    counterexamples:
+      - iphone-feature.app-store-research.call missing active workflow evidence should fail
+    waiver_policy:
+      owner: quincy
+      review_cadence: per-workflow-change
+      requires_expiry: true
+      requires_compensating_control: true
+  - id: iphone-feature.behavioral-research.call
+    level: call
+    state: blocking
+    runner: deterministic
+    blocking: true
+    owner: quincy
+    subject_paths:
+      - workflows/iphone-app-factory/feature-research-stage.fabro
+    artifact_patterns:
+      - .workflow/existing-app-feature/codex/*.json
+      - .workflow/existing-app-feature/codex/*.last-message.md
+    counterexamples:
+      - iphone-feature.behavioral-research.call missing active workflow evidence should fail
+    waiver_policy:
+      owner: quincy
+      review_cadence: per-workflow-change
+      requires_expiry: true
+      requires_compensating_control: true
+  - id: iphone-feature.research-synthesis.call
+    level: call
+    state: blocking
+    runner: deterministic
+    blocking: true
+    owner: quincy
+    subject_paths:
+      - workflows/iphone-app-factory/feature-research-stage.fabro
+    artifact_patterns:
+      - .workflow/existing-app-feature/codex/*.json
+      - .workflow/existing-app-feature/codex/*.last-message.md
+    counterexamples:
+      - iphone-feature.research-synthesis.call missing active workflow evidence should fail
+    waiver_policy:
+      owner: quincy
+      review_cadence: per-workflow-change
+      requires_expiry: true
+      requires_compensating_control: true
+  - id: iphone-feature.spec.call
+    level: call
+    state: blocking
+    runner: deterministic
+    blocking: true
+    owner: quincy
+    subject_paths:
+      - workflows/iphone-app-factory/feature-spec-stage.fabro
+    artifact_patterns:
+      - .workflow/existing-app-feature/codex/*.json
+      - .workflow/existing-app-feature/codex/*.last-message.md
+    counterexamples:
+      - iphone-feature.spec.call missing active workflow evidence should fail
+    waiver_policy:
+      owner: quincy
+      review_cadence: per-workflow-change
+      requires_expiry: true
+      requires_compensating_control: true
+  - id: iphone-feature.implementation-plan.call
+    level: call
+    state: blocking
+    runner: deterministic
+    blocking: true
+    owner: quincy
+    subject_paths:
+      - workflows/iphone-app-factory/feature-implementation-plan-stage.fabro
+    artifact_patterns:
+      - .workflow/existing-app-feature/codex/*.json
+      - .workflow/existing-app-feature/codex/*.last-message.md
+    counterexamples:
+      - iphone-feature.implementation-plan.call missing active workflow evidence should fail
+    waiver_policy:
+      owner: quincy
+      review_cadence: per-workflow-change
+      requires_expiry: true
+      requires_compensating_control: true
+  - id: iphone-feature.validation-review.call
+    level: call
+    state: blocking
+    runner: deterministic
+    blocking: true
+    owner: quincy
+    subject_paths:
+      - workflows/iphone-app-factory/feature-validation-stage.fabro
+    artifact_patterns:
+      - .workflow/existing-app-feature/codex/*.json
+      - .workflow/existing-app-feature/codex/*.last-message.md
+    counterexamples:
+      - iphone-feature.validation-review.call missing active workflow evidence should fail
+    waiver_policy:
+      owner: quincy
+      review_cadence: per-workflow-change
+      requires_expiry: true
+      requires_compensating_control: true
+  - id: iphone-feature.postmortem.call
+    level: call
+    state: blocking
+    runner: deterministic
+    blocking: true
+    owner: quincy
+    subject_paths:
+      - workflows/iphone-app-factory/feature-publish-postmortem-stage.fabro
+    artifact_patterns:
+      - .workflow/existing-app-feature/codex/*.json
+      - .workflow/existing-app-feature/codex/*.last-message.md
+    counterexamples:
+      - iphone-feature.postmortem.call missing active workflow evidence should fail
+    waiver_policy:
+      owner: quincy
+      review_cadence: per-workflow-change
+      requires_expiry: true
+      requires_compensating_control: true
+  - id: iphone-build.factory.outcome
+    level: product
+    state: blocking
+    runner: deterministic
+    blocking: true
+    owner: iphone-app-factory
+    subject_paths:
+      - workflows/iphone-app-factory/build-iphone-app.fabro
+    artifact_patterns:
+      - .workflow/iphone-app-factory/**
+    counterexamples:
+      - build factory native prompt collection gap must be visible
+    waiver_policy:
+      owner: iphone-app-factory
+      review_cadence: per-workflow-change
+      requires_expiry: true
+      requires_compensating_control: true
+  - id: iphone-build.factory.workflow
+    level: workflow
+    state: blocking
+    runner: deterministic
+    blocking: true
+    owner: iphone-app-factory
+    subject_paths:
+      - workflows/iphone-app-factory/build-iphone-app.fabro
+    artifact_patterns:
+      - .workflow/iphone-app-factory/**
+    counterexamples:
+      - build factory native prompt nodes must be tracked
+    waiver_policy:
+      owner: iphone-app-factory
+      review_cadence: per-workflow-change
+      requires_expiry: true
+      requires_compensating_control: true
+  - id: iphone-build.factory-cli.workflow
+    level: workflow
+    state: blocking
+    runner: deterministic
+    blocking: true
+    owner: iphone-app-factory
+    subject_paths:
+      - workflows/iphone-app-factory/build-iphone-app.cli.fabro
+    artifact_patterns:
+      - .workflow/iphone-app-factory/**
+    counterexamples:
+      - build factory CLI native prompt nodes must be tracked
+    waiver_policy:
+      owner: iphone-app-factory
+      review_cadence: per-workflow-change
+      requires_expiry: true
+      requires_compensating_control: true
+  - id: waketask-product.iteration.outcome
+    level: product
+    state: blocking
+    runner: deterministic
+    blocking: true
+    owner: quincy
+    subject_paths:
+      - workflows/iphone-app-factory/waketask-product-iteration.fabro
+    artifact_patterns:
+      - .workflow/iphone-app-ux-studio/**
+    counterexamples:
+      - waketask-product.iteration.outcome missing active workflow evidence should fail
+    waiver_policy:
+      owner: quincy
+      review_cadence: per-workflow-change
+      requires_expiry: true
+      requires_compensating_control: true
+  - id: waketask-product.iteration.workflow
+    level: workflow
+    state: blocking
+    runner: deterministic
+    blocking: true
+    owner: quincy
+    subject_paths:
+      - workflows/iphone-app-factory/waketask-product-iteration.fabro
+    artifact_patterns:
+      - .workflow/iphone-app-ux-studio/**
+    counterexamples:
+      - waketask-product.iteration.workflow missing active workflow evidence should fail
+    waiver_policy:
+      owner: quincy
+      review_cadence: per-workflow-change
+      requires_expiry: true
+      requires_compensating_control: true
+  - id: waketask-product.preflight.workflow
+    level: workflow
+    state: blocking
+    runner: deterministic
+    blocking: true
+    owner: quincy
+    subject_paths:
+      - workflows/iphone-app-factory/waketask-workflow-preflight-stage.fabro
+    artifact_patterns:
+      - .workflow/iphone-app-ux-studio/**
+    counterexamples:
+      - waketask-product.preflight.workflow missing active workflow evidence should fail
+    waiver_policy:
+      owner: quincy
+      review_cadence: per-workflow-change
+      requires_expiry: true
+      requires_compensating_control: true
+  - id: waketask-product.spec.workflow
+    level: workflow
+    state: blocking
+    runner: deterministic
+    blocking: true
+    owner: quincy
+    subject_paths:
+      - workflows/iphone-app-factory/waketask-product-spec-stage.fabro
+    artifact_patterns:
+      - .workflow/iphone-app-ux-studio/**
+    counterexamples:
+      - waketask-product.spec.workflow missing active workflow evidence should fail
+    waiver_policy:
+      owner: quincy
+      review_cadence: per-workflow-change
+      requires_expiry: true
+      requires_compensating_control: true
+  - id: iphone-ux.iteration.workflow
+    level: workflow
+    state: blocking
+    runner: deterministic
+    blocking: true
+    owner: quincy
+    subject_paths:
+      - workflows/iphone-app-factory/iterate-existing-app-ux.fabro
+    artifact_patterns:
+      - .workflow/iphone-app-ux-studio/**
+    counterexamples:
+      - iphone-ux.iteration.workflow missing active workflow evidence should fail
+    waiver_policy:
+      owner: quincy
+      review_cadence: per-workflow-change
+      requires_expiry: true
+      requires_compensating_control: true
+  - id: waketask-product.validation-postmortem.workflow
+    level: workflow
+    state: blocking
+    runner: deterministic
+    blocking: true
+    owner: quincy
+    subject_paths:
+      - workflows/iphone-app-factory/waketask-validation-postmortem-stage.fabro
+    artifact_patterns:
+      - .workflow/iphone-app-ux-studio/**
+    counterexamples:
+      - waketask-product.validation-postmortem.workflow missing active workflow evidence should fail
+    waiver_policy:
+      owner: quincy
+      review_cadence: per-workflow-change
+      requires_expiry: true
+      requires_compensating_control: true
+  - id: hermes.create-agent.outcome
+    level: product
+    state: blocking
+    runner: deterministic
+    blocking: true
+    owner: hermes
+    subject_paths:
+      - workflows/hermes/create-agent.fabro
+    artifact_patterns:
+      - .workflow/hermes/create-agent/**
+    counterexamples:
+      - hermes.create-agent.outcome missing active workflow evidence should fail
+    waiver_policy:
+      owner: hermes
+      review_cadence: per-workflow-change
+      requires_expiry: true
+      requires_compensating_control: true
+  - id: hermes.create-agent.workflow
+    level: workflow
+    state: blocking
+    runner: deterministic
+    blocking: true
+    owner: hermes
+    subject_paths:
+      - workflows/hermes/create-agent.fabro
+    artifact_patterns:
+      - .workflow/hermes/create-agent/**
+    counterexamples:
+      - hermes.create-agent.workflow missing active workflow evidence should fail
+    waiver_policy:
+      owner: hermes
+      review_cadence: per-workflow-change
+      requires_expiry: true
+      requires_compensating_control: true
+  - id: iphone-ux.existing-app-intake.call
+    level: call
+    state: blocking
+    runner: deterministic
+    blocking: true
+    owner: quincy
+    subject_paths:
+      - workflows/iphone-app-factory/iterate-existing-app-ux.fabro
+    artifact_patterns:
+      - .workflow/iphone-app-ux-studio/codex/*.json
+      - .workflow/iphone-app-ux-studio/codex/*.last-message.md
+    counterexamples:
+      - iphone-ux.existing-app-intake.call missing active workflow evidence should fail
+    waiver_policy:
+      owner: quincy
+      review_cadence: per-workflow-change
+      requires_expiry: true
+      requires_compensating_control: true
+  - id: iphone-ux.baseline-screenshot-capture.call
+    level: call
+    state: blocking
+    runner: deterministic
+    blocking: true
+    owner: quincy
+    subject_paths:
+      - workflows/iphone-app-factory/iterate-existing-app-ux.fabro
+    artifact_patterns:
+      - .workflow/iphone-app-ux-studio/codex/*.json
+      - .workflow/iphone-app-ux-studio/codex/*.last-message.md
+    counterexamples:
+      - iphone-ux.baseline-screenshot-capture.call missing active workflow evidence should fail
+    waiver_policy:
+      owner: quincy
+      review_cadence: per-workflow-change
+      requires_expiry: true
+      requires_compensating_control: true
+  - id: iphone-ux.competitor-flow-research.call
+    level: call
+    state: blocking
+    runner: deterministic
+    blocking: true
+    owner: quincy
+    subject_paths:
+      - workflows/iphone-app-factory/iterate-existing-app-ux.fabro
+    artifact_patterns:
+      - .workflow/iphone-app-ux-studio/codex/*.json
+      - .workflow/iphone-app-ux-studio/codex/*.last-message.md
+    counterexamples:
+      - iphone-ux.competitor-flow-research.call missing active workflow evidence should fail
+    waiver_policy:
+      owner: quincy
+      review_cadence: per-workflow-change
+      requires_expiry: true
+      requires_compensating_control: true
+  - id: iphone-ux.app-store-review-mining.call
+    level: call
+    state: blocking
+    runner: deterministic
+    blocking: true
+    owner: quincy
+    subject_paths:
+      - workflows/iphone-app-factory/iterate-existing-app-ux.fabro
+    artifact_patterns:
+      - .workflow/iphone-app-ux-studio/codex/*.json
+      - .workflow/iphone-app-ux-studio/codex/*.last-message.md
+    counterexamples:
+      - iphone-ux.app-store-review-mining.call missing active workflow evidence should fail
+    waiver_policy:
+      owner: quincy
+      review_cadence: per-workflow-change
+      requires_expiry: true
+      requires_compensating_control: true
+  - id: iphone-ux.mobbin-mcp-research.call
+    level: call
+    state: blocking
+    runner: deterministic
+    blocking: true
+    owner: quincy
+    subject_paths:
+      - workflows/iphone-app-factory/iterate-existing-app-ux.fabro
+    artifact_patterns:
+      - .workflow/iphone-app-ux-studio/codex/*.json
+      - .workflow/iphone-app-ux-studio/codex/*.last-message.md
+    counterexamples:
+      - iphone-ux.mobbin-mcp-research.call missing active workflow evidence should fail
+    waiver_policy:
+      owner: quincy
+      review_cadence: per-workflow-change
+      requires_expiry: true
+      requires_compensating_control: true
+  - id: iphone-ux.pageflows-research.call
+    level: call
+    state: blocking
+    runner: deterministic
+    blocking: true
+    owner: quincy
+    subject_paths:
+      - workflows/iphone-app-factory/iterate-existing-app-ux.fabro
+    artifact_patterns:
+      - .workflow/iphone-app-ux-studio/codex/*.json
+      - .workflow/iphone-app-ux-studio/codex/*.last-message.md
+    counterexamples:
+      - iphone-ux.pageflows-research.call missing active workflow evidence should fail
+    waiver_policy:
+      owner: quincy
+      review_cadence: per-workflow-change
+      requires_expiry: true
+      requires_compensating_control: true
+  - id: iphone-ux.apple-hig-research.call
+    level: call
+    state: blocking
+    runner: deterministic
+    blocking: true
+    owner: quincy
+    subject_paths:
+      - workflows/iphone-app-factory/iterate-existing-app-ux.fabro
+    artifact_patterns:
+      - .workflow/iphone-app-ux-studio/codex/*.json
+      - .workflow/iphone-app-ux-studio/codex/*.last-message.md
+    counterexamples:
+      - iphone-ux.apple-hig-research.call missing active workflow evidence should fail
+    waiver_policy:
+      owner: quincy
+      review_cadence: per-workflow-change
+      requires_expiry: true
+      requires_compensating_control: true
+  - id: iphone-ux.behavioral-ux-research.call
+    level: call
+    state: blocking
+    runner: deterministic
+    blocking: true
+    owner: quincy
+    subject_paths:
+      - workflows/iphone-app-factory/iterate-existing-app-ux.fabro
+    artifact_patterns:
+      - .workflow/iphone-app-ux-studio/codex/*.json
+      - .workflow/iphone-app-ux-studio/codex/*.last-message.md
+    counterexamples:
+      - iphone-ux.behavioral-ux-research.call missing active workflow evidence should fail
+    waiver_policy:
+      owner: quincy
+      review_cadence: per-workflow-change
+      requires_expiry: true
+      requires_compensating_control: true
+  - id: iphone-ux.design-opportunity-synthesis.call
+    level: call
+    state: blocking
+    runner: deterministic
+    blocking: true
+    owner: quincy
+    subject_paths:
+      - workflows/iphone-app-factory/iterate-existing-app-ux.fabro
+    artifact_patterns:
+      - .workflow/iphone-app-ux-studio/codex/*.json
+      - .workflow/iphone-app-ux-studio/codex/*.last-message.md
+    counterexamples:
+      - iphone-ux.design-opportunity-synthesis.call missing active workflow evidence should fail
+    waiver_policy:
+      owner: quincy
+      review_cadence: per-workflow-change
+      requires_expiry: true
+      requires_compensating_control: true
+  - id: iphone-ux.calm-accountability-direction.call
+    level: call
+    state: blocking
+    runner: deterministic
+    blocking: true
+    owner: quincy
+    subject_paths:
+      - workflows/iphone-app-factory/iterate-existing-app-ux.fabro
+    artifact_patterns:
+      - .workflow/iphone-app-ux-studio/codex/*.json
+      - .workflow/iphone-app-ux-studio/codex/*.last-message.md
+    counterexamples:
+      - iphone-ux.calm-accountability-direction.call missing active workflow evidence should fail
+    waiver_policy:
+      owner: quincy
+      review_cadence: per-workflow-change
+      requires_expiry: true
+      requires_compensating_control: true
+  - id: iphone-ux.hard-wake-direction.call
+    level: call
+    state: blocking
+    runner: deterministic
+    blocking: true
+    owner: quincy
+    subject_paths:
+      - workflows/iphone-app-factory/iterate-existing-app-ux.fabro
+    artifact_patterns:
+      - .workflow/iphone-app-ux-studio/codex/*.json
+      - .workflow/iphone-app-ux-studio/codex/*.last-message.md
+    counterexamples:
+      - iphone-ux.hard-wake-direction.call missing active workflow evidence should fail
+    waiver_policy:
+      owner: quincy
+      review_cadence: per-workflow-change
+      requires_expiry: true
+      requires_compensating_control: true
+  - id: iphone-ux.gamified-streak-direction.call
+    level: call
+    state: blocking
+    runner: deterministic
+    blocking: true
+    owner: quincy
+    subject_paths:
+      - workflows/iphone-app-factory/iterate-existing-app-ux.fabro
+    artifact_patterns:
+      - .workflow/iphone-app-ux-studio/codex/*.json
+      - .workflow/iphone-app-ux-studio/codex/*.last-message.md
+    counterexamples:
+      - iphone-ux.gamified-streak-direction.call missing active workflow evidence should fail
+    waiver_policy:
+      owner: quincy
+      review_cadence: per-workflow-change
+      requires_expiry: true
+      requires_compensating_control: true
+  - id: iphone-ux.minimal-native-direction.call
+    level: call
+    state: blocking
+    runner: deterministic
+    blocking: true
+    owner: quincy
+    subject_paths:
+      - workflows/iphone-app-factory/iterate-existing-app-ux.fabro
+    artifact_patterns:
+      - .workflow/iphone-app-ux-studio/codex/*.json
+      - .workflow/iphone-app-ux-studio/codex/*.last-message.md
+    counterexamples:
+      - iphone-ux.minimal-native-direction.call missing active workflow evidence should fail
+    waiver_policy:
+      owner: quincy
+      review_cadence: per-workflow-change
+      requires_expiry: true
+      requires_compensating_control: true
+  - id: iphone-ux.design-cross-critique.call
+    level: call
+    state: blocking
+    runner: deterministic
+    blocking: true
+    owner: quincy
+    subject_paths:
+      - workflows/iphone-app-factory/iterate-existing-app-ux.fabro
+    artifact_patterns:
+      - .workflow/iphone-app-ux-studio/codex/*.json
+      - .workflow/iphone-app-ux-studio/codex/*.last-message.md
+    counterexamples:
+      - iphone-ux.design-cross-critique.call missing active workflow evidence should fail
+    waiver_policy:
+      owner: quincy
+      review_cadence: per-workflow-change
+      requires_expiry: true
+      requires_compensating_control: true
+  - id: iphone-ux.design-tournament-consensus.call
+    level: call
+    state: blocking
+    runner: deterministic
+    blocking: true
+    owner: quincy
+    subject_paths:
+      - workflows/iphone-app-factory/iterate-existing-app-ux.fabro
+    artifact_patterns:
+      - .workflow/iphone-app-ux-studio/codex/*.json
+      - .workflow/iphone-app-ux-studio/codex/*.last-message.md
+    counterexamples:
+      - iphone-ux.design-tournament-consensus.call missing active workflow evidence should fail
+    waiver_policy:
+      owner: quincy
+      review_cadence: per-workflow-change
+      requires_expiry: true
+      requires_compensating_control: true
+  - id: iphone-ux.screen-ux-spec.call
+    level: call
+    state: blocking
+    runner: deterministic
+    blocking: true
+    owner: quincy
+    subject_paths:
+      - workflows/iphone-app-factory/iterate-existing-app-ux.fabro
+    artifact_patterns:
+      - .workflow/iphone-app-ux-studio/codex/*.json
+      - .workflow/iphone-app-ux-studio/codex/*.last-message.md
+    counterexamples:
+      - iphone-ux.screen-ux-spec.call missing active workflow evidence should fail
+    waiver_policy:
+      owner: quincy
+      review_cadence: per-workflow-change
+      requires_expiry: true
+      requires_compensating_control: true
+  - id: iphone-ux.implementation-plan.call
+    level: call
+    state: blocking
+    runner: deterministic
+    blocking: true
+    owner: quincy
+    subject_paths:
+      - workflows/iphone-app-factory/iterate-existing-app-ux.fabro
+    artifact_patterns:
+      - .workflow/iphone-app-ux-studio/codex/*.json
+      - .workflow/iphone-app-ux-studio/codex/*.last-message.md
+    counterexamples:
+      - iphone-ux.implementation-plan.call missing active workflow evidence should fail
+    waiver_policy:
+      owner: quincy
+      review_cadence: per-workflow-change
+      requires_expiry: true
+      requires_compensating_control: true
+  - id: iphone-ux.visual-system.call
+    level: call
+    state: blocking
+    runner: deterministic
+    blocking: true
+    owner: quincy
+    subject_paths:
+      - workflows/iphone-app-factory/iterate-existing-app-ux.fabro
+    artifact_patterns:
+      - .workflow/iphone-app-ux-studio/codex/*.json
+      - .workflow/iphone-app-ux-studio/codex/*.last-message.md
+    counterexamples:
+      - iphone-ux.visual-system.call missing active workflow evidence should fail
+    waiver_policy:
+      owner: quincy
+      review_cadence: per-workflow-change
+      requires_expiry: true
+      requires_compensating_control: true
+  - id: iphone-ux.verify-visual-system.call
+    level: call
+    state: blocking
+    runner: deterministic
+    blocking: true
+    owner: quincy
+    subject_paths:
+      - workflows/iphone-app-factory/iterate-existing-app-ux.fabro
+    artifact_patterns:
+      - .workflow/iphone-app-ux-studio/codex/*.json
+      - .workflow/iphone-app-ux-studio/codex/*.last-message.md
+    counterexamples:
+      - iphone-ux.verify-visual-system.call missing active workflow evidence should fail
+    waiver_policy:
+      owner: quincy
+      review_cadence: per-workflow-change
+      requires_expiry: true
+      requires_compensating_control: true
+  - id: iphone-ux.screen-flows.call
+    level: call
+    state: blocking
+    runner: deterministic
+    blocking: true
+    owner: quincy
+    subject_paths:
+      - workflows/iphone-app-factory/iterate-existing-app-ux.fabro
+    artifact_patterns:
+      - .workflow/iphone-app-ux-studio/codex/*.json
+      - .workflow/iphone-app-ux-studio/codex/*.last-message.md
+    counterexamples:
+      - iphone-ux.screen-flows.call missing active workflow evidence should fail
+    waiver_policy:
+      owner: quincy
+      review_cadence: per-workflow-change
+      requires_expiry: true
+      requires_compensating_control: true
+  - id: iphone-ux.verify-screen-flows.call
+    level: call
+    state: blocking
+    runner: deterministic
+    blocking: true
+    owner: quincy
+    subject_paths:
+      - workflows/iphone-app-factory/iterate-existing-app-ux.fabro
+    artifact_patterns:
+      - .workflow/iphone-app-ux-studio/codex/*.json
+      - .workflow/iphone-app-ux-studio/codex/*.last-message.md
+    counterexamples:
+      - iphone-ux.verify-screen-flows.call missing active workflow evidence should fail
+    waiver_policy:
+      owner: quincy
+      review_cadence: per-workflow-change
+      requires_expiry: true
+      requires_compensating_control: true
+  - id: iphone-ux.screenshot-evidence-review.call
+    level: call
+    state: blocking
+    runner: deterministic
+    blocking: true
+    owner: quincy
+    subject_paths:
+      - workflows/iphone-app-factory/iterate-existing-app-ux.fabro
+    artifact_patterns:
+      - .workflow/iphone-app-ux-studio/codex/*.json
+      - .workflow/iphone-app-ux-studio/codex/*.last-message.md
+    counterexamples:
+      - iphone-ux.screenshot-evidence-review.call missing active workflow evidence should fail
+    waiver_policy:
+      owner: quincy
+      review_cadence: per-workflow-change
+      requires_expiry: true
+      requires_compensating_control: true
+  - id: iphone-ux.ux-quality-review.call
+    level: call
+    state: blocking
+    runner: deterministic
+    blocking: true
+    owner: quincy
+    subject_paths:
+      - workflows/iphone-app-factory/iterate-existing-app-ux.fabro
+    artifact_patterns:
+      - .workflow/iphone-app-ux-studio/codex/*.json
+      - .workflow/iphone-app-ux-studio/codex/*.last-message.md
+    counterexamples:
+      - iphone-ux.ux-quality-review.call missing active workflow evidence should fail
+    waiver_policy:
+      owner: quincy
+      review_cadence: per-workflow-change
+      requires_expiry: true
+      requires_compensating_control: true
+  - id: iphone-ux.product-fidelity-review.call
+    level: call
+    state: blocking
+    runner: deterministic
+    blocking: true
+    owner: quincy
+    subject_paths:
+      - workflows/iphone-app-factory/iterate-existing-app-ux.fabro
+    artifact_patterns:
+      - .workflow/iphone-app-ux-studio/codex/*.json
+      - .workflow/iphone-app-ux-studio/codex/*.last-message.md
+    counterexamples:
+      - iphone-ux.product-fidelity-review.call missing active workflow evidence should fail
+    waiver_policy:
+      owner: quincy
+      review_cadence: per-workflow-change
+      requires_expiry: true
+      requires_compensating_control: true
+  - id: iphone-ux.ios-architecture-review.call
+    level: call
+    state: blocking
+    runner: deterministic
+    blocking: true
+    owner: quincy
+    subject_paths:
+      - workflows/iphone-app-factory/iterate-existing-app-ux.fabro
+    artifact_patterns:
+      - .workflow/iphone-app-ux-studio/codex/*.json
+      - .workflow/iphone-app-ux-studio/codex/*.last-message.md
+    counterexamples:
+      - iphone-ux.ios-architecture-review.call missing active workflow evidence should fail
+    waiver_policy:
+      owner: quincy
+      review_cadence: per-workflow-change
+      requires_expiry: true
+      requires_compensating_control: true
+  - id: iphone-ux.accessibility-review.call
+    level: call
+    state: blocking
+    runner: deterministic
+    blocking: true
+    owner: quincy
+    subject_paths:
+      - workflows/iphone-app-factory/iterate-existing-app-ux.fabro
+    artifact_patterns:
+      - .workflow/iphone-app-ux-studio/codex/*.json
+      - .workflow/iphone-app-ux-studio/codex/*.last-message.md
+    counterexamples:
+      - iphone-ux.accessibility-review.call missing active workflow evidence should fail
+    waiver_policy:
+      owner: quincy
+      review_cadence: per-workflow-change
+      requires_expiry: true
+      requires_compensating_control: true
+  - id: iphone-ux.security-privacy-review.call
+    level: call
+    state: blocking
+    runner: deterministic
+    blocking: true
+    owner: quincy
+    subject_paths:
+      - workflows/iphone-app-factory/iterate-existing-app-ux.fabro
+    artifact_patterns:
+      - .workflow/iphone-app-ux-studio/codex/*.json
+      - .workflow/iphone-app-ux-studio/codex/*.last-message.md
+    counterexamples:
+      - iphone-ux.security-privacy-review.call missing active workflow evidence should fail
+    waiver_policy:
+      owner: quincy
+      review_cadence: per-workflow-change
+      requires_expiry: true
+      requires_compensating_control: true
+  - id: iphone-ux.release-readiness-review.call
+    level: call
+    state: blocking
+    runner: deterministic
+    blocking: true
+    owner: quincy
+    subject_paths:
+      - workflows/iphone-app-factory/iterate-existing-app-ux.fabro
+    artifact_patterns:
+      - .workflow/iphone-app-ux-studio/codex/*.json
+      - .workflow/iphone-app-ux-studio/codex/*.last-message.md
+    counterexamples:
+      - iphone-ux.release-readiness-review.call missing active workflow evidence should fail
+    waiver_policy:
+      owner: quincy
+      review_cadence: per-workflow-change
+      requires_expiry: true
+      requires_compensating_control: true
+  - id: iphone-ux.final-consensus.call
+    level: call
+    state: blocking
+    runner: deterministic
+    blocking: true
+    owner: quincy
+    subject_paths:
+      - workflows/iphone-app-factory/iterate-existing-app-ux.fabro
+    artifact_patterns:
+      - .workflow/iphone-app-ux-studio/codex/*.json
+      - .workflow/iphone-app-ux-studio/codex/*.last-message.md
+    counterexamples:
+      - iphone-ux.final-consensus.call missing active workflow evidence should fail
+    waiver_policy:
+      owner: quincy
+      review_cadence: per-workflow-change
+      requires_expiry: true
+      requires_compensating_control: true
+  - id: iphone-ux.postmortem-learning-capture.call
+    level: call
+    state: blocking
+    runner: deterministic
+    blocking: true
+    owner: quincy
+    subject_paths:
+      - workflows/iphone-app-factory/iterate-existing-app-ux.fabro
+    artifact_patterns:
+      - .workflow/iphone-app-ux-studio/codex/*.json
+      - .workflow/iphone-app-ux-studio/codex/*.last-message.md
+    counterexamples:
+      - iphone-ux.postmortem-learning-capture.call missing active workflow evidence should fail
+    waiver_policy:
+      owner: quincy
+      review_cadence: per-workflow-change
+      requires_expiry: true
+      requires_compensating_control: true
