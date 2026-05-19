@@ -40,6 +40,9 @@ Each agent must have the skills and docs needed for its domain available in the 
 Required checks:
 
 - profile has the relevant `skills/*/SKILL.md`
+- distribution profile includes the Superpowers skills from `https://github.com/obra/superpowers`
+- worker install copies the distribution skill set into every durable profile
+- each SOUL file names `using-superpowers` as the first skill-discovery step for software work
 - required docs exist under `/app/docs` or `/app/hermes`
 - required scripts exist under `/app/scripts`
 - if a doc/script is needed at runtime, add it to `prepare-railway-gateway-context.sh` and the Dockerfile when it is outside the copied `hermes/` tree

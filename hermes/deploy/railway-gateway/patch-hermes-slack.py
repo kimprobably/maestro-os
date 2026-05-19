@@ -227,19 +227,35 @@ def main() -> None:
     if ledger_marker not in text:
         raise SystemExit(f"Failed to apply Slack ledger patch marker in {path}.")
 
-    ingress_reaction_marker = "Maestro patch v7: immediate Slack ingress reaction"
+    ingress_reaction_marker = "Maestro patch v8: every routed Slack message ingress reaction"
     ingress_reaction_needle = """        _should_react = (is_dm or is_mentioned) and self._reactions_enabled()
         if _should_react:
             self._reacting_message_ids.add(ts)
 
         await self.handle_message(msg_event)
 """
-    ingress_reaction_patch = """        _should_react = (is_dm or is_mentioned) and self._reactions_enabled()
+    legacy_ingress_reaction_patch = """        _should_react = (is_dm or is_mentioned) and self._reactions_enabled()
         if _should_react:
             self._reacting_message_ids.add(ts)
             # Maestro patch v7: immediate Slack ingress reaction.
             # The operator wants an emoji-only acknowledgement, but it must
             # happen before the agent/model/tool path can stall.
+            await self._maestro_add_ingress_reaction(
+                channel_id,
+                ts,
+                thread_ts,
+            )
+
+        await self.handle_message(msg_event)
+"""
+    ingress_reaction_patch = """        _should_react = self._reactions_enabled()
+        if _should_react:
+            if not hasattr(self, "_reacting_message_ids"):
+                self._reacting_message_ids = set()
+            self._reacting_message_ids.add(ts)
+            # Maestro patch v8: every routed Slack message ingress reaction.
+            # The operator wants an emoji-only acknowledgement on every routed
+            # Slack message, before the agent/model/tool path can stall.
             await self._maestro_add_ingress_reaction(
                 channel_id,
                 ts,
@@ -270,6 +286,8 @@ def main() -> None:
     if ingress_reaction_marker not in text:
         if legacy_visible_ack_patch in text:
             text = text.replace(legacy_visible_ack_patch, ingress_reaction_patch, 1)
+        elif legacy_ingress_reaction_patch in text:
+            text = text.replace(legacy_ingress_reaction_patch, ingress_reaction_patch, 1)
         elif ingress_reaction_needle in text:
             text = text.replace(ingress_reaction_needle, ingress_reaction_patch, 1)
         else:
@@ -460,6 +478,48 @@ def main() -> None:
             bot_ids.add(self._bot_user_id)
         return any(bot_id and f"<@{bot_id}>" in (text or "") for bot_id in bot_ids)
 
+    def _maestro_mention_sweep_ledger_thread_roots(self, channel_id: str) -> list[str]:
+        try:
+            import sqlite3
+            from hermes_constants import get_hermes_home
+
+            profile = os.getenv("HERMES_PROFILE", "maestro-operator")
+            db_path = (
+                get_hermes_home()
+                / "profiles"
+                / profile
+                / "state"
+                / "operator-ledger.sqlite"
+            )
+            if not db_path.exists():
+                return []
+            limit = max(1, min(250, int(os.getenv("SLACK_MENTION_SWEEP_LEDGER_THREAD_LIMIT", "80"))))
+            with sqlite3.connect(db_path) as db:
+                rows = db.execute(
+                    """
+                    SELECT subject_key
+                    FROM ledger_subjects
+                    WHERE subject_type = 'slack_thread'
+                      AND subject_key LIKE ?
+                    ORDER BY updated_at DESC, id DESC
+                    LIMIT ?
+                    """,
+                    (f"{channel_id}:%", limit),
+                ).fetchall()
+            roots = []
+            for row in rows:
+                subject_key = str(row[0] or "")
+                if ":" in subject_key:
+                    roots.append(subject_key.split(":", 1)[1])
+            return roots
+        except Exception:
+            logger.debug(
+                "[%s] Could not load Slack thread roots from operator ledger",
+                getattr(self, "name", "Slack"),
+                exc_info=True,
+            )
+            return []
+
     def _maestro_mention_sweep_thread_roots(self, channel_id: str) -> list[str]:
         """Return known thread roots to poll even when their parents are old."""
         roots: list[str] = []
@@ -473,6 +533,9 @@ def main() -> None:
                 return
             seen.add(value)
             roots.append(value)
+
+        for root in self._maestro_mention_sweep_ledger_thread_roots(channel_id):
+            add(root)
 
         roots_by_channel = getattr(self, "_maestro_thread_roots_by_channel", {})
         if isinstance(roots_by_channel, dict):
@@ -616,6 +679,73 @@ def main() -> None:
             )
         text = text.replace(helper_insert_needle, sweeper_helper + helper_insert_needle, 1)
 
+    ledger_thread_roots_helper = r'''    def _maestro_mention_sweep_ledger_thread_roots(self, channel_id: str) -> list[str]:
+        try:
+            import sqlite3
+            from hermes_constants import get_hermes_home
+
+            profile = os.getenv("HERMES_PROFILE", "maestro-operator")
+            db_path = (
+                get_hermes_home()
+                / "profiles"
+                / profile
+                / "state"
+                / "operator-ledger.sqlite"
+            )
+            if not db_path.exists():
+                return []
+            limit = max(1, min(250, int(os.getenv("SLACK_MENTION_SWEEP_LEDGER_THREAD_LIMIT", "80"))))
+            with sqlite3.connect(db_path) as db:
+                rows = db.execute(
+                    """
+                    SELECT subject_key
+                    FROM ledger_subjects
+                    WHERE subject_type = 'slack_thread'
+                      AND subject_key LIKE ?
+                    ORDER BY updated_at DESC, id DESC
+                    LIMIT ?
+                    """,
+                    (f"{channel_id}:%", limit),
+                ).fetchall()
+            roots = []
+            for row in rows:
+                subject_key = str(row[0] or "")
+                if ":" in subject_key:
+                    roots.append(subject_key.split(":", 1)[1])
+            return roots
+        except Exception:
+            logger.debug(
+                "[%s] Could not load Slack thread roots from operator ledger",
+                getattr(self, "name", "Slack"),
+                exc_info=True,
+            )
+            return []
+
+'''
+    if "def _maestro_mention_sweep_ledger_thread_roots" not in text:
+        helper_insert_needle = """    def _maestro_mention_sweep_thread_roots(self, channel_id: str) -> list[str]:
+"""
+        if helper_insert_needle not in text:
+            raise SystemExit(
+                f"Expected Slack adapter mention-sweeper thread-root helper not found in {path}. "
+                "Upstream may have moved; re-derive the ledger thread-root patch."
+            )
+        text = text.replace(helper_insert_needle, ledger_thread_roots_helper + helper_insert_needle, 1)
+
+    ledger_thread_roots_call = """        for root in self._maestro_mention_sweep_ledger_thread_roots(channel_id):
+            add(root)
+
+"""
+    if "self._maestro_mention_sweep_ledger_thread_roots(channel_id)" not in text:
+        call_insert_needle = """        roots_by_channel = getattr(self, "_maestro_thread_roots_by_channel", {})
+"""
+        if call_insert_needle not in text:
+            raise SystemExit(
+                f"Expected Slack adapter in-memory thread-root block not found in {path}. "
+                "Upstream may have moved; re-derive the ledger thread-root call patch."
+            )
+        text = text.replace(call_insert_needle, ledger_thread_roots_call + call_insert_needle, 1)
+
     reaction_helper = r'''    def _maestro_ingress_reaction_timeout(self) -> float:
         raw = os.getenv("SLACK_INGRESS_REACTION_TIMEOUT", "")
         if not raw:
@@ -710,10 +840,18 @@ def main() -> None:
                 if not isinstance(value, str):
                     return value
                 value = re.sub(r"sk-or-v1-[A-Za-z0-9_-]+", "[redacted]", value)
+                value = re.sub(r"sk-proj-[A-Za-z0-9_-]+", "[redacted]", value)
+                value = re.sub(r"github_pat_[A-Za-z0-9_]+", "[redacted]", value)
                 value = re.sub(r"xox[baprs]-[A-Za-z0-9-]+", "[redacted]", value)
                 value = re.sub(r"xapp-[A-Za-z0-9-]+", "[redacted]", value)
                 value = re.sub(r"lin_api_[A-Za-z0-9_-]+", "[redacted]", value)
                 value = re.sub(r"apify_api_[A-Za-z0-9_-]+", "[redacted]", value)
+                value = re.sub(r"eyJ[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+", "[redacted]", value)
+                value = re.sub(
+                    r"(?i)\b(refresh|access|id|auth)[_-]?token\s*[:=]\s*['\"]?[^\s'\"]+",
+                    lambda match: f"{match.group(1)}_token=[redacted]",
+                    value,
+                )
                 return value
 
             subject_type = "slack_thread"

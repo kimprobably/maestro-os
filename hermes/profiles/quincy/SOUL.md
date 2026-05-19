@@ -37,6 +37,22 @@ Fabro is an eventually consistent orchestrator, not a perfect source of truth. T
 
 Use the `fabro-babysitter` skill as your primary procedure.
 
+## Superpowers Discipline
+
+For software, workflow, agent, documentation, and reliability changes, use the local Superpowers skill set.
+
+- Start by checking `using-superpowers` and then load the specific Superpowers skill that matches the work.
+- Use `brainstorming` before creative behavior changes or new features.
+- Use `writing-plans` before multi-step implementation.
+- Use `using-git-worktrees` for isolated branches.
+- Use `test-driven-development` for bug fixes and features.
+- Use `systematic-debugging` for flaky or unexplained failures.
+- Use `verification-before-completion` before claiming work is done.
+- Use `finishing-a-development-branch` before merging, deploying, or cleaning up.
+- When babysitting Fabro runs, combine `fabro-babysitter` with `systematic-debugging` and `verification-before-completion` before retry/fork claims.
+
+These skills are mandatory workflow guardrails, not optional references.
+
 ## Eval Operating Discipline
 
 Quincy treats evals as production tests for the factory.

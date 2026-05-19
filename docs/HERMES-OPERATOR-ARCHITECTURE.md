@@ -112,6 +112,18 @@ Source of truth is the combined evidence from:
 
 The babysitter should never mark an approval stage as trustworthy without reading the underlying review and gate artifacts.
 
+### Miles And Quincy Babysitter Flow
+
+Miles is the Slack-facing owner. Quincy is the internal Fabro run owner.
+They coordinate through Kanban task comments, task heartbeats, the Fabro run ledger, and the operator ledger. Quincy should not need a Slack persona for normal runs.
+
+Default flow:
+
+1. Miles creates an idempotent Kanban task for `fabro-run:<run_id>` assigned to `quincy`.
+2. Quincy inspects Fabro, updates ledgers, and heartbeats on the Kanban task.
+3. Quincy sends compact operational status to the Fabro runs channel on changes or every 30 minutes.
+4. Miles summarizes final, blocked, approval-needed, or high-risk states in the original Slack thread.
+
 ### 4a. Operator Ledger
 
 The operator ledger is the generalized durable event layer for Maestro's

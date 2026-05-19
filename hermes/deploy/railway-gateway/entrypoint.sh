@@ -7,10 +7,10 @@ export HERMES_ACCEPT_HOOKS="${HERMES_ACCEPT_HOOKS:-1}"
 export GATEWAY_ALLOW_ALL_USERS="${GATEWAY_ALLOW_ALL_USERS:-false}"
 export HERMES_TERMINAL_CWD="${HERMES_TERMINAL_CWD:-/app}"
 export HERMES_REASONING_EFFORT="${HERMES_REASONING_EFFORT:-xhigh}"
-export HERMES_GATEWAY_MAX_TURNS="${HERMES_GATEWAY_MAX_TURNS:-30}"
+export HERMES_GATEWAY_MAX_TURNS="${HERMES_GATEWAY_MAX_TURNS:-120}"
 export HERMES_AGENT_NOTIFY_INTERVAL="${HERMES_AGENT_NOTIFY_INTERVAL:-45}"
 export HERMES_AGENT_TIMEOUT_WARNING="${HERMES_AGENT_TIMEOUT_WARNING:-180}"
-export HERMES_DELEGATION_MAX_ITERATIONS="${HERMES_DELEGATION_MAX_ITERATIONS:-30}"
+export HERMES_DELEGATION_MAX_ITERATIONS="${HERMES_DELEGATION_MAX_ITERATIONS:-120}"
 export HERMES_MEMORY_NUDGE_INTERVAL="${HERMES_MEMORY_NUDGE_INTERVAL:-4}"
 export HERMES_SKILL_NUDGE_INTERVAL="${HERMES_SKILL_NUDGE_INTERVAL:-4}"
 export HERMES_CURATOR_INTERVAL_HOURS="${HERMES_CURATOR_INTERVAL_HOURS:-24}"
@@ -383,7 +383,8 @@ def env_float(name, default):
 
 
 agent = mapping("agent")
-agent["max_turns"] = env_int("HERMES_GATEWAY_MAX_TURNS", int(agent.get("max_turns") or 30))
+configured_max_turns = int(agent.get("max_turns") or 120)
+agent["max_turns"] = env_int("HERMES_GATEWAY_MAX_TURNS", max(configured_max_turns, 120))
 agent["reasoning_effort"] = os.environ.get("HERMES_REASONING_EFFORT", "xhigh").strip() or "xhigh"
 agent["gateway_notify_interval"] = env_int("HERMES_AGENT_NOTIFY_INTERVAL", int(agent.get("gateway_notify_interval") or 45))
 agent["gateway_timeout_warning"] = env_int("HERMES_AGENT_TIMEOUT_WARNING", int(agent.get("gateway_timeout_warning") or 180))
@@ -441,15 +442,26 @@ backup["keep"] = int(backup.get("keep") or 5)
 
 delegation = mapping("delegation")
 delegation["reasoning_effort"] = os.environ.get("HERMES_REASONING_EFFORT", "xhigh").strip() or "xhigh"
-delegation["max_iterations"] = env_int("HERMES_DELEGATION_MAX_ITERATIONS", int(delegation.get("max_iterations") or 30))
+configured_max_iterations = int(delegation.get("max_iterations") or 120)
+delegation["max_iterations"] = env_int("HERMES_DELEGATION_MAX_ITERATIONS", max(configured_max_iterations, 120))
 delegation["child_timeout_seconds"] = int(delegation.get("child_timeout_seconds") or 900)
 delegation["inherit_mcp_toolsets"] = True
 
 slack = mapping("slack")
+channel_prompts = slack.get("channel_prompts")
+if not isinstance(channel_prompts, dict):
+    channel_prompts = {}
+slack["channel_prompts"] = channel_prompts
 bindings = slack.get("channel_skill_bindings")
 if not isinstance(bindings, list):
     bindings = []
 slack["channel_skill_bindings"] = bindings
+
+
+def set_channel_prompt(channel_id, prompt):
+    if not channel_id:
+        return
+    channel_prompts[channel_id] = prompt
 
 
 def merge_binding(channel_id, required_skills):
@@ -473,6 +485,11 @@ def merge_binding(channel_id, required_skills):
 
 
 home_channel = os.environ.get("SLACK_HOME_CHANNEL", "").strip() or "C0AHCRH4EP4"
+fabro_runs_channel = (
+    os.environ.get("SLACK_FABRO_RUNS_CHANNEL", "").strip()
+    or os.environ.get("FABRO_SLACK_CHANNEL_ID", "").strip()
+    or home_channel
+)
 profile_name = os.environ.get("HERMES_PROFILE", "maestro-operator").strip() or "maestro-operator"
 operator_skills = [
     "maestro-memory",
@@ -501,6 +518,19 @@ for channel_id in (home_channel, "C_AGENT_CONTROL", "C_MAESTRO"):
     merge_binding(channel_id, gateway_skills)
 if profile_name == "maestro-operator":
     merge_binding("C_CODE", ["maestro-skill-governance", "maestro-integrations", "maestro-spec-planning", "fabro-babysitter"])
+if profile_name in ("maestro-operator", "quincy"):
+    merge_binding(fabro_runs_channel, ["fabro-babysitter"])
+    set_channel_prompt(
+        fabro_runs_channel,
+        (
+            "You are operating Fabro runs. Use the Fabro run ledger, Kanban "
+            "babysitter task comments, and evidence from Fabro events before "
+            "acting. Report compact status changes, blockers, approval needs, "
+            "and terminal states. Do not dump raw logs or secrets. Quincy owns "
+            "off-thread run monitoring; Miles owns the original user Slack "
+            "thread summary."
+        ),
+    )
 
 mcp_servers = mapping("mcp_servers")
 mobbin = mcp_servers.get("mobbin")

@@ -467,7 +467,13 @@ const runId = requireSafeRunId(argValue("--run-id"));
 if (!runId) usage();
 const sourceChannel = argValue("--source-channel", "unknown");
 const sourceThread = argValue("--source-thread", "unknown");
-const reportChannel = argValue("--report-channel", process.env.SLACK_FABRO_RUNS_CHANNEL || "C_FABRO_RUNS");
+const reportChannel = argValue(
+  "--report-channel",
+  process.env.SLACK_FABRO_RUNS_CHANNEL ||
+    process.env.FABRO_SLACK_CHANNEL_ID ||
+    process.env.SLACK_HOME_CHANNEL ||
+    "C0AHCRH4EP4",
+);
 const title = `Babysit Fabro run ${runId}`;
 const idempotencyKey = `fabro-run:${runId}`;
 const body = [
@@ -651,7 +657,7 @@ test("refresh-codex-auth validates and redacts local Codex auth", () => {
   writeFileSync(join(codexHome, "auth.json"), JSON.stringify({ refresh_token: "secret-refresh" }));
   writeFileSync(join(codexHome, ".credentials.json"), JSON.stringify({ mobbin: { access_token: "secret-mcp" } }));
 
-  const result = run(["--codex-home", codexHome, "--service", "maestro-fabro", "--dry-run"]);
+  const result = run(["--codex-home", codexHome, "--service", "fabro-maestro", "--dry-run"]);
   assert.equal(result.status, 0, result.stderr);
   const payload = JSON.parse(result.stdout);
   assert.equal(payload.ok, true);
@@ -675,7 +681,7 @@ const input = fs.readFileSync(0, "utf8");
 fs.appendFileSync(${JSON.stringify(log)}, process.argv.slice(2).join(" ") + " stdin=" + input.length + "\\n");
 `, { mode: 0o755 });
 
-  const result = run(["--codex-home", codexHome, "--service", "maestro-fabro", "--environment", "production"], {
+  const result = run(["--codex-home", codexHome, "--service", "fabro-maestro", "--environment", "production"], {
     PATH: `${bin}:${process.env.PATH}`,
   });
   assert.equal(result.status, 0, result.stderr);
@@ -731,7 +737,7 @@ function setRailwayVariable({ key, value, service, environment, skipDeploys }) {
 }
 
 const codexHome = resolve(argValue("--codex-home", process.env.CODEX_HOME || join(homedir(), ".codex")));
-const service = argValue("--service", process.env.FABRO_RAILWAY_SERVICE || "maestro-fabro");
+const service = argValue("--service", process.env.FABRO_RAILWAY_SERVICE || "fabro-maestro");
 const environment = argValue("--environment", process.env.FABRO_RAILWAY_ENVIRONMENT || "production");
 const dryRun = hasFlag("--dry-run");
 const redeploy = hasFlag("--redeploy");
@@ -750,7 +756,7 @@ if (!dryRun) {
     setRailwayVariable({ key: variable.key, value: variable.value, service, environment, skipDeploys: true });
   }
   if (redeploy) {
-    const result = spawnSync("railway", ["service", "redeploy", service], {
+    const result = spawnSync("railway", ["service", "redeploy", "--service", service, "--yes"], {
       encoding: "utf8",
       stdio: ["ignore", "pipe", "pipe"],
     });
@@ -786,7 +792,7 @@ Run on the operator machine:
 
 ```bash
 codex login
-codex auth status
+codex login status
 ```
 
 Expected: Codex reports an authenticated account. Do not paste tokens into Slack or terminal output.
@@ -796,7 +802,7 @@ Expected: Codex reports an authenticated account. Do not paste tokens into Slack
 First identify the actual Fabro Railway service name from the Railway UI or by linking the Fabro service locally. Then run:
 
 ```bash
-node scripts/fabro/refresh-codex-auth-railway.mjs --service maestro-fabro --environment production --redeploy
+node scripts/fabro/refresh-codex-auth-railway.mjs --service fabro-maestro --environment production --redeploy
 ```
 
 Expected: JSON output lists only variable names, source paths, and encoded lengths. It must not print token values.
@@ -838,7 +844,7 @@ Fabro workers restore Codex CLI auth from `CODEX_AUTH_JSON_BASE64` and Codex MCP
 
 ```bash
 codex login
-node scripts/fabro/refresh-codex-auth-railway.mjs --service maestro-fabro --environment production --redeploy
+node scripts/fabro/refresh-codex-auth-railway.mjs --service fabro-maestro --environment production --redeploy
 ```
 
 Validate with `scripts/fabro/railway-preflight.mjs` and `workflows/fabro/daytona-cli-auth-runtime-smoke.fabro` before retrying a failed production run.
@@ -1295,7 +1301,7 @@ Run:
 printf '120' | railway variable set HERMES_GATEWAY_MAX_TURNS --stdin --service maestro-hermes-gateway --environment production --skip-deploys
 printf '120' | railway variable set HERMES_DELEGATION_MAX_ITERATIONS --stdin --service maestro-hermes-gateway --environment production --skip-deploys
 printf '80' | railway variable set SLACK_MENTION_SWEEP_LEDGER_THREAD_LIMIT --stdin --service maestro-hermes-gateway --environment production --skip-deploys
-railway service redeploy maestro-hermes-gateway
+railway service redeploy --service maestro-hermes-gateway --yes
 ```
 
 Expected: variables are set without printing secrets, then gateway redeploys.

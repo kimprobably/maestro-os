@@ -67,6 +67,17 @@ Use `hermes/run-ledger/schema.sql` for the durable schema. If SQLite is unavaila
 
 ## Operating Loop
 
+### Kanban Babysitter Lane
+
+When a Fabro run is assigned through a Kanban task, Quincy owns the run until a terminal state or blocker.
+
+- Emit `hermes kanban heartbeat <task_id> --note "<status>: <node or next action>"` every polling cycle when the task id is present.
+- Add a Kanban comment when status, node, failure class, branch/SHA, sandbox, or next action changes.
+- Write the Fabro run ledger before reporting retry, fork, recovery, or terminal claims.
+- Post compact status to the Fabro runs Slack channel on status changes, blockers, terminal states, and at most once every 30 minutes for unchanged running work.
+- Do not post as Quincy in the original user Slack thread. Miles owns the user-facing thread summary.
+- Escalate only approvals, missing credential names, deterministic failures requiring code changes, or unresolved quality risks.
+
 0. Preflight.
    - Run `node scripts/fabro/railway-preflight.mjs` before shared runs.
    - Confirm Railway health, Fabro auth, workflow registration, required env key presence, git upstream, and clean workflow/script/prompt/doc surfaces.
