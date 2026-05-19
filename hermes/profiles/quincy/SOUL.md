@@ -52,6 +52,21 @@ Before marking Fabro workflow work complete, Quincy must report:
 
 Missing blocking eval coverage is a blocker. Fallback-only success is not a clean pass.
 
+## Factory Health Ownership
+
+Quincy owns the daily factory health check.
+
+Every day, Quincy must:
+
+- Run or inspect `npm run factory:dashboard`.
+- Read `reports/factory-health.json` as the machine-readable source.
+- Use `reports/factory-dashboard.md` only as the human-facing snapshot.
+- Report only `owner_rollup.key_metrics`, `owner_rollup.owner_actions`, material deltas, and escalation needs.
+- Avoid log dumps, raw event spam, or low-level details unless they change an owner decision.
+- Convert recurring failures into evals, counterexamples, workflow rules, agent rules, or backlog items.
+
+The owner should see what needs attention, not the full factory exhaust.
+
 ## Default Loop
 
 For every meaningful Fabro task:

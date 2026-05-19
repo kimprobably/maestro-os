@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
-import { mkdtempSync, mkdirSync, rmSync, writeFileSync } from "node:fs";
+import { spawnSync } from "node:child_process";
+import { mkdtempSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import test from "node:test";
@@ -11,6 +12,8 @@ import {
   readJsonlEvents,
   renderFactoryDashboard,
 } from "./dashboard-lib.mjs";
+
+const CLI_PATH = join(import.meta.dirname, "render-factory-dashboard.mjs");
 
 function artifact(path) {
   return {
@@ -86,11 +89,22 @@ test("factory dashboard promotes missing blocking evals and failed runs into att
   assert.equal(dashboard.production.runs.completed, 1);
   assert.equal(dashboard.production.runs.failed, 1);
   assert.equal(dashboard.quality.missing_blocking, 1);
+  assert.equal(dashboard.owner_rollup.status, "attention_required");
+  assert.equal(dashboard.owner_rollup.key_metrics.factory_status, "attention_required");
+  assert.equal(dashboard.owner_rollup.key_metrics.report_artifacts, 5);
+  assert.ok(dashboard.owner_rollup.owner_actions.length <= 3);
+  assert.ok(dashboard.owner_rollup.owner_actions.some((item) => item.action.includes("Assign Quincy")));
+  assert.equal(dashboard.agent_access.daily_owner, "quincy");
+  assert.deepEqual(dashboard.agent_access.required_outputs, [
+    "reports/factory-dashboard.md",
+    "reports/factory-health.json",
+  ]);
   assert.ok(dashboard.attention_items.some((item) => item.title.includes("Missing blocking eval evidence")));
   assert.ok(dashboard.attention_items.some((item) => item.title.includes("Failed Fabro runs")));
 
   const markdown = renderFactoryDashboard(dashboard);
   assert.match(markdown, /# Factory Dashboard/);
+  assert.match(markdown, /## Owner Rollup/);
   assert.match(markdown, /ATTENTION REQUIRED/);
   assert.match(markdown, /sample\.missing/);
   assert.match(markdown, /fabro-failed/);
@@ -138,6 +152,69 @@ test("factory dashboard is working when blocking evals pass and runs complete", 
   assert.equal(dashboard.working, true);
   assert.deepEqual(dashboard.attention_items, []);
   assert.match(renderFactoryDashboard(dashboard), /WORKING/);
+});
+
+test("renderer writes agent-readable factory health JSON", () => {
+  const root = mkdtempSync(join(tmpdir(), "factory-health-cli-"));
+  try {
+    const reportsRoot = join(root, "reports");
+    const evalIndexPath = join(reportsRoot, "eval-index.json");
+    const markdownOut = join(reportsRoot, "factory-dashboard.md");
+    const jsonOut = join(reportsRoot, "factory-health.json");
+
+    mkdirSync(reportsRoot, { recursive: true });
+    writeFileSync(
+      evalIndexPath,
+      `${JSON.stringify(
+        {
+          schema_version: 1,
+          created_at: "2026-05-18T12:00:00.000Z",
+          summary: {
+            total_registered: 1,
+            blocking_registered: 1,
+            present_results: 0,
+            passed: 0,
+            failed: 0,
+            fallback_only: 0,
+            waived: 0,
+            missing_blocking: 1,
+          },
+          evals: [{ id: "sample.missing", blocking: true, result: null }],
+          missing: [{ eval_id: "sample.missing", blocking: true, reason: "missing blocking result" }],
+          issues: [],
+        },
+        null,
+        2,
+      )}\n`,
+    );
+    writeFileSync(join(reportsRoot, "quality-report.json"), "{}\n");
+
+    const result = spawnSync(process.execPath, [
+      CLI_PATH,
+      "--eval-index",
+      evalIndexPath,
+      "--reports-root",
+      reportsRoot,
+      "--out",
+      markdownOut,
+      "--json-out",
+      jsonOut,
+    ], {
+      cwd: root,
+      encoding: "utf8",
+      stdio: ["ignore", "pipe", "pipe"],
+    });
+
+    assert.equal(result.status, 0, result.stderr);
+    const health = JSON.parse(readFileSync(jsonOut, "utf8"));
+    assert.equal(health.schema_version, 1);
+    assert.equal(health.owner_rollup.status, "attention_required");
+    assert.equal(health.agent_access.daily_owner, "quincy");
+    assert.ok(health.owner_rollup.owner_actions[0].title.includes("Missing blocking eval evidence"));
+    assert.match(readFileSync(markdownOut, "utf8"), /Owner Rollup/);
+  } finally {
+    rmSync(root, { recursive: true, force: true });
+  }
 });
 
 test("factory dashboard flags missing run ledger coverage", () => {

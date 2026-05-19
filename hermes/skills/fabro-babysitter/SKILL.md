@@ -42,6 +42,20 @@ For every Fabro run or workflow-building task:
 6. Require an accepted-risk waiver before treating a fallback-only eval as complete.
 7. For changed evals, require a counterexample or meta-eval.
 
+## Factory Health Daily Check
+
+When assigned daily factory health ownership:
+
+1. Run or inspect `npm run factory:dashboard`.
+2. Read `reports/factory-health.json` as the agent API.
+3. Use `owner_rollup.key_metrics` for the high-level state.
+4. Use `owner_rollup.owner_actions` as the only default owner-facing action list.
+5. Use `agent_access.escalation_fields` for drilldown when an action needs evidence.
+6. Report deltas since the prior check when available.
+7. If the same failure class recurs, create or update an eval, counterexample, workflow rule, agent rule, or improvement backlog item.
+
+Do not send raw logs, full event streams, or artifact dumps in the daily health note. The owner rollup is intentionally selective.
+
 ## Ledger Fields
 
 Maintain these fields for each active run:

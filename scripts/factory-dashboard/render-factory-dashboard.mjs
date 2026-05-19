@@ -15,6 +15,7 @@ function parseArgs(argv) {
     reportsRoot: "reports",
     runLedger: null,
     out: "reports/factory-dashboard.md",
+    jsonOut: "reports/factory-health.json",
   };
 
   for (let index = 0; index < argv.length; index += 1) {
@@ -27,6 +28,7 @@ function parseArgs(argv) {
     if (key === "eval-index") args.evalIndex = value;
     else if (key === "reports-root") args.reportsRoot = value;
     else if (key === "run-ledger") args.runLedger = value;
+    else if (key === "json-out") args.jsonOut = value;
     else if (key === "out") args.out = value;
     else throw new Error(`unknown argument ${arg}`);
 
@@ -54,6 +56,7 @@ function main() {
   });
 
   writeTextFile(args.out, renderFactoryDashboard(dashboard));
+  if (args.jsonOut) writeTextFile(args.jsonOut, `${JSON.stringify(dashboard, null, 2)}\n`);
 }
 
 try {

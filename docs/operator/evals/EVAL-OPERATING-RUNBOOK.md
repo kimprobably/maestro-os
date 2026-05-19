@@ -18,6 +18,8 @@ Open `docs/operator/evals/eval-operating-system-one-pager.html` in a browser for
 
 `reports/factory-dashboard.md` is the central factory rollup. It answers four operator questions: whether the factory is working, how much it produced, what quality evidence exists, and what needs attention. The v0 dashboard is file-backed: it reads `reports/eval-index.json`, generated files under `reports/`, and an optional Hermes Fabro run ledger JSONL via `--run-ledger`.
 
+`reports/factory-health.json` is the agent API for Quincy. The daily health job should read `owner_rollup.key_metrics`, report only `owner_rollup.owner_actions`, and use deeper fields only when an owner action needs evidence. The job definition lives at `hermes/distribution/maestro-operator/cron/factory-health-daily.json`.
+
 ## Promptfoo
 
 Promptfoo remains a runner and local viewer. Use `promptfoo view -p 15500` for local inspection, but use the eval index as the central record.
