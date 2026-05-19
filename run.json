@@ -794,13 +794,13 @@
   },
   "web_url": "https://fabro-maestro-production.up.railway.app/runs/01KRZB714REKRRQFNTEAVCCV9K",
   "start": {
-    "start_time": "2026-05-19T05:36:01.122620827Z"
+    "start_time": "2026-05-19T05:43:13.748355052Z"
   },
   "status": {
     "kind": "running"
   },
   "status_updated_at": "2026-05-19T05:26:55.245878264Z",
-  "last_event_at": "2026-05-19T05:43:11.354644013Z",
+  "last_event_at": "2026-05-19T05:44:26.959899443Z",
   "pending_control": null,
   "checkpoints": [
     {
@@ -2146,9 +2146,9 @@
       "diff": {}
     },
     {
-      "seq": 0,
+      "seq": 157,
       "checkpoint": {
-        "timestamp": "2026-05-19T05:43:11.396297493Z",
+        "timestamp": "2026-05-19T05:43:13.743734141Z",
         "current_node": "preset_vision_stage_child",
         "completed_nodes": [
           "start",
@@ -2160,11 +2160,329 @@
         ],
         "node_retries": {},
         "context_values": {
+          "thread.barcode_learning_child.current_node": "preset_vision_stage_child",
+          "internal.retry_count.preset_vision_stage_child": 0,
+          "internal.retry_count.barcode_learning_child": 0,
+          "thread.start.current_node": "workflow_preflight_child",
+          "graph.rankdir": "LR",
+          "response.emit_contract": "[Simulated] Response for stage: emit_contract",
+          "last_response": "[Simulated] Response for stage: emit_contract",
+          "current_node": "preset_vision_stage_child",
+          "internal.thread_id": "barcode_learning_child",
+          "internal.work_dir": "/home/daytona/workspace/maestro-os",
+          "internal.retry_count.program_spec_child": 0,
+          "internal.retry_count.start": 0,
+          "last_stage": "emit_contract",
+          "graph.model_stylesheet": "\n            *       { backend: cli; provider: openai; model: gpt-5.3-codex-spark; reasoning_effort: low; }\n            .build  { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            .review { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n        ",
+          "internal.node_visit_count": 1,
+          "internal.retry_count.barcode_stage_child": 0,
+          "outcome": "succeeded",
+          "graph.goal": "Implement WakeTask's Object Proof mission pack as three staged feature slices with evals, learnings, and final postmortem",
+          "failure_class": "",
+          "thread.workflow_preflight_child.current_node": "program_spec_child",
+          "internal.run_id": "01KRZB714REKRRQFNTEAVCCV9K",
+          "failure_signature": "",
+          "graph.inputs": "repo_url,base_branch,run_branch,app_name,bundle_id,app_dir,app_domain,target_audience,feature_goal,context_paths,use_mobbin_mcp,ios_validation_mode,allow_macos_deferred,fabro_server",
+          "graph.outputs": "workflow_preflight,program_spec,barcode_stage,barcode_learnings,preset_vision_stage,preset_vision_learnings,same_object_stage,same_object_learnings,publish_handoff,program_postmortem",
+          "graph.secret_policy": "no secrets; credential checks are presence-only; do not print environment variables or credential values",
+          "thread.program_spec_child.current_node": "barcode_stage_child",
+          "graph.default_max_retries": "2",
+          "graph.persona": "waketask-object-proof-program-orchestrator",
+          "graph.artifact_root": ".workflow/object-proof-program",
+          "internal.retry_count.workflow_preflight_child": 0,
+          "thread.barcode_stage_child.current_node": "barcode_learning_child",
+          "internal.fidelity": "compact",
+          "graph.retry_target": "program_spec_child"
+        },
+        "node_outcomes": {
+          "workflow_preflight_child": {
+            "status": "succeeded",
+            "context_updates": {
+              "last_response": "[Simulated] Response for stage: emit_contract",
+              "response.emit_contract": "[Simulated] Response for stage: emit_contract",
+              "last_stage": "emit_contract"
+            },
+            "notes": "Child completed at cycle 3",
+            "usage": null
+          },
+          "start": {
+            "status": "succeeded",
+            "usage": null
+          },
+          "preset_vision_stage_child": {
+            "status": "succeeded",
+            "notes": "Child completed at cycle 44",
+            "usage": null
+          },
+          "barcode_stage_child": {
+            "status": "succeeded",
+            "notes": "Child completed at cycle 33",
+            "usage": null
+          },
+          "barcode_learning_child": {
+            "status": "succeeded",
+            "notes": "Child completed at cycle 41",
+            "usage": null
+          },
+          "program_spec_child": {
+            "status": "succeeded",
+            "notes": "Child completed at cycle 63",
+            "usage": null
+          }
+        },
+        "next_node_id": "preset_vision_learning_child",
+        "git_commit_sha": "0884d270a2f76042f9587425e8c9e285c7b5ca98",
+        "node_visits": {
+          "barcode_stage_child": 1,
+          "program_spec_child": 1,
+          "start": 1,
+          "workflow_preflight_child": 1,
+          "preset_vision_stage_child": 1,
+          "barcode_learning_child": 1
+        }
+      },
+      "diff": {
+        "summary": {
+          "files_changed": 1,
+          "additions": 1,
+          "deletions": 0
+        }
+      }
+    },
+    {
+      "seq": 166,
+      "checkpoint": {
+        "timestamp": "2026-05-19T05:43:13.748571794Z",
+        "current_node": "start",
+        "completed_nodes": [
+          "start"
+        ],
+        "node_retries": {},
+        "context_values": {
+          "internal.retry_count.barcode_learning_child": 0,
+          "internal.work_dir": "/home/daytona/workspace/maestro-os",
+          "failure_signature": "",
+          "graph.default_max_retries": "2",
+          "graph.rankdir": "LR",
+          "internal.retry_count.barcode_stage_child": 0,
+          "last_stage": "emit_contract",
+          "thread.program_spec_child.current_node": "barcode_stage_child",
+          "graph.persona": "object-proof-preset-vision-learning-reviewer",
+          "internal.thread_id": null,
+          "thread.start.current_node": "workflow_preflight_child",
+          "thread.workflow_preflight_child.current_node": "program_spec_child",
+          "last_response": "[Simulated] Response for stage: emit_contract",
+          "graph.goal": "Synthesize preset Vision stage learnings and carry them forward to same-object matching",
+          "current_node": "start",
+          "outcome": "succeeded",
+          "graph.retry_target": "program_spec_child",
+          "graph.artifact_root": ".workflow/object-proof-program",
+          "internal.run_id": "01KRZB714REKRRQFNTEAVCCV9K",
+          "internal.fidelity": "compact",
+          "failure_class": "",
+          "response.emit_contract": "[Simulated] Response for stage: emit_contract",
+          "graph.model_stylesheet": "* { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }",
+          "thread.barcode_learning_child.current_node": "preset_vision_stage_child",
+          "thread.barcode_stage_child.current_node": "barcode_learning_child",
+          "thread.preset_vision_stage_child.current_node": "preset_vision_learning_child",
+          "internal.retry_count.start": 0,
+          "internal.retry_count.preset_vision_stage_child": 0,
+          "graph.outputs": "contract.artifact,contract.gate,contract.next_action,contract.failure_classification,preset_vision_learnings",
+          "graph.secret_policy": "no secrets; do not print environment variables or credential values",
+          "internal.retry_count.program_spec_child": 0,
+          "internal.retry_count.workflow_preflight_child": 0,
+          "internal.parent_preamble": "Goal: Implement WakeTask's Object Proof mission pack as three staged feature slices with evals, learnings, and final postmortem\n\n## Completed stages\n- **workflow_preflight_child**: succeeded\n- **program_spec_child**: succeeded\n- **barcode_stage_child**: succeeded\n- **barcode_learning_child**: succeeded\n- **preset_vision_stage_child**: succeeded\n",
+          "graph.inputs": "preset_vision_stage,barcode_learnings,program_spec",
+          "internal.node_visit_count": 1
+        },
+        "node_outcomes": {
+          "start": {
+            "status": "succeeded",
+            "usage": null
+          }
+        },
+        "next_node_id": "write_preset_vision_learnings",
+        "node_visits": {
+          "start": 1
+        }
+      },
+      "diff": {}
+    },
+    {
+      "seq": 172,
+      "checkpoint": {
+        "timestamp": "2026-05-19T05:44:25.475359067Z",
+        "current_node": "write_preset_vision_learnings",
+        "completed_nodes": [
+          "start",
+          "write_preset_vision_learnings"
+        ],
+        "node_retries": {},
+        "context_values": {
+          "last_stage": "emit_contract",
+          "response.emit_contract": "[Simulated] Response for stage: emit_contract",
+          "graph.persona": "object-proof-preset-vision-learning-reviewer",
+          "internal.retry_count.barcode_stage_child": 0,
+          "internal.retry_count.write_preset_vision_learnings": 0,
+          "thread.workflow_preflight_child.current_node": "program_spec_child",
+          "failure_class": "",
+          "internal.retry_count.program_spec_child": 0,
+          "internal.run_id": "01KRZB714REKRRQFNTEAVCCV9K",
+          "internal.work_dir": "/home/daytona/workspace/maestro-os",
+          "graph.secret_policy": "no secrets; do not print environment variables or credential values",
+          "thread.start.current_node": "write_preset_vision_learnings",
+          "thread.barcode_stage_child.current_node": "barcode_learning_child",
+          "graph.outputs": "contract.artifact,contract.gate,contract.next_action,contract.failure_classification,preset_vision_learnings",
+          "internal.node_visit_count": 1,
+          "internal.parent_preamble": "Goal: Implement WakeTask's Object Proof mission pack as three staged feature slices with evals, learnings, and final postmortem\n\n## Completed stages\n- **workflow_preflight_child**: succeeded\n- **program_spec_child**: succeeded\n- **barcode_stage_child**: succeeded\n- **barcode_learning_child**: succeeded\n- **preset_vision_stage_child**: succeeded\n",
+          "graph.inputs": "preset_vision_stage,barcode_learnings,program_spec",
+          "graph.goal": "Synthesize preset Vision stage learnings and carry them forward to same-object matching",
+          "internal.retry_count.barcode_learning_child": 0,
+          "graph.default_max_retries": "2",
+          "failure_signature": "",
+          "internal.fidelity": "compact",
+          "outcome": "succeeded",
+          "thread.preset_vision_stage_child.current_node": "preset_vision_learning_child",
+          "internal.retry_count.preset_vision_stage_child": 0,
+          "thread.program_spec_child.current_node": "barcode_stage_child",
+          "graph.model_stylesheet": "* { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }",
+          "internal.retry_count.start": 0,
+          "internal.retry_count.workflow_preflight_child": 0,
+          "thread.barcode_learning_child.current_node": "preset_vision_stage_child",
+          "current_node": "write_preset_vision_learnings",
+          "last_response": "[Simulated] Response for stage: emit_contract",
+          "internal.thread_id": "start",
+          "command.output": "blob://sha256/309be146dbc0b8816105ec5db7b423741a1bf35e8bedd0d4c01366ad4c12d0ae",
+          "graph.rankdir": "LR",
+          "graph.artifact_root": ".workflow/object-proof-program",
+          "graph.retry_target": "program_spec_child"
+        },
+        "node_outcomes": {
+          "write_preset_vision_learnings": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/309be146dbc0b8816105ec5db7b423741a1bf35e8bedd0d4c01366ad4c12d0ae"
+            },
+            "notes": "Script completed: STAGE_ID=preset_vision STAGE_NAME='Preset Vision Photo' STAGE_ROOT=.workflow/object-proof-program/stages/preset_vision node scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/object-proof-stage-learning.md --stage object-proof-preset-vision-learning --eval-id iphone-object-proof.preset-vision.learning.call --out .workflow/object-proof-program/codex/preset-vision-learning.json --rendered-prompt-out .workflow/object-proof-program/codex/preset-vision-learning.prompt.md --last-message-out .workflow/object-proof-program/codex/preset-vision-learning.last-message.md",
+            "usage": null
+          },
+          "start": {
+            "status": "succeeded",
+            "usage": null
+          }
+        },
+        "next_node_id": "preset_vision_learning_gate",
+        "node_visits": {
+          "start": 1,
+          "write_preset_vision_learnings": 1
+        }
+      },
+      "diff": {}
+    },
+    {
+      "seq": 178,
+      "checkpoint": {
+        "timestamp": "2026-05-19T05:44:26.959851264Z",
+        "current_node": "preset_vision_learning_gate",
+        "completed_nodes": [
+          "start",
+          "write_preset_vision_learnings",
+          "preset_vision_learning_gate"
+        ],
+        "node_retries": {},
+        "context_values": {
+          "last_response": "[Simulated] Response for stage: emit_contract",
+          "internal.retry_count.preset_vision_stage_child": 0,
+          "graph.persona": "object-proof-preset-vision-learning-reviewer",
+          "thread.barcode_learning_child.current_node": "preset_vision_stage_child",
+          "internal.fidelity": "compact",
+          "thread.start.current_node": "write_preset_vision_learnings",
+          "internal.retry_count.program_spec_child": 0,
+          "command.output": "blob://sha256/139ddb768099a24e8c0e29d0c133812eeb8f4b67e2c925604b0e676114e11194",
+          "internal.run_id": "01KRZB714REKRRQFNTEAVCCV9K",
+          "thread.program_spec_child.current_node": "barcode_stage_child",
+          "internal.retry_count.start": 0,
+          "internal.retry_count.barcode_stage_child": 0,
+          "last_stage": "emit_contract",
+          "internal.retry_count.barcode_learning_child": 0,
+          "internal.node_visit_count": 1,
+          "internal.retry_count.preset_vision_learning_gate": 0,
+          "internal.retry_count.write_preset_vision_learnings": 0,
+          "graph.rankdir": "LR",
+          "internal.work_dir": "/home/daytona/workspace/maestro-os",
+          "graph.inputs": "preset_vision_stage,barcode_learnings,program_spec",
+          "response.emit_contract": "[Simulated] Response for stage: emit_contract",
+          "thread.preset_vision_stage_child.current_node": "preset_vision_learning_child",
+          "failure_class": "",
+          "thread.write_preset_vision_learnings.current_node": "preset_vision_learning_gate",
+          "graph.default_max_retries": "2",
+          "outcome": "succeeded",
+          "graph.goal": "Synthesize preset Vision stage learnings and carry them forward to same-object matching",
+          "graph.model_stylesheet": "* { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }",
+          "graph.artifact_root": ".workflow/object-proof-program",
+          "graph.outputs": "contract.artifact,contract.gate,contract.next_action,contract.failure_classification,preset_vision_learnings",
+          "internal.thread_id": "write_preset_vision_learnings",
+          "thread.workflow_preflight_child.current_node": "program_spec_child",
+          "thread.barcode_stage_child.current_node": "barcode_learning_child",
+          "current_node": "preset_vision_learning_gate",
+          "internal.retry_count.workflow_preflight_child": 0,
+          "graph.secret_policy": "no secrets; do not print environment variables or credential values",
+          "internal.parent_preamble": "Goal: Implement WakeTask's Object Proof mission pack as three staged feature slices with evals, learnings, and final postmortem\n\n## Completed stages\n- **workflow_preflight_child**: succeeded\n- **program_spec_child**: succeeded\n- **barcode_stage_child**: succeeded\n- **barcode_learning_child**: succeeded\n- **preset_vision_stage_child**: succeeded\n",
+          "graph.retry_target": "program_spec_child",
+          "failure_signature": ""
+        },
+        "node_outcomes": {
+          "start": {
+            "status": "succeeded",
+            "usage": null
+          },
+          "write_preset_vision_learnings": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/309be146dbc0b8816105ec5db7b423741a1bf35e8bedd0d4c01366ad4c12d0ae"
+            },
+            "notes": "Script completed: STAGE_ID=preset_vision STAGE_NAME='Preset Vision Photo' STAGE_ROOT=.workflow/object-proof-program/stages/preset_vision node scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/object-proof-stage-learning.md --stage object-proof-preset-vision-learning --eval-id iphone-object-proof.preset-vision.learning.call --out .workflow/object-proof-program/codex/preset-vision-learning.json --rendered-prompt-out .workflow/object-proof-program/codex/preset-vision-learning.prompt.md --last-message-out .workflow/object-proof-program/codex/preset-vision-learning.last-message.md",
+            "usage": null
+          },
+          "preset_vision_learning_gate": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/139ddb768099a24e8c0e29d0c133812eeb8f4b67e2c925604b0e676114e11194"
+            },
+            "notes": "Script completed: node scripts/iphone-app-factory/object-proof-learning-gate.mjs --stage preset_vision --root .workflow/object-proof-program",
+            "usage": null
+          }
+        },
+        "next_node_id": "exit",
+        "node_visits": {
+          "write_preset_vision_learnings": 1,
+          "preset_vision_learning_gate": 1,
+          "start": 1
+        }
+      },
+      "diff": {}
+    },
+    {
+      "seq": 0,
+      "checkpoint": {
+        "timestamp": "2026-05-19T05:44:27.053965247Z",
+        "current_node": "preset_vision_learning_child",
+        "completed_nodes": [
+          "start",
+          "workflow_preflight_child",
+          "program_spec_child",
+          "barcode_stage_child",
+          "barcode_learning_child",
+          "preset_vision_stage_child",
+          "preset_vision_learning_child"
+        ],
+        "node_retries": {},
+        "context_values": {
           "internal.node_visit_count": 1,
           "last_response": "[Simulated] Response for stage: emit_contract",
           "internal.retry_count.barcode_stage_child": 0,
           "thread.barcode_stage_child.current_node": "barcode_learning_child",
-          "internal.thread_id": "barcode_learning_child",
+          "internal.thread_id": "preset_vision_stage_child",
           "failure_class": "",
           "internal.retry_count.program_spec_child": 0,
           "internal.fidelity": "compact",
@@ -2173,7 +2491,7 @@
           "internal.work_dir": "/home/daytona/workspace/maestro-os",
           "outcome": "succeeded",
           "graph.inputs": "repo_url,base_branch,run_branch,app_name,bundle_id,app_dir,app_domain,target_audience,feature_goal,context_paths,use_mobbin_mcp,ios_validation_mode,allow_macos_deferred,fabro_server",
-          "current_node": "preset_vision_stage_child",
+          "current_node": "preset_vision_learning_child",
           "failure_signature": "",
           "graph.secret_policy": "no secrets; credential checks are presence-only; do not print environment variables or credential values",
           "internal.retry_count.start": 0,
@@ -2186,9 +2504,11 @@
           "internal.run_id": "01KRZB714REKRRQFNTEAVCCV9K",
           "graph.persona": "waketask-object-proof-program-orchestrator",
           "response.emit_contract": "[Simulated] Response for stage: emit_contract",
+          "thread.preset_vision_stage_child.current_node": "preset_vision_learning_child",
           "graph.artifact_root": ".workflow/object-proof-program",
           "graph.goal": "Implement WakeTask's Object Proof mission pack as three staged feature slices with evals, learnings, and final postmortem",
           "last_stage": "emit_contract",
+          "internal.retry_count.preset_vision_learning_child": 0,
           "graph.retry_target": "program_spec_child",
           "graph.rankdir": "LR",
           "graph.outputs": "workflow_preflight,program_spec,barcode_stage,barcode_learnings,preset_vision_stage,preset_vision_learnings,same_object_stage,same_object_learnings,publish_handoff,program_postmortem",
@@ -2214,6 +2534,16 @@
             "notes": "Child completed at cycle 63",
             "usage": null
           },
+          "preset_vision_stage_child": {
+            "status": "succeeded",
+            "notes": "Child completed at cycle 44",
+            "usage": null
+          },
+          "preset_vision_learning_child": {
+            "status": "succeeded",
+            "notes": "Child completed at cycle 37",
+            "usage": null
+          },
           "workflow_preflight_child": {
             "status": "succeeded",
             "context_updates": {
@@ -2223,16 +2553,12 @@
             },
             "notes": "Child completed at cycle 3",
             "usage": null
-          },
-          "preset_vision_stage_child": {
-            "status": "succeeded",
-            "notes": "Child completed at cycle 44",
-            "usage": null
           }
         },
-        "next_node_id": "preset_vision_learning_child",
+        "next_node_id": "same_object_stage_child",
         "node_visits": {
           "preset_vision_stage_child": 1,
+          "preset_vision_learning_child": 1,
           "barcode_stage_child": 1,
           "start": 1,
           "barcode_learning_child": 1,
@@ -2341,6 +2667,50 @@
       },
       "state": "succeeded"
     },
+    "write_preset_vision_learnings@1": {
+      "first_event_seq": 167,
+      "prompt": null,
+      "response": null,
+      "completion": {
+        "outcome": "succeeded",
+        "notes": "Script completed: STAGE_ID=preset_vision STAGE_NAME='Preset Vision Photo' STAGE_ROOT=.workflow/object-proof-program/stages/preset_vision node scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/object-proof-stage-learning.md --stage object-proof-preset-vision-learning --eval-id iphone-object-proof.preset-vision.learning.call --out .workflow/object-proof-program/codex/preset-vision-learning.json --rendered-prompt-out .workflow/object-proof-program/codex/preset-vision-learning.prompt.md --last-message-out .workflow/object-proof-program/codex/preset-vision-learning.last-message.md",
+        "failure_reason": null,
+        "timestamp": "2026-05-19T05:44:25.475187676Z"
+      },
+      "provider_used": null,
+      "diff": null,
+      "script_invocation": {
+        "script": "STAGE_ID=preset_vision STAGE_NAME='Preset Vision Photo' STAGE_ROOT=.workflow/object-proof-program/stages/preset_vision node scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/object-proof-stage-learning.md --stage object-proof-preset-vision-learning --eval-id iphone-object-proof.preset-vision.learning.call --out .workflow/object-proof-program/codex/preset-vision-learning.json --rendered-prompt-out .workflow/object-proof-program/codex/preset-vision-learning.prompt.md --last-message-out .workflow/object-proof-program/codex/preset-vision-learning.last-message.md",
+        "command": "exec 2>&1\nSTAGE_ID=preset_vision STAGE_NAME='Preset Vision Photo' STAGE_ROOT=.workflow/object-proof-program/stages/preset_vision node scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/object-proof-stage-learning.md --stage object-proof-preset-vision-learning --eval-id iphone-object-proof.preset-vision.learning.call --out .workflow/object-proof-program/codex/preset-vision-learning.json --rendered-prompt-out .workflow/object-proof-program/codex/preset-vision-learning.prompt.md --last-message-out .workflow/object-proof-program/codex/preset-vision-learning.last-message.md",
+        "language": "shell",
+        "timeout_ms": 3600000
+      },
+      "script_timing": {
+        "output": "blob://sha256/309be146dbc0b8816105ec5db7b423741a1bf35e8bedd0d4c01366ad4c12d0ae",
+        "exit_code": 0,
+        "duration_ms": 71724,
+        "termination": "exited",
+        "output_bytes": 5033,
+        "live_streaming": true
+      },
+      "parallel_results": null,
+      "output": null,
+      "output_bytes": 5033,
+      "live_streaming": true,
+      "termination": "exited",
+      "started_at": "2026-05-19T05:43:13.748625994Z",
+      "handler": "command",
+      "duration_ms": 71726,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "total_tokens": 0,
+        "reasoning_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "state": "succeeded"
+    },
     "implement_preset_vision@1": {
       "first_event_seq": 139,
       "prompt": null,
@@ -2404,6 +2774,72 @@
       "started_at": "2026-05-19T05:29:09.231832106Z",
       "handler": "stack.manager_loop",
       "duration_ms": 326081,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "total_tokens": 0,
+        "reasoning_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "state": "succeeded"
+    },
+    "preset_vision_learning_child@1": {
+      "first_event_seq": 160,
+      "prompt": null,
+      "response": null,
+      "completion": null,
+      "provider_used": null,
+      "diff": null,
+      "script_invocation": null,
+      "script_timing": null,
+      "parallel_results": null,
+      "output": null,
+      "started_at": "2026-05-19T05:43:13.743948780Z",
+      "handler": "stack.manager_loop",
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "total_tokens": 0,
+        "reasoning_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "state": "running"
+    },
+    "preset_vision_learning_gate@1": {
+      "first_event_seq": 173,
+      "prompt": null,
+      "response": null,
+      "completion": {
+        "outcome": "succeeded",
+        "notes": "Script completed: node scripts/iphone-app-factory/object-proof-learning-gate.mjs --stage preset_vision --root .workflow/object-proof-program",
+        "failure_reason": null,
+        "timestamp": "2026-05-19T05:44:26.959680396Z"
+      },
+      "provider_used": null,
+      "diff": null,
+      "script_invocation": {
+        "script": "node scripts/iphone-app-factory/object-proof-learning-gate.mjs --stage preset_vision --root .workflow/object-proof-program",
+        "command": "exec 2>&1\nnode scripts/iphone-app-factory/object-proof-learning-gate.mjs --stage preset_vision --root .workflow/object-proof-program",
+        "language": "shell"
+      },
+      "script_timing": {
+        "output": "blob://sha256/139ddb768099a24e8c0e29d0c133812eeb8f4b67e2c925604b0e676114e11194",
+        "exit_code": 0,
+        "duration_ms": 1482,
+        "termination": "exited",
+        "output_bytes": 348,
+        "live_streaming": true
+      },
+      "parallel_results": null,
+      "output": null,
+      "output_bytes": 348,
+      "live_streaming": true,
+      "termination": "exited",
+      "started_at": "2026-05-19T05:44:25.475493248Z",
+      "handler": "command",
+      "duration_ms": 1484,
       "usage": {
         "input_tokens": 0,
         "output_tokens": 0,
@@ -2736,7 +3172,12 @@
       "first_event_seq": 132,
       "prompt": null,
       "response": null,
-      "completion": null,
+      "completion": {
+        "outcome": "succeeded",
+        "notes": "Child completed at cycle 44",
+        "failure_reason": null,
+        "timestamp": "2026-05-19T05:43:11.396169028Z"
+      },
       "provider_used": null,
       "diff": null,
       "script_invocation": null,
@@ -2745,6 +3186,7 @@
       "output": null,
       "started_at": "2026-05-19T05:36:01.117653961Z",
       "handler": "stack.manager_loop",
+      "duration_ms": 430238,
       "usage": {
         "input_tokens": 0,
         "output_tokens": 0,
@@ -2753,7 +3195,7 @@
         "cache_read_tokens": 0,
         "cache_write_tokens": 0
       },
-      "state": "running"
+      "state": "succeeded"
     },
     "exit@1": {
       "first_event_seq": 39,
@@ -2763,7 +3205,7 @@
         "outcome": "succeeded",
         "notes": null,
         "failure_reason": null,
-        "timestamp": "2026-05-19T05:43:11.354644013Z"
+        "timestamp": "2026-05-19T05:44:26.959899443Z"
       },
       "provider_used": null,
       "diff": null,
@@ -2771,7 +3213,7 @@
       "script_timing": null,
       "parallel_results": null,
       "output": null,
-      "started_at": "2026-05-19T05:43:11.354636110Z",
+      "started_at": "2026-05-19T05:44:26.959891810Z",
       "handler": "exit",
       "duration_ms": 0,
       "usage": {
@@ -2792,7 +3234,7 @@
         "outcome": "succeeded",
         "notes": null,
         "failure_reason": null,
-        "timestamp": "2026-05-19T05:36:01.122745772Z"
+        "timestamp": "2026-05-19T05:43:13.748508586Z"
       },
       "provider_used": null,
       "diff": null,
@@ -2800,7 +3242,7 @@
       "script_timing": null,
       "parallel_results": null,
       "output": null,
-      "started_at": "2026-05-19T05:36:01.122686939Z",
+      "started_at": "2026-05-19T05:43:13.748439831Z",
       "handler": "start",
       "duration_ms": 0,
       "usage": {
