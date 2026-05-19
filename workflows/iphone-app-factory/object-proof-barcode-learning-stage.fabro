@@ -1,0 +1,34 @@
+digraph ObjectProofBarcodeLearningStage {
+    graph [
+        goal="Synthesize barcode stage learnings and carry them forward to preset Vision implementation",
+        persona="object-proof-barcode-learning-reviewer",
+        inputs="barcode_stage,program_spec",
+        outputs="contract.artifact,contract.gate,contract.next_action,contract.failure_classification,barcode_learnings",
+        secret_policy="no secrets; do not print environment variables or credential values",
+        model_stylesheet="* { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }"
+    ]
+    rankdir=LR
+
+    start [shape=Mdiamond, label="Start"]
+    exit  [shape=Msquare, label="Exit"]
+
+    write_barcode_learnings [
+        label="Write Barcode Learnings",
+        shape=parallelogram,
+        retry_target="write_barcode_learnings",
+        timeout="3600s",
+        script="STAGE_ID=barcode STAGE_NAME='Barcode Scan' STAGE_ROOT=.workflow/object-proof-program/stages/barcode node scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/object-proof-stage-learning.md --stage object-proof-barcode-learning --eval-id iphone-object-proof.barcode.learning.call --out .workflow/object-proof-program/codex/barcode-learning.json --rendered-prompt-out .workflow/object-proof-program/codex/barcode-learning.prompt.md --last-message-out .workflow/object-proof-program/codex/barcode-learning.last-message.md"
+    ]
+    barcode_learning_gate [
+        label="Barcode Learning Gate",
+        shape=parallelogram,
+        retry_target="write_barcode_learnings",
+        script="node scripts/iphone-app-factory/object-proof-learning-gate.mjs --stage barcode --root .workflow/object-proof-program"
+    ]
+
+    start -> write_barcode_learnings
+    write_barcode_learnings -> barcode_learning_gate [condition="outcome=succeeded"]
+    write_barcode_learnings -> write_barcode_learnings [label="Rewrite Barcode Learnings"]
+    barcode_learning_gate -> exit [condition="outcome=succeeded"]
+    barcode_learning_gate -> write_barcode_learnings [label="Fix Barcode Learnings"]
+}

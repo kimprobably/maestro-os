@@ -1,0 +1,42 @@
+digraph ObjectProofPublishPostmortemStage {
+    graph [
+        goal="Publish the WakeTask Object Proof app branch and capture a final program postmortem with reusable workflow learnings",
+        persona="object-proof-program-publisher",
+        inputs="app_dir,run_branch,fabro_server,barcode_learnings,preset_vision_learnings,same_object_learnings",
+        outputs="contract.artifact,contract.gate,contract.next_action,contract.failure_classification,publish_handoff,program_postmortem",
+        secret_policy="no secrets; do not print environment variables or credential values",
+        model_stylesheet="* { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }"
+    ]
+    rankdir=LR
+
+    start [shape=Mdiamond, label="Start"]
+    exit  [shape=Msquare, label="Exit"]
+
+    publish_existing_app_branch [
+        label="Publish Existing App Branch",
+        shape=parallelogram,
+        retry_target="publish_existing_app_branch",
+        script="node scripts/iphone-app-factory/publish-existing-app-branch.mjs --out .workflow/object-proof-program/publish-existing-app-branch.json --message 'Implement WakeTask Object Proof mission pack'"
+    ]
+    write_program_postmortem [
+        label="Write Program Postmortem",
+        shape=parallelogram,
+        retry_target="write_program_postmortem",
+        timeout="3600s",
+        script="node scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/object-proof-program-final-postmortem.md --stage object-proof-program-postmortem --eval-id iphone-object-proof.program-postmortem.call --out .workflow/object-proof-program/codex/program-postmortem.json --rendered-prompt-out .workflow/object-proof-program/codex/program-postmortem.prompt.md --last-message-out .workflow/object-proof-program/codex/program-postmortem.last-message.md"
+    ]
+    final_gate [
+        label="Object Proof Final Gate",
+        shape=parallelogram,
+        retry_target="write_program_postmortem",
+        script="node scripts/iphone-app-factory/object-proof-final-gate.mjs --root .workflow/object-proof-program"
+    ]
+
+    start -> publish_existing_app_branch
+    publish_existing_app_branch -> write_program_postmortem [condition="outcome=succeeded"]
+    publish_existing_app_branch -> publish_existing_app_branch [label="Retry Publish"]
+    write_program_postmortem -> final_gate [condition="outcome=succeeded"]
+    write_program_postmortem -> write_program_postmortem [label="Rewrite Program Postmortem"]
+    final_gate -> exit [condition="outcome=succeeded"]
+    final_gate -> write_program_postmortem [label="Complete Program Postmortem"]
+}

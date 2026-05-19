@@ -1,0 +1,113 @@
+digraph WakeTaskObjectProofProgram {
+    graph [
+        goal="Implement WakeTask Object Proof missions as staged feature slices: barcode scan, preset Apple Vision object recognition, then same-object matching, carrying learnings forward after each stage",
+        persona="waketask-object-proof-program-orchestrator",
+        inputs="repo_url,base_branch,run_branch,app_name,bundle_id,app_dir,app_domain,target_audience,feature_goal,context_paths,use_mobbin_mcp,ios_validation_mode,allow_macos_deferred,fabro_server",
+        outputs="workflow_preflight,program_spec,barcode_stage,barcode_learnings,preset_vision_stage,preset_vision_learnings,same_object_stage,same_object_learnings,publish_handoff,program_postmortem",
+        artifact_root=".workflow/object-proof-program",
+        secret_policy="no secrets; credential checks are presence-only; do not print environment variables or credential values",
+        default_max_retries=2,
+        retry_target="program_spec_child",
+        model_stylesheet="
+            *       { backend: cli; provider: openai; model: gpt-5.3-codex-spark; reasoning_effort: low; }
+            .build  { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }
+            .review { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }
+        "
+    ]
+    rankdir=LR
+
+    start [shape=Mdiamond, label="Start"]
+    exit  [shape=Msquare, label="Exit"]
+
+    workflow_preflight_child [
+        label="Workflow Preflight Child",
+        type="stack.manager_loop",
+        stack.child_workflow="./object-proof-program-preflight-stage.fabro",
+        manager.max_cycles=120,
+        manager.poll_interval="1s"
+    ]
+
+    program_spec_child [
+        label="Program Spec Child",
+        type="stack.manager_loop",
+        stack.child_workflow="./object-proof-program-spec-stage.fabro",
+        manager.max_cycles=180,
+        manager.poll_interval="2s"
+    ]
+
+    barcode_stage_child [
+        label="Barcode Stage Child",
+        type="stack.manager_loop",
+        stack.child_workflow="./object-proof-barcode-stage.fabro",
+        manager.max_cycles=900,
+        manager.poll_interval="10s"
+    ]
+
+    barcode_learning_child [
+        label="Barcode Learning Child",
+        type="stack.manager_loop",
+        stack.child_workflow="./object-proof-barcode-learning-stage.fabro",
+        manager.max_cycles=180,
+        manager.poll_interval="2s"
+    ]
+
+    preset_vision_stage_child [
+        label="Preset Vision Stage Child",
+        type="stack.manager_loop",
+        stack.child_workflow="./object-proof-preset-vision-stage.fabro",
+        manager.max_cycles=900,
+        manager.poll_interval="10s"
+    ]
+
+    preset_vision_learning_child [
+        label="Preset Vision Learning Child",
+        type="stack.manager_loop",
+        stack.child_workflow="./object-proof-preset-vision-learning-stage.fabro",
+        manager.max_cycles=180,
+        manager.poll_interval="2s"
+    ]
+
+    same_object_stage_child [
+        label="Same Object Stage Child",
+        type="stack.manager_loop",
+        stack.child_workflow="./object-proof-same-object-stage.fabro",
+        manager.max_cycles=900,
+        manager.poll_interval="10s"
+    ]
+
+    same_object_learning_child [
+        label="Same Object Learning Child",
+        type="stack.manager_loop",
+        stack.child_workflow="./object-proof-same-object-learning-stage.fabro",
+        manager.max_cycles=180,
+        manager.poll_interval="2s"
+    ]
+
+    publish_postmortem_child [
+        label="Publish And Program Postmortem Child",
+        type="stack.manager_loop",
+        stack.child_workflow="./object-proof-publish-postmortem-stage.fabro",
+        manager.max_cycles=240,
+        manager.poll_interval="2s"
+    ]
+
+    start -> workflow_preflight_child
+    workflow_preflight_child -> program_spec_child [condition="outcome=succeeded"]
+    workflow_preflight_child -> workflow_preflight_child [label="Fix Workflow/Environment"]
+    program_spec_child -> barcode_stage_child [condition="outcome=succeeded"]
+    program_spec_child -> program_spec_child [label="Fix Program Spec"]
+    barcode_stage_child -> barcode_learning_child [condition="outcome=succeeded"]
+    barcode_stage_child -> barcode_stage_child [label="Fix Barcode Stage"]
+    barcode_learning_child -> preset_vision_stage_child [condition="outcome=succeeded"]
+    barcode_learning_child -> barcode_learning_child [label="Fix Barcode Learnings"]
+    preset_vision_stage_child -> preset_vision_learning_child [condition="outcome=succeeded"]
+    preset_vision_stage_child -> preset_vision_stage_child [label="Fix Preset Vision Stage"]
+    preset_vision_learning_child -> same_object_stage_child [condition="outcome=succeeded"]
+    preset_vision_learning_child -> preset_vision_learning_child [label="Fix Preset Vision Learnings"]
+    same_object_stage_child -> same_object_learning_child [condition="outcome=succeeded"]
+    same_object_stage_child -> same_object_stage_child [label="Fix Same Object Stage"]
+    same_object_learning_child -> publish_postmortem_child [condition="outcome=succeeded"]
+    same_object_learning_child -> same_object_learning_child [label="Fix Same Object Learnings"]
+    publish_postmortem_child -> exit [condition="outcome=succeeded"]
+    publish_postmortem_child -> publish_postmortem_child [label="Complete Publish/Postmortem"]
+}

@@ -1,0 +1,34 @@
+digraph ObjectProofPresetVisionLearningStage {
+    graph [
+        goal="Synthesize preset Vision stage learnings and carry them forward to same-object matching",
+        persona="object-proof-preset-vision-learning-reviewer",
+        inputs="preset_vision_stage,barcode_learnings,program_spec",
+        outputs="contract.artifact,contract.gate,contract.next_action,contract.failure_classification,preset_vision_learnings",
+        secret_policy="no secrets; do not print environment variables or credential values",
+        model_stylesheet="* { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }"
+    ]
+    rankdir=LR
+
+    start [shape=Mdiamond, label="Start"]
+    exit  [shape=Msquare, label="Exit"]
+
+    write_preset_vision_learnings [
+        label="Write Preset Vision Learnings",
+        shape=parallelogram,
+        retry_target="write_preset_vision_learnings",
+        timeout="3600s",
+        script="STAGE_ID=preset_vision STAGE_NAME='Preset Vision Photo' STAGE_ROOT=.workflow/object-proof-program/stages/preset_vision node scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/object-proof-stage-learning.md --stage object-proof-preset-vision-learning --eval-id iphone-object-proof.preset-vision.learning.call --out .workflow/object-proof-program/codex/preset-vision-learning.json --rendered-prompt-out .workflow/object-proof-program/codex/preset-vision-learning.prompt.md --last-message-out .workflow/object-proof-program/codex/preset-vision-learning.last-message.md"
+    ]
+    preset_vision_learning_gate [
+        label="Preset Vision Learning Gate",
+        shape=parallelogram,
+        retry_target="write_preset_vision_learnings",
+        script="node scripts/iphone-app-factory/object-proof-learning-gate.mjs --stage preset_vision --root .workflow/object-proof-program"
+    ]
+
+    start -> write_preset_vision_learnings
+    write_preset_vision_learnings -> preset_vision_learning_gate [condition="outcome=succeeded"]
+    write_preset_vision_learnings -> write_preset_vision_learnings [label="Rewrite Preset Vision Learnings"]
+    preset_vision_learning_gate -> exit [condition="outcome=succeeded"]
+    preset_vision_learning_gate -> write_preset_vision_learnings [label="Fix Preset Vision Learnings"]
+}

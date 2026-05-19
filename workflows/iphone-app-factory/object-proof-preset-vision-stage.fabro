@@ -1,0 +1,34 @@
+digraph ObjectProofPresetVisionStage {
+    graph [
+        goal="Implement preset local Apple Vision object-photo missions in WakeTask with dismiss-blocking behavior and evidence",
+        persona="object-proof-preset-vision-implementer",
+        inputs="app_dir,program_spec,barcode_learnings",
+        outputs="contract.artifact,contract.gate,contract.next_action,contract.failure_classification,preset_vision_stage",
+        secret_policy="no secrets; do not print environment variables or credential values",
+        model_stylesheet="* { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }"
+    ]
+    rankdir=LR
+
+    start [shape=Mdiamond, label="Start"]
+    exit  [shape=Msquare, label="Exit"]
+
+    implement_preset_vision [
+        label="Implement Preset Vision Stage",
+        shape=parallelogram,
+        retry_target="implement_preset_vision",
+        timeout="7200s",
+        script="STAGE_ID=preset_vision STAGE_NAME='Preset Vision Photo' STAGE_GOAL='Classify preset object photos locally with Apple Vision before unlocking the alarm' STAGE_REQUIRED_CAPABILITIES=preset_object_picker,local_vision_classification,photo_dismiss_blocking,vision_eval_coverage STAGE_ROOT=.workflow/object-proof-program/stages/preset_vision node scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/object-proof-stage-implementation.md --stage object-proof-preset-vision-implementation --eval-id iphone-object-proof.preset-vision.implementation.call --out .workflow/object-proof-program/codex/preset-vision-implementation.json --rendered-prompt-out .workflow/object-proof-program/codex/preset-vision-implementation.prompt.md --last-message-out .workflow/object-proof-program/codex/preset-vision-implementation.last-message.md"
+    ]
+    preset_vision_gate [
+        label="Preset Vision Stage Gate",
+        shape=parallelogram,
+        retry_target="implement_preset_vision",
+        script="node scripts/iphone-app-factory/object-proof-stage-gate.mjs --stage preset_vision --root .workflow/object-proof-program/stages/preset_vision --required-capabilities preset_object_picker,local_vision_classification,photo_dismiss_blocking,vision_eval_coverage"
+    ]
+
+    start -> implement_preset_vision
+    implement_preset_vision -> preset_vision_gate [condition="outcome=succeeded"]
+    implement_preset_vision -> implement_preset_vision [label="Retry Preset Vision Implementation"]
+    preset_vision_gate -> exit [condition="outcome=succeeded"]
+    preset_vision_gate -> implement_preset_vision [label="Fix Preset Vision Coverage"]
+}
