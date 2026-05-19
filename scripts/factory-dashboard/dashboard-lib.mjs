@@ -1,4 +1,6 @@
 import { existsSync, mkdirSync, readFileSync, readdirSync, statSync, writeFileSync } from "node:fs";
+import { spawnSync } from "node:child_process";
+import { homedir } from "node:os";
 import { dirname, isAbsolute, join, relative, resolve } from "node:path";
 
 const ACTIVE_RUN_STATUSES = new Set(["queued", "pending", "running", "submitted", "in_progress"]);
@@ -37,12 +39,23 @@ function latestTimestamp(event) {
   return asIsoString(event.recorded_at || event.updated_at || event.created_at || event.timestamp);
 }
 
+function ledgerText(value) {
+  if (value === null || value === undefined) return null;
+  if (typeof value === "string") {
+    const trimmed = value.trim();
+    if (!trimmed || trimmed === "[object Object]") return null;
+    return trimmed;
+  }
+  if (typeof value === "number" || typeof value === "boolean") return String(value);
+  return null;
+}
+
 function ledgerRunId(event, index) {
-  return event.run_id || event.fabro_run_id || event.runId || event.id || `unknown-${index + 1}`;
+  return ledgerText(event.run_id) || ledgerText(event.fabro_run_id) || ledgerText(event.runId) || ledgerText(event.id) || `unknown-${index + 1}`;
 }
 
 function ledgerStatus(event) {
-  return String(event.current_status || event.status || event.event_kind || "unknown").toLowerCase();
+  return (ledgerText(event.current_status) || ledgerText(event.status) || ledgerText(event.event_kind) || "unknown").toLowerCase();
 }
 
 function isBlockingFailure(entry) {
@@ -112,6 +125,104 @@ export function readJsonlEvents(path) {
     };
   }
   return parseJsonlEvents(readFileSync(path, "utf8"), path);
+}
+
+export function defaultRunLedgerSources(options = {}) {
+  const hermesHome = options.hermesHome || process.env.HERMES_HOME || join(homedir(), ".hermes");
+  const profile = options.profile || "maestro-operator";
+  return [
+    join(hermesHome, "profiles", profile, "state", "fabro-run-ledger.jsonl"),
+    join(hermesHome, "profiles", profile, "state", "fabro-run-ledger.sqlite"),
+    join(hermesHome, "state", "fabro-run-ledger.jsonl"),
+    join(hermesHome, "state", "fabro-run-ledger.sqlite"),
+  ];
+}
+
+export function discoverRunLedgerSource(options = {}) {
+  return defaultRunLedgerSources(options).find((path) => existsSync(path)) || null;
+}
+
+export function readSqliteLedgerEvents(path) {
+  if (!path) return { events: [], issues: [] };
+  if (!existsSync(path)) {
+    return {
+      events: [],
+      issues: [
+        {
+          type: "missing_sqlite",
+          source: path,
+          message: "run ledger SQLite file not found",
+        },
+      ],
+    };
+  }
+
+  const query = `
+SELECT
+  run_id,
+  workflow_file,
+  'ledger_projection' AS event_kind,
+  current_status,
+  current_node,
+  next_node_id,
+  failure_class,
+  latest_git_sha,
+  run_branch,
+  sandbox_name,
+  sandbox_id,
+  next_action,
+  updated_at AS recorded_at
+FROM fabro_runs
+ORDER BY updated_at DESC;
+`;
+  const result = spawnSync("sqlite3", ["-json", path, query], {
+    encoding: "utf8",
+    stdio: ["ignore", "pipe", "pipe"],
+  });
+
+  if (result.status !== 0) {
+    return {
+      events: [],
+      issues: [
+        {
+          type: "sqlite_read_failed",
+          source: path,
+          message: result.stderr || result.stdout || "sqlite3 failed",
+        },
+      ],
+    };
+  }
+
+  try {
+    return {
+      events: JSON.parse(result.stdout || "[]"),
+      issues: [],
+    };
+  } catch (error) {
+    return {
+      events: [],
+      issues: [
+        {
+          type: "malformed_sqlite_json",
+          source: path,
+          message: error.message,
+        },
+      ],
+    };
+  }
+}
+
+export function readRunLedgerSource(path) {
+  if (!path) return { events: [], issues: [] };
+  if (path.endsWith(".sqlite") || path.endsWith(".db")) return readSqliteLedgerEvents(path);
+  return readJsonlEvents(path);
+}
+
+export function readDefaultRunLedgerEvents(options = {}) {
+  const source = discoverRunLedgerSource(options);
+  if (!source) return { source: null, events: [], issues: [] };
+  const parsed = readRunLedgerSource(source);
+  return { source, ...parsed };
 }
 
 export function readJsonFile(path, fallback = null) {
@@ -227,6 +338,7 @@ function summarizeLedgerRuns(events, now, staleRunMinutes) {
     const candidate = {
       ...event,
       run_id: runId,
+      workflow: ledgerText(event.workflow) || ledgerText(event.workflow_file),
       status: ledgerStatus(event),
       recorded_at: timestamp,
     };
@@ -327,6 +439,15 @@ function buildAttentionItems({ quality, artifacts, runs, ledgerIssues, runLedger
       title: `Possibly stuck Fabro runs (${runs.stale_runs.length})`,
       detail: detailList(runs.stale_runs.map((run) => run.run_id)),
       action: "Assign Quincy to inspect run projection and event cursors, then resume, fork, or escalate.",
+    });
+  }
+
+  if (runs.unknown > 0) {
+    items.push({
+      severity: "medium",
+      title: `Unknown Fabro run status (${runs.unknown})`,
+      detail: `${runs.unknown} tracked run projections do not have a known terminal or active status.`,
+      action: "Assign Quincy to refresh the run projection and classify unknown runs as completed, failed, active, or intentionally ignored.",
     });
   }
 
@@ -504,12 +625,12 @@ export function renderFactoryDashboard(dashboard) {
   const runs = dashboard.production.runs;
   const owner = dashboard.owner_rollup;
   const runStreamStatus = runs.source_connected
-    ? runs.failed === 0 && runs.stale_active === 0
+    ? runs.failed === 0 && runs.stale_active === 0 && runs.unknown === 0
       ? "working"
       : "attention"
     : "not connected";
   const runStreamNotes = runs.source_connected
-    ? `${runs.total} tracked runs, ${runs.completed} completed, ${runs.failed} failed, ${runs.active} active.`
+    ? `${runs.total} tracked runs, ${runs.completed} completed, ${runs.failed} failed, ${runs.active} active, ${runs.unknown} unknown.`
     : "No run ledger path supplied, so production run state is not included.";
 
   return `# Factory Dashboard

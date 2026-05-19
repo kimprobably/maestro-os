@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-05-19T00:50:54.754Z",
+  "generated_at": "2026-05-19T01:50:14.147Z",
   "status": "attention_required",
   "working": false,
   "owner_rollup": {
@@ -9,7 +9,7 @@
     "key_metrics": {
       "factory_status": "attention_required",
       "report_artifacts": 9,
-      "fabro_runs_tracked": 0,
+      "fabro_runs_tracked": 1,
       "completed_runs": 0,
       "failed_runs": 0,
       "eval_evidence_coverage_pct": 0,
@@ -25,13 +25,13 @@
       },
       {
         "severity": "medium",
-        "title": "Run ledger not connected",
-        "why_it_matters": "Pass --run-ledger with the Hermes Fabro run ledger JSONL path to include run production and failure data.",
-        "action": "Wire the Hermes Fabro run ledger into npm run factory:dashboard so daily health includes production state."
+        "title": "Unknown Fabro run status (1)",
+        "why_it_matters": "1 tracked run projections do not have a known terminal or active status.",
+        "action": "Assign Quincy to refresh the run projection and classify unknown runs as completed, failed, active, or intentionally ignored."
       }
     ],
     "learning_loop": {
-      "status": "instrumentation_needed",
+      "status": "attention",
       "rule": "Every repeated failure should become an eval, counterexample, workflow rule, agent rule, or backlog item.",
       "open_improvement_signals": 1
     }
@@ -97,17 +97,84 @@
       ]
     },
     "runs": {
-      "total": 0,
+      "total": 1,
       "completed": 0,
       "failed": 0,
       "active": 0,
       "stale_active": 0,
-      "unknown": 0,
-      "by_status": {},
+      "unknown": 1,
+      "by_status": {
+        "unknown": 1
+      },
       "failed_runs": [],
       "stale_runs": [],
-      "recent": [],
-      "source_connected": false
+      "recent": [
+        {
+          "recorded_at": "2026-05-17T14:20:13.942Z",
+          "run_id": "01KRV4X3GESNR09A2FVJRCGPTS",
+          "workflow_file": "[object Object]",
+          "event_kind": "observed",
+          "fabro_event_cursor": 56,
+          "fabro_event_id": "019e364e-a2f3-7b23-b421-83cfe5b2d17f",
+          "current_status": "unknown",
+          "current_node": "write_context_pack",
+          "next_node_id": null,
+          "failure_class": null,
+          "latest_git_sha": null,
+          "run_branch": null,
+          "sandbox_name": null,
+          "sandbox_id": null,
+          "evidence": {
+            "seq": 56,
+            "id": "019e364e-a2f3-7b23-b421-83cfe5b2d17f",
+            "ts": "2026-05-17T14:19:43.731345914Z",
+            "run_id": "01KRV4X3GESNR09A2FVJRCGPTS",
+            "event": "command.started",
+            "node_id": "write_context_pack",
+            "node_label": "write_context_pack",
+            "stage_id": "write_context_pack@1",
+            "actor": {
+              "kind": "worker",
+              "run_id": "01KRV4X3GESNR09A2FVJRCGPTS"
+            },
+            "properties": {
+              "script": "node scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/feature-context-intake.md --stage feature-context-intake --out .workflow/existing-app-feature/codex/feature-context-intake.json",
+              "command": "exec 2>&1\nnode scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/feature-context-intake.md --stage feature-context-intake --out .workflow/existing-app-feature/codex/feature-context-intake.json",
+              "language": "shell",
+              "timeout_ms": 3600000
+            }
+          },
+          "payload": {
+            "seq": 56,
+            "id": "019e364e-a2f3-7b23-b421-83cfe5b2d17f",
+            "ts": "2026-05-17T14:19:43.731345914Z",
+            "run_id": "01KRV4X3GESNR09A2FVJRCGPTS",
+            "event": "command.started",
+            "node_id": "write_context_pack",
+            "node_label": "write_context_pack",
+            "stage_id": "write_context_pack@1",
+            "actor": {
+              "kind": "worker",
+              "run_id": "01KRV4X3GESNR09A2FVJRCGPTS"
+            },
+            "properties": {
+              "script": "node scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/feature-context-intake.md --stage feature-context-intake --out .workflow/existing-app-feature/codex/feature-context-intake.json",
+              "command": "exec 2>&1\nnode scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/feature-context-intake.md --stage feature-context-intake --out .workflow/existing-app-feature/codex/feature-context-intake.json",
+              "language": "shell",
+              "timeout_ms": 3600000
+            }
+          },
+          "decision": null,
+          "known_failures": [],
+          "decisions_taken": [],
+          "open_quality_risks": [],
+          "next_action": "continue polling Fabro events",
+          "summary": "observed",
+          "workflow": null,
+          "status": "unknown"
+        }
+      ],
+      "source_connected": true
     }
   },
   "quality": {
@@ -155,9 +222,9 @@
     },
     {
       "severity": "medium",
-      "title": "Run ledger not connected",
-      "detail": "Pass --run-ledger with the Hermes Fabro run ledger JSONL path to include run production and failure data.",
-      "action": "Wire the Hermes Fabro run ledger into npm run factory:dashboard so daily health includes production state."
+      "title": "Unknown Fabro run status (1)",
+      "detail": "1 tracked run projections do not have a known terminal or active status.",
+      "action": "Assign Quincy to refresh the run projection and classify unknown runs as completed, failed, active, or intentionally ignored."
     }
   ],
   "agent_access": {
@@ -180,6 +247,6 @@
   "sources": {
     "eval_index": "reports/eval-index.json",
     "reports_root": "reports",
-    "run_ledger": null
+    "run_ledger": "/Users/timlife/.hermes/profiles/maestro-operator/state/fabro-run-ledger.jsonl"
   }
 }
