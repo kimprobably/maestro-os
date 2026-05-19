@@ -1,6 +1,6 @@
 # Eval Dashboard
 
-Generated: 2026-05-18T22:19:44.262Z
+Generated: 2026-05-19T01:54:27.137Z
 
 ## Summary
 
@@ -8,12 +8,12 @@ Generated: 2026-05-18T22:19:44.262Z
 | --- | ---: |
 | Registered | 8 |
 | Blocking | 8 |
-| Present Results | 0 |
-| Passed | 0 |
+| Present Results | 1 |
+| Passed | 1 |
 | Failed | 0 |
 | Fallback Only | 0 |
 | Waived | 0 |
-| Missing Blocking | 8 |
+| Missing Blocking | 7 |
 
 ## Blocking Issues
 
@@ -22,6 +22,5 @@ Generated: 2026-05-18T22:19:44.262Z
 - iphone-factory.prompt-quality: missing blocking result
 - hermes.skill-promotion-quality: missing blocking result
 - eval.meta.fallback-masking: missing blocking result
-- workflow-builder.eval-coverage: missing blocking result
 - iphone-feature.context-intake.call: missing blocking result
 - iphone-feature.implementation.call: missing blocking result
