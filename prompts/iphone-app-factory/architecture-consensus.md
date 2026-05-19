@@ -28,3 +28,10 @@ The architecture must explicitly map the product to SwiftAIBoilerplatePro:
 - `CompositionRoot`
 
 If any module is removed, the ADR must explain dependency order and App Store 4.3 consequences.
+
+The architecture must also define the recovery/evidence lane:
+
+- how generated app, `.workflow/iphone-app-factory`, `.github/workflows`, and `reports/ios` artifacts survive control-plane failures;
+- where GitHub Actions hosted macOS run id, commit SHA, successful conclusion, and artifact names are recorded when `allow_macos_deferred=false`;
+- how metadata branch push failures are classified and retried from the pushed run branch instead of being treated as successful completion;
+- how `allow_macos_deferred` changes Appium/XCUITest evidence requirements, including explicit accepted-risk notes only when deferral is true.

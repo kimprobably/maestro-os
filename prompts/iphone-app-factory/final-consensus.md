@@ -24,6 +24,10 @@ Rules:
 - If the app does not use the boilerplate substantially, reject.
 - If App Store 4.3 hardening did not pass, reject.
 
+- If the handoff lacks artifact preservation evidence, metadata branch push verification, or restart/fork notes for control-plane failures, reject.
+- If `allow_macos_deferred=false`, require GitHub Actions hosted macOS run id, commit SHA, successful conclusion, and artifact names for xcodebuild/Appium/release evidence; workflow-only claims are not enough.
+- If `allow_macos_deferred=true`, list accepted risk, compensating controls, review deadline, and deferred evidence explicitly; do not call the build release-ready.
+
 Write `.workflow/iphone-app-factory/final-consensus.md` with:
 
 - reviewer agreement/disagreement

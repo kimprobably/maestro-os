@@ -1,11 +1,11 @@
 description: "iPhone App Factory prompt quality eval"
 
 providers:
-  - id: openrouter:anthropic/claude-haiku-4-5
+  - id: openrouter:anthropic/claude-sonnet-4
     config:
       apiKeyEnvar: OPENROUTER_API_KEY
       temperature: 0
-      max_tokens: 1200
+      max_tokens: 2000
       maxRetries: 0
 
 evaluateOptions:
@@ -14,11 +14,11 @@ evaluateOptions:
 defaultTest:
   options:
     provider:
-      id: openrouter:anthropic/claude-haiku-4-5
+      id: openrouter:anthropic/claude-sonnet-4
       config:
         apiKeyEnvar: OPENROUTER_API_KEY
         temperature: 0
-        max_tokens: 1200
+        max_tokens: 2000
 
 prompts:
   - |
@@ -64,7 +64,7 @@ prompts:
     UX_POSTMORTEM_LEARNING_CAPTURE:
     {{ux_postmortem_learning_capture}}
 
-    Return valid JSON only, no markdown fences. It must match this shape:
+    Return exactly one minified JSON object and nothing else. Your first character must be `{` and your last character must be `}`. Do not include markdown fences, headings, prose, comments, or preambles. Include every required key exactly as shown, including literal keys `required_artifacts` and `risks`, even when arrays are empty. If you find gaps, put them in `critical_gaps`, `gaps`, or `risks` inside JSON; never switch to narrative.
     {
       "verdict": "APPROVE",
       "score": 0.0,
@@ -96,7 +96,9 @@ tests:
     assert:
       - type: javascript
         value: |
-          const parsed = JSON.parse(output);
+          const rawOutput = String(output || "").trim();
+          const normalizedOutput = rawOutput.replace(/^```(?:json|javascript|js)?\s*/i, "").replace(/```\s*$/i, "").trim();
+          const parsed = JSON.parse(normalizedOutput); // JSON.parse(output) after markdown-fence normalization
           const requiredKeys = ["verdict", "score", "covered", "golden_case_results", "critical_gaps", "gaps", "risks", "required_artifacts", "accepted_risk"];
           for (const key of requiredKeys) {
             if (!(key in parsed)) return { pass: false, reason: `missing ${key}` };
