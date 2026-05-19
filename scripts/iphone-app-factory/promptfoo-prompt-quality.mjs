@@ -33,7 +33,22 @@ const timeoutMs = Number(process.env.PROMPTFOO_MAX_EVAL_TIME_MS || "120000");
 function writeReport(report) {
   mkdirSync(dirname(outPath), { recursive: true });
   writeFileSync(outPath, `${JSON.stringify(report, null, 2)}\n`);
-  console.log(JSON.stringify(report, null, 2));
+  const compactReport = {
+    ok: report.ok,
+    prompt_count: report.prompt_count,
+    prompt_file_count: report.prompt_file_count,
+    promptfoo_attempted: report.promptfoo_attempted,
+    promptfoo_ok: report.promptfoo_ok,
+    promptfoo_status: report.promptfoo_status,
+    attempted_fallback_accepted: report.attempted_fallback_accepted,
+    accepted_risk_promptfoo_failure: report.accepted_risk_promptfoo_failure,
+    fallback_ok: report.fallback_ok,
+    fallback_failure_count: report.fallback_failures.length,
+    promptfoo_failure_count: report.promptfoo_failures.length,
+    critical_gaps: report.critical_gaps,
+    report_path: outPath,
+  };
+  console.log(JSON.stringify(compactReport, null, 2));
 }
 
 function readJson(path) {

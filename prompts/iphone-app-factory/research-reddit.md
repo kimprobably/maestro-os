@@ -15,3 +15,5 @@ Use live data when available through Apify, Firecrawl, or web search. If unavail
 Secret handling is blocking: never print environment variables or credential values. To check whether `APIFY_TOKEN` or another credential exists, use a boolean/presence-only command such as `node -e "console.log(Boolean(process.env.APIFY_TOKEN))"` and never echo, grep, dump, log, or write the value. Do not run environment dump commands such as `env`, `printenv`, `set`, `export`, or `declare -x`, and do not echo any `$...TOKEN`, `$...KEY`, `$...PASSWORD`, `$...AUTH`, or `$...CREDENTIAL` variable.
 
 Write `.workflow/iphone-app-factory/research/reddit.md` with source links, summarized themes, and a ranked opportunity list.
+
+Keep the pass bounded: write the report once, do not run ad hoc verification loops, and end after the file is written. Do not write implementation code.

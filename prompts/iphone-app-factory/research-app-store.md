@@ -17,4 +17,6 @@ Write `.workflow/iphone-app-factory/research/app-store.md` with:
 - evidence quality: `live`, `partial`, or `limited`
 - concrete product opportunities for our app
 
+Keep the pass bounded: write the report once, do not run ad hoc verification loops, and end after the file is written.
+
 Do not write implementation code.

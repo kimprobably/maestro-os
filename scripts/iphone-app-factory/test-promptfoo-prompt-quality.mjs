@@ -127,5 +127,12 @@ exit 1
     assert.equal(report.fallback_ok, true);
     assert.equal(report.attempted_fallback_accepted, true);
     assert.equal(report.accepted_risk_promptfoo_failure, false);
+
+    const stdoutReport = JSON.parse(result.stdout);
+    assert.equal(stdoutReport.ok, true);
+    assert.equal(stdoutReport.report_path, out);
+    assert.equal(stdoutReport.promptfoo_failure_count, 0);
+    assert.ok(result.stdout.length < 1200, result.stdout);
+    assert.doesNotMatch(result.stdout, /simulated promptfoo model grading failure/);
   });
 });

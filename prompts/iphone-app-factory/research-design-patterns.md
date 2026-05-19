@@ -16,3 +16,5 @@ Write `.workflow/iphone-app-factory/research/design-patterns.md` with:
 - DesignSystem components or tokens likely to use
 
 This is inspiration and pattern abstraction, not clone work. Do not copy another app's visual design or proprietary assets.
+
+Keep the pass bounded: write the report once, do not run ad hoc verification loops, and end after the file is written. Do not write implementation code.
