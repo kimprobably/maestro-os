@@ -1,6 +1,6 @@
 # Eval Dashboard
 
-Generated: 2026-05-19T06:16:03.890Z
+Generated: 2026-05-19T06:18:41.373Z
 
 ## Summary
 
@@ -8,12 +8,12 @@ Generated: 2026-05-19T06:16:03.890Z
 | --- | ---: |
 | Registered | 90 |
 | Blocking | 90 |
-| Present Results | 1 |
-| Passed | 1 |
+| Present Results | 2 |
+| Passed | 2 |
 | Failed | 0 |
 | Fallback Only | 0 |
 | Waived | 0 |
-| Missing Blocking | 89 |
+| Missing Blocking | 88 |
 
 ## Blocking Issues
 
@@ -24,7 +24,6 @@ Generated: 2026-05-19T06:16:03.890Z
 - eval.meta.fallback-masking: missing blocking result
 - iphone-feature.context-intake.call: missing blocking result
 - iphone-feature.implementation.call: missing blocking result
-- active-workflows.eval-coverage: missing blocking result
 - iphone-object-proof.program.outcome: missing blocking result
 - iphone-object-proof.program.workflow: missing blocking result
 - iphone-object-proof.preflight.workflow: missing blocking result

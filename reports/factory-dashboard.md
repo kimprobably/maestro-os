@@ -1,6 +1,6 @@
 # Factory Dashboard
 
-Generated: 2026-05-19T06:17:13.711Z
+Generated: 2026-05-19T06:18:42.478Z
 Overall: **ATTENTION REQUIRED**
 
 ## Owner Rollup
@@ -10,7 +10,7 @@ Factory needs owner attention.
 | Metric | Value |
 | --- | ---: |
 | Factory Status | attention_required |
-| Report Artifacts | 11 |
+| Report Artifacts | 12 |
 | Fabro Runs Tracked | 1 |
 | Completed Runs | 0 |
 | Failed Runs | 0 |
@@ -28,13 +28,13 @@ Factory needs owner attention.
 | --- | --- | --- |
 | Eval gate | attention | 88 blocking evals need evidence or fixes. |
 | Fabro run stream | attention | 1 tracked runs, 0 completed, 0 failed, 0 active, 1 unknown. |
-| Artifact stream | working | 11 generated report artifacts. |
+| Artifact stream | working | 12 generated report artifacts. |
 
 ## How Much Has It Produced?
 
 | Metric | Count |
 | --- | ---: |
-| Report Artifacts | 11 |
+| Report Artifacts | 12 |
 | Fabro Runs Tracked | 1 |
 | Completed Runs | 0 |
 | Failed Runs | 0 |
@@ -44,7 +44,7 @@ Factory needs owner attention.
 
 | Category | Count |
 | --- | ---: |
-| eval | 4 |
+| eval | 5 |
 | quality | 3 |
 | review | 4 |
 
@@ -61,7 +61,7 @@ Factory needs owner attention.
 | Waived | 0 |
 | Missing Blocking | 88 |
 
-Eval index generated: 2026-05-19T06:17:13.264Z
+Eval index generated: 2026-05-19T06:18:41.373Z
 
 ## Pay Attention
 
@@ -72,14 +72,14 @@ Eval index generated: 2026-05-19T06:17:13.264Z
 
 ## Recent Factory Artifacts
 
+- reports/eval-dashboard.md (eval, 5987 bytes)
 - reports/eval-index.json (eval, 35585 bytes)
-- reports/eval-dashboard.md (eval, 6045 bytes)
 - reports/evals/factory-health/active-workflows.eval-coverage.json (eval, 14027 bytes)
 - reports/evals/factory-health/workflow-builder.eval-coverage.json (eval, 1113 bytes)
+- reports/active-workflow-eval-review.md (eval, 1295 bytes)
 - reports/consumer-radar/reviews/qwen-feedback.json (review, 4209 bytes)
 - reports/consumer-radar/reviews/kimi-feedback.json (review, 2910 bytes)
 - reports/consumer-radar/reviews/deepseek-feedback.json (review, 3421 bytes)
-- reports/consumer-radar/review-consensus.json (review, 520 bytes)
 
 ## Recent Fabro Runs
 
