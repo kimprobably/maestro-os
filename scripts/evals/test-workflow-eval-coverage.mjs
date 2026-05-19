@@ -332,3 +332,269 @@ test("fabro analyzer finds wrapper calls, native prompts, and manager loop child
   assert.equal(analysis.native_prompt_nodes.length, 1);
   assert.equal(analysis.manager_loop_children[0].workflow, "workflows/fixture/child.fabro");
 });
+
+test("active workflow coverage fails when active wrapper call lacks eval id", () => {
+  withFixture((root) => {
+    const workflowPath = join(root, "workflows/active.fabro");
+    const manifestPath = join(root, "active-workflows.yaml");
+    const registryPath = join(root, "registry.yaml");
+    mkdirSync(dirname(workflowPath), { recursive: true });
+    writeFileSync(
+      workflowPath,
+      `digraph Active {
+  call [script="node scripts/iphone-app-factory/run-codex-prompt.mjs --stage one"]
+}
+`,
+    );
+    writeFileSync(
+      manifestPath,
+      `version: 1
+groups:
+  - id: active
+    owner: quincy
+    outcome_eval_id: active.outcome
+    workflows:
+      - path: ${workflowPath}
+        role: standalone
+        workflow_eval_id: active.workflow
+        native_prompt_policy: none
+`,
+    );
+    writeFileSync(
+      registryPath,
+      `version: 1
+evals:
+  - id: active.workflow
+    level: workflow
+    state: blocking
+    runner: deterministic
+    blocking: true
+    owner: quincy
+    subject_paths:
+      - ${workflowPath}
+    artifact_patterns:
+      - reports/active.workflow.json
+    counterexamples:
+      - active wrapper call without eval id must fail
+    waiver_policy:
+      owner: quincy
+      review_cadence: per-workflow-change
+      requires_expiry: true
+      requires_compensating_control: true
+  - id: active.outcome
+    level: product
+    state: blocking
+    runner: deterministic
+    blocking: true
+    owner: quincy
+    subject_paths:
+      - ${workflowPath}
+    artifact_patterns:
+      - reports/active.outcome.json
+    counterexamples:
+      - active outcome without coverage must fail
+    waiver_policy:
+      owner: quincy
+      review_cadence: per-workflow-change
+      requires_expiry: true
+      requires_compensating_control: true
+`,
+    );
+
+    const result = run(["--registry", registryPath, "--active-workflows", manifestPath]);
+    assert.notEqual(result.status, 0);
+    assert.match(result.stderr, /missing --eval-id/);
+  });
+});
+
+test("active workflow coverage passes for registered calls and tracked native prompts", () => {
+  withFixture((root) => {
+    const workflowPath = join(root, "workflows/active.fabro");
+    const childPath = join(root, "workflows/child.fabro");
+    const manifestPath = join(root, "active-workflows.yaml");
+    const registryPath = join(root, "registry.yaml");
+    const evalOutPath = join(root, "reports/evals/factory-health/active-workflows.eval-coverage.json");
+    mkdirSync(dirname(workflowPath), { recursive: true });
+    writeFileSync(
+      workflowPath,
+      `digraph Active {
+  child [type="stack.manager_loop", stack.child_workflow="./child.fabro"]
+  call [script="node scripts/iphone-app-factory/run-codex-prompt.mjs --stage one --eval-id active.one.call"]
+  native [prompt="@../../prompts/active.md"]
+}
+`,
+    );
+    writeFileSync(childPath, `digraph Child { start [shape=Mdiamond] }`);
+    writeFileSync(
+      manifestPath,
+      `version: 1
+groups:
+  - id: active
+    owner: quincy
+    outcome_eval_id: active.outcome
+    workflows:
+      - path: ${workflowPath}
+        role: parent
+        workflow_eval_id: active.workflow
+        native_prompt_policy: tracked_pending
+      - path: ${childPath}
+        role: child
+        workflow_eval_id: active.child.workflow
+        native_prompt_policy: none
+`,
+    );
+    writeFileSync(
+      registryPath,
+      `version: 1
+evals:
+  - id: active-workflows.eval-coverage
+    level: meta
+    state: blocking
+    runner: deterministic
+    blocking: true
+    owner: quincy
+    subject_paths:
+      - ${manifestPath}
+    artifact_patterns:
+      - ${evalOutPath}
+    counterexamples:
+      - missing active workflow eval coverage must fail
+    waiver_policy:
+      owner: quincy
+      review_cadence: per-workflow-change
+      requires_expiry: true
+      requires_compensating_control: true
+  - id: active.outcome
+    level: product
+    state: blocking
+    runner: deterministic
+    blocking: true
+    owner: quincy
+    subject_paths:
+      - ${workflowPath}
+    artifact_patterns:
+      - reports/active.outcome.json
+    counterexamples:
+      - missing active outcome evidence must fail
+    waiver_policy:
+      owner: quincy
+      review_cadence: per-workflow-change
+      requires_expiry: true
+      requires_compensating_control: true
+  - id: active.workflow
+    level: workflow
+    state: blocking
+    runner: deterministic
+    blocking: true
+    owner: quincy
+    subject_paths:
+      - ${workflowPath}
+    artifact_patterns:
+      - reports/active.workflow.json
+    counterexamples:
+      - missing active workflow evidence must fail
+    waiver_policy:
+      owner: quincy
+      review_cadence: per-workflow-change
+      requires_expiry: true
+      requires_compensating_control: true
+  - id: active.child.workflow
+    level: workflow
+    state: blocking
+    runner: deterministic
+    blocking: true
+    owner: quincy
+    subject_paths:
+      - ${childPath}
+    artifact_patterns:
+      - reports/active.child.workflow.json
+    counterexamples:
+      - missing child workflow evidence must fail
+    waiver_policy:
+      owner: quincy
+      review_cadence: per-workflow-change
+      requires_expiry: true
+      requires_compensating_control: true
+  - id: active.one.call
+    level: call
+    state: blocking
+    runner: deterministic
+    blocking: true
+    owner: quincy
+    subject_paths:
+      - ${workflowPath}
+    artifact_patterns:
+      - reports/active.one.call.json
+    counterexamples:
+      - missing active call evidence must fail
+    waiver_policy:
+      owner: quincy
+      review_cadence: per-workflow-change
+      requires_expiry: true
+      requires_compensating_control: true
+`,
+    );
+
+    const result = run([
+      "--registry",
+      registryPath,
+      "--active-workflows",
+      manifestPath,
+      "--eval-id",
+      "active-workflows.eval-coverage",
+      "--workflow-id",
+      "active-workflows",
+      "--eval-result-out",
+      evalOutPath,
+    ]);
+
+    assert.equal(result.status, 0, result.stderr);
+    const summary = JSON.parse(result.stdout);
+    assert.equal(summary.active_groups, 1);
+    assert.equal(summary.workflows_scanned, 2);
+    assert.equal(summary.codex_prompt_calls, 1);
+    assert.equal(summary.native_prompt_nodes, 1);
+    const evalResult = JSON.parse(readFileSync(evalOutPath, "utf8"));
+    assert.equal(evalResult.eval_id, "active-workflows.eval-coverage");
+    assert.equal(evalResult.runner_status, "passed");
+  });
+});
+
+test("active workflow coverage fails when native prompts are untracked or child manifest entries are missing", () => {
+  withFixture((root) => {
+    const workflowPath = join(root, "workflows/active.fabro");
+    const childPath = join(root, "workflows/child.fabro");
+    const manifestPath = join(root, "active-workflows.yaml");
+    const registryPath = join(root, "registry.yaml");
+    mkdirSync(dirname(workflowPath), { recursive: true });
+    writeFileSync(
+      workflowPath,
+      `digraph Active {
+  child [type="stack.manager_loop", stack.child_workflow="./child.fabro"]
+  native [prompt="@../../prompts/active.md"]
+}
+`,
+    );
+    writeFileSync(childPath, `digraph Child { start [shape=Mdiamond] }`);
+    writeFileSync(
+      manifestPath,
+      `version: 1
+groups:
+  - id: active
+    owner: quincy
+    outcome_eval_id: active.outcome
+    workflows:
+      - path: ${workflowPath}
+        role: parent
+        workflow_eval_id: active.workflow
+        native_prompt_policy: none
+`,
+    );
+    writeRegistry(registryPath, workflowPath);
+
+    const result = run(["--registry", registryPath, "--active-workflows", manifestPath]);
+    assert.notEqual(result.status, 0);
+    assert.match(result.stderr, /native prompt nodes/);
+    assert.match(result.stderr, /child workflow .* is not declared active/);
+  });
+});
