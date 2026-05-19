@@ -5,6 +5,11 @@ import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import test from "node:test";
+import {
+  analyzeFabroWorkflowText,
+  loadActiveWorkflowManifest,
+  validateActiveWorkflowManifest,
+} from "./active-workflow-lib.mjs";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const VERIFIER_PATH = join(__dirname, "verify-workflow-eval-coverage.mjs");
@@ -283,4 +288,47 @@ test("draft or non-blocking evals do not satisfy workflow coverage", () => {
     assert.match(result.stderr, /not registered with level: call/);
     assert.match(result.stderr, /missing registered stage\/workflow\/product eval/);
   });
+});
+
+test("active workflow manifest validates active groups and workflow paths", () => {
+  withFixture((root) => {
+    const manifestPath = join(root, "active-workflows.yaml");
+    writeFileSync(
+      manifestPath,
+      `version: 1
+groups:
+  - id: fixture
+    owner: quincy
+    outcome_eval_id: fixture.outcome
+    workflows:
+      - path: workflows/fixture/parent.fabro
+        role: parent
+        workflow_eval_id: fixture.parent.workflow
+        native_prompt_policy: tracked_pending
+`,
+    );
+
+    const manifest = loadActiveWorkflowManifest(manifestPath);
+    assert.deepEqual(validateActiveWorkflowManifest(manifest), []);
+    assert.equal(manifest.groups[0].workflows[0].path, "workflows/fixture/parent.fabro");
+  });
+});
+
+test("fabro analyzer finds wrapper calls, native prompts, and manager loop children", () => {
+  const analysis = analyzeFabroWorkflowText(`digraph Fixture {
+  child_stage [
+    type="stack.manager_loop",
+    stack.child_workflow="workflows/fixture/child.fabro"
+  ]
+  wrapper [
+    script="node scripts/iphone-app-factory/run-codex-prompt.mjs --stage intake --eval-id fixture.intake.call"
+  ]
+  native_prompt [prompt="@../../prompts/fixture.md"]
+}`);
+
+  assert.equal(analysis.codex_prompt_invocations.length, 1);
+  assert.equal(analysis.codex_prompt_invocations[0].eval_id, "fixture.intake.call");
+  assert.equal(analysis.codex_prompt_invocations[0].stage, "intake");
+  assert.equal(analysis.native_prompt_nodes.length, 1);
+  assert.equal(analysis.manager_loop_children[0].workflow, "workflows/fixture/child.fabro");
 });
