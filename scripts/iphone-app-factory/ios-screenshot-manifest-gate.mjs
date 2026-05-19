@@ -32,6 +32,10 @@ function booleanArg(name, fallback) {
   return String(argValue(name, String(fallback))).toLowerCase() === "true";
 }
 
+function booleanValue(value) {
+  return String(value ?? "").toLowerCase() === "true";
+}
+
 function numberArg(name, fallback) {
   const raw = argValue(name, String(fallback));
   const value = Number(raw);
@@ -254,10 +258,10 @@ const manifestPath = argValue("--manifest", DEFAULT_MANIFEST);
 const phase = argValue("--phase", "after");
 const requireBeforeAfter = booleanArg("--require-before-after", false);
 const skipFileExistence = booleanArg("--skip-file-existence", false);
-const allowDeferred = booleanArg(
-  "--allow-deferred",
-  process.env.UX_ALLOW_MACOS_DEFERRED || process.env.FEATURE_ALLOW_CI_DEFERRED || "false",
-);
+const cliAllowDeferred = booleanArg("--allow-deferred", false);
+const envAllowDeferred = booleanValue(process.env.UX_ALLOW_MACOS_DEFERRED)
+  || booleanValue(process.env.FEATURE_ALLOW_CI_DEFERRED);
+const allowDeferred = cliAllowDeferred || envAllowDeferred;
 const maxBlankScore = numberArg("--max-blank-score", DEFAULT_MAX_BLANK_SCORE);
 const outPath = argValue("--out", DEFAULT_OUT);
 

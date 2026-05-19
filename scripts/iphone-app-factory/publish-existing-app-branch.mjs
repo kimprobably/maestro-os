@@ -129,9 +129,18 @@ try {
 
     statusBefore = runGit(appDir, ["status", "--porcelain=v1"]);
     if (!statusBefore.trim()) {
-      action = "no_changes";
       commitSha = runGit(appDir, ["rev-parse", "HEAD"]);
       pushedSha = remoteSha(appDir, authArgs, remote, runBranch);
+      if (pushedSha !== commitSha) {
+        runGit(appDir, [...authArgs, "push", remote, `HEAD:refs/heads/${runBranch}`], { timeout: 180000 });
+        pushedSha = remoteSha(appDir, authArgs, remote, runBranch);
+        action = "pushed_existing_head";
+        if (pushedSha !== commitSha) {
+          throw new Error(`pushed branch ${runBranch} does not match local commit`);
+        }
+      } else {
+        action = "no_changes";
+      }
     } else {
       configuredGitIdentity(appDir);
       runGit(appDir, ["add", "-A"]);

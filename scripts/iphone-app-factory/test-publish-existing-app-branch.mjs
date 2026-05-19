@@ -73,17 +73,34 @@ test("publish existing app branch commits nested app changes and pushes run bran
   }
 });
 
-test("publish existing app branch records no-op when nested app has no changes", () => {
+test("publish existing app branch records no-op when nested app has no changes and remote branch is current", () => {
   const { dir, appDir } = setupCheckout();
+  try {
+    const head = sh(appDir, "git", ["rev-parse", "HEAD"]);
+    runScript(dir, ["--app-dir", "apps/waketask-ios", "--run-branch", "main"]);
+
+    const report = JSON.parse(readFileSync(join(dir, ".workflow/iphone-app-ux-studio/publish-existing-app-branch.json"), "utf8"));
+    assert.equal(report.ok, true);
+    assert.equal(report.action, "no_changes");
+    assert.equal(report.commit_sha, head);
+    assert.equal(report.pushed, true);
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
+  }
+});
+
+test("publish existing app branch pushes a clean unpublished HEAD to the run branch", () => {
+  const { dir, remote, appDir } = setupCheckout();
   try {
     const head = sh(appDir, "git", ["rev-parse", "HEAD"]);
     runScript(dir, ["--app-dir", "apps/waketask-ios", "--run-branch", "ux/noop-branch"]);
 
     const report = JSON.parse(readFileSync(join(dir, ".workflow/iphone-app-ux-studio/publish-existing-app-branch.json"), "utf8"));
     assert.equal(report.ok, true);
-    assert.equal(report.action, "no_changes");
+    assert.equal(report.action, "pushed_existing_head");
     assert.equal(report.commit_sha, head);
-    assert.equal(report.pushed, false);
+    assert.equal(report.pushed, true);
+    assert.equal(head, sh(dir, "git", ["--git-dir", remote, "rev-parse", "refs/heads/ux/noop-branch"]));
   } finally {
     rmSync(dir, { recursive: true, force: true });
   }

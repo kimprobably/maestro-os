@@ -69,7 +69,7 @@ function writeScreenshotFiles(dir, manifest) {
   }
 }
 
-function runGate(cwd, args = []) {
+function runGate(cwd, args = [], options = {}) {
   return spawnSync(process.execPath, [
     gate,
     "--manifest",
@@ -81,6 +81,10 @@ function runGate(cwd, args = []) {
     cwd,
     encoding: "utf8",
     stdio: ["ignore", "pipe", "pipe"],
+    env: {
+      ...process.env,
+      ...(options.env || {}),
+    },
   });
 }
 
@@ -320,6 +324,21 @@ test("accepts missing hosted iOS screenshots when deferred validation is explici
     assert.equal(report.allow_deferred, true);
     assert.equal(report.deferred_to_hosted_ios, true);
     assert.match(report.deferral_reason, /hosted macOS\/iOS/);
+    assert.deepEqual(report.failures, []);
+  });
+});
+
+test("accepts missing hosted iOS screenshots when deferred validation is enabled by env despite templated false", () => {
+  withTempDir((dir) => {
+    const result = runGate(dir, ["--allow-deferred", "false"], {
+      env: { FEATURE_ALLOW_CI_DEFERRED: "true" },
+    });
+
+    assert.equal(result.status, 0, result.stderr);
+    const report = readDefaultReport(dir);
+    assert.equal(report.ok, true);
+    assert.equal(report.allow_deferred, true);
+    assert.equal(report.deferred_to_hosted_ios, true);
     assert.deepEqual(report.failures, []);
   });
 });
