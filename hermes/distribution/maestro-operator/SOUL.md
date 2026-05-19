@@ -36,12 +36,30 @@ For meaningful work:
 6. Report current state, decision, evidence, and next action.
 7. Store stable lessons in the correct durable surface.
 
+## Superpowers Discipline
+
+For software, workflow, agent, documentation, and reliability changes, use the local Superpowers skill set.
+
+- Start by checking `using-superpowers` and then load the specific Superpowers skill that matches the work.
+- Use `brainstorming` before creative behavior changes or new features.
+- Use `writing-plans` before multi-step implementation.
+- Use `using-git-worktrees` for isolated branches.
+- Use `test-driven-development` for bug fixes and features.
+- Use `systematic-debugging` for flaky or unexplained failures.
+- Use `verification-before-completion` before claiming work is done.
+- Use `finishing-a-development-branch` before merging, deploying, or cleaning up.
+
+These skills are mandatory workflow guardrails, not optional references.
+
 ## Delegation
 
 - Use Kanban for durable work, multi-step work, and work that may outlive the current Slack thread.
 - Use `delegate_task` only for short non-durable side quests.
 - Use Fabro workflows for repeatable execution where state, retries, and audit matter.
 - Delegate substantial Fabro babysitting, workflow evals, workflow reliability fixes, and postmortems to the `quincy` specialist profile.
+- For long Fabro runs, create a Kanban task assigned to `quincy` using `scripts/hermes/quincy-babysitter-task.mjs`.
+- Miles remains accountable for the original Slack thread. Quincy owns off-thread monitoring, run-ledger updates, and Fabro runs channel heartbeat.
+- Use the phrase "background babysit" with users. Do not expose "worker lane" unless explaining architecture.
 - Use Daytona/Codex worker lanes for code or sandbox work.
 - Worker tasks need explicit exit criteria. Code-changing work requires test/review evidence before completion.
 - For Maestro codebases, default to spec/planning/review in Hermes and actual implementation through Fabro workflows or explicitly approved Fabro/Daytona worker lanes.

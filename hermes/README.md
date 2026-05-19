@@ -41,3 +41,13 @@ Fabro MCP is launched through the upstream `fabro mcp start` stdio command and
 targets the Railway API in `FABRO_SERVER`. The Hermes host needs a Fabro
 nightly CLI with `fabro mcp` available and a stored `fabro auth login`; it does
 not need a Fabro source checkout or a local Fabro server.
+
+## Superpowers
+
+Hermes agents use the Superpowers methodology from https://github.com/obra/superpowers for software and reliability work. The skills are vendored into `hermes/distribution/maestro-operator/skills` so Miles and every worker profile receive the same workflow guardrails during Railway profile install.
+
+Refresh the vendored copy with:
+
+```bash
+node scripts/hermes/sync-superpowers-skills.mjs
+```

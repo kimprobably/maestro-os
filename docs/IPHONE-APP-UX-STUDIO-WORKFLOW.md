@@ -132,6 +132,31 @@ Run `claude mcp add mobbin --transport http https://api.mobbin.com/mcp` and `cod
 Mobbin MCP is configured but not authorized:
 Complete the interactive Mobbin authorization in Claude Code. Non-interactive workflow runs should fail clearly rather than dumping credentials.
 
+Codex auth or MCP OAuth fails in Daytona:
+Refresh local Codex auth on the operator machine with `codex login` and
+`codex login status`, then push Codex's local file-backed auth to the Fabro
+Railway service:
+
+```bash
+node scripts/fabro/refresh-codex-auth-railway.mjs --service fabro-maestro --environment production --redeploy
+```
+
+The helper uses Railway stdin for `CODEX_AUTH_JSON_BASE64` and
+`CODEX_MCP_CREDENTIALS_JSON_BASE64`; do not paste token values into prompts,
+Slack, or logs. Validate before retrying the UX Studio run:
+
+```bash
+node scripts/fabro/railway-preflight.mjs --server https://fabro-maestro-production.up.railway.app/api/v1 --expected-workflow build-iphone-app
+fabro run workflows/fabro/daytona-cli-auth-runtime-smoke.fabro --server https://fabro-maestro-production.up.railway.app/api/v1
+```
+
+If a failed run already exists, inspect it first so the ledger captures status,
+branch, sandbox, failure class, and next action:
+
+```bash
+node scripts/fabro/babysit-run.mjs --run-id <run-id> --server https://fabro-maestro-production.up.railway.app/api/v1 --once
+```
+
 The run appears only on local Fabro:
 Check `FABRO_SERVER`. It must be `https://fabro-maestro-production.up.railway.app/api/v1` for shared runs.
 

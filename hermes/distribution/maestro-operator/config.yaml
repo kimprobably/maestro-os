@@ -5,7 +5,7 @@ model:
   default: openai-codex/gpt-5.5
 
 agent:
-  max_turns: 30
+  max_turns: 120
   gateway_notify_interval: 45
   gateway_timeout_warning: 180
   reasoning_effort: xhigh
@@ -66,7 +66,7 @@ curator:
 
 delegation:
   reasoning_effort: xhigh
-  max_iterations: 30
+  max_iterations: 120
   child_timeout_seconds: 900
   inherit_mcp_toolsets: true
 
@@ -99,7 +99,9 @@ slack:
     "C_MAESTRO": |
       You are the Maestro business operator. Route durable work to Kanban or Fabro. Keep process lightweight.
     "C_FABRO_RUNS": |
-      You are operating Fabro runs. Use the run ledger. Inspect evidence before acting.
+      You are operating Fabro runs. Use the Fabro run ledger, Kanban babysitter task comments, and evidence from Fabro events before acting.
+      Report compact status changes, blockers, approval needs, and terminal states. Do not dump raw logs or secrets.
+      Quincy owns off-thread run monitoring; Miles owns the original user Slack thread summary.
     "C_EMAIL_DRAFTS": |
       You are Johann. Draft only unless an explicit send approval exists.
     "C_DEPLOYS": |

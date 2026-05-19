@@ -219,6 +219,9 @@ test("Slack patch resolves user_name before the operator-ledger mirror", () => {
     const patched = readFileSync(slackPath, "utf8");
     assert.match(patched, /Maestro patch v4: safe Slack ledger mirror/);
     assert.match(patched, /Maestro patch v3: bounded Slack thread context/);
+    assert.match(patched, /github_pat_/);
+    assert.match(patched, /sk-proj-/);
+    assert.match(patched, /refresh\|access\|id\|auth/);
     assertSafeLedgerPlacement(patched);
 
     runPatch(dir);
@@ -265,14 +268,16 @@ test("Slack patch installs missed mention recovery sweeper", () => {
   });
 });
 
-test("Slack patch posts a visible ack independently of agent processing", () => {
+test("Slack patch adds an immediate emoji ack independently of agent processing", () => {
   withTempPythonPackage(({ dir, slackPath }) => {
     runPatch(dir);
     compile(slackPath);
 
     const patched = readFileSync(slackPath, "utf8");
-    assert.match(patched, /async def _maestro_post_visible_ack/);
-    assert.match(patched, /await self\._maestro_post_visible_ack/);
+    assert.match(patched, /async def _maestro_add_ingress_reaction/);
+    assert.match(patched, /await self\._maestro_add_ingress_reaction/);
+    assert.doesNotMatch(patched, /Got it - working on this/);
+    assert.doesNotMatch(patched, /_maestro_post_visible_ack/);
 
     runPythonInline(
       `
@@ -280,32 +285,111 @@ import asyncio
 from types import SimpleNamespace
 from gateway.platforms.slack import SlackGateway
 
-class Client:
-    def __init__(self):
-        self.posts = []
-    async def chat_postMessage(self, **kwargs):
-        self.posts.append(kwargs)
-        return {"ts": "177.ack"}
-
 async def main():
     gateway = SlackGateway()
     gateway.config = SimpleNamespace(extra={})
-    client = Client()
-    gateway._get_client = lambda channel_id: client
-    ok = await gateway._maestro_post_visible_ack(
+    reactions = []
+    async def add_reaction(channel_id, ts, emoji):
+        reactions.append((channel_id, ts, emoji))
+        return True
+    gateway._add_reaction = add_reaction
+
+    ok = await gateway._maestro_add_ingress_reaction(
         "C123456789",
         "1779130250.583759",
         "1779130250.583759",
     )
     assert ok is True
-    assert client.posts == [{
-        "channel": "C123456789",
-        "text": "Got it - working on this.",
-        "thread_ts": "1779130250.583759",
-    }]
-    assert "177.ack" in gateway._bot_message_ts
+    assert reactions == [("C123456789", "1779130250.583759", "eyes")]
+    assert gateway._maestro_thread_roots_by_channel == {
+        "C123456789": ["1779130250.583759"]
+    }
 
 asyncio.run(main())
+`,
+      { PYTHONPATH: dir },
+    );
+  });
+});
+
+test("Slack patch reacts to every routed Slack message, not only fresh mentions", () => {
+  withTempPythonPackage(({ dir, slackPath }) => {
+    runPatch(dir);
+    compile(slackPath);
+
+    runPythonInline(
+      `
+import asyncio
+import os
+from types import SimpleNamespace
+from gateway.platforms.slack import SlackGateway
+
+os.environ["SLACK_REACTIONS"] = "true"
+gateway = SlackGateway()
+gateway.config = SimpleNamespace(extra={})
+gateway._bot_user_id = "U_BOT"
+reactions = []
+
+async def add_reaction(channel, ts, emoji):
+    reactions.append((channel, ts, emoji))
+    return True
+
+gateway._add_reaction = add_reaction
+
+asyncio.run(gateway._handle_slack_message({
+    "channel": "C123456789",
+    "ts": "1779130300.111111",
+    "thread_ts": "1779130250.583759",
+    "user": "UTIM",
+    "text": "follow up without a direct mention",
+}))
+
+assert reactions == [("C123456789", "1779130300.111111", "eyes")]
+`,
+      { PYTHONPATH: dir },
+    );
+  });
+});
+
+test("Slack mention sweep seeds thread roots from the operator ledger", () => {
+  withTempPythonPackage(({ dir, slackPath }) => {
+    writeFileSync(
+      join(dir, "hermes_constants.py"),
+      [
+        "from pathlib import Path",
+        "import os",
+        "def get_hermes_home():",
+        "    return Path(os.environ['HERMES_HOME'])",
+        "",
+      ].join("\n"),
+    );
+    runPatch(dir);
+    compile(slackPath);
+
+    runPythonInline(
+      `
+import os
+import sqlite3
+import tempfile
+from pathlib import Path
+from gateway.platforms.slack import SlackGateway
+
+home = Path(tempfile.mkdtemp())
+os.environ["HERMES_HOME"] = str(home)
+state = home / "profiles" / "maestro-operator" / "state"
+state.mkdir(parents=True)
+db = sqlite3.connect(state / "operator-ledger.sqlite")
+db.execute("CREATE TABLE ledger_subjects (id INTEGER PRIMARY KEY, subject_type TEXT, subject_key TEXT, updated_at TEXT)")
+db.execute(
+    "INSERT INTO ledger_subjects (subject_type, subject_key, updated_at) VALUES (?, ?, ?)",
+    ("slack_thread", "C123456789:1779130250.583759", "2026-05-19T00:00:00Z"),
+)
+db.commit()
+db.close()
+
+gateway = SlackGateway()
+roots = gateway._maestro_mention_sweep_thread_roots("C123456789")
+assert "1779130250.583759" in roots
 `,
       { PYTHONPATH: dir },
     );

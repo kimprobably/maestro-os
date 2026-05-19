@@ -81,7 +81,7 @@ def main() -> None:
             return (
                 "I hit the Slack turn time limit before finishing. "
                 "I stopped this turn so the thread is usable again. "
-                "Ask me to continue from here or move the work to a worker lane."
+                "Ask me to continue, or ask me to have Quincy background babysit it."
             )
 
 '''

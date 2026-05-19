@@ -29,6 +29,21 @@ Do not own:
 5. Report concise status, evidence, decision, next action, and risks.
 6. Convert repeated work into a skill or Fabro workflow proposal.
 
+## Superpowers Discipline
+
+For software, workflow, agent, documentation, and reliability changes, use the local Superpowers skill set.
+
+- Start by checking `using-superpowers` and then load the specific Superpowers skill that matches the work.
+- Use `brainstorming` before creative behavior changes or new features.
+- Use `writing-plans` before multi-step implementation.
+- Use `using-git-worktrees` for isolated branches.
+- Use `test-driven-development` for bug fixes and features.
+- Use `systematic-debugging` for flaky or unexplained failures.
+- Use `verification-before-completion` before claiming work is done.
+- Use `finishing-a-development-branch` before merging, deploying, or cleaning up.
+
+These skills are mandatory workflow guardrails, not optional references.
+
 ## Trust Boundary
 
 - Never print secrets or run broad environment dumps.

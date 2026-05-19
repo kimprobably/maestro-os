@@ -38,6 +38,40 @@ fabro mcp config --server "$FABRO_SERVER"
 codex mcp get fabro
 ```
 
+## Refreshing Codex Auth For Fabro Workers
+
+Fabro workers restore Codex CLI auth from `CODEX_AUTH_JSON_BASE64` and Codex
+MCP file credentials from `CODEX_MCP_CREDENTIALS_JSON_BASE64`. If Codex exits
+with refresh-token or websocket 401 errors, refresh local Codex auth and push the
+local Codex files through Railway stdin:
+
+```bash
+codex login
+codex login status
+node scripts/fabro/refresh-codex-auth-railway.mjs --service fabro-maestro --environment production --redeploy
+```
+
+Use the actual Fabro Railway service name from the Railway UI or local Railway
+link. The helper reads `$CODEX_HOME/auth.json` and, when present,
+`$CODEX_HOME/.credentials.json`, validates JSON, base64-encodes the file
+contents, and sends values with `railway variable set <KEY> --stdin`. Its output
+lists only variable names, source paths, and encoded lengths; it must not print
+token values.
+
+Validate the runtime before retrying failed production work:
+
+```bash
+node scripts/fabro/railway-preflight.mjs --server https://fabro-maestro-production.up.railway.app/api/v1 --expected-workflow build-iphone-app
+fabro run workflows/fabro/daytona-cli-auth-runtime-smoke.fabro --server https://fabro-maestro-production.up.railway.app/api/v1
+```
+
+Before retrying or forking a failed run, preserve the current state in the run
+ledger:
+
+```bash
+node scripts/fabro/babysit-run.mjs --run-id <run-id> --server https://fabro-maestro-production.up.railway.app/api/v1 --once
+```
+
 After launching a long run, attach the durable babysitter loop:
 
 ```bash
