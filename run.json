@@ -3707,7 +3707,7 @@
     "kind": "running"
   },
   "status_updated_at": "2026-05-19T06:20:12.567799331Z",
-  "last_event_at": "2026-05-19T06:21:47.145366170Z",
+  "last_event_at": "2026-05-19T06:22:01.314956986Z",
   "pending_control": null,
   "checkpoints": [
     {
@@ -4309,9 +4309,9 @@
       }
     },
     {
-      "seq": 0,
+      "seq": 123,
       "checkpoint": {
-        "timestamp": "2026-05-19T06:21:47.360953868Z",
+        "timestamp": "2026-05-19T06:21:51.753952757Z",
         "current_node": "research_synthesis",
         "completed_nodes": [
           "start",
@@ -4328,19 +4328,185 @@
           "app_store_research": 2
         },
         "context_values": {
+          "command.output": "blob://sha256/c241331f242bbcd62f4480eb0716fc0091b7dfe63d70e19ef169e28103e010da",
+          "internal.retry_count.bootstrap": 0,
+          "internal.retry_count.prompt_quality_gate": 0,
+          "outcome": "failed",
+          "thread.start.current_node": "run_input_gate",
+          "graph.outputs": "research_pack,spec,architecture,swift_app,ios_quality_report,appium_report,release_handoff",
+          "internal.retry_count.research_join": 0,
+          "internal.retry_count.start": 0,
+          "internal.retry_count.app_store_research": 2,
+          "failure_signature": "research_synthesis|deterministic|failed to resolve cli credential",
+          "failure_class": "deterministic",
+          "thread.app_store_research.current_node": "research_join",
+          "internal.fidelity": "compact",
+          "internal.thread_id": "research",
+          "parallel.results": [
+            {
+              "id": "",
+              "status": "failed"
+            },
+            {
+              "id": "",
+              "status": "failed"
+            },
+            {
+              "id": "",
+              "status": "failed"
+            },
+            {
+              "id": "",
+              "status": "failed"
+            }
+          ],
+          "thread.research.current_node": "research_synthesis",
+          "graph.model_stylesheet": "\n            *                  { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: low; }\n            .research          { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            .design            { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            .spec              { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            .architecture      { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            .coding            { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            .review            { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            .verify            { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: medium; }\n            .security          { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            .simplify          { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            .macos             { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            #spec_codex        { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            #spec_claude       { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            #spec_kimi         { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            #spec_deepseek     { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            #arch_codex        { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            #arch_claude       { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n        ",
+          "internal.retry_count.research_synthesis": 2,
+          "graph.fallback_retry_target": "architecture_consensus",
+          "internal.retry_count.research_fanout": 0,
+          "graph.secret_policy": "never print environment variables or credential values; credential checks must be presence-only true/false checks; do not run environment dump commands.",
+          "parallel.branch_count": 4,
+          "graph.inputs": "app_type,target_audience,app_name,bundle_id,app_dir,spec_kitty_feature,boilerplate_repo,max_competitors,use_mobbin,ios_validation_mode,allow_macos_deferred",
+          "thread.bootstrap.current_node": "prompt_quality_gate",
+          "graph.retry_target": "spec_consensus",
+          "internal.retry_count.run_input_gate": 0,
+          "thread.prompt_quality_gate.current_node": "research_fanout",
+          "graph.rankdir": "LR",
+          "current_node": "research_synthesis",
+          "graph.persona": "iphone-app-factory",
+          "graph.default_max_retries": "2",
+          "internal.run_id": "01KRZE8H8QYQ8WDDSG0TNW84S9",
+          "internal.work_dir": "/home/daytona/workspace/maestro-os",
+          "thread.run_input_gate.current_node": "bootstrap",
+          "graph.goal": "Build Joni Capture, a phone-first iPhone app for capturing rambled LinkedIn ideas, handing them to Joni for draft preparation, monitoring Joni activity and analytics, and supporting an AI content interviewer mode.",
+          "internal.node_visit_count": 1
+        },
+        "node_outcomes": {
+          "start": {
+            "status": "succeeded",
+            "usage": null
+          },
+          "bootstrap": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/0a1f191165f396cf4a20c1b485fd6c0bb1fb8ce144fe05e56e3f96fd656302c8"
+            },
+            "notes": "Script completed: node scripts/iphone-app-factory/bootstrap.mjs --app-dir 'apps/joni-capture-iphone' --app-name 'Joni Capture' --bundle-id 'com.maestro.jonicapture' --boilerplate-repo 'SwiftAIBoilerplatePro/SwiftAIBoilerplatePro-Distribution'",
+            "usage": null
+          },
+          "research_fanout": {
+            "status": "partially_succeeded",
+            "notes": "Parallel node dispatched 4 branches (0 succeeded, 4 failed)",
+            "usage": null
+          },
+          "app_store_research": {
+            "status": "failed",
+            "failure": {
+              "message": "Failed to resolve CLI credential",
+              "causes": [
+                "openai is not configured"
+              ],
+              "category": "deterministic"
+            },
+            "usage": null
+          },
+          "prompt_quality_gate": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/c241331f242bbcd62f4480eb0716fc0091b7dfe63d70e19ef169e28103e010da"
+            },
+            "notes": "Script completed: node scripts/iphone-app-factory/promptfoo-prompt-quality.mjs --config evals/iphone-app-factory/prompt-quality.yaml --registry evals/iphone-app-factory/prompt-registry.json --out .workflow/iphone-app-factory/evals/prompt-quality.json --allow-fallback true --accepted-risk-promptfoo-failure false",
+            "usage": null
+          },
+          "research_join": {
+            "status": "failed",
+            "failure": {
+              "message": "all candidates failed",
+              "category": "deterministic"
+            },
+            "usage": null
+          },
+          "research_synthesis": {
+            "status": "failed",
+            "failure": {
+              "message": "Failed to resolve CLI credential",
+              "causes": [
+                "openai is not configured"
+              ],
+              "category": "deterministic"
+            },
+            "usage": null
+          },
+          "run_input_gate": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/4b9612434adb2d34c5ce252355a5dd3a63d86799a618c61d5ecc1c081962e95a"
+            },
+            "notes": "Script completed: node scripts/iphone-app-factory/run-input-gate.mjs --app-type 'iPhone productivity and creator-operator tool. Read docs/superpowers/specs/2026-05-19-joni-capture-iphone-design.md and contexts/iphone-app-factory/joni-capture/feature-context.md. Build a lock-screen/action-button voice capture app for Joni, the LinkedIn agent. It must capture rambled post ideas, transcribe or queue them, submit through a configurable Joni ingestion client, classify post type, prepare evaluated LinkedIn drafts in Tim voice, show Joni activity and analytics, and include interviewer mode for structured notes. No LinkedIn publishing or mutation.' --target-audience 'Tim Keen and operator-founders who capture ideas on the move and want a private agent-assisted LinkedIn drafting workflow with visible status, draft review, and analytics.' --app-name 'Joni Capture' --bundle-id 'com.maestro.jonicapture' --app-dir 'apps/joni-capture-iphone' --spec-kitty-feature 'joni-capture-iphone-app' --ios-validation-mode 'github' --allow-macos-deferred 'false'",
+            "usage": null
+          }
+        },
+        "next_node_id": "research_fanout",
+        "git_commit_sha": "b8ac53a1606404ca5e2120aba501924a80d815ca",
+        "loop_failure_signatures": {
+          "app_store_research|deterministic|failed to resolve cli credential": 1,
+          "research_join|deterministic|all candidates failed": 1,
+          "research_synthesis|deterministic|failed to resolve cli credential": 1
+        },
+        "node_visits": {
+          "research_synthesis": 1,
+          "bootstrap": 1,
+          "prompt_quality_gate": 1,
+          "research_join": 1,
+          "run_input_gate": 1,
+          "app_store_research": 1,
+          "start": 1,
+          "research_fanout": 1
+        }
+      },
+      "diff": {
+        "summary": {
+          "files_changed": 4900,
+          "additions": 347769,
+          "deletions": 0
+        }
+      }
+    },
+    {
+      "seq": 0,
+      "checkpoint": {
+        "timestamp": "2026-05-19T06:22:01.529627643Z",
+        "current_node": "research_fanout",
+        "completed_nodes": [
+          "start",
+          "run_input_gate",
+          "bootstrap",
+          "prompt_quality_gate",
+          "research_fanout",
+          "app_store_research",
+          "research_join",
+          "research_synthesis",
+          "research_fanout"
+        ],
+        "node_retries": {
+          "research_synthesis": 2,
+          "app_store_research": 2
+        },
+        "context_values": {
           "internal.retry_count.bootstrap": 0,
           "graph.goal": "Build Joni Capture, a phone-first iPhone app for capturing rambled LinkedIn ideas, handing them to Joni for draft preparation, monitoring Joni activity and analytics, and supporting an AI content interviewer mode.",
           "graph.rankdir": "LR",
           "thread.bootstrap.current_node": "prompt_quality_gate",
-          "outcome": "failed",
-          "current_node": "research_synthesis",
+          "outcome": "partially_succeeded",
+          "current_node": "research_fanout",
           "graph.secret_policy": "never print environment variables or credential values; credential checks must be presence-only true/false checks; do not run environment dump commands.",
           "internal.retry_count.app_store_research": 2,
           "graph.default_max_retries": "2",
-          "failure_signature": "research_synthesis|deterministic|failed to resolve cli credential",
+          "failure_signature": "",
           "thread.prompt_quality_gate.current_node": "research_fanout",
           "graph.model_stylesheet": "\n            *                  { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: low; }\n            .research          { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            .design            { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            .spec              { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            .architecture      { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            .coding            { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            .review            { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            .verify            { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: medium; }\n            .security          { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            .simplify          { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            .macos             { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            #spec_codex        { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            #spec_claude       { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            #spec_kimi         { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            #spec_deepseek     { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            #arch_codex        { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            #arch_claude       { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n        ",
-          "failure_class": "deterministic",
+          "failure_class": "",
           "internal.retry_count.prompt_quality_gate": 0,
           "internal.retry_count.research_fanout": 0,
           "internal.retry_count.start": 0,
@@ -4352,10 +4518,11 @@
           "internal.fidelity": "compact",
           "graph.retry_target": "spec_consensus",
           "thread.run_input_gate.current_node": "bootstrap",
+          "thread.research_synthesis.current_node": "research_fanout",
           "thread.app_store_research.current_node": "research_join",
           "graph.outputs": "research_pack,spec,architecture,swift_app,ios_quality_report,appium_report,release_handoff",
-          "internal.thread_id": "research",
-          "internal.node_visit_count": 1,
+          "internal.thread_id": "research_synthesis",
+          "internal.node_visit_count": 2,
           "thread.start.current_node": "run_input_gate",
           "command.output": "blob://sha256/c241331f242bbcd62f4480eb0716fc0091b7dfe63d70e19ef169e28103e010da",
           "graph.persona": "iphone-app-factory",
@@ -4447,10 +4614,10 @@
             "usage": null
           }
         },
-        "next_node_id": "research_fanout",
+        "next_node_id": "app_store_research",
         "node_visits": {
           "app_store_research": 1,
-          "research_fanout": 1,
+          "research_fanout": 2,
           "run_input_gate": 1,
           "bootstrap": 1,
           "research_synthesis": 1,
@@ -4545,7 +4712,12 @@
       "first_event_seq": 106,
       "prompt": null,
       "response": null,
-      "completion": null,
+      "completion": {
+        "outcome": "failed",
+        "notes": null,
+        "failure_reason": "Failed to resolve CLI credential",
+        "timestamp": "2026-05-19T06:21:47.359751910Z"
+      },
       "provider_used": {
         "mode": "cli",
         "provider": "openai",
@@ -4559,6 +4731,7 @@
       "output": null,
       "started_at": "2026-05-19T06:21:46.462348010Z",
       "handler": "agent",
+      "duration_ms": 13379,
       "usage": {
         "input_tokens": 0,
         "output_tokens": 0,
@@ -4567,7 +4740,7 @@
         "cache_read_tokens": 0,
         "cache_write_tokens": 0
       },
-      "state": "running"
+      "state": "failed"
     },
     "run_input_gate@1": {
       "first_event_seq": 19,
@@ -4782,6 +4955,51 @@
         "cache_write_tokens": 0
       },
       "state": "failed"
+    },
+    "research_fanout@2": {
+      "first_event_seq": 126,
+      "prompt": null,
+      "response": null,
+      "completion": null,
+      "provider_used": {
+        "mode": "cli",
+        "provider": "openai",
+        "model": "gpt-5.3-codex",
+        "command": "cat /tmp/fabro_cli_4d4c9fee-8fba-49c9-9957-b23991b885ad_prompt.txt | codex exec --json --full-auto -m gpt-5.3-codex"
+      },
+      "diff": null,
+      "script_invocation": null,
+      "script_timing": null,
+      "parallel_results": [
+        {
+          "id": "",
+          "status": "failed"
+        },
+        {
+          "id": "",
+          "status": "failed"
+        },
+        {
+          "id": "",
+          "status": "failed"
+        },
+        {
+          "id": "",
+          "status": "failed"
+        }
+      ],
+      "output": null,
+      "started_at": "2026-05-19T06:21:51.756861441Z",
+      "handler": "parallel",
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "total_tokens": 0,
+        "reasoning_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "state": "running"
     }
   }
 }
