@@ -9,6 +9,7 @@ import {
   buildFactoryDashboard,
   defaultRunLedgerSources,
   discoverReportArtifacts,
+  displayLocalPath,
   parseJsonlEvents,
   readJsonlEvents,
   readRunLedgerSource,
@@ -294,7 +295,8 @@ test("renderer auto-discovers default Hermes JSONL run ledger", () => {
     assert.equal(health.production.runs.total, 1);
     assert.equal(health.production.runs.completed, 1);
     assert.equal(health.production.runs.source_connected, true);
-    assert.equal(health.sources.run_ledger, ledgerPath);
+    assert.equal(health.sources.run_ledger, "$HERMES_HOME/profiles/maestro-operator/state/fabro-run-ledger.jsonl");
+    assert.doesNotMatch(readFileSync(jsonOut, "utf8"), new RegExp(ledgerPath.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")));
     assert.ok(!health.attention_items.some((item) => item.title === "Run ledger not connected"));
   } finally {
     rmSync(root, { recursive: true, force: true });
@@ -308,6 +310,22 @@ test("default run ledger sources include profile and legacy Hermes paths", () =>
     "/tmp/hermes/state/fabro-run-ledger.jsonl",
     "/tmp/hermes/state/fabro-run-ledger.sqlite",
   ]);
+});
+
+test("local paths render with stable environment placeholders", () => {
+  assert.equal(
+    displayLocalPath("/tmp/hermes/profiles/maestro-operator/state/fabro-run-ledger.jsonl", {
+      hermesHome: "/tmp/hermes",
+      home: "/Users/someone",
+    }),
+    "$HERMES_HOME/profiles/maestro-operator/state/fabro-run-ledger.jsonl",
+  );
+  assert.equal(
+    displayLocalPath("/Users/someone/.hermes/profiles/maestro-operator/state/fabro-run-ledger.jsonl", {
+      home: "/Users/someone",
+    }),
+    "$HOME/.hermes/profiles/maestro-operator/state/fabro-run-ledger.jsonl",
+  );
 });
 
 test("sqlite run ledger reader maps current run rows", (t) => {
@@ -435,6 +453,48 @@ test("factory dashboard flags unknown run status and sanitizes malformed workflo
   const markdown = renderFactoryDashboard(dashboard);
   assert.match(markdown, /run-unknown: unknown/);
   assert.doesNotMatch(markdown, /\[object Object\]/);
+});
+
+test("factory dashboard treats eval index issues as gate attention", () => {
+  const dashboard = buildFactoryDashboard({
+    now: "2026-05-18T13:00:00.000Z",
+    evalIndex: {
+      created_at: "2026-05-18T12:00:00.000Z",
+      summary: {
+        total_registered: 1,
+        blocking_registered: 1,
+        present_results: 1,
+        passed: 1,
+        failed: 0,
+        fallback_only: 0,
+        waived: 0,
+        missing_blocking: 0,
+      },
+      evals: [
+        {
+          id: "sample.present",
+          blocking: true,
+          status: "passed",
+          result: { gate_status: "passed", passed: true },
+        },
+      ],
+      missing: [],
+      issues: [{ type: "result_registry_mismatch", message: "artifact mismatch" }],
+    },
+    artifacts: [artifact("reports/evals/run-1/sample.present.json")],
+    ledgerEvents: [
+      {
+        run_id: "run-complete",
+        current_status: "completed",
+        recorded_at: "2026-05-18T12:20:00.000Z",
+      },
+    ],
+    sources: { run_ledger: "ledger.jsonl" },
+  });
+
+  assert.equal(dashboard.status, "attention_required");
+  assert.ok(dashboard.attention_items.some((item) => item.title.includes("Eval index issues")));
+  assert.match(renderFactoryDashboard(dashboard), /\| Eval gate \| attention \| 1 eval index issues must be resolved before trusting the rollup\. \|/);
 });
 
 test("report discovery categorizes generated artifacts and excludes dashboard self-output", () => {

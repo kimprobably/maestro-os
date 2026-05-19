@@ -587,6 +587,10 @@ if [ -f /app/hermes/deploy/railway-gateway/patch-hermes-auxiliary-budgets.py ]; 
   /usr/local/lib/hermes-agent/venv/bin/python3 /app/hermes/deploy/railway-gateway/patch-hermes-auxiliary-budgets.py
 fi
 
+if [ -f /app/hermes/deploy/railway-gateway/patch-hermes-base-reliability.py ]; then
+  /usr/local/lib/hermes-agent/venv/bin/python3 /app/hermes/deploy/railway-gateway/patch-hermes-base-reliability.py
+fi
+
 if [ -f /app/hermes/deploy/railway-gateway/patch-hermes-learning.py ]; then
   /usr/local/lib/hermes-agent/venv/bin/python3 /app/hermes/deploy/railway-gateway/patch-hermes-learning.py
 fi

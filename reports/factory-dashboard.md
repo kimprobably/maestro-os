@@ -1,6 +1,6 @@
 # Factory Dashboard
 
-Generated: 2026-05-19T01:54:27.731Z
+Generated: 2026-05-19T05:07:38.518Z
 Overall: **ATTENTION REQUIRED**
 
 ## Owner Rollup
@@ -61,7 +61,7 @@ Factory needs owner attention.
 | Waived | 0 |
 | Missing Blocking | 7 |
 
-Eval index generated: 2026-05-19T01:54:27.137Z
+Eval index generated: 2026-05-19T05:04:22.962Z
 
 ## Pay Attention
 
@@ -75,11 +75,11 @@ Eval index generated: 2026-05-19T01:54:27.137Z
 - reports/eval-dashboard.md (eval, 691 bytes)
 - reports/eval-index.json (eval, 3685 bytes)
 - reports/evals/factory-health/workflow-builder.eval-coverage.json (eval, 1113 bytes)
-- reports/consumer-radar/reviews/qwen-feedback.json (review, 4209 bytes)
-- reports/consumer-radar/reviews/kimi-feedback.json (review, 2910 bytes)
 - reports/consumer-radar/reviews/deepseek-feedback.json (review, 3421 bytes)
-- reports/consumer-radar/review-consensus.json (review, 520 bytes)
+- reports/consumer-radar/reviews/kimi-feedback.json (review, 2910 bytes)
+- reports/consumer-radar/reviews/qwen-feedback.json (review, 4209 bytes)
 - reports/consumer-radar/quality/qlty-report.json (quality, 1150 bytes)
+- reports/consumer-radar/review-consensus.json (review, 520 bytes)
 
 ## Recent Fabro Runs
 
@@ -91,4 +91,4 @@ Eval index generated: 2026-05-19T01:54:27.137Z
 | --- | --- |
 | Eval Index | reports/eval-index.json |
 | Reports Root | reports |
-| Run Ledger | /Users/timlife/.hermes/profiles/maestro-operator/state/fabro-run-ledger.jsonl |
+| Run Ledger | $HOME/.hermes/profiles/maestro-operator/state/fabro-run-ledger.jsonl |
