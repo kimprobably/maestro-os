@@ -1,0 +1,825 @@
+{
+  "title": "Implement WakeTask's Object Proof mission pack as three staged feature slices with evals, learnin...",
+  "spec": {
+    "run_id": "01KRZB714REKRRQFNTEAVCCV9K",
+    "settings": {
+      "project": {
+        "name": "maestro-os",
+        "description": null,
+        "metadata": {}
+      },
+      "workflow": {
+        "name": null,
+        "description": null,
+        "graph": "workflow.fabro",
+        "metadata": {}
+      },
+      "run": {
+        "goal": {
+          "type": "inline",
+          "value": "Implement WakeTask's Object Proof mission pack as three staged feature slices with evals, learnings, and final postmortem"
+        },
+        "working_dir": null,
+        "metadata": {
+          "topic": "task-alarm-object-proof",
+          "app": "waketask",
+          "control_plane": "railway",
+          "factory": "iphone-app-object-proof-program"
+        },
+        "inputs": {
+          "ios_validation_mode": "github",
+          "run_branch": "feature/waketask-object-proof-program-20260519",
+          "base_branch": "feature/waketask-mission-engine-20260517",
+          "repo_url": "https://github.com/kimprobably/waketask-ios.git",
+          "use_mobbin_mcp": "true",
+          "app_dir": "apps/waketask-ios",
+          "target_audience": "Heavy sleepers and consumer iPhone users who need forced engagement to wake up reliably",
+          "app_name": "WakeTask",
+          "fabro_server": "https://fabro-maestro-production.up.railway.app/api/v1",
+          "app_domain": "task_alarm",
+          "context_paths": "contexts/iphone-app-factory/waketask,contexts/iphone-app-factory/waketask/screenshots",
+          "bundle_id": "com.keen.waketask",
+          "allow_macos_deferred": "false",
+          "feature_goal": "Add barcode/QR, preset local Vision object-photo, and same-object reference-photo missions that are easy to configure, funny to demonstrate, and impossible to dismiss until proof succeeds."
+        },
+        "model": {
+          "provider": "openrouter",
+          "name": "anthropic/claude-haiku-4-5",
+          "fallbacks": [],
+          "controls": {
+            "reasoning_effort": null,
+            "speed": null
+          }
+        },
+        "git": {
+          "author": null
+        },
+        "prepare": {
+          "commands": [],
+          "timeout_ms": 300000
+        },
+        "execution": {
+          "mode": "normal",
+          "approval": "prompt"
+        },
+        "checkpoint": {
+          "exclude_globs": []
+        },
+        "clone": {
+          "enabled": true
+        },
+        "run_branch": {
+          "enabled": true,
+          "push": true
+        },
+        "meta_branch": {
+          "enabled": true,
+          "push": true
+        },
+        "sandbox": {
+          "provider": "daytona",
+          "preserve": false,
+          "stop_on_terminal": true,
+          "devcontainer": false,
+          "env": {
+            "UX_IOS_VALIDATION_MODE": "github",
+            "CLAUDE_CODE_CREDENTIALS_JSON_BASE64": "{{ env.CLAUDE_CODE_CREDENTIALS_JSON_BASE64 }}",
+            "OBJECT_PROOF_ROOT": ".workflow/object-proof-program",
+            "UX_ALLOW_MACOS_DEFERRED": "false",
+            "LINEAR_API_KEY": "{{ env.LINEAR_API_KEY }}",
+            "OPENAI_API_KEY": "{{ env.OPENAI_API_KEY }}",
+            "OPENROUTER_API_KEY": "{{ env.OPENROUTER_API_KEY }}",
+            "LINEAR_API_URL": "{{ env.LINEAR_API_URL }}",
+            "FABRO_SERVER": "https://fabro-maestro-production.up.railway.app/api/v1",
+            "APIFY_APPSTORE_ACTOR": "crawlerbros/appstore-scraper",
+            "CLAUDE_CODE_OAUTH_TOKEN": "{{ env.CLAUDE_CODE_OAUTH_TOKEN }}",
+            "FABRO_DEV_TOKEN": "{{ env.FABRO_DEV_TOKEN }}",
+            "PROMPTFOO_DISABLE_TELEMETRY": "1",
+            "DAYTONA_API_URL": "{{ env.DAYTONA_API_URL }}",
+            "FABRO_SLACK_CHANNEL_ID": "{{ env.FABRO_SLACK_CHANNEL_ID }}",
+            "FEATURE_ALLOW_CI_DEFERRED": "false",
+            "APIFY_TOKEN": "{{ env.APIFY_TOKEN }}",
+            "FEATURE_CONTEXT_PATHS": "contexts/iphone-app-factory/waketask,contexts/iphone-app-factory/waketask/screenshots",
+            "CODEX_MCP_CREDENTIALS_JSON_BASE64": "{{ env.CODEX_MCP_CREDENTIALS_JSON_BASE64 }}",
+            "APP_DIR": "apps/waketask-ios",
+            "UX_BASE_BRANCH": "feature/waketask-mission-engine-20260517",
+            "DAYTONA_API_KEY": "{{ env.DAYTONA_API_KEY }}",
+            "UX_USE_MOBBIN_MCP": "true",
+            "GH_TOKEN": "{{ env.GH_TOKEN }}",
+            "UX_REPO_URL": "https://github.com/kimprobably/waketask-ios.git",
+            "OBJECT_PROOF_CONTEXT_PATHS": "contexts/iphone-app-factory/waketask,contexts/iphone-app-factory/waketask/screenshots",
+            "FEATURE_REQUIRED_CAPABILITIES": "barcode_target_registration,barcode_scan_camera_flow,barcode_dismiss_blocking,barcode_eval_coverage,preset_object_picker,local_vision_classification,photo_dismiss_blocking,vision_eval_coverage,reference_object_registration,same_object_matching,reference_privacy_storage,same_object_eval_coverage",
+            "FABRO_SLACK_BOT_TOKEN": "{{ env.FABRO_SLACK_BOT_TOKEN }}",
+            "CODEX_AUTH_JSON_BASE64": "{{ env.CODEX_AUTH_JSON_BASE64 }}",
+            "FEATURE_WORKFLOW_ROOT": ".workflow/object-proof-program",
+            "APIFY_INSTAGRAM_ACTOR": "apify/instagram-scraper",
+            "APIFY_TIKTOK_ACTOR": "clockworks/tiktok-scraper",
+            "UX_RUN_BRANCH": "feature/waketask-object-proof-program-20260519",
+            "UX_RUN_ID": "object-proof-program-20260519",
+            "UX_APP_DIR": "apps/waketask-ios",
+            "GITHUB_TOKEN": "{{ env.GITHUB_TOKEN }}"
+          },
+          "docker": {
+            "image": "buildpack-deps:noble",
+            "network_mode": null,
+            "memory_limit": 4000000000,
+            "cpu_quota": 200000,
+            "env_vars": {}
+          },
+          "daytona": {
+            "auto_stop_interval": 30,
+            "labels": {
+              "project": "maestro-os",
+              "purpose": "code-factory"
+            },
+            "volumes": [],
+            "snapshot": {
+              "name": "maestro-code-factory-v8",
+              "cpu": 2,
+              "memory_gb": 4,
+              "disk_gb": 10,
+              "dockerfile": {
+                "type": "inline",
+                "value": "FROM ubuntu:24.04\n\nENV DEBIAN_FRONTEND=noninteractive\nENV BUN_INSTALL=/root/.bun\nENV PATH=\"/root/.fabro/bin:/root/.bun/bin:/root/.local/bin:/root/.qlty/bin:${PATH}\"\nWORKDIR /home/daytona\n\nRUN apt-get update && apt-get install -y --no-install-recommends bash ca-certificates curl gh git jq openssh-client python3 python3-pip pipx ripgrep shellcheck sqlite3 unzip xz-utils && rm -rf /var/lib/apt/lists/*\n\nRUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash - && apt-get update && apt-get install -y --no-install-recommends nodejs && npm install -g @anthropic-ai/claude-code@2.1.141 @openai/codex promptfoo && npm cache clean --force && rm -rf /var/lib/apt/lists/*\n\nRUN curl -fsSL https://bun.sh/install | bash -s \"bun-v1.2.22\" && ln -sf /root/.bun/bin/bun /usr/local/bin/bun\n\nRUN pipx install spec-kitty-cli==3.1.8 && curl -fsSL https://qlty.sh | sh && ln -sf /root/.qlty/bin/qlty /usr/local/bin/qlty\n\nRUN set -eux; target=\"x86_64-unknown-linux-gnu\"; asset=\"fabro-${target}.tar.gz\"; url=\"$(curl -fsSL https://api.github.com/repos/fabro-sh/fabro/releases/latest | jq -r --arg asset \"$asset\" '.assets[] | select(.name == $asset) | .browser_download_url')\"; test -n \"$url\"; curl -fsSL \"$url\" -o /tmp/fabro.tar.gz; tar -xzf /tmp/fabro.tar.gz -C /tmp; install -m 0755 \"/tmp/fabro-${target}/fabro\" /usr/local/bin/fabro; rm -rf /tmp/fabro.tar.gz \"/tmp/fabro-${target}\"; fabro --version\n\nCMD [\"/bin/bash\"]\n"
+              }
+            },
+            "network": "allow_all"
+          }
+        },
+        "notifications": {},
+        "interviews": {
+          "provider": null,
+          "slack": null
+        },
+        "agent": {
+          "permissions": "full",
+          "mcps": {}
+        },
+        "hooks": [],
+        "scm": {
+          "provider": null,
+          "owner": null,
+          "repository": null,
+          "github": null
+        },
+        "pull_request": null,
+        "artifacts": {
+          "include": [
+            ".workflow/object-proof-program/**",
+            "apps/waketask-ios/**",
+            "reports/ios/**",
+            "reports/evals/**",
+            ".github/workflows/**"
+          ]
+        },
+        "integrations": {
+          "github": {
+            "permissions": {
+              "pull_requests": "write",
+              "actions": "read",
+              "contents": "write",
+              "issues": "write",
+              "metadata": "read"
+            }
+          }
+        }
+      }
+    },
+    "graph": {
+      "name": "WakeTaskObjectProofProgram",
+      "nodes": {
+        "same_object_stage_child": {
+          "id": "same_object_stage_child",
+          "attrs": {
+            "model": {
+              "String": "gpt-5.3-codex-spark"
+            },
+            "backend": {
+              "String": "cli"
+            },
+            "type": {
+              "String": "stack.manager_loop"
+            },
+            "manager.poll_interval": {
+              "Duration": {
+                "secs": 10,
+                "nanos": 0
+              }
+            },
+            "label": {
+              "String": "Same Object Stage Child"
+            },
+            "stack.child_workflow": {
+              "String": "./object-proof-same-object-stage.fabro"
+            },
+            "manager.max_cycles": {
+              "Integer": 900
+            },
+            "provider": {
+              "String": "openai"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            }
+          }
+        },
+        "exit": {
+          "id": "exit",
+          "attrs": {
+            "backend": {
+              "String": "cli"
+            },
+            "model": {
+              "String": "gpt-5.3-codex-spark"
+            },
+            "label": {
+              "String": "Exit"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "shape": {
+              "String": "Msquare"
+            },
+            "provider": {
+              "String": "openai"
+            }
+          }
+        },
+        "barcode_learning_child": {
+          "id": "barcode_learning_child",
+          "attrs": {
+            "label": {
+              "String": "Barcode Learning Child"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "backend": {
+              "String": "cli"
+            },
+            "model": {
+              "String": "gpt-5.3-codex-spark"
+            },
+            "provider": {
+              "String": "openai"
+            },
+            "stack.child_workflow": {
+              "String": "./object-proof-barcode-learning-stage.fabro"
+            },
+            "manager.poll_interval": {
+              "Duration": {
+                "secs": 2,
+                "nanos": 0
+              }
+            },
+            "type": {
+              "String": "stack.manager_loop"
+            },
+            "manager.max_cycles": {
+              "Integer": 180
+            }
+          }
+        },
+        "program_spec_child": {
+          "id": "program_spec_child",
+          "attrs": {
+            "model": {
+              "String": "gpt-5.3-codex-spark"
+            },
+            "manager.max_cycles": {
+              "Integer": 180
+            },
+            "provider": {
+              "String": "openai"
+            },
+            "backend": {
+              "String": "cli"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "manager.poll_interval": {
+              "Duration": {
+                "secs": 2,
+                "nanos": 0
+              }
+            },
+            "label": {
+              "String": "Program Spec Child"
+            },
+            "type": {
+              "String": "stack.manager_loop"
+            },
+            "stack.child_workflow": {
+              "String": "./object-proof-program-spec-stage.fabro"
+            }
+          }
+        },
+        "same_object_learning_child": {
+          "id": "same_object_learning_child",
+          "attrs": {
+            "stack.child_workflow": {
+              "String": "./object-proof-same-object-learning-stage.fabro"
+            },
+            "provider": {
+              "String": "openai"
+            },
+            "manager.max_cycles": {
+              "Integer": 180
+            },
+            "type": {
+              "String": "stack.manager_loop"
+            },
+            "backend": {
+              "String": "cli"
+            },
+            "model": {
+              "String": "gpt-5.3-codex-spark"
+            },
+            "label": {
+              "String": "Same Object Learning Child"
+            },
+            "manager.poll_interval": {
+              "Duration": {
+                "secs": 2,
+                "nanos": 0
+              }
+            },
+            "reasoning_effort": {
+              "String": "low"
+            }
+          }
+        },
+        "start": {
+          "id": "start",
+          "attrs": {
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "provider": {
+              "String": "openai"
+            },
+            "backend": {
+              "String": "cli"
+            },
+            "label": {
+              "String": "Start"
+            },
+            "shape": {
+              "String": "Mdiamond"
+            },
+            "model": {
+              "String": "gpt-5.3-codex-spark"
+            }
+          }
+        },
+        "workflow_preflight_child": {
+          "id": "workflow_preflight_child",
+          "attrs": {
+            "type": {
+              "String": "stack.manager_loop"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "label": {
+              "String": "Workflow Preflight Child"
+            },
+            "provider": {
+              "String": "openai"
+            },
+            "stack.child_workflow": {
+              "String": "./object-proof-program-preflight-stage.fabro"
+            },
+            "manager.max_cycles": {
+              "Integer": 120
+            },
+            "backend": {
+              "String": "cli"
+            },
+            "manager.poll_interval": {
+              "Duration": {
+                "secs": 1,
+                "nanos": 0
+              }
+            },
+            "model": {
+              "String": "gpt-5.3-codex-spark"
+            }
+          }
+        },
+        "preset_vision_learning_child": {
+          "id": "preset_vision_learning_child",
+          "attrs": {
+            "model": {
+              "String": "gpt-5.3-codex-spark"
+            },
+            "label": {
+              "String": "Preset Vision Learning Child"
+            },
+            "backend": {
+              "String": "cli"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "manager.poll_interval": {
+              "Duration": {
+                "secs": 2,
+                "nanos": 0
+              }
+            },
+            "provider": {
+              "String": "openai"
+            },
+            "stack.child_workflow": {
+              "String": "./object-proof-preset-vision-learning-stage.fabro"
+            },
+            "manager.max_cycles": {
+              "Integer": 180
+            },
+            "type": {
+              "String": "stack.manager_loop"
+            }
+          }
+        },
+        "barcode_stage_child": {
+          "id": "barcode_stage_child",
+          "attrs": {
+            "label": {
+              "String": "Barcode Stage Child"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "manager.poll_interval": {
+              "Duration": {
+                "secs": 10,
+                "nanos": 0
+              }
+            },
+            "model": {
+              "String": "gpt-5.3-codex-spark"
+            },
+            "provider": {
+              "String": "openai"
+            },
+            "backend": {
+              "String": "cli"
+            },
+            "stack.child_workflow": {
+              "String": "./object-proof-barcode-stage.fabro"
+            },
+            "manager.max_cycles": {
+              "Integer": 900
+            },
+            "type": {
+              "String": "stack.manager_loop"
+            }
+          }
+        },
+        "preset_vision_stage_child": {
+          "id": "preset_vision_stage_child",
+          "attrs": {
+            "model": {
+              "String": "gpt-5.3-codex-spark"
+            },
+            "backend": {
+              "String": "cli"
+            },
+            "manager.poll_interval": {
+              "Duration": {
+                "secs": 10,
+                "nanos": 0
+              }
+            },
+            "stack.child_workflow": {
+              "String": "./object-proof-preset-vision-stage.fabro"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "label": {
+              "String": "Preset Vision Stage Child"
+            },
+            "provider": {
+              "String": "openai"
+            },
+            "manager.max_cycles": {
+              "Integer": 900
+            },
+            "type": {
+              "String": "stack.manager_loop"
+            }
+          }
+        },
+        "publish_postmortem_child": {
+          "id": "publish_postmortem_child",
+          "attrs": {
+            "type": {
+              "String": "stack.manager_loop"
+            },
+            "provider": {
+              "String": "openai"
+            },
+            "backend": {
+              "String": "cli"
+            },
+            "manager.poll_interval": {
+              "Duration": {
+                "secs": 2,
+                "nanos": 0
+              }
+            },
+            "manager.max_cycles": {
+              "Integer": 240
+            },
+            "label": {
+              "String": "Publish And Program Postmortem Child"
+            },
+            "model": {
+              "String": "gpt-5.3-codex-spark"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "stack.child_workflow": {
+              "String": "./object-proof-publish-postmortem-stage.fabro"
+            }
+          }
+        }
+      },
+      "edges": [
+        {
+          "from": "start",
+          "to": "workflow_preflight_child",
+          "attrs": {}
+        },
+        {
+          "from": "workflow_preflight_child",
+          "to": "program_spec_child",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "workflow_preflight_child",
+          "to": "workflow_preflight_child",
+          "attrs": {
+            "label": {
+              "String": "Fix Workflow/Environment"
+            }
+          }
+        },
+        {
+          "from": "program_spec_child",
+          "to": "barcode_stage_child",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "program_spec_child",
+          "to": "program_spec_child",
+          "attrs": {
+            "label": {
+              "String": "Fix Program Spec"
+            }
+          }
+        },
+        {
+          "from": "barcode_stage_child",
+          "to": "barcode_learning_child",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "barcode_stage_child",
+          "to": "barcode_stage_child",
+          "attrs": {
+            "label": {
+              "String": "Fix Barcode Stage"
+            }
+          }
+        },
+        {
+          "from": "barcode_learning_child",
+          "to": "preset_vision_stage_child",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "barcode_learning_child",
+          "to": "barcode_learning_child",
+          "attrs": {
+            "label": {
+              "String": "Fix Barcode Learnings"
+            }
+          }
+        },
+        {
+          "from": "preset_vision_stage_child",
+          "to": "preset_vision_learning_child",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "preset_vision_stage_child",
+          "to": "preset_vision_stage_child",
+          "attrs": {
+            "label": {
+              "String": "Fix Preset Vision Stage"
+            }
+          }
+        },
+        {
+          "from": "preset_vision_learning_child",
+          "to": "same_object_stage_child",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "preset_vision_learning_child",
+          "to": "preset_vision_learning_child",
+          "attrs": {
+            "label": {
+              "String": "Fix Preset Vision Learnings"
+            }
+          }
+        },
+        {
+          "from": "same_object_stage_child",
+          "to": "same_object_learning_child",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "same_object_stage_child",
+          "to": "same_object_stage_child",
+          "attrs": {
+            "label": {
+              "String": "Fix Same Object Stage"
+            }
+          }
+        },
+        {
+          "from": "same_object_learning_child",
+          "to": "publish_postmortem_child",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "same_object_learning_child",
+          "to": "same_object_learning_child",
+          "attrs": {
+            "label": {
+              "String": "Fix Same Object Learnings"
+            }
+          }
+        },
+        {
+          "from": "publish_postmortem_child",
+          "to": "exit",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "publish_postmortem_child",
+          "to": "publish_postmortem_child",
+          "attrs": {
+            "label": {
+              "String": "Complete Publish/Postmortem"
+            }
+          }
+        }
+      ],
+      "attrs": {
+        "model_stylesheet": {
+          "String": "\n            *       { backend: cli; provider: openai; model: gpt-5.3-codex-spark; reasoning_effort: low; }\n            .build  { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            .review { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n        "
+        },
+        "retry_target": {
+          "String": "program_spec_child"
+        },
+        "default_max_retries": {
+          "Integer": 2
+        },
+        "inputs": {
+          "String": "repo_url,base_branch,run_branch,app_name,bundle_id,app_dir,app_domain,target_audience,feature_goal,context_paths,use_mobbin_mcp,ios_validation_mode,allow_macos_deferred,fabro_server"
+        },
+        "artifact_root": {
+          "String": ".workflow/object-proof-program"
+        },
+        "persona": {
+          "String": "waketask-object-proof-program-orchestrator"
+        },
+        "rankdir": {
+          "String": "LR"
+        },
+        "goal": {
+          "String": "Implement WakeTask's Object Proof mission pack as three staged feature slices with evals, learnings, and final postmortem"
+        },
+        "outputs": {
+          "String": "workflow_preflight,program_spec,barcode_stage,barcode_learnings,preset_vision_stage,preset_vision_learnings,same_object_stage,same_object_learnings,publish_handoff,program_postmortem"
+        },
+        "secret_policy": {
+          "String": "no secrets; credential checks are presence-only; do not print environment variables or credential values"
+        }
+      }
+    },
+    "graph_source": "digraph WakeTaskObjectProofProgram {\n    graph [\n        goal=\"Implement WakeTask Object Proof missions as staged feature slices: barcode scan, preset Apple Vision object recognition, then same-object matching, carrying learnings forward after each stage\",\n        persona=\"waketask-object-proof-program-orchestrator\",\n        inputs=\"repo_url,base_branch,run_branch,app_name,bundle_id,app_dir,app_domain,target_audience,feature_goal,context_paths,use_mobbin_mcp,ios_validation_mode,allow_macos_deferred,fabro_server\",\n        outputs=\"workflow_preflight,program_spec,barcode_stage,barcode_learnings,preset_vision_stage,preset_vision_learnings,same_object_stage,same_object_learnings,publish_handoff,program_postmortem\",\n        artifact_root=\".workflow/object-proof-program\",\n        secret_policy=\"no secrets; credential checks are presence-only; do not print environment variables or credential values\",\n        default_max_retries=2,\n        retry_target=\"program_spec_child\",\n        model_stylesheet=\"\n            *       { backend: cli; provider: openai; model: gpt-5.3-codex-spark; reasoning_effort: low; }\n            .build  { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            .review { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n        \"\n    ]\n    rankdir=LR\n\n    start [shape=Mdiamond, label=\"Start\"]\n    exit  [shape=Msquare, label=\"Exit\"]\n\n    workflow_preflight_child [\n        label=\"Workflow Preflight Child\",\n        type=\"stack.manager_loop\",\n        stack.child_workflow=\"./object-proof-program-preflight-stage.fabro\",\n        manager.max_cycles=120,\n        manager.poll_interval=\"1s\"\n    ]\n\n    program_spec_child [\n        label=\"Program Spec Child\",\n        type=\"stack.manager_loop\",\n        stack.child_workflow=\"./object-proof-program-spec-stage.fabro\",\n        manager.max_cycles=180,\n        manager.poll_interval=\"2s\"\n    ]\n\n    barcode_stage_child [\n        label=\"Barcode Stage Child\",\n        type=\"stack.manager_loop\",\n        stack.child_workflow=\"./object-proof-barcode-stage.fabro\",\n        manager.max_cycles=900,\n        manager.poll_interval=\"10s\"\n    ]\n\n    barcode_learning_child [\n        label=\"Barcode Learning Child\",\n        type=\"stack.manager_loop\",\n        stack.child_workflow=\"./object-proof-barcode-learning-stage.fabro\",\n        manager.max_cycles=180,\n        manager.poll_interval=\"2s\"\n    ]\n\n    preset_vision_stage_child [\n        label=\"Preset Vision Stage Child\",\n        type=\"stack.manager_loop\",\n        stack.child_workflow=\"./object-proof-preset-vision-stage.fabro\",\n        manager.max_cycles=900,\n        manager.poll_interval=\"10s\"\n    ]\n\n    preset_vision_learning_child [\n        label=\"Preset Vision Learning Child\",\n        type=\"stack.manager_loop\",\n        stack.child_workflow=\"./object-proof-preset-vision-learning-stage.fabro\",\n        manager.max_cycles=180,\n        manager.poll_interval=\"2s\"\n    ]\n\n    same_object_stage_child [\n        label=\"Same Object Stage Child\",\n        type=\"stack.manager_loop\",\n        stack.child_workflow=\"./object-proof-same-object-stage.fabro\",\n        manager.max_cycles=900,\n        manager.poll_interval=\"10s\"\n    ]\n\n    same_object_learning_child [\n        label=\"Same Object Learning Child\",\n        type=\"stack.manager_loop\",\n        stack.child_workflow=\"./object-proof-same-object-learning-stage.fabro\",\n        manager.max_cycles=180,\n        manager.poll_interval=\"2s\"\n    ]\n\n    publish_postmortem_child [\n        label=\"Publish And Program Postmortem Child\",\n        type=\"stack.manager_loop\",\n        stack.child_workflow=\"./object-proof-publish-postmortem-stage.fabro\",\n        manager.max_cycles=240,\n        manager.poll_interval=\"2s\"\n    ]\n\n    start -> workflow_preflight_child\n    workflow_preflight_child -> program_spec_child [condition=\"outcome=succeeded\"]\n    workflow_preflight_child -> workflow_preflight_child [label=\"Fix Workflow/Environment\"]\n    program_spec_child -> barcode_stage_child [condition=\"outcome=succeeded\"]\n    program_spec_child -> program_spec_child [label=\"Fix Program Spec\"]\n    barcode_stage_child -> barcode_learning_child [condition=\"outcome=succeeded\"]\n    barcode_stage_child -> barcode_stage_child [label=\"Fix Barcode Stage\"]\n    barcode_learning_child -> preset_vision_stage_child [condition=\"outcome=succeeded\"]\n    barcode_learning_child -> barcode_learning_child [label=\"Fix Barcode Learnings\"]\n    preset_vision_stage_child -> preset_vision_learning_child [condition=\"outcome=succeeded\"]\n    preset_vision_stage_child -> preset_vision_stage_child [label=\"Fix Preset Vision Stage\"]\n    preset_vision_learning_child -> same_object_stage_child [condition=\"outcome=succeeded\"]\n    preset_vision_learning_child -> preset_vision_learning_child [label=\"Fix Preset Vision Learnings\"]\n    same_object_stage_child -> same_object_learning_child [condition=\"outcome=succeeded\"]\n    same_object_stage_child -> same_object_stage_child [label=\"Fix Same Object Stage\"]\n    same_object_learning_child -> publish_postmortem_child [condition=\"outcome=succeeded\"]\n    same_object_learning_child -> same_object_learning_child [label=\"Fix Same Object Learnings\"]\n    publish_postmortem_child -> exit [condition=\"outcome=succeeded\"]\n    publish_postmortem_child -> publish_postmortem_child [label=\"Complete Publish/Postmortem\"]\n}\n",
+    "workflow_slug": "waketask-object-proof-program",
+    "source_directory": "/Users/timlife/Documents/claude code/maestro-os",
+    "labels": {
+      "factory": "iphone-app-object-proof-program",
+      "control_plane": "railway",
+      "app": "waketask",
+      "topic": "task-alarm-object-proof"
+    },
+    "provenance": {
+      "server": {
+        "version": "0.236.0-nightly.0"
+      },
+      "client": {
+        "user_agent": "fabro-cli/0.232.0-nightly.0",
+        "name": "fabro-cli",
+        "version": "0.232.0-nightly.0"
+      },
+      "subject": {
+        "kind": "user",
+        "identity": {
+          "issuer": "fabro:dev",
+          "subject": "dev"
+        },
+        "login": "dev",
+        "auth_method": "dev_token"
+      }
+    },
+    "manifest_blob": "ce047dbaf70b3502bb759bf34f4cdb8cdc95e4f57e69046b415a3f2a0fdcd6c3",
+    "definition_blob": "62d077151cd530a835cca4dc44bcf7eb24a37db0f2dd865bbabd3bfd1085207f",
+    "git": {
+      "origin_url": "https://github.com/kimprobably/maestro-os",
+      "branch": "feature/object-proof-program-workflow",
+      "sha": "3312be8a2b7dace97436e31c8d65f92ff8945b15",
+      "dirty": "dirty",
+      "push_outcome": {
+        "type": "not_attempted"
+      }
+    }
+  },
+  "web_url": "https://fabro-maestro-production.up.railway.app/runs/01KRZB714REKRRQFNTEAVCCV9K",
+  "start": null,
+  "status": {
+    "kind": "starting"
+  },
+  "status_updated_at": "2026-05-19T05:26:52.914569673Z",
+  "last_event_at": "2026-05-19T05:26:54.891061786Z",
+  "pending_control": null,
+  "checkpoints": [],
+  "conclusion": null,
+  "sandbox": {
+    "provider": "daytona",
+    "image": "buildpack-deps:noble",
+    "snapshot": "maestro-code-factory-v8",
+    "runtime": {
+      "id": "fabro-01KRZB714REKRRQFNTEAVCCV9K",
+      "working_directory": "/home/daytona/workspace/maestro-os",
+      "repo_cloned": true,
+      "clone_origin_url": "https://github.com/kimprobably/maestro-os",
+      "clone_branch": "feature/object-proof-program-workflow",
+      "workspace_root": "/home/daytona/workspace",
+      "repos_root": "/home/daytona/repos",
+      "primary_repo_path": "/home/daytona/repos/kimprobably/maestro-os",
+      "primary_repo_link": "/home/daytona/workspace/maestro-os"
+    }
+  },
+  "pull_request": null,
+  "superseded_by": null,
+  "pending_interviews": {},
+  "stages": {}
+}
