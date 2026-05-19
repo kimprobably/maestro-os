@@ -3760,7 +3760,7 @@
     "kind": "running"
   },
   "status_updated_at": "2026-05-19T05:14:27.145770674Z",
-  "last_event_at": "2026-05-19T05:16:11.899425125Z",
+  "last_event_at": "2026-05-19T05:16:16.031153153Z",
   "pending_control": null,
   "checkpoints": [
     {
@@ -4190,9 +4190,9 @@
       }
     },
     {
-      "seq": 0,
+      "seq": 106,
       "checkpoint": {
-        "timestamp": "2026-05-19T05:16:11.982806802Z",
+        "timestamp": "2026-05-19T05:16:16.027963174Z",
         "current_node": "app_store_research",
         "completed_nodes": [
           "start",
@@ -4202,6 +4202,155 @@
           "prompt_quality_gate",
           "research_fanout",
           "app_store_research"
+        ],
+        "node_retries": {
+          "app_store_research": 2
+        },
+        "context_values": {
+          "graph.secret_policy": "never print environment variables or credential values; credential checks must be presence-only true/false checks; do not run environment dump commands.",
+          "outcome": "failed",
+          "graph.model_stylesheet": "\n            *                  { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: low; }\n            .research          { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            .design            { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            .spec              { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            .architecture      { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            .coding            { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            .review            { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            .verify            { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: medium; }\n            .security          { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            .simplify          { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            .macos             { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            #spec_codex        { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            #spec_claude       { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            #spec_kimi         { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            #spec_deepseek     { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            #arch_codex        { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            #arch_claude       { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n        ",
+          "graph.persona": "iphone-app-factory",
+          "graph.fallback_retry_target": "architecture_consensus",
+          "internal.retry_count.prompt_quality_gate": 0,
+          "thread.run_input_gate.current_node": "bootstrap",
+          "current_node": "app_store_research",
+          "command.output": "blob://sha256/7e2e4189390b3835b88c46d96292c0abd32223d52e6fd9169c318f9503bc47eb",
+          "internal.retry_count.research_fanout": 0,
+          "internal.work_dir": "/home/daytona/workspace/maestro-os",
+          "parallel.branch_count": 4,
+          "graph.outputs": "research_pack,spec,architecture,swift_app,ios_quality_report,appium_report,release_handoff",
+          "thread.bootstrap.current_node": "prompt_quality_patch",
+          "thread.prompt_quality_patch.current_node": "prompt_quality_gate",
+          "internal.run_id": "01KRZAG54XZQN1R4GA403G97KD",
+          "graph.inputs": "app_type,target_audience,app_name,bundle_id,app_dir,spec_kitty_feature,boilerplate_repo,max_competitors,use_mobbin,ios_validation_mode,allow_macos_deferred",
+          "thread.prompt_quality_gate.current_node": "research_fanout",
+          "graph.rankdir": "LR",
+          "internal.retry_count.prompt_quality_patch": 0,
+          "thread.research.current_node": "app_store_research",
+          "internal.retry_count.start": 0,
+          "thread.start.current_node": "run_input_gate",
+          "failure_signature": "app_store_research|deterministic|failed to resolve cli credential",
+          "internal.retry_count.bootstrap": 0,
+          "graph.goal": "Build a differentiated iPhone app from a researched app opportunity using SwiftAIBoilerplatePro",
+          "graph.retry_target": "spec_consensus",
+          "failure_class": "deterministic",
+          "internal.fidelity": "compact",
+          "parallel.results": [
+            {
+              "id": "",
+              "status": "failed"
+            },
+            {
+              "id": "",
+              "status": "failed"
+            },
+            {
+              "id": "",
+              "status": "failed"
+            },
+            {
+              "id": "",
+              "status": "failed"
+            }
+          ],
+          "internal.retry_count.run_input_gate": 0,
+          "graph.default_max_retries": "2",
+          "internal.retry_count.app_store_research": 2,
+          "internal.node_visit_count": 1,
+          "internal.thread_id": "research"
+        },
+        "node_outcomes": {
+          "prompt_quality_patch": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/c63126b894f2ddd9575ea4a1c2fe602e84b2c50002703cf937da2b2c37787887"
+            },
+            "notes": "Script completed: set -eu\nnode - <<'NODE'\nconst fs = require('fs');\nfunction appendAfter(path, anchor, insert) {\n  let text = fs.readFileSync(path, 'utf8');\n  if (text.includes(insert.trim().split('\\n')[0])) return false;\n  if (!text.includes(anchor)) throw new Error(`${path}: missing patch anchor`);\n  text = text.replace(anchor, `${anchor}\\n\\n${insert}`);\n  fs.writeFileSync(path, text);\n  return true;\n}\nfunction replaceOnce(path, oldText, newText) {\n  let text = fs.readFileSync(path, 'utf8');\n  if (text.includes(newText)) return false;\n  if (!text.includes(oldText)) throw new Error(`${path}: missing replace anchor`);\n  text = text.replace(oldText, newText);\n  fs.writeFileSync(path, text);\n  return true;\n}\nconst changed = [];\nif (appendAfter('prompts/iphone-app-factory/spec-consensus.md', 'The Definition of Done must be checklist-based and testable.', `The Definition of Done must include a \\`Run Recovery And Evidence\\` checklist with:\n\n- control-plane failure classification and recovery: if prompt materialization, networking, metadata push, or artifact collection fails after useful state exists, preserve artifacts, record branch/SHA/checkpoint, compact large context, and restart or fork from the pushed run branch; do not treat the failed run as cleanly complete.\n- hosted macOS CI fallback policy: when \\`allow_macos_deferred=false\\`, require GitHub Actions hosted macOS evidence with run id, commit SHA, successful conclusion, and artifact names; workflow-only CI declarations are not sufficient.\n- deferral handling: if \\`allow_macos_deferred=true\\`, list explicit deferred iOS/Appium evidence, accepted risk, compensating controls, and review deadline; when false, reject missing macOS/Appium evidence.\n- artifact preservation: final handoff must include app artifacts under \\`apps/*-iphone\\`, root GitHub workflows, \\`reports/ios\\`, metadata branch push status, and handoff manifest evidence.`)) changed.push('spec-consensus.md');\nif (appendAfter('prompts/iphone-app-factory/architecture-consensus.md', 'If any module is removed, the ADR must explain dependency order and App Store 4.3 consequences.', `The architecture must also define the recovery/evidence lane:\n\n- how generated app, \\`.workflow/iphone-app-factory\\`, \\`.github/workflows\\`, and \\`reports/ios\\` artifacts survive control-plane failures;\n- where GitHub Actions hosted macOS run id, commit SHA, successful conclusion, and artifact names are recorded when \\`allow_macos_deferred=false\\`;\n- how metadata branch push failures are classified and retried from the pushed run branch instead of being treated as successful completion;\n- how \\`allow_macos_deferred\\` changes Appium/XCUITest evidence requirements, including explicit accepted-risk notes only when deferral is true.`)) changed.push('architecture-consensus.md');\nif (appendAfter('prompts/iphone-app-factory/review-release-readiness.md', 'Reject if the app claims App Store readiness without macOS/Xcode evidence.', `Also reject when any of these are missing for \\`allow_macos_deferred=false\\`:\n\n- GitHub Actions hosted macOS run id;\n- commit SHA and branch;\n- successful workflow conclusion;\n- artifact names or links for xcodebuild/Appium/release evidence;\n- metadata branch push verification and handoff manifest;\n- explicit classification of any control-plane failure, with restart/fork instructions from the pushed run branch.\n\nWorkflow-only CI declarations, local-text claims, or fallback-only evidence are not enough.`)) changed.push('review-release-readiness.md');\nif (appendAfter('prompts/iphone-app-factory/review-qa-evidence.md', 'Reject if Appium did not tap reachable controls or if failures are unresolved.', `For \\`allow_macos_deferred=false\\`, reject if Appium/XCUITest or hosted macOS evidence is only described textually. Require GitHub Actions run id, commit SHA, successful conclusion, artifact names, and the concrete \\`reports/ios/appium-exploratory-report.json\\` or equivalent artifact. If deferral is true, the review must name the accepted risk, compensating controls, and review deadline.`)) changed.push('review-qa-evidence.md');\nif (appendAfter('prompts/iphone-app-factory/ai-ui-explorer.md', 'Do not mark the pass complete unless a real simulator/Appium run happened, unless the workflow explicitly allows macOS deferral.', `When \\`allow_macos_deferred=false\\`, the explorer/handoff must point to hosted macOS or simulator evidence, not workflow-only claims. Record the GitHub Actions run id, commit SHA, successful conclusion, artifact names, and any controls skipped. When deferral is allowed, write an explicit risk note and do not call the app TestFlight-ready.`)) changed.push('ai-ui-explorer.md');\nif (appendAfter('prompts/iphone-app-factory/final-consensus.md', '- If App Store 4.3 hardening did not pass, reject.', `- If the handoff lacks artifact preservation evidence, metadata branch push verification, or restart/fork notes for control-plane failures, reject.\n- If \\`allow_macos_deferred=false\\`, require GitHub Actions hosted macOS run id, commit SHA, successful conclusion, and artifact names for xcodebuild/Appium/release evidence; workflow-only claims are not enough.\n- If \\`allow_macos_deferred=true\\`, list accepted risk, compensating controls, review deadline, and deferred evidence explicitly; do not call the build release-ready.`)) changed.push('final-consensus.md');\n\nconst yamlPath = 'evals/iphone-app-factory/prompt-quality.yaml';\nlet yamlText = fs.readFileSync(yamlPath, 'utf8');\nconst beforeYaml = yamlText;\nyamlText = yamlText.replace(/openrouter:anthropic\\/claude-haiku-4-5/g, 'openrouter:anthropic/claude-sonnet-4');\nyamlText = yamlText.replace(/max_tokens: 1200/g, 'max_tokens: 2000');\nconst oldInstruction = '    Return valid JSON only, no markdown fences. It must match this shape:';\nconst newInstruction = '    Return exactly one minified JSON object and nothing else. Your first character must be `{` and your last character must be `}`. Do not include markdown fences, headings, prose, comments, or preambles. Include every required key exactly as shown, including literal keys `required_artifacts` and `risks`, even when arrays are empty. If you find gaps, put them in `critical_gaps`, `gaps`, or `risks` inside JSON; never switch to narrative.';\nyamlText = yamlText.replace(oldInstruction, newInstruction);\nconst oldParse = '          const parsed = JSON.parse(output);';\nconst newParse = '          const rawOutput = String(output || \"\").trim();\\n          const normalizedOutput = rawOutput.replace(/^```(?:json|javascript|js)?\\\\s*/i, \"\").replace(/```\\\\s*$/i, \"\").trim();\\n          const parsed = JSON.parse(normalizedOutput); // JSON.parse(output) after markdown-fence normalization';\nyamlText = yamlText.replace(oldParse, newParse);\nif (yamlText !== beforeYaml) {\n  fs.writeFileSync(yamlPath, yamlText);\n  changed.push('prompt-quality.yaml');\n}\n\nconst registryPath = 'evals/iphone-app-factory/prompt-registry.json';\nconst registry = JSON.parse(fs.readFileSync(registryPath, 'utf8'));\nconst markersByPath = {\n  'prompts/iphone-app-factory/spec-consensus.md': ['control-plane failure', 'hosted macOS CI', 'allow_macos_deferred', 'artifact preservation'],\n  'prompts/iphone-app-factory/architecture-consensus.md': ['metadata branch push', 'GitHub Actions hosted macOS', 'allow_macos_deferred'],\n  'prompts/iphone-app-factory/review-release-readiness.md': ['GitHub Actions hosted macOS run id', 'metadata branch push verification', 'control-plane failure'],\n  'prompts/iphone-app-factory/review-qa-evidence.md': ['allow_macos_deferred', 'GitHub Actions run id', 'reports/ios/appium-exploratory-report.json'],\n  'prompts/iphone-app-factory/ai-ui-explorer.md': ['allow_macos_deferred', 'GitHub Actions run id', 'artifact names'],\n  'prompts/iphone-app-factory/final-consensus.md': ['metadata branch push verification', 'control-plane failures', 'GitHub Actions hosted macOS run id']\n};\nlet registryChanged = false;\nfor (const entry of registry.prompts || []) {\n  const markers = markersByPath[entry.path];\n  if (!markers) continue;\n  entry.must_include = Array.isArray(entry.must_include) ? entry.must_include : [];\n  for (const marker of markers) {\n    if (!entry.must_include.includes(marker)) {\n      entry.must_include.push(marker);\n      registryChanged = true;\n    }\n  }\n}\nif (registryChanged) {\n  fs.writeFileSync(registryPath, JSON.stringify(registry, null, 2) + '\\n');\n  changed.push('prompt-registry.json');\n}\nfs.mkdirSync('.workflow/iphone-app-factory/evidence', { recursive: true });\nfs.writeFileSync('.workflow/iphone-app-factory/evidence/prompt-quality-hotfix.md', `# Prompt Quality Hotfix v3\\n\\nPatched prompt suite before prompt quality gate.\\n\\nFiles changed:\\n${changed.map((name) => `- ${name}`).join('\\n') || '- none; already patched'}\\n\\nReason: prior Joni Capture runs failed prompt_quality_gate because Promptfoo identified missing reproducibility coverage, then failed JSON parsing on fenced model output. This patch adds recovery/macOS/artifact requirements, increases completion budget, switches to a stronger OpenRouter model, and normalizes markdown-fenced JSON inside the assertion without accepting fallback-only risk.\\n`);\nconsole.log(JSON.stringify({ ok: true, changed }));\nNODE",
+            "usage": null
+          },
+          "research_fanout": {
+            "status": "partially_succeeded",
+            "notes": "Parallel node dispatched 4 branches (0 succeeded, 4 failed)",
+            "usage": null
+          },
+          "prompt_quality_gate": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/7e2e4189390b3835b88c46d96292c0abd32223d52e6fd9169c318f9503bc47eb"
+            },
+            "notes": "Script completed: node scripts/iphone-app-factory/promptfoo-prompt-quality.mjs --config evals/iphone-app-factory/prompt-quality.yaml --registry evals/iphone-app-factory/prompt-registry.json --out .workflow/iphone-app-factory/evals/prompt-quality.json --allow-fallback true --accepted-risk-promptfoo-failure false",
+            "usage": null
+          },
+          "app_store_research": {
+            "status": "failed",
+            "failure": {
+              "message": "Failed to resolve CLI credential",
+              "causes": [
+                "openai is not configured"
+              ],
+              "category": "deterministic"
+            },
+            "usage": null
+          },
+          "bootstrap": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/0a1f191165f396cf4a20c1b485fd6c0bb1fb8ce144fe05e56e3f96fd656302c8"
+            },
+            "notes": "Script completed: node scripts/iphone-app-factory/bootstrap.mjs --app-dir 'apps/joni-capture-iphone' --app-name 'Joni Capture' --bundle-id 'com.maestro.jonicapture' --boilerplate-repo 'SwiftAIBoilerplatePro/SwiftAIBoilerplatePro-Distribution'",
+            "usage": null
+          },
+          "start": {
+            "status": "succeeded",
+            "usage": null
+          },
+          "run_input_gate": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/4b9612434adb2d34c5ce252355a5dd3a63d86799a618c61d5ecc1c081962e95a"
+            },
+            "notes": "Script completed: node scripts/iphone-app-factory/run-input-gate.mjs --app-type 'Internal iPhone capture and operator console for Joni, Maestro LinkedIn agent. Implement the product slice from docs/operator/specs/active/joni-capture-iphone-app.md: lock-screen-adjacent/Shortcut/Action Button voice capture, safe driving capture UX, transcript/capture packet queue, Joni draft prep states, agent activity timeline, LinkedIn/Joni analytics dashboard, no LinkedIn mutation or auto-publishing.' --target-audience 'Tim, Maestro founder/operator; B2B GTM LinkedIn audience; internal premium operator console, not consumer social app.' --app-name 'Joni Capture' --bundle-id 'com.maestro.jonicapture' --app-dir 'apps/joni-capture-iphone' --spec-kitty-feature 'joni-capture-iphone-app' --ios-validation-mode 'github' --allow-macos-deferred 'false'",
+            "usage": null
+          }
+        },
+        "next_node_id": "research_join",
+        "git_commit_sha": "582b03be366383febd44306c0ade3ed23fcdcf0d",
+        "loop_failure_signatures": {
+          "app_store_research|deterministic|failed to resolve cli credential": 1
+        },
+        "node_visits": {
+          "run_input_gate": 1,
+          "start": 1,
+          "prompt_quality_gate": 1,
+          "prompt_quality_patch": 1,
+          "research_fanout": 1,
+          "app_store_research": 1,
+          "bootstrap": 1
+        }
+      },
+      "diff": {
+        "summary": {
+          "files_changed": 4908,
+          "additions": 348244,
+          "deletions": 68
+        }
+      }
+    },
+    {
+      "seq": 0,
+      "checkpoint": {
+        "timestamp": "2026-05-19T05:16:16.114752749Z",
+        "current_node": "research_join",
+        "completed_nodes": [
+          "start",
+          "run_input_gate",
+          "bootstrap",
+          "prompt_quality_patch",
+          "prompt_quality_gate",
+          "research_fanout",
+          "app_store_research",
+          "research_join"
         ],
         "node_retries": {
           "app_store_research": 2
@@ -4217,7 +4366,7 @@
           "thread.research.current_node": "app_store_research",
           "internal.retry_count.app_store_research": 2,
           "graph.goal": "Build a differentiated iPhone app from a researched app opportunity using SwiftAIBoilerplatePro",
-          "current_node": "app_store_research",
+          "current_node": "research_join",
           "internal.node_visit_count": 1,
           "command.output": "blob://sha256/7e2e4189390b3835b88c46d96292c0abd32223d52e6fd9169c318f9503bc47eb",
           "internal.retry_count.bootstrap": 0,
@@ -4226,6 +4375,7 @@
           "graph.persona": "iphone-app-factory",
           "thread.start.current_node": "run_input_gate",
           "failure_class": "deterministic",
+          "internal.retry_count.research_join": 0,
           "graph.retry_target": "spec_consensus",
           "internal.retry_count.prompt_quality_patch": 0,
           "parallel.results": [
@@ -4246,14 +4396,15 @@
               "status": "failed"
             }
           ],
-          "internal.thread_id": "research",
+          "internal.thread_id": "app_store_research",
           "internal.retry_count.run_input_gate": 0,
           "graph.secret_policy": "never print environment variables or credential values; credential checks must be presence-only true/false checks; do not run environment dump commands.",
+          "thread.app_store_research.current_node": "research_join",
           "graph.inputs": "app_type,target_audience,app_name,bundle_id,app_dir,spec_kitty_feature,boilerplate_repo,max_competitors,use_mobbin,ios_validation_mode,allow_macos_deferred",
           "thread.prompt_quality_patch.current_node": "prompt_quality_gate",
           "graph.fallback_retry_target": "architecture_consensus",
           "graph.model_stylesheet": "\n            *                  { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: low; }\n            .research          { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            .design            { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            .spec              { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            .architecture      { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            .coding            { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            .review            { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            .verify            { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: medium; }\n            .security          { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            .simplify          { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            .macos             { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            #spec_codex        { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            #spec_claude       { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            #spec_kimi         { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            #spec_deepseek     { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            #arch_codex        { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            #arch_claude       { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n        ",
-          "failure_signature": "app_store_research|deterministic|failed to resolve cli credential",
+          "failure_signature": "research_join|deterministic|all candidates failed",
           "graph.default_max_retries": "2",
           "outcome": "failed",
           "internal.retry_count.prompt_quality_gate": 0,
@@ -4300,6 +4451,14 @@
             "status": "succeeded",
             "usage": null
           },
+          "research_join": {
+            "status": "failed",
+            "failure": {
+              "message": "all candidates failed",
+              "category": "deterministic"
+            },
+            "usage": null
+          },
           "research_fanout": {
             "status": "partially_succeeded",
             "notes": "Parallel node dispatched 4 branches (0 succeeded, 4 failed)",
@@ -4314,14 +4473,15 @@
             "usage": null
           }
         },
-        "next_node_id": "research_join",
+        "next_node_id": "research_synthesis",
         "node_visits": {
+          "research_fanout": 1,
+          "research_join": 1,
           "bootstrap": 1,
           "prompt_quality_patch": 1,
           "prompt_quality_gate": 1,
           "app_store_research": 1,
           "run_input_gate": 1,
-          "research_fanout": 1,
           "start": 1
         }
       },
@@ -4349,6 +4509,80 @@
   "superseded_by": null,
   "pending_interviews": {},
   "stages": {
+    "research_join@1": {
+      "first_event_seq": 109,
+      "prompt": null,
+      "response": null,
+      "completion": null,
+      "provider_used": null,
+      "diff": null,
+      "script_invocation": null,
+      "script_timing": null,
+      "parallel_results": null,
+      "output": null,
+      "started_at": "2026-05-19T05:16:16.031153153Z",
+      "handler": "parallel.fan_in",
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "total_tokens": 0,
+        "reasoning_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "state": "running"
+    },
+    "research_fanout@1": {
+      "first_event_seq": 59,
+      "prompt": null,
+      "response": null,
+      "completion": {
+        "outcome": "partially_succeeded",
+        "notes": "Parallel node dispatched 4 branches (0 succeeded, 4 failed)",
+        "failure_reason": null,
+        "timestamp": "2026-05-19T05:15:56.342813440Z"
+      },
+      "provider_used": {
+        "mode": "cli",
+        "provider": "openai",
+        "model": "gpt-5.3-codex",
+        "command": "cat /tmp/fabro_cli_8407f0ef-d0e4-4d26-b5e0-0f2f1de60062_prompt.txt | codex exec --json --full-auto -m gpt-5.3-codex"
+      },
+      "diff": null,
+      "script_invocation": null,
+      "script_timing": null,
+      "parallel_results": [
+        {
+          "id": "",
+          "status": "failed"
+        },
+        {
+          "id": "",
+          "status": "failed"
+        },
+        {
+          "id": "",
+          "status": "failed"
+        },
+        {
+          "id": "",
+          "status": "failed"
+        }
+      ],
+      "output": null,
+      "started_at": "2026-05-19T05:15:49.660315122Z",
+      "handler": "parallel",
+      "duration_ms": 6599,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "total_tokens": 0,
+        "reasoning_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "state": "partially_succeeded"
+    },
     "run_input_gate@1": {
       "first_event_seq": 20,
       "prompt": null,
@@ -4435,62 +4669,16 @@
       },
       "state": "succeeded"
     },
-    "research_fanout@1": {
-      "first_event_seq": 59,
-      "prompt": null,
-      "response": null,
-      "completion": {
-        "outcome": "partially_succeeded",
-        "notes": "Parallel node dispatched 4 branches (0 succeeded, 4 failed)",
-        "failure_reason": null,
-        "timestamp": "2026-05-19T05:15:56.342813440Z"
-      },
-      "provider_used": {
-        "mode": "cli",
-        "provider": "openai",
-        "model": "gpt-5.3-codex",
-        "command": "cat /tmp/fabro_cli_8407f0ef-d0e4-4d26-b5e0-0f2f1de60062_prompt.txt | codex exec --json --full-auto -m gpt-5.3-codex"
-      },
-      "diff": null,
-      "script_invocation": null,
-      "script_timing": null,
-      "parallel_results": [
-        {
-          "id": "",
-          "status": "failed"
-        },
-        {
-          "id": "",
-          "status": "failed"
-        },
-        {
-          "id": "",
-          "status": "failed"
-        },
-        {
-          "id": "",
-          "status": "failed"
-        }
-      ],
-      "output": null,
-      "started_at": "2026-05-19T05:15:49.660315122Z",
-      "handler": "parallel",
-      "duration_ms": 6599,
-      "usage": {
-        "input_tokens": 0,
-        "output_tokens": 0,
-        "total_tokens": 0,
-        "reasoning_tokens": 0,
-        "cache_read_tokens": 0,
-        "cache_write_tokens": 0
-      },
-      "state": "partially_succeeded"
-    },
     "app_store_research@1": {
       "first_event_seq": 89,
       "prompt": null,
       "response": null,
-      "completion": null,
+      "completion": {
+        "outcome": "failed",
+        "notes": null,
+        "failure_reason": "Failed to resolve CLI credential",
+        "timestamp": "2026-05-19T05:16:11.981848767Z"
+      },
       "provider_used": {
         "mode": "cli",
         "provider": "openai",
@@ -4504,6 +4692,7 @@
       "output": null,
       "started_at": "2026-05-19T05:16:11.341798681Z",
       "handler": "agent",
+      "duration_ms": 12343,
       "usage": {
         "input_tokens": 0,
         "output_tokens": 0,
@@ -4512,7 +4701,7 @@
         "cache_read_tokens": 0,
         "cache_write_tokens": 0
       },
-      "state": "running"
+      "state": "failed"
     },
     "prompt_quality_patch@1": {
       "first_event_seq": 39,
