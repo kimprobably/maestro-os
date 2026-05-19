@@ -10,9 +10,24 @@ const repoRoot = resolve(import.meta.dirname, "..", "..");
 const patchScript = join(repoRoot, "hermes/deploy/railway-gateway/patch-hermes-slack.py");
 
 const upstreamSlackFixture = `import asyncio
+import json
+import logging
 import os
+import re
+import time
+
+logger = logging.getLogger(__name__)
 
 class SlackGateway:
+    def __init__(self):
+        self._reacting_message_ids = set()
+        self._bot_message_ts = set()
+        self._mentioned_threads = set()
+        self._active_status_threads = {}
+        self._assistant_threads = {}
+        self._team_bot_user_ids = {}
+        self._bot_user_id = "U_BOT"
+
     async def connect(self):
         try:
             self._socket_mode_task = asyncio.create_task(self._handler.start_async())
@@ -37,6 +52,27 @@ class SlackGateway:
 
     async def _fetch_thread_context(self, channel_id, thread_ts, current_ts, team_id=""):
         return ""
+
+    def _slack_allowed_channels(self):
+        return set()
+
+    def _slack_free_response_channels(self):
+        return set()
+
+    def _slack_require_mention(self):
+        return True
+
+    def _slack_strict_mention(self):
+        return False
+
+    def _reactions_enabled(self):
+        return True
+
+    def build_source(self, **kwargs):
+        return kwargs
+
+    async def handle_message(self, event):
+        self.handled_message = event
 
     async def _handle_slack_message(self, event):
         text = event.get("text", "")
@@ -82,7 +118,20 @@ class SlackGateway:
             "user_name": user_name,
             "thread_id": thread_ts,
         }
-        return source
+        msg_event = type("MessageEvent", (), {
+            "text": text,
+            "source": type("Source", (), {
+                "chat_id": channel_id,
+                "thread_id": thread_ts,
+            })(),
+            "message_id": ts,
+        })()
+
+        _should_react = (is_dm or is_mentioned) and self._reactions_enabled()
+        if _should_react:
+            self._reacting_message_ids.add(ts)
+
+        await self.handle_message(msg_event)
 
     # ----- Thread context fetching -----
 
@@ -149,6 +198,12 @@ function compile(slackPath) {
   assert.equal(result.status, 0, result.stderr || result.stdout);
 }
 
+function runPythonInline(script, env) {
+  const result = runPython(["-c", script], env);
+  assert.equal(result.status, 0, result.stderr || result.stdout);
+  return result;
+}
+
 function assertSafeLedgerPlacement(text) {
   const callIndex = text.indexOf("await self._maestro_record_slack_ledger_event(");
   assert.ok(callIndex > 0, "ledger call should exist");
@@ -206,6 +261,117 @@ test("Slack patch installs missed mention recovery sweeper", () => {
     assert.equal(
       (twicePatched.match(/Maestro patch v5: missed mention recovery sweeper/g) || []).length,
       1,
+    );
+  });
+});
+
+test("Slack patch posts a visible ack independently of agent processing", () => {
+  withTempPythonPackage(({ dir, slackPath }) => {
+    runPatch(dir);
+    compile(slackPath);
+
+    const patched = readFileSync(slackPath, "utf8");
+    assert.match(patched, /async def _maestro_post_visible_ack/);
+    assert.match(patched, /await self\._maestro_post_visible_ack/);
+
+    runPythonInline(
+      `
+import asyncio
+from types import SimpleNamespace
+from gateway.platforms.slack import SlackGateway
+
+class Client:
+    def __init__(self):
+        self.posts = []
+    async def chat_postMessage(self, **kwargs):
+        self.posts.append(kwargs)
+        return {"ts": "177.ack"}
+
+async def main():
+    gateway = SlackGateway()
+    gateway.config = SimpleNamespace(extra={})
+    client = Client()
+    gateway._get_client = lambda channel_id: client
+    ok = await gateway._maestro_post_visible_ack(
+        "C123456789",
+        "1779130250.583759",
+        "1779130250.583759",
+    )
+    assert ok is True
+    assert client.posts == [{
+        "channel": "C123456789",
+        "text": "Got it - working on this.",
+        "thread_ts": "1779130250.583759",
+    }]
+    assert "177.ack" in gateway._bot_message_ts
+
+asyncio.run(main())
+`,
+      { PYTHONPATH: dir },
+    );
+  });
+});
+
+test("Slack mention sweeper scans known long-thread roots outside recent history", () => {
+  withTempPythonPackage(({ dir, slackPath }) => {
+    runPatch(dir);
+    compile(slackPath);
+
+    const patched = readFileSync(slackPath, "utf8");
+    assert.match(patched, /async def _maestro_sweep_channel_for_missed_mentions/);
+    assert.match(patched, /_maestro_mention_sweep_thread_roots/);
+
+    runPythonInline(
+      `
+import asyncio
+from types import SimpleNamespace
+from gateway.platforms.slack import SlackGateway
+
+class Dedup:
+    def __init__(self):
+        self._seen = {}
+
+class Client:
+    def __init__(self):
+        self.reply_calls = []
+    async def conversations_history(self, **kwargs):
+        return {"messages": []}
+    async def conversations_replies(self, **kwargs):
+        self.reply_calls.append(kwargs["ts"])
+        return {
+            "messages": [
+                {"ts": kwargs["ts"], "user": "UOTHER", "text": "old parent"},
+                {"ts": "1779130265.200000", "user": "UTIM", "text": "<@U_BOT> missed in old thread", "thread_ts": kwargs["ts"]},
+            ]
+        }
+
+async def main():
+    gateway = SlackGateway()
+    gateway.config = SimpleNamespace(extra={})
+    gateway._dedup = Dedup()
+    gateway._bot_user_id = "U_BOT"
+    gateway._team_bot_user_ids = {}
+    gateway._mentioned_threads = {"1779130250.583759"}
+    gateway._bot_message_ts = set()
+    gateway._assistant_threads = {}
+    gateway._active_status_threads = {}
+    handled = []
+    async def fake_handle(event):
+        handled.append(event)
+    gateway._handle_slack_message = fake_handle
+    client = Client()
+    gateway._get_client = lambda channel_id: client
+
+    await gateway._maestro_sweep_channel_for_missed_mentions("C123456789", "1779130260.150000")
+
+    assert client.reply_calls == ["1779130250.583759"]
+    assert len(handled) == 1
+    assert handled[0]["ts"] == "1779130265.200000"
+    assert handled[0]["channel"] == "C123456789"
+
+asyncio.run(main())
+`,
+      { PYTHONPATH: dir },
     );
   });
 });
