@@ -6,6 +6,8 @@ If `{{ inputs.use_mobbin|default("true") }}` is true and a usable Mobbin login/s
 
 Secret handling is blocking: never print environment variables or credential values. If checking Mobbin credential availability, report only true/false presence and never echo, grep, dump, log, or write the email, password, cookies, or session values. Do not run environment dump commands such as `env`, `printenv`, `set`, `export`, or `declare -x`, and do not echo any `$...TOKEN`, `$...KEY`, `$...PASSWORD`, `$...AUTH`, or `$...CREDENTIAL` variable.
 
+Do not spawn subagents, delegate, inspect `.env` files, or search the environment for credentials. If Mobbin or another live source fails, record the limitation and continue with HIG and public-reference evidence.
+
 Write `.workflow/iphone-app-factory/research/design-patterns.md` with:
 
 - pattern name

@@ -136,3 +136,18 @@ exit 1
     assert.doesNotMatch(result.stdout, /simulated promptfoo model grading failure/);
   });
 });
+
+test("research prompts forbid subagent delegation and credential environment inspection", () => {
+  for (const name of [
+    "research-app-store.md",
+    "research-reddit.md",
+    "research-competitors.md",
+    "research-design-patterns.md",
+  ]) {
+    const prompt = readFileSync(join(repoRoot, "prompts/iphone-app-factory", name), "utf8");
+    assert.match(prompt, /Do not spawn subagents/);
+    assert.match(prompt, /inspect `\.env` files/);
+    assert.match(prompt, /search the environment for credentials/);
+    assert.match(prompt, /environment dump commands/);
+  }
+});
