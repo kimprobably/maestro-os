@@ -648,6 +648,12 @@ export function renderFactoryDashboard(dashboard) {
   const artifacts = dashboard.production.artifacts;
   const runs = dashboard.production.runs;
   const owner = dashboard.owner_rollup;
+  const evalGateHealthy = quality.source_present && quality.blocking_failure_ids.length === 0 && quality.index_issues.length === 0;
+  const evalGateNotes = evalGateHealthy
+    ? "No blocking eval failures in the current index."
+    : quality.index_issues.length > 0
+      ? `${quality.index_issues.length} eval index issues must be resolved before trusting the rollup.`
+      : `${quality.blocking_failure_ids.length} blocking evals need evidence or fixes.`;
   const runStreamStatus = runs.source_connected
     ? runs.failed === 0 && runs.stale_active === 0 && runs.unknown === 0
       ? "working"
@@ -684,7 +690,7 @@ ${renderOwnerActions(owner.owner_actions)}
 
 | Signal | Status | Notes |
 | --- | --- | --- |
-| Eval gate | ${quality.blocking_failure_ids.length === 0 && quality.source_present ? "working" : "attention"} | ${quality.blocking_failure_ids.length === 0 ? "No blocking eval failures in the current index." : `${quality.blocking_failure_ids.length} blocking evals need evidence or fixes.`} |
+| Eval gate | ${evalGateHealthy ? "working" : "attention"} | ${evalGateNotes} |
 | Fabro run stream | ${runStreamStatus} | ${runStreamNotes} |
 | Artifact stream | ${artifacts.total > 0 ? "working" : "attention"} | ${artifacts.total} generated report artifacts. |
 

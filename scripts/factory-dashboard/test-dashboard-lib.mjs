@@ -455,6 +455,48 @@ test("factory dashboard flags unknown run status and sanitizes malformed workflo
   assert.doesNotMatch(markdown, /\[object Object\]/);
 });
 
+test("factory dashboard treats eval index issues as gate attention", () => {
+  const dashboard = buildFactoryDashboard({
+    now: "2026-05-18T13:00:00.000Z",
+    evalIndex: {
+      created_at: "2026-05-18T12:00:00.000Z",
+      summary: {
+        total_registered: 1,
+        blocking_registered: 1,
+        present_results: 1,
+        passed: 1,
+        failed: 0,
+        fallback_only: 0,
+        waived: 0,
+        missing_blocking: 0,
+      },
+      evals: [
+        {
+          id: "sample.present",
+          blocking: true,
+          status: "passed",
+          result: { gate_status: "passed", passed: true },
+        },
+      ],
+      missing: [],
+      issues: [{ type: "result_registry_mismatch", message: "artifact mismatch" }],
+    },
+    artifacts: [artifact("reports/evals/run-1/sample.present.json")],
+    ledgerEvents: [
+      {
+        run_id: "run-complete",
+        current_status: "completed",
+        recorded_at: "2026-05-18T12:20:00.000Z",
+      },
+    ],
+    sources: { run_ledger: "ledger.jsonl" },
+  });
+
+  assert.equal(dashboard.status, "attention_required");
+  assert.ok(dashboard.attention_items.some((item) => item.title.includes("Eval index issues")));
+  assert.match(renderFactoryDashboard(dashboard), /\| Eval gate \| attention \| 1 eval index issues must be resolved before trusting the rollup\. \|/);
+});
+
 test("report discovery categorizes generated artifacts and excludes dashboard self-output", () => {
   const root = mkdtempSync(join(tmpdir(), "factory-dashboard-"));
   try {
