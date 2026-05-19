@@ -1,0 +1,57 @@
+_version = 1
+
+[workflow]
+graph = "../build-iphone-app.cli.fabro"
+
+[run]
+goal = "Build Joni Capture, a phone-first iPhone app for capturing rambled LinkedIn ideas, handing them to Joni for draft preparation, monitoring Joni activity and analytics, and supporting an AI content interviewer mode."
+
+[run.metadata]
+factory = "iphone-app"
+app = "joni-capture"
+topic = "joni-linkedin-capture"
+control_plane = "railway"
+
+[run.inputs]
+app_type = "iPhone productivity and creator-operator tool. Read docs/superpowers/specs/2026-05-19-joni-capture-iphone-design.md and contexts/iphone-app-factory/joni-capture/feature-context.md. Build a lock-screen/action-button voice capture app for Joni, the LinkedIn agent. It must capture rambled post ideas, transcribe or queue them, submit through a configurable Joni ingestion client, classify post type, prepare evaluated LinkedIn drafts in Tim's voice, show Joni activity and analytics, and include interviewer mode for structured notes. No LinkedIn publishing or mutation."
+target_audience = "Tim Keen and operator-founders who capture ideas on the move and want a private agent-assisted LinkedIn drafting workflow with visible status, draft review, and analytics."
+app_name = "Joni Capture"
+bundle_id = "com.maestro.jonicapture"
+app_dir = "apps/joni-capture-iphone"
+spec_kitty_feature = "joni-capture-iphone-app"
+boilerplate_repo = "SwiftAIBoilerplatePro/SwiftAIBoilerplatePro-Distribution"
+max_competitors = "8"
+use_mobbin = "true"
+ios_validation_mode = "github"
+allow_macos_deferred = "false"
+
+[run.sandbox]
+provider = "daytona"
+preserve = false
+stop_on_terminal = true
+
+[run.sandbox.daytona]
+auto_stop_interval = 30
+network = "allow_all"
+
+[run.sandbox.env]
+APIFY_TOKEN = "{{ env.APIFY_TOKEN }}"
+GITHUB_TOKEN = "{{ env.GITHUB_TOKEN }}"
+GH_TOKEN = "{{ env.GH_TOKEN }}"
+OPENROUTER_API_KEY = "{{ env.OPENROUTER_API_KEY }}"
+CLAUDE_CODE_OAUTH_TOKEN = "{{ env.CLAUDE_CODE_OAUTH_TOKEN }}"
+CLAUDE_CODE_CREDENTIALS_JSON_BASE64 = "{{ env.CLAUDE_CODE_CREDENTIALS_JSON_BASE64 }}"
+CODEX_AUTH_JSON_BASE64 = "{{ env.CODEX_AUTH_JSON_BASE64 }}"
+CODEX_MCP_CREDENTIALS_JSON_BASE64 = "{{ env.CODEX_MCP_CREDENTIALS_JSON_BASE64 }}"
+MOBBIN_EMAIL = "{{ env.MOBBIN_EMAIL }}"
+MOBBIN_PASSWORD = "{{ env.MOBBIN_PASSWORD }}"
+FABRO_SERVER = "{{ env.FABRO_SERVER }}"
+FABRO_DEV_TOKEN = "{{ env.FABRO_DEV_TOKEN }}"
+
+[run.artifacts]
+include = [
+  ".workflow/**",
+  "apps/*-iphone/**",
+  ".github/workflows/**",
+  "reports/ios/**",
+]
