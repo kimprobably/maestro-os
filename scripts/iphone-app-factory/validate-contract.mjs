@@ -46,6 +46,8 @@ for (const token of [
   ".security          { provider: openrouter",
   "#spec_kimi         { provider: openrouter; model: google/gemini-3.1-flash-lite;",
   "#spec_deepseek     { provider: openrouter",
+  "max_tokens: 8192",
+  "max_tokens: 12000",
   "MOBBIN_EMAIL",
   "MOBBIN_PASSWORD",
   "never print environment variables",

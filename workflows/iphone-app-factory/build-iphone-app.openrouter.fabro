@@ -9,23 +9,23 @@ digraph BuildIPhoneApp {
         retry_target="spec_consensus",
         fallback_retry_target="architecture_consensus",
         model_stylesheet="
-            *                  { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: low; }
-            .research          { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: high; }
-            .design            { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: high; }
-            .spec              { provider: openrouter; model: google/gemini-3.1-pro-preview; reasoning_effort: high; }
-            .architecture      { provider: openrouter; model: qwen/qwen3.6-plus; reasoning_effort: high; }
-            .coding            { provider: openrouter; model: google/gemini-3.1-pro-preview; reasoning_effort: high; }
-            .review            { provider: openrouter; model: google/gemini-3.1-pro-preview; reasoning_effort: high; }
-            .verify            { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: medium; }
-            .security          { provider: openrouter; model: google/gemini-3.1-pro-preview; reasoning_effort: high; }
-            .simplify          { provider: openrouter; model: google/gemini-3.1-pro-preview; reasoning_effort: high; }
-            .macos             { provider: openrouter; model: google/gemini-3.1-pro-preview; reasoning_effort: high; }
-            #spec_codex        { provider: openrouter; model: google/gemini-3.1-pro-preview; reasoning_effort: high; }
-            #spec_claude       { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: high; }
-            #spec_kimi         { provider: openrouter; model: google/gemini-3.1-flash-lite; reasoning_effort: high; }
-            #spec_deepseek     { provider: openrouter; model: deepseek/deepseek-v4-pro; reasoning_effort: high; }
-            #arch_codex        { provider: openrouter; model: qwen/qwen3.6-plus; reasoning_effort: high; }
-            #arch_claude       { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: high; }
+            *                  { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: low; max_tokens: 8192; }
+            .research          { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: high; max_tokens: 12000; }
+            .design            { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: high; max_tokens: 12000; }
+            .spec              { provider: openrouter; model: google/gemini-3.1-pro-preview; reasoning_effort: high; max_tokens: 8192; }
+            .architecture      { provider: openrouter; model: qwen/qwen3.6-plus; reasoning_effort: high; max_tokens: 8192; }
+            .coding            { provider: openrouter; model: google/gemini-3.1-pro-preview; reasoning_effort: high; max_tokens: 12000; }
+            .review            { provider: openrouter; model: google/gemini-3.1-pro-preview; reasoning_effort: high; max_tokens: 4096; }
+            .verify            { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: medium; max_tokens: 2048; }
+            .security          { provider: openrouter; model: google/gemini-3.1-pro-preview; reasoning_effort: high; max_tokens: 4096; }
+            .simplify          { provider: openrouter; model: google/gemini-3.1-pro-preview; reasoning_effort: high; max_tokens: 12000; }
+            .macos             { provider: openrouter; model: google/gemini-3.1-pro-preview; reasoning_effort: high; max_tokens: 8192; }
+            #spec_codex        { provider: openrouter; model: google/gemini-3.1-pro-preview; reasoning_effort: high; max_tokens: 8192; }
+            #spec_claude       { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: high; max_tokens: 8192; }
+            #spec_kimi         { provider: openrouter; model: google/gemini-3.1-flash-lite; reasoning_effort: high; max_tokens: 8192; }
+            #spec_deepseek     { provider: openrouter; model: deepseek/deepseek-v4-pro; reasoning_effort: high; max_tokens: 8192; }
+            #arch_codex        { provider: openrouter; model: qwen/qwen3.6-plus; reasoning_effort: high; max_tokens: 8192; }
+            #arch_claude       { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: high; max_tokens: 8192; }
         "
     ]
     rankdir=LR
