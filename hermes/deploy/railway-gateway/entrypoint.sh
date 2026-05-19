@@ -117,6 +117,75 @@ if [ -d "$distribution_dir/skills" ]; then
   cp -R "$distribution_dir/skills/." "$profile_dir/skills/"
 fi
 
+sync_distribution_cron_templates() {
+  if [ "$profile_name" != "maestro-operator" ] || [ ! -d "$distribution_dir/cron" ]; then
+    return 0
+  fi
+
+  python3 - "$profile_dir" "$distribution_dir" <<'PY'
+import json
+import os
+import shutil
+import subprocess
+import sys
+from pathlib import Path
+
+profile_dir = Path(sys.argv[1])
+distribution_dir = Path(sys.argv[2])
+source_dir = distribution_dir / "cron"
+target_dir = profile_dir / "cron"
+target_dir.mkdir(parents=True, exist_ok=True)
+cron_env = {**os.environ, "HERMES_HOME": str(profile_dir)}
+
+jobs_path = target_dir / "jobs.json"
+try:
+    jobs = json.loads(jobs_path.read_text()).get("jobs", []) if jobs_path.exists() else []
+except Exception:
+    jobs = []
+existing_names = {job.get("name") for job in jobs if isinstance(job, dict)}
+
+for source in sorted(source_dir.glob("*.json")):
+    target = target_dir / source.name
+    if not target.exists():
+        shutil.copy2(source, target)
+    try:
+        template = json.loads(source.read_text())
+    except Exception as exc:
+        print(f"WARN: could not read cron template {source.name}: {exc}", file=sys.stderr)
+        continue
+    if template.get("paused", True):
+        continue
+    name = template.get("name") or source.stem
+    if name in existing_names:
+        continue
+    schedule = template.get("schedule")
+    prompt = template.get("prompt", "")
+    if not schedule or not prompt:
+        print(f"WARN: cron template {source.name} missing schedule or prompt", file=sys.stderr)
+        continue
+    command = [
+        "hermes",
+        "cron",
+        "create",
+        str(schedule),
+        str(prompt),
+        "--name",
+        str(name),
+        "--deliver",
+        str(template.get("deliver", "local")),
+    ]
+    for skill in template.get("skills", []):
+        command.extend(["--skill", str(skill)])
+    repeat = template.get("repeat")
+    if repeat:
+        command.extend(["--repeat", str(repeat)])
+    result = subprocess.run(command, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, env=cron_env)
+    if result.returncode != 0:
+        print(f"WARN: could not create cron job from {source.name}: {result.stderr or result.stdout}", file=sys.stderr)
+PY
+}
+sync_distribution_cron_templates
+
 sync_managed_memory() {
   local src="$1"
   local dst="$2"
@@ -575,6 +644,116 @@ stitch_enabled_env = os.environ.get("STITCH_MCP_ENABLED", "false").strip().lower
 stitch["enabled"] = bool(stitch_enabled_env or os.environ.get("STITCH_API_KEY", "").strip())
 
 path.write_text(yaml.safe_dump(cfg, sort_keys=False))
+PY
+
+/usr/local/lib/hermes-agent/venv/bin/python3 - "$HERMES_HOME" <<'PY'
+import os
+import re
+import sys
+from pathlib import Path
+
+import yaml
+
+home = Path(sys.argv[1])
+provider = os.environ.get("HERMES_GATEWAY_MODEL_PROVIDER", "").strip()
+model = os.environ.get("HERMES_GATEWAY_MODEL", "").strip()
+reasoning_effort = os.environ.get("HERMES_REASONING_EFFORT", "xhigh").strip() or "xhigh"
+
+
+def env_int(name, default):
+    raw = os.environ.get(name, str(default)).strip()
+    try:
+        return int(raw)
+    except ValueError:
+        return default
+
+
+def apply_profile_runtime_overrides(config_path):
+    cfg = yaml.safe_load(config_path.read_text()) or {}
+    if not isinstance(cfg, dict):
+        cfg = {}
+
+    model_cfg = cfg.get("model")
+    if not isinstance(model_cfg, dict):
+        model_cfg = {}
+        cfg["model"] = model_cfg
+    if provider:
+        model_cfg["provider"] = provider
+    if model:
+        model_cfg["default"] = model
+
+    agent = cfg.get("agent")
+    if not isinstance(agent, dict):
+        agent = {}
+        cfg["agent"] = agent
+    configured_max_turns = int(agent.get("max_turns") or 120)
+    agent["max_turns"] = env_int("HERMES_GATEWAY_MAX_TURNS", max(configured_max_turns, 120))
+    agent["reasoning_effort"] = reasoning_effort
+    agent["gateway_notify_interval"] = env_int("HERMES_AGENT_NOTIFY_INTERVAL", int(agent.get("gateway_notify_interval") or 45))
+    agent["gateway_timeout_warning"] = env_int("HERMES_AGENT_TIMEOUT_WARNING", int(agent.get("gateway_timeout_warning") or 180))
+
+    delegation = cfg.get("delegation")
+    if not isinstance(delegation, dict):
+        delegation = {}
+        cfg["delegation"] = delegation
+    configured_max_iterations = int(delegation.get("max_iterations") or 120)
+    delegation["reasoning_effort"] = reasoning_effort
+    delegation["max_iterations"] = env_int("HERMES_DELEGATION_MAX_ITERATIONS", max(configured_max_iterations, 120))
+    delegation["child_timeout_seconds"] = int(delegation.get("child_timeout_seconds") or 900)
+    delegation["inherit_mcp_toolsets"] = True
+
+    mcp_servers = cfg.get("mcp_servers")
+    if not isinstance(mcp_servers, dict):
+        mcp_servers = {}
+        cfg["mcp_servers"] = mcp_servers
+
+    mobbin = mcp_servers.get("mobbin")
+    if not isinstance(mobbin, dict):
+        mobbin = {}
+        mcp_servers["mobbin"] = mobbin
+    mobbin["url"] = os.environ.get("MOBBIN_MCP_URL", "https://api.mobbin.com/mcp").strip() or "https://api.mobbin.com/mcp"
+    mobbin["auth"] = "oauth"
+    mobbin["connect_timeout"] = int(mobbin.get("connect_timeout") or 300)
+    mobbin["timeout"] = int(mobbin.get("timeout") or 180)
+    tools = mobbin.get("tools")
+    if not isinstance(tools, dict):
+        tools = {}
+    mobbin["tools"] = tools
+    tools["resources"] = False
+    tools["prompts"] = False
+    mobbin_enabled = os.environ.get("MOBBIN_MCP_ENABLED", "false").strip().lower() in {"1", "true", "yes", "on"}
+    mobbin["enabled"] = bool(mobbin_enabled)
+
+    stitch = mcp_servers.get("stitch")
+    if not isinstance(stitch, dict):
+        stitch = {}
+        mcp_servers["stitch"] = stitch
+    stitch["url"] = os.environ.get("STITCH_MCP_URL", "https://stitch.googleapis.com/mcp").strip() or "https://stitch.googleapis.com/mcp"
+    headers = stitch.get("headers")
+    if not isinstance(headers, dict):
+        headers = {}
+    stitch["headers"] = headers
+    headers["X-Goog-Api-Key"] = "${STITCH_API_KEY}"
+    stitch["connect_timeout"] = int(stitch.get("connect_timeout") or 300)
+    stitch["timeout"] = int(stitch.get("timeout") or 180)
+    tools = stitch.get("tools")
+    if not isinstance(tools, dict):
+        tools = {}
+    stitch["tools"] = tools
+    tools["resources"] = False
+    tools["prompts"] = False
+    stitch_enabled = os.environ.get("STITCH_MCP_ENABLED", "false").strip().lower() in {"1", "true", "yes", "on"}
+    stitch["enabled"] = bool(stitch_enabled or os.environ.get("STITCH_API_KEY", "").strip())
+
+    text = yaml.safe_dump(cfg, sort_keys=False)
+    text = re.sub(r"\n{3,}", "\n\n", text)
+    config_path.write_text(text)
+
+
+profiles_dir = home / "profiles"
+if profiles_dir.exists():
+    for config_path in profiles_dir.glob("*/config.yaml"):
+        apply_profile_runtime_overrides(config_path)
 PY
 
 /usr/local/lib/hermes-agent/venv/bin/python3 - "$HERMES_HOME" <<'PY'

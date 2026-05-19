@@ -17,4 +17,8 @@ Write `.workflow/iphone-app-factory/research/competitors.md`.
 
 Secret handling is blocking: never print environment variables or credential values. If checking credential availability, report only true/false presence and never echo, grep, dump, log, or write the value. Do not run environment dump commands such as `env`, `printenv`, `set`, `export`, or `declare -x`, and do not echo any `$...TOKEN`, `$...KEY`, `$...PASSWORD`, `$...AUTH`, or `$...CREDENTIAL` variable.
 
+Do not spawn subagents, delegate, inspect `.env` files, or search the environment for credentials. If a live source fails, record the limitation and continue with limited evidence.
+
 Be explicit about evidence quality. Do not overfit to the largest apps if smaller fast-growing products better match the opportunity.
+
+Keep the pass bounded: write the report once, do not run ad hoc verification loops, and end after the file is written. Do not write implementation code.

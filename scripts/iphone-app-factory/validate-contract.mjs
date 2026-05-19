@@ -13,7 +13,21 @@ function requireFile(path) {
 }
 
 const graph = requireFile(workflow);
-const buildHaystack = `${graph}\n${requireFile("workflows/iphone-app-factory/build-iphone-app.toml")}\n${requireFile("workflows/iphone-app-factory/build-iphone-app.daytona.toml")}`;
+const openrouterGraph = requireFile("workflows/iphone-app-factory/build-iphone-app.openrouter.fabro");
+const buildHaystack = `${graph}\n${openrouterGraph}\n${requireFile("workflows/iphone-app-factory/build-iphone-app.toml")}\n${requireFile("workflows/iphone-app-factory/build-iphone-app.daytona.toml")}`;
+
+function requireNodeMaxTokens(path, body, node, expected) {
+  const escapedNode = node.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const match = body.match(new RegExp(`(?:^|\\n)\\s*${escapedNode}\\s*\\[([\\s\\S]*?)\\]`, "m"));
+  if (!match) {
+    failures.push(`${path} missing node ${node}`);
+    return;
+  }
+  if (!new RegExp(`\\bmax_tokens\\s*=\\s*${expected}\\b`).test(match[1])) {
+    failures.push(`${path} node ${node} missing max_tokens=${expected}`);
+  }
+}
+
 for (const token of [
   "research_fanout",
   "run_input_gate",
@@ -43,8 +57,10 @@ for (const token of [
   ".review            { provider: openrouter",
   ".verify            { provider: openrouter",
   ".security          { provider: openrouter",
-  "#spec_kimi         { provider: openrouter",
+  "#spec_kimi         { provider: openrouter; model: google/gemini-3.1-flash-lite;",
   "#spec_deepseek     { provider: openrouter",
+  "max_tokens: 4096",
+  "max_tokens: 2048",
   "MOBBIN_EMAIL",
   "MOBBIN_PASSWORD",
   "never print environment variables",
@@ -55,6 +71,58 @@ for (const token of [
 
 for (const token of ["provider: anthropic", "claude-sonnet-4-5"]) {
   if (graph.includes(token)) failures.push(`workflow must not depend on unavailable Claude CLI route: ${token}`);
+}
+
+for (const [name, body] of [
+  [workflow, graph],
+  ["workflows/iphone-app-factory/build-iphone-app.openrouter.fabro", openrouterGraph],
+]) {
+  if (/#spec_kimi\s+\{[^}]*moonshotai\/kimi-k2\.6/.test(body)) {
+    failures.push(`${name} must not route spec_kimi to Kimi; Joni Capture exceeded Kimi context during spec fanout`);
+  }
+  for (const node of [
+    "app_store_research",
+    "reddit_research",
+    "competitor_research",
+    "design_pattern_research",
+    "research_synthesis",
+    "spec_codex",
+    "spec_claude",
+    "spec_kimi",
+    "spec_deepseek",
+    "arch_codex",
+    "arch_claude",
+    "architecture_consensus",
+  ]) {
+    requireNodeMaxTokens(name, body, node, 4096);
+  }
+  const cliBacked = name === workflow;
+  for (const node of ["boilerplate_setup", "implement_foundation", "implement_core", "implement_interface", "implement_integration", "simplification"]) {
+    requireNodeMaxTokens(name, body, node, cliBacked ? 12000 : 4096);
+  }
+  requireNodeMaxTokens(name, body, "ai_ui_explorer", cliBacked ? 8192 : 4096);
+  for (const node of ["verify_foundation", "verify_core", "verify_interface", "verify_integration"]) {
+    requireNodeMaxTokens(name, body, node, 1024);
+  }
+  for (const node of [
+    "spec_cross_critique",
+    "spec_red_team",
+    "implementation_correctness_review",
+    "implementation_test_review",
+    "implementation_security_review",
+    "implementation_boilerplate_review",
+    "implementation_review_consensus",
+    "app_store_hardening",
+    "product_fidelity_review",
+    "ios_architecture_review",
+    "security_privacy_review",
+    "code_quality_review",
+    "release_readiness_review",
+    "qa_review",
+    "final_consensus",
+  ]) {
+    requireNodeMaxTokens(name, body, node, 2048);
+  }
 }
 
 const promptDir = "prompts/iphone-app-factory";

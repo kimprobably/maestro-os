@@ -14,12 +14,12 @@ digraph BuildIPhoneApp {
             .design            { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: high; max_tokens: 4096; }
             .spec              { provider: openrouter; model: google/gemini-3.1-pro-preview; reasoning_effort: high; max_tokens: 4096; }
             .architecture      { provider: openrouter; model: qwen/qwen3.6-plus; reasoning_effort: high; max_tokens: 4096; }
-            .coding            { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; max_tokens: 12000; }
+            .coding            { provider: openrouter; model: google/gemini-3.1-pro-preview; reasoning_effort: high; max_tokens: 4096; }
             .review            { provider: openrouter; model: google/gemini-3.1-pro-preview; reasoning_effort: high; max_tokens: 2048; }
             .verify            { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: medium; max_tokens: 1024; }
             .security          { provider: openrouter; model: google/gemini-3.1-pro-preview; reasoning_effort: high; max_tokens: 2048; }
-            .simplify          { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; max_tokens: 12000; }
-            .macos             { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; max_tokens: 8192; }
+            .simplify          { provider: openrouter; model: google/gemini-3.1-pro-preview; reasoning_effort: high; max_tokens: 4096; }
+            .macos             { provider: openrouter; model: google/gemini-3.1-pro-preview; reasoning_effort: high; max_tokens: 4096; }
             #spec_codex        { provider: openrouter; model: google/gemini-3.1-pro-preview; reasoning_effort: high; max_tokens: 4096; }
             #spec_claude       { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: high; max_tokens: 4096; }
             #spec_kimi         { provider: openrouter; model: google/gemini-3.1-flash-lite; reasoning_effort: high; max_tokens: 4096; }
@@ -151,7 +151,7 @@ digraph BuildIPhoneApp {
     boilerplate_setup [
         label="Clone And Rebrand Boilerplate",
         class="coding",
-        max_tokens=12000,
+        max_tokens=4096,
         goal_gate=true,
         retry_target="boilerplate_setup",
         prompt="@../../prompts/iphone-app-factory/boilerplate-setup.md"
@@ -164,19 +164,19 @@ digraph BuildIPhoneApp {
         script="node scripts/iphone-app-factory/boilerplate-contract-gate.mjs '{{ inputs.app_dir|default('apps/generated-iphone-app') }}'"
     ]
 
-    implement_foundation [label="Implement Foundation", class="coding", max_tokens=12000, goal_gate=true, retry_target="implement_foundation", prompt="@../../prompts/iphone-app-factory/implement-foundation.md"]
+    implement_foundation [label="Implement Foundation", class="coding", max_tokens=4096, goal_gate=true, retry_target="implement_foundation", prompt="@../../prompts/iphone-app-factory/implement-foundation.md"]
     verify_foundation [label="Verify Foundation", class="verify", max_tokens=1024, goal_gate=true, retry_target="implement_foundation", prompt="@../../prompts/iphone-app-factory/verify-phase.md"]
     gate_foundation [label="Foundation Gate", shape=parallelogram, goal_gate=true, retry_target="implement_foundation", script="node scripts/iphone-app-factory/phase-evidence-gate.mjs foundation '{{ inputs.app_dir|default('apps/generated-iphone-app') }}'"]
 
-    implement_core [label="Implement Core", class="coding", max_tokens=12000, goal_gate=true, retry_target="implement_core", prompt="@../../prompts/iphone-app-factory/implement-core.md"]
+    implement_core [label="Implement Core", class="coding", max_tokens=4096, goal_gate=true, retry_target="implement_core", prompt="@../../prompts/iphone-app-factory/implement-core.md"]
     verify_core [label="Verify Core", class="verify", max_tokens=1024, goal_gate=true, retry_target="implement_core", prompt="@../../prompts/iphone-app-factory/verify-phase.md"]
     gate_core [label="Core Gate", shape=parallelogram, goal_gate=true, retry_target="implement_core", script="node scripts/iphone-app-factory/phase-evidence-gate.mjs core '{{ inputs.app_dir|default('apps/generated-iphone-app') }}'"]
 
-    implement_interface [label="Implement Interface", class="coding", max_tokens=12000, goal_gate=true, retry_target="implement_interface", prompt="@../../prompts/iphone-app-factory/implement-interface.md"]
+    implement_interface [label="Implement Interface", class="coding", max_tokens=4096, goal_gate=true, retry_target="implement_interface", prompt="@../../prompts/iphone-app-factory/implement-interface.md"]
     verify_interface [label="Verify Interface", class="verify", max_tokens=1024, goal_gate=true, retry_target="implement_interface", prompt="@../../prompts/iphone-app-factory/verify-phase.md"]
     gate_interface [label="Interface Gate", shape=parallelogram, goal_gate=true, retry_target="implement_interface", script="node scripts/iphone-app-factory/phase-evidence-gate.mjs interface '{{ inputs.app_dir|default('apps/generated-iphone-app') }}'"]
 
-    implement_integration [label="Implement Integration", class="coding", max_tokens=12000, goal_gate=true, retry_target="implement_integration", prompt="@../../prompts/iphone-app-factory/implement-integration.md"]
+    implement_integration [label="Implement Integration", class="coding", max_tokens=4096, goal_gate=true, retry_target="implement_integration", prompt="@../../prompts/iphone-app-factory/implement-integration.md"]
     verify_integration [label="Verify Integration", class="verify", max_tokens=1024, goal_gate=true, retry_target="implement_integration", prompt="@../../prompts/iphone-app-factory/verify-phase.md"]
     gate_integration [label="Integration Gate", shape=parallelogram, goal_gate=true, retry_target="implement_integration", script="node scripts/iphone-app-factory/phase-evidence-gate.mjs integration '{{ inputs.app_dir|default('apps/generated-iphone-app') }}'"]
 
@@ -220,7 +220,7 @@ digraph BuildIPhoneApp {
     simplification [
         label="Code Simplification",
         class="simplify",
-        max_tokens=12000,
+        max_tokens=4096,
         goal_gate=true,
         retry_target="simplification",
         prompt="@../../prompts/iphone-app-factory/simplification.md"
@@ -243,7 +243,7 @@ digraph BuildIPhoneApp {
     ai_ui_explorer [
         label="AI UI Explorer",
         class="macos",
-        max_tokens=8192,
+        max_tokens=4096,
         goal_gate=true,
         retry_target="implement_interface",
         prompt="@../../prompts/iphone-app-factory/ai-ui-explorer.md"

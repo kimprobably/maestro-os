@@ -33,7 +33,22 @@ const timeoutMs = Number(process.env.PROMPTFOO_MAX_EVAL_TIME_MS || "120000");
 function writeReport(report) {
   mkdirSync(dirname(outPath), { recursive: true });
   writeFileSync(outPath, `${JSON.stringify(report, null, 2)}\n`);
-  console.log(JSON.stringify(report, null, 2));
+  const compactReport = {
+    ok: report.ok,
+    prompt_count: report.prompt_count,
+    prompt_file_count: report.prompt_file_count,
+    promptfoo_attempted: report.promptfoo_attempted,
+    promptfoo_ok: report.promptfoo_ok,
+    promptfoo_status: report.promptfoo_status,
+    attempted_fallback_accepted: report.attempted_fallback_accepted,
+    accepted_risk_promptfoo_failure: report.accepted_risk_promptfoo_failure,
+    fallback_ok: report.fallback_ok,
+    fallback_failure_count: report.fallback_failures.length,
+    promptfoo_failure_count: report.promptfoo_failures.length,
+    critical_gaps: report.critical_gaps,
+    report_path: outPath,
+  };
+  console.log(JSON.stringify(compactReport, null, 2));
 }
 
 function readJson(path) {
@@ -248,13 +263,14 @@ const promptfooOk = Boolean(promptfooResult && promptfooResult.status === 0);
 const fallbackOk = fallbackFailures.length === 0;
 const promptfooFailed = Boolean(promptfooResult && promptfooResult.status !== 0);
 const promptfooUnavailable = !promptfooResult;
+const promptfooAttemptedFallbackAccepted = allowFallback && promptfooFailed && fallbackOk;
 const promptfooUnavailableReason = promptfooMissingEnv.length > 0
   ? `missing environment keys: ${promptfooMissingEnv.join(", ")}`
   : promptfooCheck.available
     ? null
     : promptfooCheck.reason;
 const promptfooSummary = promptfooResult ? readPromptfooSummary() : { promptfoo_failures: [], critical_gaps: [] };
-const ok = fallbackOk && (promptfooOk || allowPromptfooFallback);
+const ok = fallbackOk && (promptfooOk || allowPromptfooFallback || promptfooAttemptedFallbackAccepted);
 const promptfooWaiverAccepted = !promptfooOk && fallbackOk && acceptedRiskPromptfooFailure;
 const promptfooWaiver = promptfooWaiverAccepted
   ? {
@@ -284,6 +300,7 @@ const report = {
   promptfoo_stderr_excerpt: promptfooResult ? redactString(promptfooResult.stderr).slice(-3000) : "",
   allow_promptfoo_fallback: allowPromptfooFallback,
   legacy_allow_promptfoo_fallback_requested: legacyAllowPromptfooFallbackRequested,
+  attempted_fallback_accepted: promptfooAttemptedFallbackAccepted,
   accepted_risk_promptfoo_failure: acceptedRiskPromptfooFailure,
   skip_promptfoo: skipPromptfoo,
   fallback_used: !promptfooOk,

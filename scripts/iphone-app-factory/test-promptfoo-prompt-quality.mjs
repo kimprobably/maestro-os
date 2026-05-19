@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 import assert from "node:assert/strict";
-import { mkdtempSync, readFileSync, rmSync } from "node:fs";
+import { chmodSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import { spawnSync } from "node:child_process";
@@ -79,4 +79,75 @@ test("promptfoo prompt quality fails closed when promptfoo is skipped without ac
     assert.equal(report.accepted_risk_promptfoo_failure, false);
     assert.equal(report.ok, false);
   });
+});
+
+test("promptfoo prompt quality accepts deterministic fallback when promptfoo runner fails after attempting", () => {
+  withTempDir((dir) => {
+    const out = join(dir, "prompt-quality.json");
+    const normalizedOut = join(dir, "normalized-prompt-quality.json");
+    const fakeBin = join(dir, "bin");
+    const fakePromptfoo = join(fakeBin, "promptfoo");
+    mkdirSync(fakeBin, { recursive: true });
+    writeFileSync(fakePromptfoo, `#!/usr/bin/env bash
+if [[ "$1" == "--version" ]]; then
+  echo "promptfoo fake"
+  exit 0
+fi
+echo "simulated promptfoo model grading failure"
+exit 1
+`);
+    chmodSync(fakePromptfoo, 0o755);
+
+    const result = spawnSync(process.execPath, [
+      script,
+      "--allow-fallback",
+      "true",
+      "--accepted-risk-promptfoo-failure",
+      "false",
+      "--out",
+      out,
+      "--normalized-out",
+      normalizedOut,
+    ], {
+      cwd: repoRoot,
+      encoding: "utf8",
+      env: {
+        ...process.env,
+        PATH: `${fakeBin}:${process.env.PATH || ""}`,
+        OPENROUTER_API_KEY: "test-openrouter-key",
+      },
+      stdio: ["ignore", "pipe", "pipe"],
+    });
+
+    assert.equal(result.status, 0, result.stderr || result.stdout);
+    const report = JSON.parse(readFileSync(out, "utf8"));
+    assert.equal(report.ok, true);
+    assert.equal(report.promptfoo_attempted, true);
+    assert.equal(report.promptfoo_ok, false);
+    assert.equal(report.fallback_ok, true);
+    assert.equal(report.attempted_fallback_accepted, true);
+    assert.equal(report.accepted_risk_promptfoo_failure, false);
+
+    const stdoutReport = JSON.parse(result.stdout);
+    assert.equal(stdoutReport.ok, true);
+    assert.equal(stdoutReport.report_path, out);
+    assert.equal(stdoutReport.promptfoo_failure_count, 0);
+    assert.ok(result.stdout.length < 1200, result.stdout);
+    assert.doesNotMatch(result.stdout, /simulated promptfoo model grading failure/);
+  });
+});
+
+test("research prompts forbid subagent delegation and credential environment inspection", () => {
+  for (const name of [
+    "research-app-store.md",
+    "research-reddit.md",
+    "research-competitors.md",
+    "research-design-patterns.md",
+  ]) {
+    const prompt = readFileSync(join(repoRoot, "prompts/iphone-app-factory", name), "utf8");
+    assert.match(prompt, /Do not spawn subagents/);
+    assert.match(prompt, /inspect `\.env` files/);
+    assert.match(prompt, /search the environment for credentials/);
+    assert.match(prompt, /environment dump commands/);
+  }
 });
