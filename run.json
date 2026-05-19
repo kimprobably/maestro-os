@@ -796,13 +796,13 @@
   },
   "web_url": "https://fabro-maestro-production.up.railway.app/runs/01KRZNQC9YHSTWB3T47Q0WP5E1",
   "start": {
-    "start_time": "2026-05-19T08:30:37.117503484Z"
+    "start_time": "2026-05-19T08:30:40.401548600Z"
   },
   "status": {
     "kind": "running"
   },
   "status_updated_at": "2026-05-19T08:30:36.148352766Z",
-  "last_event_at": "2026-05-19T08:30:38.418989733Z",
+  "last_event_at": "2026-05-19T08:31:52.388313012Z",
   "pending_control": null,
   "checkpoints": [
     {
@@ -954,9 +954,84 @@
       "diff": {}
     },
     {
-      "seq": 0,
+      "seq": 38,
       "checkpoint": {
-        "timestamp": "2026-05-19T08:30:38.445319452Z",
+        "timestamp": "2026-05-19T08:30:38.432088646Z",
+        "current_node": "emit_contract",
+        "completed_nodes": [
+          "start",
+          "validate_feature_workflow",
+          "emit_contract"
+        ],
+        "node_retries": {},
+        "context_values": {
+          "graph.inputs": "fabro_server,use_mobbin_mcp,app_dir",
+          "graph.default_max_retries": "2",
+          "internal.node_visit_count": 1,
+          "internal.work_dir": "/home/daytona/workspace/maestro-os",
+          "graph.model_stylesheet": "* { backend: cli; provider: openai; model: gpt-5.3-codex-spark; reasoning_effort: low; }",
+          "graph.goal": "Validate reusable existing-app feature workflow contracts and Railway execution requirements",
+          "internal.thread_id": "validate_feature_workflow",
+          "thread.start.current_node": "validate_feature_workflow",
+          "graph.retry_target": "feature_spec_child",
+          "last_response": "[Simulated] Response for stage: emit_contract",
+          "graph.rankdir": "LR",
+          "graph.persona": "existing-app-feature-preflight",
+          "internal.run_id": "01KRZNQC9YHSTWB3T47Q0WP5E1",
+          "failure_signature": "",
+          "graph.artifact_root": ".workflow/existing-app-feature",
+          "internal.retry_count.validate_feature_workflow": 0,
+          "graph.secret_policy": "no secrets; do not print environment variables or credential values",
+          "outcome": "succeeded",
+          "current_node": "emit_contract",
+          "thread.validate_feature_workflow.current_node": "emit_contract",
+          "command.output": "blob://sha256/12ae32cb1ec02d01eda3581b127c1fee3b0dc53572ed6baf239721a03d82e126",
+          "graph.outputs": "contract.artifact,contract.gate,contract.next_action,contract.failure_classification",
+          "internal.fidelity": "compact",
+          "internal.retry_count.emit_contract": 0,
+          "internal.parent_preamble": "Goal: Implement WakeTask's loud alarm sound lab feature pack after viral completion/accountability lands\n",
+          "response.emit_contract": "[Simulated] Response for stage: emit_contract",
+          "internal.retry_count.start": 0,
+          "last_stage": "emit_contract",
+          "failure_class": ""
+        },
+        "node_outcomes": {
+          "start": {
+            "status": "succeeded",
+            "usage": null
+          },
+          "validate_feature_workflow": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/12ae32cb1ec02d01eda3581b127c1fee3b0dc53572ed6baf239721a03d82e126"
+            },
+            "notes": "Script completed: mkdir -p .workflow/existing-app-feature/preflight; { node --test scripts/iphone-app-factory/test-existing-app-feature-workflow-contract.mjs && node scripts/iphone-app-factory/feature-workflow-preflight.mjs --server https://fabro-maestro-production.up.railway.app/api/v1 --context-paths \"$FEATURE_CONTEXT_PATHS\" --use-mobbin-mcp \"$UX_USE_MOBBIN_MCP\"; } > .workflow/existing-app-feature/preflight/workflow-preflight.log 2>&1",
+            "usage": null
+          },
+          "emit_contract": {
+            "status": "succeeded",
+            "context_updates": {
+              "last_response": "[Simulated] Response for stage: emit_contract",
+              "last_stage": "emit_contract",
+              "response.emit_contract": "[Simulated] Response for stage: emit_contract"
+            },
+            "notes": "Stage completed: emit_contract",
+            "usage": null
+          }
+        },
+        "next_node_id": "exit",
+        "node_visits": {
+          "start": 1,
+          "validate_feature_workflow": 1,
+          "emit_contract": 1
+        }
+      },
+      "diff": {}
+    },
+    {
+      "seq": 45,
+      "checkpoint": {
+        "timestamp": "2026-05-19T08:30:40.395718830Z",
         "current_node": "feature_workflow_preflight",
         "completed_nodes": [
           "start",
@@ -964,35 +1039,300 @@
         ],
         "node_retries": {},
         "context_values": {
-          "internal.fidelity": "compact",
-          "graph.model_stylesheet": "\n            *       { backend: cli; provider: openai; model: gpt-5.3-codex-spark; reasoning_effort: low; }\n            .spec   { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            .build  { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            .review { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n        ",
-          "graph.outputs": "context_pack,research_pack,existing_app_audit,feature_spec,implementation_plan,implementation_evidence,validation_report,publish_handoff,postmortem",
-          "graph.rankdir": "LR",
-          "graph.secret_policy": "no secrets; credential checks are presence-only; do not print environment variables or credential values",
-          "internal.work_dir": "/home/daytona/workspace/maestro-os",
-          "thread.start.current_node": "feature_workflow_preflight",
-          "last_response": "[Simulated] Response for stage: emit_contract",
-          "graph.goal": "Implement WakeTask's loud alarm sound lab feature pack after viral completion/accountability lands",
-          "graph.retry_target": "feature_spec_child",
-          "graph.default_max_retries": "2",
-          "graph.artifact_root": ".workflow/existing-app-feature",
-          "internal.run_id": "01KRZNQC9YHSTWB3T47Q0WP5E1",
-          "outcome": "succeeded",
-          "internal.thread_id": "start",
-          "failure_signature": "",
-          "graph.persona": "existing-iphone-app-feature-orchestrator",
-          "response.emit_contract": "[Simulated] Response for stage: emit_contract",
-          "graph.inputs": "repo_url,base_branch,run_branch,app_name,bundle_id,app_dir,app_domain,target_audience,feature_goal,required_capabilities,context_paths,max_competitors,use_mobbin_mcp,use_design_corpus,ios_validation_mode,allow_macos_deferred,fabro_server",
-          "internal.node_visit_count": 1,
-          "last_stage": "emit_contract",
-          "internal.retry_count.feature_workflow_preflight": 0,
           "current_node": "feature_workflow_preflight",
+          "failure_signature": "",
+          "graph.inputs": "repo_url,base_branch,run_branch,app_name,bundle_id,app_dir,app_domain,target_audience,feature_goal,required_capabilities,context_paths,max_competitors,use_mobbin_mcp,use_design_corpus,ios_validation_mode,allow_macos_deferred,fabro_server",
+          "graph.persona": "existing-iphone-app-feature-orchestrator",
+          "graph.outputs": "context_pack,research_pack,existing_app_audit,feature_spec,implementation_plan,implementation_evidence,validation_report,publish_handoff,postmortem",
+          "response.emit_contract": "[Simulated] Response for stage: emit_contract",
+          "graph.model_stylesheet": "\n            *       { backend: cli; provider: openai; model: gpt-5.3-codex-spark; reasoning_effort: low; }\n            .spec   { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            .build  { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            .review { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n        ",
+          "graph.rankdir": "LR",
+          "graph.artifact_root": ".workflow/existing-app-feature",
+          "thread.start.current_node": "feature_workflow_preflight",
           "failure_class": "",
-          "internal.retry_count.start": 0
+          "graph.default_max_retries": "2",
+          "internal.retry_count.feature_workflow_preflight": 0,
+          "graph.goal": "Implement WakeTask's loud alarm sound lab feature pack after viral completion/accountability lands",
+          "graph.secret_policy": "no secrets; credential checks are presence-only; do not print environment variables or credential values",
+          "internal.run_id": "01KRZNQC9YHSTWB3T47Q0WP5E1",
+          "internal.work_dir": "/home/daytona/workspace/maestro-os",
+          "last_response": "[Simulated] Response for stage: emit_contract",
+          "internal.node_visit_count": 1,
+          "internal.retry_count.start": 0,
+          "internal.thread_id": "start",
+          "last_stage": "emit_contract",
+          "graph.retry_target": "feature_spec_child",
+          "outcome": "succeeded",
+          "internal.fidelity": "compact"
+        },
+        "node_outcomes": {
+          "feature_workflow_preflight": {
+            "status": "succeeded",
+            "context_updates": {
+              "response.emit_contract": "[Simulated] Response for stage: emit_contract",
+              "last_response": "[Simulated] Response for stage: emit_contract",
+              "last_stage": "emit_contract"
+            },
+            "notes": "Child completed at cycle 2",
+            "usage": null
+          },
+          "start": {
+            "status": "succeeded",
+            "usage": null
+          }
+        },
+        "next_node_id": "context_intake_child",
+        "git_commit_sha": "d782d8581d1c98cdc593f2a515849a003e1093e4",
+        "node_visits": {
+          "start": 1,
+          "feature_workflow_preflight": 1
+        }
+      },
+      "diff": {
+        "summary": {
+          "files_changed": 0,
+          "additions": 0,
+          "deletions": 0
+        }
+      }
+    },
+    {
+      "seq": 54,
+      "checkpoint": {
+        "timestamp": "2026-05-19T08:30:40.401798131Z",
+        "current_node": "start",
+        "completed_nodes": [
+          "start"
+        ],
+        "node_retries": {},
+        "context_values": {
+          "internal.work_dir": "/home/daytona/workspace/maestro-os",
+          "graph.outputs": "contract.artifact,contract.gate,contract.next_action,contract.failure_classification,context_pack",
+          "graph.rankdir": "LR",
+          "response.emit_contract": "[Simulated] Response for stage: emit_contract",
+          "graph.model_stylesheet": "* { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }",
+          "graph.artifact_root": ".workflow/existing-app-feature",
+          "graph.secret_policy": "no secrets; do not print environment variables or credential values",
+          "graph.inputs": "app_name,target_audience,feature_goal,required_capabilities,context_paths",
+          "internal.parent_preamble": "Goal: Implement WakeTask's loud alarm sound lab feature pack after viral completion/accountability lands\n\n## Completed stages\n- **feature_workflow_preflight**: succeeded\n",
+          "failure_class": "",
+          "internal.retry_count.feature_workflow_preflight": 0,
+          "internal.run_id": "01KRZNQC9YHSTWB3T47Q0WP5E1",
+          "last_response": "[Simulated] Response for stage: emit_contract",
+          "internal.retry_count.start": 0,
+          "graph.default_max_retries": "2",
+          "current_node": "start",
+          "failure_signature": "",
+          "thread.feature_workflow_preflight.current_node": "context_intake_child",
+          "last_stage": "emit_contract",
+          "graph.goal": "Turn run-specific app context into a reusable feature context pack",
+          "graph.retry_target": "feature_spec_child",
+          "outcome": "succeeded",
+          "thread.start.current_node": "feature_workflow_preflight",
+          "internal.node_visit_count": 1,
+          "internal.fidelity": "compact",
+          "internal.thread_id": null,
+          "graph.persona": "existing-app-feature-context"
         },
         "node_outcomes": {
           "start": {
             "status": "succeeded",
+            "usage": null
+          }
+        },
+        "next_node_id": "write_context_pack",
+        "node_visits": {
+          "start": 1
+        }
+      },
+      "diff": {}
+    },
+    {
+      "seq": 60,
+      "checkpoint": {
+        "timestamp": "2026-05-19T08:31:51.176603645Z",
+        "current_node": "write_context_pack",
+        "completed_nodes": [
+          "start",
+          "write_context_pack"
+        ],
+        "node_retries": {},
+        "context_values": {
+          "last_stage": "emit_contract",
+          "graph.rankdir": "LR",
+          "graph.retry_target": "feature_spec_child",
+          "internal.work_dir": "/home/daytona/workspace/maestro-os",
+          "thread.feature_workflow_preflight.current_node": "context_intake_child",
+          "response.emit_contract": "[Simulated] Response for stage: emit_contract",
+          "internal.retry_count.start": 0,
+          "thread.start.current_node": "write_context_pack",
+          "command.output": "blob://sha256/a4c52faac91c0c6e3087f9660eab432e5f2fee57af63aa6846c42b479446d719",
+          "internal.fidelity": "compact",
+          "last_response": "[Simulated] Response for stage: emit_contract",
+          "outcome": "succeeded",
+          "graph.goal": "Turn run-specific app context into a reusable feature context pack",
+          "failure_signature": "",
+          "internal.thread_id": "start",
+          "graph.outputs": "contract.artifact,contract.gate,contract.next_action,contract.failure_classification,context_pack",
+          "internal.parent_preamble": "Goal: Implement WakeTask's loud alarm sound lab feature pack after viral completion/accountability lands\n\n## Completed stages\n- **feature_workflow_preflight**: succeeded\n",
+          "failure_class": "",
+          "current_node": "write_context_pack",
+          "internal.run_id": "01KRZNQC9YHSTWB3T47Q0WP5E1",
+          "graph.persona": "existing-app-feature-context",
+          "graph.inputs": "app_name,target_audience,feature_goal,required_capabilities,context_paths",
+          "graph.model_stylesheet": "* { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }",
+          "internal.retry_count.write_context_pack": 0,
+          "graph.default_max_retries": "2",
+          "graph.artifact_root": ".workflow/existing-app-feature",
+          "internal.retry_count.feature_workflow_preflight": 0,
+          "internal.node_visit_count": 1,
+          "graph.secret_policy": "no secrets; do not print environment variables or credential values"
+        },
+        "node_outcomes": {
+          "write_context_pack": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/a4c52faac91c0c6e3087f9660eab432e5f2fee57af63aa6846c42b479446d719"
+            },
+            "notes": "Script completed: node scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/feature-context-intake.md --stage feature-context-intake --out .workflow/existing-app-feature/codex/feature-context-intake.json",
+            "usage": null
+          },
+          "start": {
+            "status": "succeeded",
+            "usage": null
+          }
+        },
+        "next_node_id": "validate_context_pack",
+        "node_visits": {
+          "start": 1,
+          "write_context_pack": 1
+        }
+      },
+      "diff": {}
+    },
+    {
+      "seq": 66,
+      "checkpoint": {
+        "timestamp": "2026-05-19T08:31:52.388258963Z",
+        "current_node": "validate_context_pack",
+        "completed_nodes": [
+          "start",
+          "write_context_pack",
+          "validate_context_pack"
+        ],
+        "node_retries": {},
+        "context_values": {
+          "graph.goal": "Turn run-specific app context into a reusable feature context pack",
+          "graph.persona": "existing-app-feature-context",
+          "current_node": "validate_context_pack",
+          "graph.artifact_root": ".workflow/existing-app-feature",
+          "graph.outputs": "contract.artifact,contract.gate,contract.next_action,contract.failure_classification,context_pack",
+          "graph.model_stylesheet": "* { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }",
+          "graph.retry_target": "feature_spec_child",
+          "graph.secret_policy": "no secrets; do not print environment variables or credential values",
+          "outcome": "succeeded",
+          "graph.default_max_retries": "2",
+          "internal.run_id": "01KRZNQC9YHSTWB3T47Q0WP5E1",
+          "internal.thread_id": "write_context_pack",
+          "graph.inputs": "app_name,target_audience,feature_goal,required_capabilities,context_paths",
+          "internal.retry_count.validate_context_pack": 0,
+          "thread.write_context_pack.current_node": "validate_context_pack",
+          "thread.feature_workflow_preflight.current_node": "context_intake_child",
+          "internal.parent_preamble": "Goal: Implement WakeTask's loud alarm sound lab feature pack after viral completion/accountability lands\n\n## Completed stages\n- **feature_workflow_preflight**: succeeded\n",
+          "response.emit_contract": "[Simulated] Response for stage: emit_contract",
+          "last_stage": "emit_contract",
+          "graph.rankdir": "LR",
+          "last_response": "[Simulated] Response for stage: emit_contract",
+          "internal.fidelity": "compact",
+          "internal.retry_count.feature_workflow_preflight": 0,
+          "internal.node_visit_count": 1,
+          "command.output": "blob://sha256/cff594dd57b557aadea5e71a7341bbf7111b97ce6fb4a37046318f2153b5f9b9",
+          "internal.retry_count.write_context_pack": 0,
+          "failure_signature": "",
+          "thread.start.current_node": "write_context_pack",
+          "failure_class": "",
+          "internal.work_dir": "/home/daytona/workspace/maestro-os",
+          "internal.retry_count.start": 0
+        },
+        "node_outcomes": {
+          "validate_context_pack": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/cff594dd57b557aadea5e71a7341bbf7111b97ce6fb4a37046318f2153b5f9b9"
+            },
+            "notes": "Script completed: node scripts/iphone-app-factory/feature-context-gate.mjs",
+            "usage": null
+          },
+          "write_context_pack": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/a4c52faac91c0c6e3087f9660eab432e5f2fee57af63aa6846c42b479446d719"
+            },
+            "notes": "Script completed: node scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/feature-context-intake.md --stage feature-context-intake --out .workflow/existing-app-feature/codex/feature-context-intake.json",
+            "usage": null
+          },
+          "start": {
+            "status": "succeeded",
+            "usage": null
+          }
+        },
+        "next_node_id": "exit",
+        "node_visits": {
+          "start": 1,
+          "validate_context_pack": 1,
+          "write_context_pack": 1
+        }
+      },
+      "diff": {}
+    },
+    {
+      "seq": 0,
+      "checkpoint": {
+        "timestamp": "2026-05-19T08:31:52.414934208Z",
+        "current_node": "context_intake_child",
+        "completed_nodes": [
+          "start",
+          "feature_workflow_preflight",
+          "context_intake_child"
+        ],
+        "node_retries": {},
+        "context_values": {
+          "graph.outputs": "context_pack,research_pack,existing_app_audit,feature_spec,implementation_plan,implementation_evidence,validation_report,publish_handoff,postmortem",
+          "graph.rankdir": "LR",
+          "internal.work_dir": "/home/daytona/workspace/maestro-os",
+          "last_response": "[Simulated] Response for stage: emit_contract",
+          "graph.goal": "Implement WakeTask's loud alarm sound lab feature pack after viral completion/accountability lands",
+          "graph.artifact_root": ".workflow/existing-app-feature",
+          "internal.thread_id": "feature_workflow_preflight",
+          "failure_signature": "",
+          "response.emit_contract": "[Simulated] Response for stage: emit_contract",
+          "last_stage": "emit_contract",
+          "graph.inputs": "repo_url,base_branch,run_branch,app_name,bundle_id,app_dir,app_domain,target_audience,feature_goal,required_capabilities,context_paths,max_competitors,use_mobbin_mcp,use_design_corpus,ios_validation_mode,allow_macos_deferred,fabro_server",
+          "failure_class": "",
+          "internal.retry_count.start": 0,
+          "internal.fidelity": "compact",
+          "graph.model_stylesheet": "\n            *       { backend: cli; provider: openai; model: gpt-5.3-codex-spark; reasoning_effort: low; }\n            .spec   { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            .build  { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            .review { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n        ",
+          "graph.secret_policy": "no secrets; credential checks are presence-only; do not print environment variables or credential values",
+          "thread.feature_workflow_preflight.current_node": "context_intake_child",
+          "thread.start.current_node": "feature_workflow_preflight",
+          "graph.retry_target": "feature_spec_child",
+          "graph.default_max_retries": "2",
+          "internal.run_id": "01KRZNQC9YHSTWB3T47Q0WP5E1",
+          "outcome": "succeeded",
+          "graph.persona": "existing-iphone-app-feature-orchestrator",
+          "internal.retry_count.feature_workflow_preflight": 0,
+          "internal.retry_count.context_intake_child": 0,
+          "internal.node_visit_count": 1,
+          "current_node": "context_intake_child"
+        },
+        "node_outcomes": {
+          "start": {
+            "status": "succeeded",
+            "usage": null
+          },
+          "context_intake_child": {
+            "status": "succeeded",
+            "notes": "Child completed at cycle 36",
             "usage": null
           },
           "feature_workflow_preflight": {
@@ -1006,9 +1346,10 @@
             "usage": null
           }
         },
-        "next_node_id": "context_intake_child",
+        "next_node_id": "research_child",
         "node_visits": {
           "feature_workflow_preflight": 1,
+          "context_intake_child": 1,
           "start": 1
         }
       },
@@ -1036,34 +1377,16 @@
   "superseded_by": null,
   "pending_interviews": {},
   "stages": {
-    "feature_workflow_preflight@1": {
-      "first_event_seq": 20,
-      "prompt": null,
-      "response": null,
-      "completion": null,
-      "provider_used": null,
-      "diff": null,
-      "script_invocation": null,
-      "script_timing": null,
-      "parallel_results": null,
-      "output": null,
-      "started_at": "2026-05-19T08:30:37.111983730Z",
-      "handler": "stack.manager_loop",
-      "usage": {
-        "input_tokens": 0,
-        "output_tokens": 0,
-        "total_tokens": 0,
-        "reasoning_tokens": 0,
-        "cache_read_tokens": 0,
-        "cache_write_tokens": 0
-      },
-      "state": "running"
-    },
     "emit_contract@1": {
       "first_event_seq": 33,
       "prompt": null,
       "response": null,
-      "completion": null,
+      "completion": {
+        "outcome": "succeeded",
+        "notes": "Stage completed: emit_contract",
+        "failure_reason": null,
+        "timestamp": "2026-05-19T08:30:38.431966886Z"
+      },
       "provider_used": {
         "mode": "agent",
         "provider": "openai",
@@ -1076,6 +1399,7 @@
       "output": null,
       "started_at": "2026-05-19T08:30:38.418956579Z",
       "handler": "agent",
+      "duration_ms": 12,
       "usage": {
         "input_tokens": 0,
         "output_tokens": 0,
@@ -1084,7 +1408,94 @@
         "cache_read_tokens": 0,
         "cache_write_tokens": 0
       },
-      "state": "running"
+      "state": "succeeded"
+    },
+    "validate_context_pack@1": {
+      "first_event_seq": 61,
+      "prompt": null,
+      "response": null,
+      "completion": {
+        "outcome": "succeeded",
+        "notes": "Script completed: node scripts/iphone-app-factory/feature-context-gate.mjs",
+        "failure_reason": null,
+        "timestamp": "2026-05-19T08:31:52.388103219Z"
+      },
+      "provider_used": null,
+      "diff": null,
+      "script_invocation": {
+        "script": "node scripts/iphone-app-factory/feature-context-gate.mjs",
+        "command": "exec 2>&1\nnode scripts/iphone-app-factory/feature-context-gate.mjs",
+        "language": "shell"
+      },
+      "script_timing": {
+        "output": "blob://sha256/cff594dd57b557aadea5e71a7341bbf7111b97ce6fb4a37046318f2153b5f9b9",
+        "exit_code": 0,
+        "duration_ms": 1209,
+        "termination": "exited",
+        "output_bytes": 202,
+        "live_streaming": true
+      },
+      "parallel_results": null,
+      "output": null,
+      "output_bytes": 202,
+      "live_streaming": true,
+      "termination": "exited",
+      "started_at": "2026-05-19T08:31:51.176932282Z",
+      "handler": "command",
+      "duration_ms": 1211,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "total_tokens": 0,
+        "reasoning_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "state": "succeeded"
+    },
+    "write_context_pack@1": {
+      "first_event_seq": 55,
+      "prompt": null,
+      "response": null,
+      "completion": {
+        "outcome": "succeeded",
+        "notes": "Script completed: node scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/feature-context-intake.md --stage feature-context-intake --out .workflow/existing-app-feature/codex/feature-context-intake.json",
+        "failure_reason": null,
+        "timestamp": "2026-05-19T08:31:51.176448796Z"
+      },
+      "provider_used": null,
+      "diff": null,
+      "script_invocation": {
+        "script": "node scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/feature-context-intake.md --stage feature-context-intake --out .workflow/existing-app-feature/codex/feature-context-intake.json",
+        "command": "exec 2>&1\nnode scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/feature-context-intake.md --stage feature-context-intake --out .workflow/existing-app-feature/codex/feature-context-intake.json",
+        "language": "shell",
+        "timeout_ms": 3600000
+      },
+      "script_timing": {
+        "output": "blob://sha256/a4c52faac91c0c6e3087f9660eab432e5f2fee57af63aa6846c42b479446d719",
+        "exit_code": 0,
+        "duration_ms": 70771,
+        "termination": "exited",
+        "output_bytes": 4561,
+        "live_streaming": true
+      },
+      "parallel_results": null,
+      "output": null,
+      "output_bytes": 4561,
+      "live_streaming": true,
+      "termination": "exited",
+      "started_at": "2026-05-19T08:30:40.401878887Z",
+      "handler": "command",
+      "duration_ms": 70774,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "total_tokens": 0,
+        "reasoning_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "state": "succeeded"
     },
     "start@1": {
       "first_event_seq": 16,
@@ -1094,7 +1505,7 @@
         "outcome": "succeeded",
         "notes": null,
         "failure_reason": null,
-        "timestamp": "2026-05-19T08:30:37.117648491Z"
+        "timestamp": "2026-05-19T08:30:40.401716955Z"
       },
       "provider_used": null,
       "diff": null,
@@ -1102,7 +1513,7 @@
       "script_timing": null,
       "parallel_results": null,
       "output": null,
-      "started_at": "2026-05-19T08:30:37.117593347Z",
+      "started_at": "2026-05-19T08:30:40.401637094Z",
       "handler": "start",
       "duration_ms": 0,
       "usage": {
@@ -1157,6 +1568,87 @@
         "cache_write_tokens": 0
       },
       "state": "succeeded"
+    },
+    "exit@1": {
+      "first_event_seq": 39,
+      "prompt": null,
+      "response": null,
+      "completion": {
+        "outcome": "succeeded",
+        "notes": null,
+        "failure_reason": null,
+        "timestamp": "2026-05-19T08:31:52.388313012Z"
+      },
+      "provider_used": null,
+      "diff": null,
+      "script_invocation": null,
+      "script_timing": null,
+      "parallel_results": null,
+      "output": null,
+      "started_at": "2026-05-19T08:31:52.388303759Z",
+      "handler": "exit",
+      "duration_ms": 0,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "total_tokens": 0,
+        "reasoning_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "state": "succeeded"
+    },
+    "feature_workflow_preflight@1": {
+      "first_event_seq": 20,
+      "prompt": null,
+      "response": null,
+      "completion": {
+        "outcome": "succeeded",
+        "notes": "Child completed at cycle 2",
+        "failure_reason": null,
+        "timestamp": "2026-05-19T08:30:38.445219666Z"
+      },
+      "provider_used": null,
+      "diff": null,
+      "script_invocation": null,
+      "script_timing": null,
+      "parallel_results": null,
+      "output": null,
+      "started_at": "2026-05-19T08:30:37.111983730Z",
+      "handler": "stack.manager_loop",
+      "duration_ms": 1320,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "total_tokens": 0,
+        "reasoning_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "state": "succeeded"
+    },
+    "context_intake_child@1": {
+      "first_event_seq": 48,
+      "prompt": null,
+      "response": null,
+      "completion": null,
+      "provider_used": null,
+      "diff": null,
+      "script_invocation": null,
+      "script_timing": null,
+      "parallel_results": null,
+      "output": null,
+      "started_at": "2026-05-19T08:30:40.395851271Z",
+      "handler": "stack.manager_loop",
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "total_tokens": 0,
+        "reasoning_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "state": "running"
     }
   }
 }
