@@ -126,6 +126,7 @@ fs.appendFileSync(${JSON.stringify(log)}, process.argv.slice(2).join(" ") + " st
     const logged = readFileSync(log, "utf8");
     assert.match(logged, /variable set CODEX_AUTH_JSON_BASE64 --stdin --service fabro-maestro --environment production --skip-deploys/);
     assert.match(logged, /service redeploy --service fabro-maestro --yes/);
+    assert.doesNotMatch(logged, /service redeploy .*--environment/);
     assert.doesNotMatch(output(result), /secret-refresh|secret-mcp/);
   });
 });
