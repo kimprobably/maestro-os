@@ -49,6 +49,16 @@ function groupPresent(group) {
   return group.some(envPresent);
 }
 
+function githubRepoFromUrl(value) {
+  if (!value) return "";
+  if (/^[A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+$/.test(value)) return value;
+  const httpsMatch = value.match(/^https:\/\/github\.com\/([^/]+)\/([^/#?]+?)(?:\.git)?(?:[#?].*)?$/);
+  if (httpsMatch) return `${httpsMatch[1]}/${httpsMatch[2]}`;
+  const sshMatch = value.match(/^git@github\.com:([^/]+)\/(.+?)(?:\.git)?$/);
+  if (sshMatch) return `${sshMatch[1]}/${sshMatch[2]}`;
+  return "";
+}
+
 function parseList(value) {
   return String(value || "")
     .split(",")
@@ -108,10 +118,50 @@ function contextReport(contextPaths) {
   return { checks, failures, warnings };
 }
 
+async function fetchGithubCredentialStatus(name, token, repo) {
+  if (!token || token.includes("{{") || token.includes("}}")) {
+    return { name, present: false, ok: false, status: null, endpoint: null };
+  }
+  const endpoint = repo
+    ? `https://api.github.com/repos/${repo}/actions/workflows/ios-quality.yml`
+    : "https://api.github.com/user";
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 15000);
+  try {
+    const response = await fetch(endpoint, {
+      signal: controller.signal,
+      headers: {
+        accept: "application/vnd.github+json",
+        authorization: `Bearer ${token}`,
+        "user-agent": "maestro-feature-workflow-preflight/1.0",
+      },
+    });
+    return {
+      name,
+      present: true,
+      ok: response.ok,
+      status: response.status,
+      endpoint: repo ? "repo_actions_workflow" : "user",
+    };
+  } catch (error) {
+    return {
+      name,
+      present: true,
+      ok: false,
+      status: null,
+      endpoint: repo ? "repo_actions_workflow" : "user",
+      error: error.message,
+    };
+  } finally {
+    clearTimeout(timeout);
+  }
+}
+
 const apiUrl = normalizeApiUrl(argValue("--server", process.env.FABRO_SERVER || RAILWAY_API_URL));
 const webUrl = webUrlFromApi(apiUrl);
 const contextPaths = parseList(argValue("--context-paths", process.env.FEATURE_CONTEXT_PATHS || ""));
 const useMobbinMcp = String(argValue("--use-mobbin-mcp", process.env.UX_USE_MOBBIN_MCP || "true")).toLowerCase() !== "false";
+const githubRepo = githubRepoFromUrl(process.env.FEATURE_GITHUB_REPO || process.env.UX_REPO_URL || "");
 const failures = [];
 const warnings = [];
 
@@ -154,6 +204,18 @@ if (useMobbinMcp && !credentialPresence.mobbin_mcp) {
   warnings.push("CODEX_MCP_CREDENTIALS_JSON_BASE64 is not present; Mobbin MCP research should record a gap and use durable screenshots/design corpus instead of failing preflight");
 }
 
+const githubCredentialChecks = await Promise.all(
+  ["GITHUB_TOKEN", "GH_TOKEN"].map((name) => fetchGithubCredentialStatus(name, process.env[name] || "", githubRepo)),
+);
+if (!credentialPresence.github) {
+  failures.push("GITHUB_TOKEN or GH_TOKEN is required for app branch publishing and GitHub Actions validation");
+}
+for (const check of githubCredentialChecks) {
+  if (check.present && !check.ok) {
+    failures.push(`${check.name} failed GitHub credential validation with status ${check.status || "error"}`);
+  }
+}
+
 const health = await fetchHealth(webUrl);
 if (!health.ok) failures.push(`Railway Fabro health check failed: ${webUrl}/health`);
 
@@ -171,6 +233,7 @@ const report = {
     health,
     contexts: contexts.checks,
     credential_presence: credentialPresence,
+    github_credentials: githubCredentialChecks,
   },
   warnings,
   failures,

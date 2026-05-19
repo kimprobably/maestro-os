@@ -25,8 +25,14 @@ digraph FeatureValidationStage {
     ci_trigger_gate [
         label="CI Trigger Evidence Gate",
         shape=parallelogram,
-        retry_target="ios_quality_gate",
+        retry_target="publish_app_branch_for_ci",
         script="node scripts/iphone-app-factory/ci-trigger-gate.mjs"
+    ]
+    publish_app_branch_for_ci [
+        label="Publish App Branch For CI",
+        shape=parallelogram,
+        retry_target="publish_app_branch_for_ci",
+        script="node scripts/iphone-app-factory/publish-existing-app-branch.mjs --out .workflow/existing-app-feature/validation/pre-ci-publish.json --message \"Apply existing app feature iteration before CI validation\""
     ]
     screenshot_evidence_gate [
         label="Screenshot Evidence Gate",
@@ -49,10 +55,12 @@ digraph FeatureValidationStage {
     ]
 
     start -> ios_quality_gate
-    ios_quality_gate -> ci_trigger_gate [condition="outcome=succeeded"]
+    ios_quality_gate -> publish_app_branch_for_ci [condition="outcome=succeeded"]
     ios_quality_gate -> ios_quality_gate [label="Fix Build/CI"]
+    publish_app_branch_for_ci -> ci_trigger_gate [condition="outcome=succeeded"]
+    publish_app_branch_for_ci -> publish_app_branch_for_ci [label="Publish App Branch"]
     ci_trigger_gate -> screenshot_evidence_gate [condition="outcome=succeeded"]
-    ci_trigger_gate -> ios_quality_gate [label="Trigger CI"]
+    ci_trigger_gate -> publish_app_branch_for_ci [label="Trigger CI"]
     screenshot_evidence_gate -> appium_exploratory_gate [condition="outcome=succeeded"]
     screenshot_evidence_gate -> ios_quality_gate [label="Capture Screenshots"]
     appium_exploratory_gate -> validation_review [condition="outcome=succeeded"]

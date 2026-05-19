@@ -28,6 +28,7 @@ function readJson(path) {
 function run(command, args, options = {}) {
   const result = spawnSync(command, args, {
     cwd: options.cwd || process.cwd(),
+    env: options.env || githubCliEnv(),
     encoding: "utf8",
     stdio: ["ignore", "pipe", "pipe"],
     timeout: options.timeout || 120000,
@@ -37,6 +38,16 @@ function run(command, args, options = {}) {
     throw new Error(`${command} ${args.join(" ")} failed${detail ? `: ${detail}` : ""}`);
   }
   return result.stdout.trim();
+}
+
+function githubCliEnv() {
+  const preferredToken = process.env.GITHUB_TOKEN || process.env.GH_TOKEN || "";
+  if (!preferredToken) return process.env;
+  return {
+    ...process.env,
+    GITHUB_TOKEN: preferredToken,
+    GH_TOKEN: preferredToken,
+  };
 }
 
 function safeRef(value) {

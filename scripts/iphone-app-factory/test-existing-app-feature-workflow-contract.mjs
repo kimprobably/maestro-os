@@ -107,6 +107,11 @@ test("feature workflow stages use deterministic gates", () => {
   }
   const implementation = read("workflows/iphone-app-factory/feature-implementation-stage.fabro");
   assert.match(implementation, /empty-action-gate\.mjs/);
+  const validation = read("workflows/iphone-app-factory/feature-validation-stage.fabro");
+  assert.match(validation, /publish_app_branch_for_ci/);
+  assert.match(validation, /publish-existing-app-branch\.mjs --out \.workflow\/existing-app-feature\/validation\/pre-ci-publish\.json/);
+  assert.match(validation, /ios_quality_gate -> publish_app_branch_for_ci \[condition="outcome=succeeded"\]/);
+  assert.match(validation, /publish_app_branch_for_ci -> ci_trigger_gate \[condition="outcome=succeeded"\]/);
 });
 
 test("feature workflow preflight is feature-specific and does not require UX Studio auth", () => {

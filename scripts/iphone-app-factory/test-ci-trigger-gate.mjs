@@ -36,6 +36,8 @@ function writeFakeGh(dir) {
 const fs = require("fs");
 const logPath = ${JSON.stringify(logPath)};
 fs.appendFileSync(logPath, process.argv.slice(2).join(" ") + "\\n");
+fs.appendFileSync(logPath, "ENV_GITHUB_TOKEN=" + (process.env.GITHUB_TOKEN || "") + "\\n");
+fs.appendFileSync(logPath, "ENV_GH_TOKEN=" + (process.env.GH_TOKEN || "") + "\\n");
 const args = process.argv.slice(2);
 if (args[0] === "workflow" && args[1] === "run") {
   process.exit(0);
@@ -78,5 +80,27 @@ test("ci-trigger-gate triggers GitHub Actions and writes durable evidence when e
     const calls = readFileSync(logPath, "utf8");
     assert.match(calls, /workflow run ios-quality\.yml --repo example\/repo --ref feature\/test/);
     assert.match(calls, /run list --repo example\/repo --workflow ios-quality\.yml --branch feature\/test/);
+  });
+});
+
+test("ci-trigger-gate normalizes gh token precedence for subprocesses", () => {
+  withTempDir((dir) => {
+    const appDir = join(dir, "apps/waketask-iphone");
+    mkdirSync(appDir, { recursive: true });
+    const { ghPath, logPath } = writeFakeGh(dir);
+    const result = run(dir, appDir, {
+      GH_BIN: ghPath,
+      UX_REPO_URL: "https://github.com/example/repo.git",
+      UX_RUN_BRANCH: "feature/test",
+      FEATURE_CI_TIMEOUT_SECONDS: "2",
+      FEATURE_CI_POLL_SECONDS: "0",
+      GITHUB_TOKEN: "fresh-token",
+      GH_TOKEN: "stale-token",
+    });
+    assert.equal(result.status, 0, result.stderr);
+    const calls = readFileSync(logPath, "utf8");
+    assert.match(calls, /ENV_GITHUB_TOKEN=fresh-token/);
+    assert.match(calls, /ENV_GH_TOKEN=fresh-token/);
+    assert.doesNotMatch(calls, /stale-token/);
   });
 });
