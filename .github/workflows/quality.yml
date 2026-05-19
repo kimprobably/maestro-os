@@ -50,6 +50,30 @@ jobs:
       - name: JavaScript Syntax Checks
         run: find scripts -name '*.mjs' -print0 | xargs -0 -n 1 node --check
 
+      - name: Factory Eval System Checks
+        run: |
+          node --test scripts/evals/test-workflow-eval-coverage.mjs scripts/factory-dashboard/test-dashboard-lib.mjs
+          npm run eval:registry
+          npm run eval:coverage
+          npm run eval:index || eval_index_status=$?
+          if [ "${eval_index_status:-0}" -ne 0 ]; then
+            node -e '
+              const index = JSON.parse(require("node:fs").readFileSync("reports/eval-index.json", "utf8"));
+              const summary = index.summary ?? {};
+              const allowedMissingBaseline =
+                (summary.missing_blocking ?? 0) > 0 &&
+                (summary.failed ?? 0) === 0 &&
+                (summary.fallback_only ?? 0) === 0 &&
+                (index.issues ?? []).length === 0;
+              if (!allowedMissingBaseline) {
+                console.error("eval:index failed outside the accepted missing-blocking baseline");
+                process.exit(1);
+              }
+            '
+          fi
+          npm run eval:dashboard
+          npm run factory:dashboard
+
       - name: Fabro Workflow Contract Checks
         run: |
           node scripts/iphone-app-factory/validate-contract.mjs
