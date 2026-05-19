@@ -1,0 +1,127 @@
+# SwiftLint Configuration for SwiftAI Boilerplate Pro
+
+# Rules to enable
+opt_in_rules:
+  - closure_end_indentation
+  - closure_spacing
+  - collection_alignment
+  - contains_over_first_not_nil
+  - empty_count
+  - empty_string
+  - fallthrough
+  - first_where
+  - last_where
+  - literal_expression_end_indentation
+  - multiline_arguments
+  - multiline_literal_brackets
+  - multiline_parameters
+  - operator_usage_whitespace
+  - overridden_super_call
+  - prefer_self_type_over_type_of_self
+  - redundant_nil_coalescing
+  - sorted_first_last
+  - toggle_bool
+  - vertical_parameter_alignment_on_call
+
+# Disabled rules
+disabled_rules:
+  - trailing_whitespace # Handled by editor
+  - todo # TODOs are ok during development
+  - identifier_name # We have descriptive names
+  # --- Disabled for v2.0.0 shipping ---
+  # These rules fire across the existing codebase. A dedicated cleanup PR
+  # after v2.0.0 can re-enable them one at a time.
+  - force_try                       # MemoryExtractor uses compile-time-valid NSRegularExpression literals
+  - trailing_newline                # Cosmetic, handled by editor config
+  - modifier_order                  # Legacy private/nonisolated ordering in pre-v2.0 view models
+  - line_length                     # Legacy long lines in legal boilerplate / feature descriptions
+  - type_name                       # Short module-name types like `enum AI` pre-date the rule
+  - implicit_optional_initialization # `var x: Int? = nil` is idiomatic for defaulted optionals
+  - large_tuple                     # StorageModelContainer migration tuples > 2 elements
+  - multiple_closures_with_trailing_closure # Cosmetic preference
+  # Removed from opt_in_rules for v2.0.0 (noisy on the existing codebase):
+  # - array_init                        — cosmetic preference
+  # - attributes                        — false positives on inline `@available(iOS 17.0, *)`
+  # - file_header                       — neither old nor new files carry a license header
+  # - trailing_closure                  — style preference
+  # - implicit_return                   — controversial
+  # - explicit_init                     — style preference
+  # - pattern_matching_keywords         — 60+ violations in AppError.swift legacy enum
+  # - redundant_type_annotation         — cosmetic
+  # - unneeded_parentheses_in_closure_argument — cosmetic
+  # - multiline_function_chains         — style preference
+
+# Rule configurations
+file_length:
+  warning: 400
+  error: 500
+  ignore_comment_only_lines: true
+
+function_body_length:
+  warning: 150
+  error: 250
+
+type_body_length:
+  warning: 300
+  error: 500
+
+cyclomatic_complexity:
+  warning: 25
+  error: 40
+
+nesting:
+  type_level:
+    warning: 2
+
+# Paths to include/exclude
+included:
+  - SwiftAIBoilerplatePro
+  - Packages
+
+excluded:
+  - Pods
+  # Build artefacts — top-level and any nested SPM/Xcode build dirs.
+  # Without the recursive globs SwiftLint descends into
+  # Packages/*/.build/index-build/checkouts/... and lints RevenueCat's
+  # own sources, producing thousands of phantom violations.
+  - .build
+  - "**/.build"
+  - "**/.build/**"
+  - DerivedData
+  - "**/DerivedData"
+  - "**/DerivedData/**"
+  - "**/index-build/**"
+  - "**/checkouts/**"
+  - SwiftAIBoilerplatePro.xcodeproj
+  - "**/Tests/**"
+  - "**/*Tests.swift"
+  - "**/*Test.swift"
+  - "**/Preview Content/**"
+  - "**/.swiftpm"
+  - "**/Package.swift"
+  # Legal boilerplate text contains intentionally long lines
+  - "Packages/FeatureSettings/Sources/FeatureSettings/Views/LegalDocumentView.swift"
+
+# Custom rules
+custom_rules:
+  # Note: the previous `no_force_unwrap` custom rule was removed in v2.0.0.
+  # Its regex `'\!\s*(?!\=)'` produced ~hundreds of false positives on
+  # Boolean negations (`!isEmpty`, `!Task.isCancelled`, etc.). A real
+  # force-unwrap detector needs AST-level analysis, not a regex.
+  # Use `implicitly_unwrapped_optional` (SwiftLint built-in, opt-in) if you
+  # want coverage for `var x: Int!` declarations.
+  #
+  # The previous `no_print` custom rule was also removed in v2.0.0 — it
+  # fired inside every #Preview block (debug-only code where plain print()
+  # is the right primitive) without being able to distinguish production
+  # from preview context.
+
+  no_direct_return_void:
+    name: "Use Void instead of ()"
+    regex: '->\s*\(\s*\)'
+    message: "Use -> Void instead of -> ()"
+    severity: warning
+
+# Reporter type
+reporter: "xcode"
+
