@@ -556,6 +556,7 @@ evals:
     assert.equal(summary.native_prompt_nodes, 1);
     const evalResult = JSON.parse(readFileSync(evalOutPath, "utf8"));
     assert.equal(evalResult.eval_id, "active-workflows.eval-coverage");
+    assert.equal(evalResult.level, "meta");
     assert.equal(evalResult.runner_status, "passed");
   });
 });

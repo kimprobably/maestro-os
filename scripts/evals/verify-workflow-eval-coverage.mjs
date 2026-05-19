@@ -334,11 +334,12 @@ function verifyWorkflowCoverage({ registry, workflows }) {
   };
 }
 
-function writeCoverageEvalResult(args, summary, errors) {
+function writeCoverageEvalResult(args, registry, summary, errors) {
   if (!args.evalResultOut) return null;
+  const registryEntry = registry.evals.find((entry) => entry.id === args.evalId);
   return writeNormalizedResult(resolve(args.evalResultOut), {
     eval_id: args.evalId,
-    level: "workflow",
+    level: registryEntry?.level ?? "workflow",
     runner: "deterministic",
     workflow: args.workflowId,
     runner_status: errors.length === 0 ? "passed" : "failed",
@@ -366,7 +367,7 @@ try {
   const { errors, summary } = args.activeWorkflows
     ? verifyActiveWorkflowCoverage({ registry, manifest: loadActiveWorkflowManifest(args.activeWorkflows) })
     : verifyWorkflowCoverage({ registry, workflows: args.workflows });
-  writeCoverageEvalResult(args, summary, errors);
+  writeCoverageEvalResult(args, registry, summary, errors);
   if (errors.length > 0) {
     console.error(JSON.stringify({ ok: false, errors }, null, 2));
     process.exit(1);
