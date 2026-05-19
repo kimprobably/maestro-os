@@ -59,8 +59,8 @@ for (const token of [
   ".security          { provider: openrouter",
   "#spec_kimi         { provider: openrouter; model: google/gemini-3.1-flash-lite;",
   "#spec_deepseek     { provider: openrouter",
-  "max_tokens: 8192",
-  "max_tokens: 12000",
+  "max_tokens: 4096",
+  "max_tokens: 2048",
   "MOBBIN_EMAIL",
   "MOBBIN_PASSWORD",
   "never print environment variables",
@@ -86,16 +86,6 @@ for (const [name, body] of [
     "competitor_research",
     "design_pattern_research",
     "research_synthesis",
-    "boilerplate_setup",
-    "implement_foundation",
-    "implement_core",
-    "implement_interface",
-    "implement_integration",
-    "simplification",
-  ]) {
-    requireNodeMaxTokens(name, body, node, 12000);
-  }
-  for (const node of [
     "spec_codex",
     "spec_claude",
     "spec_kimi",
@@ -103,9 +93,16 @@ for (const [name, body] of [
     "arch_codex",
     "arch_claude",
     "architecture_consensus",
-    "ai_ui_explorer",
   ]) {
-    requireNodeMaxTokens(name, body, node, 8192);
+    requireNodeMaxTokens(name, body, node, 4096);
+  }
+  const cliBacked = name === workflow;
+  for (const node of ["boilerplate_setup", "implement_foundation", "implement_core", "implement_interface", "implement_integration", "simplification"]) {
+    requireNodeMaxTokens(name, body, node, cliBacked ? 12000 : 4096);
+  }
+  requireNodeMaxTokens(name, body, "ai_ui_explorer", cliBacked ? 8192 : 4096);
+  for (const node of ["verify_foundation", "verify_core", "verify_interface", "verify_integration"]) {
+    requireNodeMaxTokens(name, body, node, 1024);
   }
   for (const node of [
     "spec_cross_critique",
@@ -124,9 +121,6 @@ for (const [name, body] of [
     "qa_review",
     "final_consensus",
   ]) {
-    requireNodeMaxTokens(name, body, node, 4096);
-  }
-  for (const node of ["verify_foundation", "verify_core", "verify_interface", "verify_integration"]) {
     requireNodeMaxTokens(name, body, node, 2048);
   }
 }
