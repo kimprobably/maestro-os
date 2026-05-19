@@ -42,6 +42,15 @@ test("Fabro runs channel is mapped through env and has compact reporting guidanc
   }
 });
 
+test("Railway gateway applies runtime model and MCP safety overrides to worker profiles", () => {
+  assert.match(entrypoint, /apply_profile_runtime_overrides/);
+  assert.match(entrypoint, /profiles_dir\.glob\("\*\/config\.yaml"\)/);
+  assert.match(entrypoint, /model_cfg\["provider"\] = provider/);
+  assert.match(entrypoint, /model_cfg\["default"\] = model/);
+  assert.match(entrypoint, /mobbin\["enabled"\] = bool\(mobbin_enabled\)/);
+  assert.match(entrypoint, /stitch\["enabled"\] = bool\(stitch_enabled or os\.environ\.get\("STITCH_API_KEY"/);
+});
+
 test("Miles policy explicitly hands long Fabro runs to Quincy background babysitting", () => {
   for (const soul of [operatorSoul, distributionSoul]) {
     assert.match(soul, /scripts\/hermes\/quincy-babysitter-task\.mjs/);

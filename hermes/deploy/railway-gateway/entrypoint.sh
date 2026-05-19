@@ -579,6 +579,116 @@ PY
 
 /usr/local/lib/hermes-agent/venv/bin/python3 - "$HERMES_HOME" <<'PY'
 import os
+import re
+import sys
+from pathlib import Path
+
+import yaml
+
+home = Path(sys.argv[1])
+provider = os.environ.get("HERMES_GATEWAY_MODEL_PROVIDER", "").strip()
+model = os.environ.get("HERMES_GATEWAY_MODEL", "").strip()
+reasoning_effort = os.environ.get("HERMES_REASONING_EFFORT", "xhigh").strip() or "xhigh"
+
+
+def env_int(name, default):
+    raw = os.environ.get(name, str(default)).strip()
+    try:
+        return int(raw)
+    except ValueError:
+        return default
+
+
+def apply_profile_runtime_overrides(config_path):
+    cfg = yaml.safe_load(config_path.read_text()) or {}
+    if not isinstance(cfg, dict):
+        cfg = {}
+
+    model_cfg = cfg.get("model")
+    if not isinstance(model_cfg, dict):
+        model_cfg = {}
+        cfg["model"] = model_cfg
+    if provider:
+        model_cfg["provider"] = provider
+    if model:
+        model_cfg["default"] = model
+
+    agent = cfg.get("agent")
+    if not isinstance(agent, dict):
+        agent = {}
+        cfg["agent"] = agent
+    configured_max_turns = int(agent.get("max_turns") or 120)
+    agent["max_turns"] = env_int("HERMES_GATEWAY_MAX_TURNS", max(configured_max_turns, 120))
+    agent["reasoning_effort"] = reasoning_effort
+    agent["gateway_notify_interval"] = env_int("HERMES_AGENT_NOTIFY_INTERVAL", int(agent.get("gateway_notify_interval") or 45))
+    agent["gateway_timeout_warning"] = env_int("HERMES_AGENT_TIMEOUT_WARNING", int(agent.get("gateway_timeout_warning") or 180))
+
+    delegation = cfg.get("delegation")
+    if not isinstance(delegation, dict):
+        delegation = {}
+        cfg["delegation"] = delegation
+    configured_max_iterations = int(delegation.get("max_iterations") or 120)
+    delegation["reasoning_effort"] = reasoning_effort
+    delegation["max_iterations"] = env_int("HERMES_DELEGATION_MAX_ITERATIONS", max(configured_max_iterations, 120))
+    delegation["child_timeout_seconds"] = int(delegation.get("child_timeout_seconds") or 900)
+    delegation["inherit_mcp_toolsets"] = True
+
+    mcp_servers = cfg.get("mcp_servers")
+    if not isinstance(mcp_servers, dict):
+        mcp_servers = {}
+        cfg["mcp_servers"] = mcp_servers
+
+    mobbin = mcp_servers.get("mobbin")
+    if not isinstance(mobbin, dict):
+        mobbin = {}
+        mcp_servers["mobbin"] = mobbin
+    mobbin["url"] = os.environ.get("MOBBIN_MCP_URL", "https://api.mobbin.com/mcp").strip() or "https://api.mobbin.com/mcp"
+    mobbin["auth"] = "oauth"
+    mobbin["connect_timeout"] = int(mobbin.get("connect_timeout") or 300)
+    mobbin["timeout"] = int(mobbin.get("timeout") or 180)
+    tools = mobbin.get("tools")
+    if not isinstance(tools, dict):
+        tools = {}
+    mobbin["tools"] = tools
+    tools["resources"] = False
+    tools["prompts"] = False
+    mobbin_enabled = os.environ.get("MOBBIN_MCP_ENABLED", "false").strip().lower() in {"1", "true", "yes", "on"}
+    mobbin["enabled"] = bool(mobbin_enabled)
+
+    stitch = mcp_servers.get("stitch")
+    if not isinstance(stitch, dict):
+        stitch = {}
+        mcp_servers["stitch"] = stitch
+    stitch["url"] = os.environ.get("STITCH_MCP_URL", "https://stitch.googleapis.com/mcp").strip() or "https://stitch.googleapis.com/mcp"
+    headers = stitch.get("headers")
+    if not isinstance(headers, dict):
+        headers = {}
+    stitch["headers"] = headers
+    headers["X-Goog-Api-Key"] = "${STITCH_API_KEY}"
+    stitch["connect_timeout"] = int(stitch.get("connect_timeout") or 300)
+    stitch["timeout"] = int(stitch.get("timeout") or 180)
+    tools = stitch.get("tools")
+    if not isinstance(tools, dict):
+        tools = {}
+    stitch["tools"] = tools
+    tools["resources"] = False
+    tools["prompts"] = False
+    stitch_enabled = os.environ.get("STITCH_MCP_ENABLED", "false").strip().lower() in {"1", "true", "yes", "on"}
+    stitch["enabled"] = bool(stitch_enabled or os.environ.get("STITCH_API_KEY", "").strip())
+
+    text = yaml.safe_dump(cfg, sort_keys=False)
+    text = re.sub(r"\n{3,}", "\n\n", text)
+    config_path.write_text(text)
+
+
+profiles_dir = home / "profiles"
+if profiles_dir.exists():
+    for config_path in profiles_dir.glob("*/config.yaml"):
+        apply_profile_runtime_overrides(config_path)
+PY
+
+/usr/local/lib/hermes-agent/venv/bin/python3 - "$HERMES_HOME" <<'PY'
+import os
 import sys
 from pathlib import Path
 
