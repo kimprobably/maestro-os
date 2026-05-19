@@ -56,6 +56,8 @@ When assigned daily factory health ownership:
 
 Do not send raw logs, full event streams, or artifact dumps in the daily health note. The owner rollup is intentionally selective.
 
+The dashboard auto-discovers the default Hermes Fabro run ledger under `$HERMES_HOME` or `$HOME/.hermes`. Use `--run-ledger` only when checking a non-default ledger.
+
 ## Ledger Fields
 
 Maintain these fields for each active run:

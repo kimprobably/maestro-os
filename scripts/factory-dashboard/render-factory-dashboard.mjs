@@ -4,7 +4,8 @@ import {
   buildFactoryDashboard,
   discoverReportArtifacts,
   readJsonFile,
-  readJsonlEvents,
+  readDefaultRunLedgerEvents,
+  readRunLedgerSource,
   renderFactoryDashboard,
   writeTextFile,
 } from "./dashboard-lib.mjs";
@@ -42,7 +43,9 @@ function main() {
   const args = parseArgs(process.argv.slice(2));
   const evalIndex = readJsonFile(args.evalIndex, null);
   const artifacts = discoverReportArtifacts(args.reportsRoot);
-  const ledger = args.runLedger ? readJsonlEvents(args.runLedger) : { events: [], issues: [] };
+  const ledger = args.runLedger
+    ? { source: args.runLedger, ...readRunLedgerSource(args.runLedger) }
+    : readDefaultRunLedgerEvents();
   const dashboard = buildFactoryDashboard({
     evalIndex,
     artifacts,
@@ -51,7 +54,7 @@ function main() {
     sources: {
       eval_index: args.evalIndex,
       reports_root: args.reportsRoot,
-      run_ledger: args.runLedger,
+      run_ledger: ledger.source,
     },
   });
 
