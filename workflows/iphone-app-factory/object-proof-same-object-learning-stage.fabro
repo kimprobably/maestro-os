@@ -1,0 +1,34 @@
+digraph ObjectProofSameObjectLearningStage {
+    graph [
+        goal="Synthesize same-object stage learnings and produce cumulative implementation lessons before publish",
+        persona="object-proof-same-object-learning-reviewer",
+        inputs="same_object_stage,preset_vision_learnings,barcode_learnings,program_spec",
+        outputs="contract.artifact,contract.gate,contract.next_action,contract.failure_classification,same_object_learnings",
+        secret_policy="no secrets; do not print environment variables or credential values",
+        model_stylesheet="* { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }"
+    ]
+    rankdir=LR
+
+    start [shape=Mdiamond, label="Start"]
+    exit  [shape=Msquare, label="Exit"]
+
+    write_same_object_learnings [
+        label="Write Same Object Learnings",
+        shape=parallelogram,
+        retry_target="write_same_object_learnings",
+        timeout="3600s",
+        script="STAGE_ID=same_object STAGE_NAME='Same Object Photo' STAGE_ROOT=.workflow/object-proof-program/stages/same_object node scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/object-proof-stage-learning.md --stage object-proof-same-object-learning --eval-id iphone-object-proof.same-object.learning.call --out .workflow/object-proof-program/codex/same-object-learning.json --rendered-prompt-out .workflow/object-proof-program/codex/same-object-learning.prompt.md --last-message-out .workflow/object-proof-program/codex/same-object-learning.last-message.md"
+    ]
+    same_object_learning_gate [
+        label="Same Object Learning Gate",
+        shape=parallelogram,
+        retry_target="write_same_object_learnings",
+        script="node scripts/iphone-app-factory/object-proof-learning-gate.mjs --stage same_object --root .workflow/object-proof-program"
+    ]
+
+    start -> write_same_object_learnings
+    write_same_object_learnings -> same_object_learning_gate [condition="outcome=succeeded"]
+    write_same_object_learnings -> write_same_object_learnings [label="Rewrite Same Object Learnings"]
+    same_object_learning_gate -> exit [condition="outcome=succeeded"]
+    same_object_learning_gate -> write_same_object_learnings [label="Fix Same Object Learnings"]
+}

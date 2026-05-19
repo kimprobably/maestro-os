@@ -1,0 +1,34 @@
+digraph ObjectProofProgramSpecStage {
+    graph [
+        goal="Write and validate the WakeTask Object Proof staged program spec before implementation begins",
+        persona="object-proof-program-spec",
+        inputs="app_name,target_audience,feature_goal,app_dir,context_paths",
+        outputs="contract.artifact,contract.gate,contract.next_action,contract.failure_classification,program_spec",
+        secret_policy="no secrets; do not print environment variables or credential values",
+        model_stylesheet="* { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }"
+    ]
+    rankdir=LR
+
+    start [shape=Mdiamond, label="Start"]
+    exit  [shape=Msquare, label="Exit"]
+
+    write_program_spec [
+        label="Write Program Spec",
+        shape=parallelogram,
+        retry_target="write_program_spec",
+        timeout="3600s",
+        script="node scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/object-proof-program-spec.md --stage object-proof-program-spec --eval-id iphone-object-proof.program-spec.call --out .workflow/object-proof-program/codex/program-spec.json --rendered-prompt-out .workflow/object-proof-program/codex/program-spec.prompt.md --last-message-out .workflow/object-proof-program/codex/program-spec.last-message.md"
+    ]
+    program_spec_gate [
+        label="Program Spec Gate",
+        shape=parallelogram,
+        retry_target="write_program_spec",
+        script="node scripts/iphone-app-factory/object-proof-program-spec-gate.mjs"
+    ]
+
+    start -> write_program_spec
+    write_program_spec -> program_spec_gate [condition="outcome=succeeded"]
+    write_program_spec -> write_program_spec [label="Rewrite Program Spec"]
+    program_spec_gate -> exit [condition="outcome=succeeded"]
+    program_spec_gate -> write_program_spec [label="Fix Program Spec"]
+}

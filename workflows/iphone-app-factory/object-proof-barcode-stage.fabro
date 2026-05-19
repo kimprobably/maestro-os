@@ -1,0 +1,34 @@
+digraph ObjectProofBarcodeStage {
+    graph [
+        goal="Implement barcode and QR object-proof missions in WakeTask with dismiss-blocking behavior and evidence",
+        persona="object-proof-barcode-implementer",
+        inputs="app_dir,program_spec",
+        outputs="contract.artifact,contract.gate,contract.next_action,contract.failure_classification,barcode_stage",
+        secret_policy="no secrets; do not print environment variables or credential values",
+        model_stylesheet="* { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }"
+    ]
+    rankdir=LR
+
+    start [shape=Mdiamond, label="Start"]
+    exit  [shape=Msquare, label="Exit"]
+
+    implement_barcode [
+        label="Implement Barcode Stage",
+        shape=parallelogram,
+        retry_target="implement_barcode",
+        timeout="7200s",
+        script="STAGE_ID=barcode STAGE_NAME='Barcode Scan' STAGE_GOAL='Register and scan a saved barcode or QR target to unlock the alarm' STAGE_REQUIRED_CAPABILITIES=barcode_target_registration,barcode_scan_camera_flow,barcode_dismiss_blocking,barcode_eval_coverage STAGE_ROOT=.workflow/object-proof-program/stages/barcode node scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/object-proof-stage-implementation.md --stage object-proof-barcode-implementation --eval-id iphone-object-proof.barcode.implementation.call --out .workflow/object-proof-program/codex/barcode-implementation.json --rendered-prompt-out .workflow/object-proof-program/codex/barcode-implementation.prompt.md --last-message-out .workflow/object-proof-program/codex/barcode-implementation.last-message.md"
+    ]
+    barcode_gate [
+        label="Barcode Stage Gate",
+        shape=parallelogram,
+        retry_target="implement_barcode",
+        script="node scripts/iphone-app-factory/object-proof-stage-gate.mjs --stage barcode --root .workflow/object-proof-program/stages/barcode --required-capabilities barcode_target_registration,barcode_scan_camera_flow,barcode_dismiss_blocking,barcode_eval_coverage"
+    ]
+
+    start -> implement_barcode
+    implement_barcode -> barcode_gate [condition="outcome=succeeded"]
+    implement_barcode -> implement_barcode [label="Retry Barcode Implementation"]
+    barcode_gate -> exit [condition="outcome=succeeded"]
+    barcode_gate -> implement_barcode [label="Fix Barcode Coverage"]
+}

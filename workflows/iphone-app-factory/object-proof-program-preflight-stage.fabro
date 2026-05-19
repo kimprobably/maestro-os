@@ -1,0 +1,32 @@
+digraph ObjectProofProgramPreflightStage {
+    graph [
+        goal="Validate WakeTask Object Proof workflow contracts, Railway Fabro reachability, context artifacts, and app checkout",
+        persona="object-proof-program-preflight",
+        inputs="fabro_server,repo_url,base_branch,run_branch,app_dir,context_paths",
+        outputs="contract.artifact,contract.gate,contract.next_action,contract.failure_classification,workflow_preflight",
+        secret_policy="no secrets; credential checks are presence-only; do not print environment variables or credential values",
+        model_stylesheet="* { backend: cli; provider: openai; model: gpt-5.3-codex-spark; reasoning_effort: low; }"
+    ]
+    rankdir=LR
+
+    start [shape=Mdiamond, label="Start"]
+    exit  [shape=Msquare, label="Exit"]
+
+    validate_object_proof_workflow [
+        label="Validate Object Proof Workflow",
+        shape=parallelogram,
+        retry_target="validate_object_proof_workflow",
+        script="mkdir -p .workflow/object-proof-program/preflight; { node --test scripts/iphone-app-factory/test-object-proof-program-workflow-contract.mjs && node scripts/iphone-app-factory/object-proof-program-preflight.mjs --server https://fabro-maestro-production.up.railway.app/api/v1 --context-paths \"$OBJECT_PROOF_CONTEXT_PATHS\" && node scripts/iphone-app-factory/checkout-existing-app.mjs --out .workflow/object-proof-program/preflight/checkout-existing-app.json; } > .workflow/object-proof-program/preflight/workflow-preflight.log 2>&1"
+    ]
+
+    emit_contract [
+        label="Emit Contract",
+        shape=note,
+        prompt="Read `.workflow/object-proof-program/preflight/workflow-preflight.json` and `.workflow/object-proof-program/preflight/checkout-existing-app.json`. Respond with JSON only: {\"context_updates\":{\"contract.artifact\":\".workflow/object-proof-program/preflight/workflow-preflight.json\",\"contract.gate\":\"object-proof-program-preflight\",\"contract.next_action\":\"program-spec-child\",\"contract.failure_classification\":\"none\"}}"
+    ]
+
+    start -> validate_object_proof_workflow
+    validate_object_proof_workflow -> emit_contract [condition="outcome=succeeded"]
+    validate_object_proof_workflow -> validate_object_proof_workflow [label="Fix Workflow/Environment"]
+    emit_contract -> exit
+}

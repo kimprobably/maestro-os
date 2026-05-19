@@ -17,25 +17,25 @@ digraph FeatureResearchStage {
         label="Trend Context Research",
         shape=parallelogram,
         timeout="3600s",
-        script="node scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/feature-research-synthesis.md --stage trend-context-research --out .workflow/existing-app-feature/codex/trend-context-research.json"
+        script="node scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/feature-research-synthesis.md --stage trend-context-research --eval-id iphone-feature.trend-context-research.call --out .workflow/existing-app-feature/codex/trend-context-research.json"
     ]
     competitor_ui_research [
         label="Competitor/UI Research",
         shape=parallelogram,
         timeout="3600s",
-        script="node scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/ux-mobbin-mcp-research.md --stage feature-mobbin-competitor-research --out .workflow/existing-app-feature/codex/feature-mobbin-competitor-research.json"
+        script="node scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/ux-mobbin-mcp-research.md --stage feature-mobbin-competitor-research --eval-id iphone-feature.mobbin-competitor-research.call --out .workflow/existing-app-feature/codex/feature-mobbin-competitor-research.json"
     ]
     app_store_research [
         label="App Store Research",
         shape=parallelogram,
         timeout="3600s",
-        script="node scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/ux-app-store-review-mining.md --stage feature-app-store-research --out .workflow/existing-app-feature/codex/feature-app-store-research.json"
+        script="node scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/ux-app-store-review-mining.md --stage feature-app-store-research --eval-id iphone-feature.app-store-research.call --out .workflow/existing-app-feature/codex/feature-app-store-research.json"
     ]
     behavioral_research [
         label="Behavioral Research",
         shape=parallelogram,
         timeout="3600s",
-        script="node scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/ux-behavioral-research.md --stage feature-behavioral-research --out .workflow/existing-app-feature/codex/feature-behavioral-research.json"
+        script="node scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/ux-behavioral-research.md --stage feature-behavioral-research --eval-id iphone-feature.behavioral-research.call --out .workflow/existing-app-feature/codex/feature-behavioral-research.json"
     ]
     research_join [label="Research Join", shape=tripleoctagon, join_policy="wait_all"]
     synthesize_research [
@@ -43,7 +43,7 @@ digraph FeatureResearchStage {
         shape=parallelogram,
         retry_target="research_fanout",
         timeout="3600s",
-        script="node scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/feature-research-synthesis.md --stage feature-research-synthesis --out .workflow/existing-app-feature/codex/feature-research-synthesis.json"
+        script="node scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/feature-research-synthesis.md --stage feature-research-synthesis --eval-id iphone-feature.research-synthesis.call --out .workflow/existing-app-feature/codex/feature-research-synthesis.json"
     ]
     validate_research_pack [
         label="Validate Research Pack",

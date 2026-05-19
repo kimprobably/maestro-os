@@ -1,0 +1,34 @@
+digraph ObjectProofSameObjectStage {
+    graph [
+        goal="Implement same-object reference photo missions in WakeTask with local matching, privacy-aware storage, dismiss-blocking behavior, and evidence",
+        persona="object-proof-same-object-implementer",
+        inputs="app_dir,program_spec,barcode_learnings,preset_vision_learnings",
+        outputs="contract.artifact,contract.gate,contract.next_action,contract.failure_classification,same_object_stage",
+        secret_policy="no secrets; do not print environment variables or credential values",
+        model_stylesheet="* { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }"
+    ]
+    rankdir=LR
+
+    start [shape=Mdiamond, label="Start"]
+    exit  [shape=Msquare, label="Exit"]
+
+    implement_same_object [
+        label="Implement Same Object Stage",
+        shape=parallelogram,
+        retry_target="implement_same_object",
+        timeout="7200s",
+        script="STAGE_ID=same_object STAGE_NAME='Same Object Photo' STAGE_GOAL='Register a reference object and require a matching morning photo before unlocking the alarm' STAGE_REQUIRED_CAPABILITIES=reference_object_registration,same_object_matching,reference_privacy_storage,same_object_eval_coverage STAGE_ROOT=.workflow/object-proof-program/stages/same_object node scripts/iphone-app-factory/run-codex-prompt.mjs --prompt prompts/iphone-app-factory/object-proof-stage-implementation.md --stage object-proof-same-object-implementation --eval-id iphone-object-proof.same-object.implementation.call --out .workflow/object-proof-program/codex/same-object-implementation.json --rendered-prompt-out .workflow/object-proof-program/codex/same-object-implementation.prompt.md --last-message-out .workflow/object-proof-program/codex/same-object-implementation.last-message.md"
+    ]
+    same_object_gate [
+        label="Same Object Stage Gate",
+        shape=parallelogram,
+        retry_target="implement_same_object",
+        script="node scripts/iphone-app-factory/object-proof-stage-gate.mjs --stage same_object --root .workflow/object-proof-program/stages/same_object --required-capabilities reference_object_registration,same_object_matching,reference_privacy_storage,same_object_eval_coverage"
+    ]
+
+    start -> implement_same_object
+    implement_same_object -> same_object_gate [condition="outcome=succeeded"]
+    implement_same_object -> implement_same_object [label="Retry Same Object Implementation"]
+    same_object_gate -> exit [condition="outcome=succeeded"]
+    same_object_gate -> implement_same_object [label="Fix Same Object Coverage"]
+}

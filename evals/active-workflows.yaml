@@ -1,0 +1,134 @@
+version: 1
+groups:
+  - id: waketask-object-proof-program
+    owner: quincy
+    outcome_eval_id: iphone-object-proof.program.outcome
+    workflows:
+      - path: workflows/iphone-app-factory/waketask-object-proof-program.fabro
+        role: parent
+        workflow_eval_id: iphone-object-proof.program.workflow
+        native_prompt_policy: none
+      - path: workflows/iphone-app-factory/object-proof-program-preflight-stage.fabro
+        role: child
+        workflow_eval_id: iphone-object-proof.preflight.workflow
+        native_prompt_policy: none
+      - path: workflows/iphone-app-factory/object-proof-program-spec-stage.fabro
+        role: child
+        workflow_eval_id: iphone-object-proof.program-spec.workflow
+        native_prompt_policy: none
+      - path: workflows/iphone-app-factory/object-proof-barcode-stage.fabro
+        role: child
+        workflow_eval_id: iphone-object-proof.barcode.workflow
+        native_prompt_policy: none
+      - path: workflows/iphone-app-factory/object-proof-barcode-learning-stage.fabro
+        role: child
+        workflow_eval_id: iphone-object-proof.barcode-learning.workflow
+        native_prompt_policy: none
+      - path: workflows/iphone-app-factory/object-proof-preset-vision-stage.fabro
+        role: child
+        workflow_eval_id: iphone-object-proof.preset-vision.workflow
+        native_prompt_policy: none
+      - path: workflows/iphone-app-factory/object-proof-preset-vision-learning-stage.fabro
+        role: child
+        workflow_eval_id: iphone-object-proof.preset-vision-learning.workflow
+        native_prompt_policy: none
+      - path: workflows/iphone-app-factory/object-proof-same-object-stage.fabro
+        role: child
+        workflow_eval_id: iphone-object-proof.same-object.workflow
+        native_prompt_policy: none
+      - path: workflows/iphone-app-factory/object-proof-same-object-learning-stage.fabro
+        role: child
+        workflow_eval_id: iphone-object-proof.same-object-learning.workflow
+        native_prompt_policy: none
+      - path: workflows/iphone-app-factory/object-proof-publish-postmortem-stage.fabro
+        role: child
+        workflow_eval_id: iphone-object-proof.postmortem.workflow
+        native_prompt_policy: none
+  - id: iphone-existing-app-feature-iteration
+    owner: quincy
+    outcome_eval_id: iphone-feature.iteration.outcome
+    workflows:
+      - path: workflows/iphone-app-factory/iterate-existing-app-features.fabro
+        role: parent
+        workflow_eval_id: iphone-feature.iteration.workflow
+        native_prompt_policy: none
+      - path: workflows/iphone-app-factory/feature-workflow-preflight-stage.fabro
+        role: child
+        workflow_eval_id: iphone-feature.workflow-preflight.workflow
+        native_prompt_policy: none
+      - path: workflows/iphone-app-factory/feature-context-intake-stage.fabro
+        role: child
+        workflow_eval_id: iphone-feature.context-intake.workflow
+        native_prompt_policy: none
+      - path: workflows/iphone-app-factory/feature-existing-app-audit-stage.fabro
+        role: child
+        workflow_eval_id: iphone-feature.existing-app-audit.workflow
+        native_prompt_policy: none
+      - path: workflows/iphone-app-factory/feature-research-stage.fabro
+        role: child
+        workflow_eval_id: iphone-feature.research.workflow
+        native_prompt_policy: none
+      - path: workflows/iphone-app-factory/feature-spec-stage.fabro
+        role: child
+        workflow_eval_id: iphone-feature.spec.workflow
+        native_prompt_policy: none
+      - path: workflows/iphone-app-factory/feature-implementation-plan-stage.fabro
+        role: child
+        workflow_eval_id: iphone-feature.implementation-plan.workflow
+        native_prompt_policy: none
+      - path: workflows/iphone-app-factory/feature-implementation-stage.fabro
+        role: child
+        workflow_eval_id: iphone-feature.implementation.workflow
+        native_prompt_policy: none
+      - path: workflows/iphone-app-factory/feature-validation-stage.fabro
+        role: child
+        workflow_eval_id: iphone-feature.validation.workflow
+        native_prompt_policy: none
+      - path: workflows/iphone-app-factory/feature-publish-postmortem-stage.fabro
+        role: child
+        workflow_eval_id: iphone-feature.postmortem.workflow
+        native_prompt_policy: none
+  - id: iphone-app-build-factory
+    owner: iphone-app-factory
+    outcome_eval_id: iphone-build.factory.outcome
+    workflows:
+      - path: workflows/iphone-app-factory/build-iphone-app.fabro
+        role: parent
+        workflow_eval_id: iphone-build.factory.workflow
+        native_prompt_policy: tracked_pending
+      - path: workflows/iphone-app-factory/build-iphone-app.cli.fabro
+        role: parent
+        workflow_eval_id: iphone-build.factory-cli.workflow
+        native_prompt_policy: tracked_pending
+  - id: waketask-product-ux-iteration
+    owner: quincy
+    outcome_eval_id: waketask-product.iteration.outcome
+    workflows:
+      - path: workflows/iphone-app-factory/waketask-product-iteration.fabro
+        role: parent
+        workflow_eval_id: waketask-product.iteration.workflow
+        native_prompt_policy: none
+      - path: workflows/iphone-app-factory/waketask-workflow-preflight-stage.fabro
+        role: child
+        workflow_eval_id: waketask-product.preflight.workflow
+        native_prompt_policy: none
+      - path: workflows/iphone-app-factory/waketask-product-spec-stage.fabro
+        role: child
+        workflow_eval_id: waketask-product.spec.workflow
+        native_prompt_policy: none
+      - path: workflows/iphone-app-factory/iterate-existing-app-ux.fabro
+        role: child
+        workflow_eval_id: iphone-ux.iteration.workflow
+        native_prompt_policy: none
+      - path: workflows/iphone-app-factory/waketask-validation-postmortem-stage.fabro
+        role: child
+        workflow_eval_id: waketask-product.validation-postmortem.workflow
+        native_prompt_policy: none
+  - id: hermes-create-agent
+    owner: hermes
+    outcome_eval_id: hermes.create-agent.outcome
+    workflows:
+      - path: workflows/hermes/create-agent.fabro
+        role: standalone
+        workflow_eval_id: hermes.create-agent.workflow
+        native_prompt_policy: none

@@ -1,0 +1,76 @@
+_version = 1
+
+[workflow]
+graph = "iterate-existing-app-features.fabro"
+
+[run]
+goal = "Implement WakeTask's viral completion and accountability feature pack after Object Proof missions land"
+
+[run.metadata]
+factory = "iphone-app-feature-iteration"
+control_plane = "railway"
+app = "waketask"
+topic = "task-alarm-viral-share-accountability"
+
+[run.inputs]
+repo_url = "https://github.com/kimprobably/waketask-ios.git"
+base_branch = "feature/waketask-object-proof-program-20260519"
+run_branch = "feature/waketask-viral-share-accountability-20260519"
+app_name = "WakeTask"
+bundle_id = "com.keen.waketask"
+app_dir = "apps/waketask-ios"
+app_domain = "task_alarm"
+target_audience = "Heavy sleepers and consumer iPhone users who need forced engagement to wake up reliably"
+feature_goal = "Turn completed WakeTask missions into viral-ready proof moments: shareable completion cards, funny mission result copy, streak/reward feedback, and a lightweight accountability-friend concept that can be validated without requiring a backend or a second shipped app."
+required_capabilities = "shareable_completion_card,mission_result_story_templates,streak_reward_feedback,accountability_friend_lightweight_flow,privacy_safe_share_payload"
+context_paths = "contexts/iphone-app-factory/waketask,contexts/iphone-app-factory/waketask/screenshots"
+max_competitors = "12"
+use_mobbin_mcp = "true"
+use_design_corpus = "true"
+ios_validation_mode = "github"
+allow_macos_deferred = "false"
+fabro_server = "https://fabro-maestro-production.up.railway.app/api/v1"
+
+[run.sandbox]
+provider = "daytona"
+preserve = false
+stop_on_terminal = true
+
+[run.sandbox.daytona]
+auto_stop_interval = 30
+network = "allow_all"
+
+[run.sandbox.env]
+FABRO_SERVER = "https://fabro-maestro-production.up.railway.app/api/v1"
+FABRO_DEV_TOKEN = "{{ env.FABRO_DEV_TOKEN }}"
+APP_DIR = "apps/waketask-ios"
+UX_APP_DIR = "apps/waketask-ios"
+UX_REPO_URL = "https://github.com/kimprobably/waketask-ios.git"
+UX_BASE_BRANCH = "feature/waketask-object-proof-program-20260519"
+UX_RUN_BRANCH = "feature/waketask-viral-share-accountability-20260519"
+UX_RUN_ID = "feature/waketask-viral-share-accountability-20260519"
+FEATURE_WORKFLOW_ROOT = ".workflow/existing-app-feature"
+FEATURE_CONTEXT_PATHS = "contexts/iphone-app-factory/waketask,contexts/iphone-app-factory/waketask/screenshots"
+FEATURE_REQUIRED_CAPABILITIES = "shareable_completion_card,mission_result_story_templates,streak_reward_feedback,accountability_friend_lightweight_flow,privacy_safe_share_payload"
+FEATURE_ALLOW_CI_DEFERRED = "false"
+UX_USE_MOBBIN_MCP = "true"
+UX_IOS_VALIDATION_MODE = "github"
+UX_ALLOW_MACOS_DEFERRED = "false"
+APIFY_TOKEN = "{{ env.APIFY_TOKEN }}"
+GITHUB_TOKEN = "{{ env.GITHUB_TOKEN }}"
+GH_TOKEN = "{{ env.GH_TOKEN }}"
+OPENROUTER_API_KEY = "{{ env.OPENROUTER_API_KEY }}"
+CLAUDE_CODE_OAUTH_TOKEN = "{{ env.CLAUDE_CODE_OAUTH_TOKEN }}"
+CLAUDE_CODE_CREDENTIALS_JSON_BASE64 = "{{ env.CLAUDE_CODE_CREDENTIALS_JSON_BASE64 }}"
+CODEX_AUTH_JSON_BASE64 = "{{ env.CODEX_AUTH_JSON_BASE64 }}"
+CODEX_MCP_CREDENTIALS_JSON_BASE64 = "{{ env.CODEX_MCP_CREDENTIALS_JSON_BASE64 }}"
+
+[run.artifacts]
+include = [
+  ".workflow/existing-app-feature/**",
+  ".workflow/object-proof-program/**",
+  "apps/waketask-ios/**",
+  "reports/ios/**",
+  "reports/evals/**",
+  ".github/workflows/**",
+]
