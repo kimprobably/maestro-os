@@ -507,14 +507,116 @@
     }
   },
   "web_url": "https://fabro-maestro-production.up.railway.app/runs/01KRYZDZ1WJHFP0ZEH9EY09QW1",
-  "start": null,
-  "status": {
-    "kind": "starting"
+  "start": {
+    "start_time": "2026-05-19T02:01:08.342510956Z",
+    "run_branch": "fabro/run/01KRYZDZ1WJHFP0ZEH9EY09QW1",
+    "base_sha": "f183ca34a87b2864aeec7c474c67a322f8a547c9"
   },
-  "status_updated_at": "2026-05-19T02:01:06.450421582Z",
-  "last_event_at": "2026-05-19T02:01:08.114436084Z",
+  "status": {
+    "kind": "running"
+  },
+  "status_updated_at": "2026-05-19T02:01:08.342547045Z",
+  "last_event_at": "2026-05-19T02:01:10.546543845Z",
   "pending_control": null,
-  "checkpoints": [],
+  "checkpoints": [
+    {
+      "seq": 19,
+      "checkpoint": {
+        "timestamp": "2026-05-19T02:01:09.248574352Z",
+        "current_node": "start",
+        "completed_nodes": [
+          "start"
+        ],
+        "node_retries": {},
+        "context_values": {
+          "internal.run_id": "01KRYZDZ1WJHFP0ZEH9EY09QW1",
+          "graph.persona": "code-factory",
+          "internal.retry_count.start": 0,
+          "graph.rankdir": "LR",
+          "internal.work_dir": "/home/daytona/workspace/maestro-os",
+          "graph.default_max_retries": "1",
+          "graph.inputs": "goal_path, app_dir",
+          "internal.fidelity": "compact",
+          "graph.fallback_retry_target": "implement",
+          "internal.node_visit_count": 1,
+          "failure_signature": "",
+          "graph.retry_target": "implement",
+          "outcome": "succeeded",
+          "graph.goal": "Build a tiny Joni-to-TipTap collaborative editor spike: mock Joni LinkedIn post generation streams into a collaborative TipTap/Yjs document. No production deploy or real LinkedIn/Hermes mutation.",
+          "internal.thread_id": null,
+          "current_node": "start",
+          "failure_class": "",
+          "graph.outputs": "app_dir, review_report, handoff_json"
+        },
+        "node_outcomes": {
+          "start": {
+            "status": "succeeded",
+            "usage": null
+          }
+        },
+        "next_node_id": "prepare",
+        "node_visits": {
+          "start": 1
+        }
+      },
+      "diff": {}
+    },
+    {
+      "seq": 0,
+      "checkpoint": {
+        "timestamp": "2026-05-19T02:01:10.595858786Z",
+        "current_node": "prepare",
+        "completed_nodes": [
+          "start",
+          "prepare"
+        ],
+        "node_retries": {},
+        "context_values": {
+          "internal.retry_count.prepare": 0,
+          "graph.outputs": "app_dir, review_report, handoff_json",
+          "graph.rankdir": "LR",
+          "failure_class": "",
+          "outcome": "succeeded",
+          "graph.default_max_retries": "1",
+          "internal.thread_id": "start",
+          "thread.start.current_node": "prepare",
+          "graph.goal": "Build a tiny Joni-to-TipTap collaborative editor spike: mock Joni LinkedIn post generation streams into a collaborative TipTap/Yjs document. No production deploy or real LinkedIn/Hermes mutation.",
+          "graph.persona": "code-factory",
+          "current_node": "prepare",
+          "command.output": "blob://sha256/3c2f49ed7098ba6f4c6440d4f6186581ec415b239ad66815d848b7a19588fd7b",
+          "graph.inputs": "goal_path, app_dir",
+          "internal.fidelity": "compact",
+          "internal.run_id": "01KRYZDZ1WJHFP0ZEH9EY09QW1",
+          "internal.retry_count.start": 0,
+          "failure_signature": "",
+          "internal.work_dir": "/home/daytona/workspace/maestro-os",
+          "graph.fallback_retry_target": "implement",
+          "internal.node_visit_count": 1,
+          "graph.retry_target": "implement"
+        },
+        "node_outcomes": {
+          "prepare": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/3c2f49ed7098ba6f4c6440d4f6186581ec415b239ad66815d848b7a19588fd7b"
+            },
+            "notes": "Script completed: APP='spikes/joni-tiptap-collab-demo'; GOAL='docs/superpowers/plans/2026-05-17-joni-tiptap-collab-spike.md'; mkdir -p .workflow/joni-tiptap-spike \"$APP\"; test -s \"$GOAL\"; cp \"$GOAL\" .workflow/joni-tiptap-spike/goal.md; printf '{\"app_dir\":\"%s\",\"goal_path\":\"%s\"}\n' \"$APP\" \"$GOAL\" > .workflow/joni-tiptap-spike/input.json; echo joni-tiptap-spike-prepared",
+            "usage": null
+          },
+          "start": {
+            "status": "succeeded",
+            "usage": null
+          }
+        },
+        "next_node_id": "implement",
+        "node_visits": {
+          "prepare": 1,
+          "start": 1
+        }
+      },
+      "diff": {}
+    }
+  ],
   "conclusion": null,
   "sandbox": {
     "provider": "daytona",
@@ -535,5 +637,72 @@
   "pull_request": null,
   "superseded_by": null,
   "pending_interviews": {},
-  "stages": {}
+  "stages": {
+    "prepare@1": {
+      "first_event_seq": 20,
+      "prompt": null,
+      "response": null,
+      "completion": null,
+      "provider_used": null,
+      "diff": null,
+      "script_invocation": {
+        "script": "APP='spikes/joni-tiptap-collab-demo'; GOAL='docs/superpowers/plans/2026-05-17-joni-tiptap-collab-spike.md'; mkdir -p .workflow/joni-tiptap-spike \"$APP\"; test -s \"$GOAL\"; cp \"$GOAL\" .workflow/joni-tiptap-spike/goal.md; printf '{\"app_dir\":\"%s\",\"goal_path\":\"%s\"}\n' \"$APP\" \"$GOAL\" > .workflow/joni-tiptap-spike/input.json; echo joni-tiptap-spike-prepared",
+        "command": "exec 2>&1\nAPP='spikes/joni-tiptap-collab-demo'; GOAL='docs/superpowers/plans/2026-05-17-joni-tiptap-collab-spike.md'; mkdir -p .workflow/joni-tiptap-spike \"$APP\"; test -s \"$GOAL\"; cp \"$GOAL\" .workflow/joni-tiptap-spike/goal.md; printf '{\"app_dir\":\"%s\",\"goal_path\":\"%s\"}\n' \"$APP\" \"$GOAL\" > .workflow/joni-tiptap-spike/input.json; echo joni-tiptap-spike-prepared",
+        "language": "shell"
+      },
+      "script_timing": {
+        "output": "blob://sha256/3c2f49ed7098ba6f4c6440d4f6186581ec415b239ad66815d848b7a19588fd7b",
+        "exit_code": 0,
+        "duration_ms": 1294,
+        "termination": "exited",
+        "output_bytes": 27,
+        "live_streaming": true
+      },
+      "parallel_results": null,
+      "output": null,
+      "output_bytes": 27,
+      "live_streaming": true,
+      "termination": "exited",
+      "started_at": "2026-05-19T02:01:09.248704601Z",
+      "handler": "command",
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "total_tokens": 0,
+        "reasoning_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "state": "running"
+    },
+    "start@1": {
+      "first_event_seq": 16,
+      "prompt": null,
+      "response": null,
+      "completion": {
+        "outcome": "succeeded",
+        "notes": null,
+        "failure_reason": null,
+        "timestamp": "2026-05-19T02:01:09.248412764Z"
+      },
+      "provider_used": null,
+      "diff": null,
+      "script_invocation": null,
+      "script_timing": null,
+      "parallel_results": null,
+      "output": null,
+      "started_at": "2026-05-19T02:01:09.202204561Z",
+      "handler": "start",
+      "duration_ms": 0,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "total_tokens": 0,
+        "reasoning_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "state": "succeeded"
+    }
+  }
 }
