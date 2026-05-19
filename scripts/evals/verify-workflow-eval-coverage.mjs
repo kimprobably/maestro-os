@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import { readFileSync } from "node:fs";
 import { relative, resolve } from "node:path";
-import { loadRegistry, validateRegistry } from "./eval-lib.mjs";
+import { loadRegistry, validateRegistry, writeNormalizedResult } from "./eval-lib.mjs";
 
 const COVERAGE_LEVELS = new Set(["stage", "workflow", "product"]);
 const ACTIVE_BLOCKING_STATES = new Set(["blocking", "ratcheted"]);
@@ -10,6 +10,9 @@ function parseArgs(argv) {
   const args = {
     registry: "evals/registry.yaml",
     workflows: [],
+    evalId: null,
+    workflowId: null,
+    evalResultOut: null,
   };
 
   for (let index = 0; index < argv.length; index += 1) {
@@ -18,6 +21,12 @@ function parseArgs(argv) {
       args.registry = argv[++index];
     } else if (arg === "--workflow") {
       args.workflows.push(argv[++index]);
+    } else if (arg === "--eval-id") {
+      args.evalId = argv[++index];
+    } else if (arg === "--workflow-id") {
+      args.workflowId = argv[++index];
+    } else if (arg === "--eval-result-out") {
+      args.evalResultOut = argv[++index];
     } else {
       throw new Error(`unknown argument ${arg}`);
     }
@@ -26,6 +35,8 @@ function parseArgs(argv) {
   if (!args.registry) throw new Error("--registry requires a path");
   if (args.workflows.some((workflow) => !workflow)) throw new Error("--workflow requires a path");
   if (args.workflows.length === 0) throw new Error("at least one --workflow path is required");
+  if (args.evalResultOut && !args.evalId) throw new Error("--eval-result-out requires --eval-id");
+  if (args.evalResultOut && !args.workflowId) throw new Error("--eval-result-out requires --workflow-id");
   return args;
 }
 
@@ -199,6 +210,26 @@ function verifyWorkflowCoverage({ registry, workflows }) {
   };
 }
 
+function writeCoverageEvalResult(args, summary, errors) {
+  if (!args.evalResultOut) return null;
+  return writeNormalizedResult(resolve(args.evalResultOut), {
+    eval_id: args.evalId,
+    level: "workflow",
+    runner: "deterministic",
+    workflow: args.workflowId,
+    runner_status: errors.length === 0 ? "passed" : "failed",
+    fallback_status: "not_used",
+    waiver_status: "none",
+    score: errors.length === 0 ? 1 : 0,
+    failure_class: errors.length === 0 ? null : "eval_coverage",
+    artifact_uris: [displayWorkflowPath(args.evalResultOut), ...args.workflows.map((workflow) => displayWorkflowPath(workflow))],
+    metadata: {
+      summary,
+      errors,
+    },
+  });
+}
+
 try {
   const args = parseArgs(process.argv.slice(2));
   const registry = loadRegistry(args.registry);
@@ -209,6 +240,7 @@ try {
   }
 
   const { errors, summary } = verifyWorkflowCoverage({ registry, workflows: args.workflows });
+  writeCoverageEvalResult(args, summary, errors);
   if (errors.length > 0) {
     console.error(JSON.stringify({ ok: false, errors }, null, 2));
     process.exit(1);
