@@ -1,6 +1,6 @@
 # Factory Dashboard
 
-Generated: 2026-05-19T04:58:46.550Z
+Generated: 2026-05-19T05:04:24.479Z
 Overall: **ATTENTION REQUIRED**
 
 ## Owner Rollup
@@ -61,7 +61,7 @@ Factory needs owner attention.
 | Waived | 0 |
 | Missing Blocking | 7 |
 
-Eval index generated: 2026-05-19T01:58:06.174Z
+Eval index generated: 2026-05-19T05:04:22.962Z
 
 ## Pay Attention
 
