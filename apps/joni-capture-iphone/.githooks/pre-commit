@@ -1,0 +1,37 @@
+#!/bin/bash
+# Pre-commit hook: prevent committing real API keys in Configuration.swift
+# Install: git config core.hooksPath .githooks
+
+CONFIG_FILE="SwiftAIBoilerplatePro/Generated/Configuration.swift"
+
+# Only check if Configuration.swift is staged
+if ! git diff --cached --name-only | grep -q "$CONFIG_FILE"; then
+    exit 0
+fi
+
+# Get staged content
+STAGED_CONTENT=$(git show ":$CONFIG_FILE" 2>/dev/null)
+if [ -z "$STAGED_CONTENT" ]; then
+    exit 0
+fi
+
+# Check each static let line for non-placeholder values
+# Allow: "placeholder", "pro" (RC_ENTITLEMENT_ID), "/ai" (PROXY_PATH)
+NON_PLACEHOLDER=$(echo "$STAGED_CONTENT" \
+    | grep 'static let' \
+    | grep -v 'placeholder' \
+    | grep -v 'RC_ENTITLEMENT_ID' \
+    | grep -v 'PROXY_PATH')
+
+if [ -n "$NON_PLACEHOLDER" ]; then
+    echo ""
+    echo "BLOCKED: Configuration.swift contains non-placeholder values:"
+    echo "$NON_PLACEHOLDER"
+    echo ""
+    echo "Do not commit real API keys. To fix:"
+    echo "  git checkout -- $CONFIG_FILE"
+    echo ""
+    exit 1
+fi
+
+exit 0
