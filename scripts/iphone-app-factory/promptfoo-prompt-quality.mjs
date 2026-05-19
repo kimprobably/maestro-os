@@ -248,13 +248,14 @@ const promptfooOk = Boolean(promptfooResult && promptfooResult.status === 0);
 const fallbackOk = fallbackFailures.length === 0;
 const promptfooFailed = Boolean(promptfooResult && promptfooResult.status !== 0);
 const promptfooUnavailable = !promptfooResult;
+const promptfooAttemptedFallbackAccepted = allowFallback && promptfooFailed && fallbackOk;
 const promptfooUnavailableReason = promptfooMissingEnv.length > 0
   ? `missing environment keys: ${promptfooMissingEnv.join(", ")}`
   : promptfooCheck.available
     ? null
     : promptfooCheck.reason;
 const promptfooSummary = promptfooResult ? readPromptfooSummary() : { promptfoo_failures: [], critical_gaps: [] };
-const ok = fallbackOk && (promptfooOk || allowPromptfooFallback);
+const ok = fallbackOk && (promptfooOk || allowPromptfooFallback || promptfooAttemptedFallbackAccepted);
 const promptfooWaiverAccepted = !promptfooOk && fallbackOk && acceptedRiskPromptfooFailure;
 const promptfooWaiver = promptfooWaiverAccepted
   ? {
@@ -284,6 +285,7 @@ const report = {
   promptfoo_stderr_excerpt: promptfooResult ? redactString(promptfooResult.stderr).slice(-3000) : "",
   allow_promptfoo_fallback: allowPromptfooFallback,
   legacy_allow_promptfoo_fallback_requested: legacyAllowPromptfooFallbackRequested,
+  attempted_fallback_accepted: promptfooAttemptedFallbackAccepted,
   accepted_risk_promptfoo_failure: acceptedRiskPromptfooFailure,
   skip_promptfoo: skipPromptfoo,
   fallback_used: !promptfooOk,
