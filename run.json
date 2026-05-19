@@ -1,0 +1,533 @@
+{
+  "title": "Build a tiny Joni-to-TipTap collaborative editor spike: mock Joni LinkedIn post generation stream...",
+  "spec": {
+    "run_id": "01KRYVE1ZVS80XG5EN8SFGPH64",
+    "settings": {
+      "project": {
+        "name": "maestro-os",
+        "description": null,
+        "metadata": {}
+      },
+      "workflow": {
+        "name": null,
+        "description": null,
+        "graph": "workflow.fabro",
+        "metadata": {}
+      },
+      "run": {
+        "goal": {
+          "type": "inline",
+          "value": "Build a tiny Joni-to-TipTap collaborative editor spike: mock Joni LinkedIn post generation streams into a collaborative TipTap/Yjs document. No production deploy or real LinkedIn/Hermes mutation."
+        },
+        "working_dir": null,
+        "metadata": {
+          "project": "maestro-os",
+          "initiated_by": "miles",
+          "purpose": "joni-tiptap-spike"
+        },
+        "inputs": {
+          "goal_path": "docs/superpowers/plans/2026-05-17-joni-tiptap-collab-spike.md",
+          "app_dir": "spikes/joni-tiptap-collab-demo"
+        },
+        "model": {
+          "provider": "openrouter",
+          "name": "anthropic/claude-haiku-4-5",
+          "fallbacks": [],
+          "controls": {
+            "reasoning_effort": null,
+            "speed": null
+          }
+        },
+        "git": {
+          "author": null
+        },
+        "prepare": {
+          "commands": [],
+          "timeout_ms": 300000
+        },
+        "execution": {
+          "mode": "normal",
+          "approval": "prompt"
+        },
+        "checkpoint": {
+          "exclude_globs": []
+        },
+        "clone": {
+          "enabled": true
+        },
+        "run_branch": {
+          "enabled": true,
+          "push": true
+        },
+        "meta_branch": {
+          "enabled": true,
+          "push": true
+        },
+        "sandbox": {
+          "provider": "daytona",
+          "preserve": true,
+          "stop_on_terminal": false,
+          "devcontainer": false,
+          "env": {
+            "FABRO_SLACK_BOT_TOKEN": "{{ env.FABRO_SLACK_BOT_TOKEN }}",
+            "FABRO_SERVER": "{{ env.FABRO_SERVER }}",
+            "PROMPTFOO_DISABLE_TELEMETRY": "1",
+            "APIFY_TOKEN": "{{ env.APIFY_TOKEN }}",
+            "CODEX_AUTH_JSON_BASE64": "{{ env.CODEX_AUTH_JSON_BASE64 }}",
+            "CLAUDE_CODE_OAUTH_TOKEN": "{{ env.CLAUDE_CODE_OAUTH_TOKEN }}",
+            "CLAUDE_CODE_CREDENTIALS_JSON_BASE64": "{{ env.CLAUDE_CODE_CREDENTIALS_JSON_BASE64 }}",
+            "FABRO_SLACK_CHANNEL_ID": "{{ env.FABRO_SLACK_CHANNEL_ID }}",
+            "APIFY_TIKTOK_ACTOR": "clockworks/tiktok-scraper",
+            "DAYTONA_API_KEY": "{{ env.DAYTONA_API_KEY }}",
+            "APIFY_APPSTORE_ACTOR": "crawlerbros/appstore-scraper",
+            "APIFY_INSTAGRAM_ACTOR": "apify/instagram-scraper",
+            "DAYTONA_API_URL": "{{ env.DAYTONA_API_URL }}",
+            "OPENROUTER_API_KEY": "{{ env.OPENROUTER_API_KEY }}",
+            "LINEAR_API_URL": "{{ env.LINEAR_API_URL }}",
+            "OPENAI_API_KEY": "{{ env.OPENAI_API_KEY }}",
+            "LINEAR_API_KEY": "{{ env.LINEAR_API_KEY }}",
+            "FABRO_DEV_TOKEN": "{{ env.FABRO_DEV_TOKEN }}"
+          },
+          "docker": {
+            "image": "buildpack-deps:noble",
+            "network_mode": null,
+            "memory_limit": 4000000000,
+            "cpu_quota": 200000,
+            "env_vars": {}
+          },
+          "daytona": {
+            "auto_stop_interval": 60,
+            "labels": {
+              "project": "maestro-os",
+              "purpose": "joni-tiptap-spike"
+            },
+            "volumes": [],
+            "snapshot": {
+              "name": "maestro-code-factory-v8",
+              "cpu": 2,
+              "memory_gb": 4,
+              "disk_gb": 10,
+              "dockerfile": {
+                "type": "inline",
+                "value": "FROM ubuntu:24.04\n\nENV DEBIAN_FRONTEND=noninteractive\nENV BUN_INSTALL=/root/.bun\nENV PATH=\"/root/.fabro/bin:/root/.bun/bin:/root/.local/bin:/root/.qlty/bin:${PATH}\"\nWORKDIR /home/daytona\n\nRUN apt-get update && apt-get install -y --no-install-recommends bash ca-certificates curl gh git jq openssh-client python3 python3-pip pipx ripgrep shellcheck sqlite3 unzip xz-utils && rm -rf /var/lib/apt/lists/*\n\nRUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash - && apt-get update && apt-get install -y --no-install-recommends nodejs && npm install -g @anthropic-ai/claude-code@2.1.141 @openai/codex promptfoo && npm cache clean --force && rm -rf /var/lib/apt/lists/*\n\nRUN curl -fsSL https://bun.sh/install | bash -s \"bun-v1.2.22\" && ln -sf /root/.bun/bin/bun /usr/local/bin/bun\n\nRUN pipx install spec-kitty-cli==3.1.8 && curl -fsSL https://qlty.sh | sh && ln -sf /root/.qlty/bin/qlty /usr/local/bin/qlty\n\nRUN set -eux; target=\"x86_64-unknown-linux-gnu\"; asset=\"fabro-${target}.tar.gz\"; url=\"$(curl -fsSL https://api.github.com/repos/fabro-sh/fabro/releases/latest | jq -r --arg asset \"$asset\" '.assets[] | select(.name == $asset) | .browser_download_url')\"; test -n \"$url\"; curl -fsSL \"$url\" -o /tmp/fabro.tar.gz; tar -xzf /tmp/fabro.tar.gz -C /tmp; install -m 0755 \"/tmp/fabro-${target}/fabro\" /usr/local/bin/fabro; rm -rf /tmp/fabro.tar.gz \"/tmp/fabro-${target}\"; fabro --version\n\nCMD [\"/bin/bash\"]\n"
+              }
+            },
+            "network": "allow_all"
+          }
+        },
+        "notifications": {},
+        "interviews": {
+          "provider": null,
+          "slack": null
+        },
+        "agent": {
+          "permissions": "full",
+          "mcps": {}
+        },
+        "hooks": [],
+        "scm": {
+          "provider": null,
+          "owner": null,
+          "repository": null,
+          "github": null
+        },
+        "pull_request": null,
+        "artifacts": {
+          "include": [
+            ".workflow/**",
+            "reports/**",
+            "reports/ios/**",
+            "evals/output/**",
+            ".github/workflows/**",
+            "apps/*-iphone/**",
+            "apps/generated-*/README.md",
+            "apps/generated-*/.workflow-build.json",
+            "apps/generated-*/fixtures/**",
+            "apps/generated-*/public/**",
+            "apps/generated-*/src/**",
+            "apps/generated-*/tests/**"
+          ]
+        },
+        "integrations": {
+          "github": {
+            "permissions": {
+              "contents": "write",
+              "actions": "read",
+              "metadata": "read",
+              "pull_requests": "write",
+              "issues": "write"
+            }
+          }
+        }
+      }
+    },
+    "graph": {
+      "name": "JoniTipTapSpikeAcp",
+      "nodes": {
+        "exit": {
+          "id": "exit",
+          "attrs": {
+            "label": {
+              "String": "Exit"
+            },
+            "shape": {
+              "String": "Msquare"
+            }
+          }
+        },
+        "review": {
+          "id": "review",
+          "attrs": {
+            "acp_command": {
+              "String": "codex --acp --stdio"
+            },
+            "label": {
+              "String": "Spike Review"
+            },
+            "retry_target": {
+              "String": "implement"
+            },
+            "shape": {
+              "String": "box"
+            },
+            "backend": {
+              "String": "acp"
+            },
+            "prompt": {
+              "String": "# Review the Joni + TipTap Collaboration Spike\n\nReview the spike in `spikes/joni-tiptap-collab-demo` against the goal/spec at `docs/superpowers/plans/2026-05-17-joni-tiptap-collab-spike.md`.\n\nDo not perform production deployment, public publishing, real LinkedIn actions, or real Hermes/Joni calls.\n\n## Review checklist\n\nApprove only if all are true:\n\n1. The app is a small standalone local spike.\n2. It uses TipTap for the editor.\n3. It uses Yjs/Hocuspocus or equivalent local collaboration so two browser sessions can share one document.\n4. It has a mock Joni Server-Sent Events stream that produces LinkedIn-post-like chunks.\n5. The UI can stream mock Joni chunks into the TipTap document.\n6. The README documents setup, run commands, two-window manual verification, architecture, limitations, and next steps to swap mock Joni for real Hermes/Joni streaming.\n7. `npm install`, `npm run typecheck --if-present`, `npm test --if-present`, and `npm run build` pass or the README explains why a missing optional script is intentionally absent.\n8. No secrets are printed or required.\n9. No real LinkedIn/customer/user data mutation exists.\n\n## Output contract\n\nWrite your review to `.workflow/joni-tiptap-spike/review.md`.\n\nThe first line must be exactly one of:\n\n- `VERDICT: APPROVED`\n- `VERDICT: REJECTED`\n\nThen include:\n\n- evidence commands run;\n- files inspected;\n- any remaining risks;\n- recommended next steps.\n\nIf rejected, be specific about the smallest fixes needed."
+            },
+            "goal_gate": {
+              "Boolean": true
+            }
+          }
+        },
+        "implement": {
+          "id": "implement",
+          "attrs": {
+            "retry_target": {
+              "String": "implement"
+            },
+            "acp_command": {
+              "String": "codex --acp --stdio"
+            },
+            "label": {
+              "String": "Implement Spike"
+            },
+            "backend": {
+              "String": "acp"
+            },
+            "shape": {
+              "String": "box"
+            },
+            "goal_gate": {
+              "Boolean": true
+            },
+            "prompt": {
+              "String": "# Implement the Joni + TipTap Collaboration Spike\n\nYou are running inside a Fabro Daytona coding sandbox for Maestro. Build the smallest useful spike, not a production product.\n\n## Inputs\n\n- Goal/spec: `docs/superpowers/plans/2026-05-17-joni-tiptap-collab-spike.md`\n- App directory: `spikes/joni-tiptap-collab-demo`\n\nRead the goal/spec first. Then implement the app in the app directory.\n\n## Product goal\n\nProve that a LinkedIn-specialized agent like Joni can stream generated post content into a TipTap document while humans collaboratively edit the same document.\n\n## Strict scope\n\nImplement a local standalone spike only.\n\nInclude:\n\n1. A React + TypeScript UI using TipTap.\n2. A collaborative document using Yjs/Hocuspocus and TipTap collaboration extensions.\n3. A mock Joni streaming endpoint using Server-Sent Events, e.g. `GET /api/joni/stream?topic=...`.\n4. A UI flow:\n   - user enters a post topic or prompt;\n   - clicks a button such as “Ask Joni”;\n   - the server streams LinkedIn post chunks;\n   - chunks are inserted into the TipTap doc;\n   - a second browser tab/window connected to the same document sees the content and can edit concurrently.\n5. A README with setup, run commands, manual two-window verification steps, architecture notes, and explicit “not included in spike” section.\n6. Build/typecheck/test scripts sufficient for the verification node to run `npm install`, `npm run typecheck --if-present`, `npm test --if-present`, and `npm run build`.\n\nExclude:\n\n- No real Hermes/Joni API call.\n- No real LinkedIn auth, posting, importing, scraping, or outbound send.\n- No user auth.\n- No persistence beyond in-memory local collaboration server state unless trivially provided by the chosen libraries.\n- No production deploy.\n- No secret values.\n\n## Suggested implementation shape\n\nPrefer a small Vite app plus a Node/Express server:\n\n- `package.json`\n- `src/App.tsx`\n- `src/main.tsx`\n- `src/styles.css`\n- `server/index.ts`\n- optional `server/joniMock.ts`\n- `README.md`\n\nUseful dependencies may include:\n\n- `@tiptap/react`\n- `@tiptap/starter-kit`\n- `@tiptap/extension-collaboration`\n- `@tiptap/extension-collaboration-caret`\n- `@hocuspocus/provider`\n- `@hocuspocus/server`\n- `yjs`\n- `express`\n- `cors`\n- `vite`\n- `typescript`\n- `tsx`\n- `concurrently`\n\nIf an exact library API has changed, inspect installed package docs/types and choose the smallest compiling implementation.\n\n## Acceptance criteria\n\nThe implementation is complete only if:\n\n- `npm install` succeeds in the app directory.\n- `npm run build` succeeds.\n- The README describes a manual test with two browser sessions where one asks Joni and both sessions see/edit the same document.\n- The app clearly labels generated content as mock Joni output.\n- The implementation remains simple enough to throw away after the spike.\n\nWhen finished, summarize changed files and verification commands run."
+            }
+          }
+        },
+        "verify": {
+          "id": "verify",
+          "attrs": {
+            "goal_gate": {
+              "Boolean": true
+            },
+            "retry_target": {
+              "String": "implement"
+            },
+            "shape": {
+              "String": "parallelogram"
+            },
+            "script": {
+              "String": "APP='spikes/joni-tiptap-collab-demo'; test -d \"$APP\"; test -f \"$APP/package.json\"; test -f \"$APP/README.md\"; (cd \"$APP\" && npm install && npm run typecheck --if-present && npm test --if-present && npm run build); grep -Eiq 'Joni|TipTap|collab|stream' \"$APP/README.md\"; mkdir -p .workflow/joni-tiptap-spike; printf '# CI Report\n\nstatus=ok\napp_dir=%s\n' \"$APP\" > .workflow/joni-tiptap-spike/ci-report.md; echo native-verification-ok"
+            },
+            "label": {
+              "String": "Native Verification"
+            }
+          }
+        },
+        "start": {
+          "id": "start",
+          "attrs": {
+            "shape": {
+              "String": "Mdiamond"
+            },
+            "label": {
+              "String": "Start"
+            }
+          }
+        },
+        "prepare": {
+          "id": "prepare",
+          "attrs": {
+            "script": {
+              "String": "APP='spikes/joni-tiptap-collab-demo'; GOAL='docs/superpowers/plans/2026-05-17-joni-tiptap-collab-spike.md'; mkdir -p .workflow/joni-tiptap-spike \"$APP\"; test -s \"$GOAL\"; cp \"$GOAL\" .workflow/joni-tiptap-spike/goal.md; printf '{\"app_dir\":\"%s\",\"goal_path\":\"%s\"}\n' \"$APP\" \"$GOAL\" > .workflow/joni-tiptap-spike/input.json; echo joni-tiptap-spike-prepared"
+            },
+            "shape": {
+              "String": "parallelogram"
+            },
+            "retry_target": {
+              "String": "prepare"
+            },
+            "goal_gate": {
+              "Boolean": true
+            },
+            "label": {
+              "String": "Prepare Spike Workspace"
+            }
+          }
+        },
+        "review_gate": {
+          "id": "review_gate",
+          "attrs": {
+            "goal_gate": {
+              "Boolean": true
+            },
+            "retry_target": {
+              "String": "implement"
+            },
+            "script": {
+              "String": "test -s .workflow/joni-tiptap-spike/review.md; grep -Eq '^VERDICT:[[:space:]]*APPROVED' .workflow/joni-tiptap-spike/review.md; echo review-approved"
+            },
+            "label": {
+              "String": "Review Gate"
+            },
+            "shape": {
+              "String": "parallelogram"
+            }
+          }
+        },
+        "handoff": {
+          "id": "handoff",
+          "attrs": {
+            "script": {
+              "String": "APP='spikes/joni-tiptap-collab-demo'; node - <<'NODE'\nconst fs=require('fs'), cp=require('child_process');\nconst app=process.env.APP || 'spikes/joni-tiptap-collab-demo';\nconst out={kind:'joni_tiptap_spike_handoff', app_dir:app, ci_report:'.workflow/joni-tiptap-spike/ci-report.md', review:'.workflow/joni-tiptap-spike/review.md', status:'approved', updated_at:new Date().toISOString()};\ntry{out.git_status=cp.execSync('git status --short',{encoding:'utf8'}).trim().split('\\n').filter(Boolean).slice(0,50)}catch{}\nfs.mkdirSync('.workflow/joni-tiptap-spike',{recursive:true});\nfs.writeFileSync('.workflow/joni-tiptap-spike/handoff.json', JSON.stringify(out,null,2)+'\\n');\nconsole.log(JSON.stringify(out));\nNODE"
+            },
+            "shape": {
+              "String": "parallelogram"
+            },
+            "retry_target": {
+              "String": "review"
+            },
+            "label": {
+              "String": "Publish Handoff"
+            },
+            "goal_gate": {
+              "Boolean": true
+            }
+          }
+        }
+      },
+      "edges": [
+        {
+          "from": "start",
+          "to": "prepare",
+          "attrs": {}
+        },
+        {
+          "from": "prepare",
+          "to": "implement",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "prepare",
+          "to": "prepare",
+          "attrs": {
+            "loop_restart": {
+              "Boolean": true
+            }
+          }
+        },
+        {
+          "from": "implement",
+          "to": "verify",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "implement",
+          "to": "implement",
+          "attrs": {
+            "loop_restart": {
+              "Boolean": true
+            }
+          }
+        },
+        {
+          "from": "verify",
+          "to": "review",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "verify",
+          "to": "implement",
+          "attrs": {
+            "label": {
+              "String": "Fix"
+            }
+          }
+        },
+        {
+          "from": "review",
+          "to": "review_gate",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "review",
+          "to": "implement",
+          "attrs": {
+            "label": {
+              "String": "Fix"
+            }
+          }
+        },
+        {
+          "from": "review_gate",
+          "to": "handoff",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "review_gate",
+          "to": "implement",
+          "attrs": {
+            "label": {
+              "String": "Fix"
+            }
+          }
+        },
+        {
+          "from": "handoff",
+          "to": "exit",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "handoff",
+          "to": "review",
+          "attrs": {
+            "label": {
+              "String": "Fix"
+            }
+          }
+        }
+      ],
+      "attrs": {
+        "inputs": {
+          "String": "goal_path, app_dir"
+        },
+        "goal": {
+          "String": "Build a tiny Joni-to-TipTap collaborative editor spike: mock Joni LinkedIn post generation streams into a collaborative TipTap/Yjs document. No production deploy or real LinkedIn/Hermes mutation."
+        },
+        "fallback_retry_target": {
+          "String": "implement"
+        },
+        "persona": {
+          "String": "code-factory"
+        },
+        "rankdir": {
+          "String": "LR"
+        },
+        "retry_target": {
+          "String": "implement"
+        },
+        "outputs": {
+          "String": "app_dir, review_report, handoff_json"
+        },
+        "default_max_retries": {
+          "Integer": 2
+        }
+      }
+    },
+    "graph_source": "digraph JoniTipTapSpikeAcp {\n    graph [\n        goal=\"Build a tiny Joni-to-TipTap collaborative editor spike with streaming mock LinkedIn post generation\",\n        persona=\"code-factory\",\n        inputs=\"goal_path, app_dir\",\n        outputs=\"app_dir, review_report, handoff_json\",\n        default_max_retries=2,\n        retry_target=\"implement\",\n        fallback_retry_target=\"implement\"\n    ]\n    rankdir=LR\n\n    start [shape=Mdiamond, label=\"Start\"]\n    exit  [shape=Msquare, label=\"Exit\"]\n\n    prepare [\n        label=\"Prepare Spike Workspace\",\n        shape=parallelogram,\n        goal_gate=true,\n        retry_target=\"prepare\",\n        script=\"APP='{{ inputs.app_dir|default('spikes/joni-tiptap-collab-demo') }}'; GOAL='{{ inputs.goal_path|default('docs/superpowers/plans/2026-05-17-joni-tiptap-collab-spike.md') }}'; mkdir -p .workflow/joni-tiptap-spike \\\"$APP\\\"; test -s \\\"$GOAL\\\"; cp \\\"$GOAL\\\" .workflow/joni-tiptap-spike/goal.md; printf '{\\\"app_dir\\\":\\\"%s\\\",\\\"goal_path\\\":\\\"%s\\\"}\\n' \\\"$APP\\\" \\\"$GOAL\\\" > .workflow/joni-tiptap-spike/input.json; echo joni-tiptap-spike-prepared\"\n    ]\n\n    implement [\n        label=\"Implement Spike\",\n        shape=box,\n        backend=\"acp\",\n        acp_command=\"codex --acp --stdio\",\n        goal_gate=true,\n        retry_target=\"implement\",\n        prompt=\"@../../prompts/code/joni-tiptap-spike-implement.md\"\n    ]\n\n    verify [\n        label=\"Native Verification\",\n        shape=parallelogram,\n        goal_gate=true,\n        retry_target=\"implement\",\n        script=\"APP='{{ inputs.app_dir|default('spikes/joni-tiptap-collab-demo') }}'; test -d \\\"$APP\\\"; test -f \\\"$APP/package.json\\\"; test -f \\\"$APP/README.md\\\"; (cd \\\"$APP\\\" && npm install && npm run typecheck --if-present && npm test --if-present && npm run build); grep -Eiq 'Joni|TipTap|collab|stream' \\\"$APP/README.md\\\"; mkdir -p .workflow/joni-tiptap-spike; printf '# CI Report\\n\\nstatus=ok\\napp_dir=%s\\n' \\\"$APP\\\" > .workflow/joni-tiptap-spike/ci-report.md; echo native-verification-ok\"\n    ]\n\n    review [\n        label=\"Spike Review\",\n        shape=box,\n        backend=\"acp\",\n        acp_command=\"codex --acp --stdio\",\n        goal_gate=true,\n        retry_target=\"implement\",\n        prompt=\"@../../prompts/code/joni-tiptap-spike-review.md\"\n    ]\n\n    review_gate [\n        label=\"Review Gate\",\n        shape=parallelogram,\n        goal_gate=true,\n        retry_target=\"implement\",\n        script=\"test -s .workflow/joni-tiptap-spike/review.md; grep -Eq '^VERDICT:[[:space:]]*APPROVED' .workflow/joni-tiptap-spike/review.md; echo review-approved\"\n    ]\n\n    handoff [\n        label=\"Publish Handoff\",\n        shape=parallelogram,\n        goal_gate=true,\n        retry_target=\"review\",\n        script=\"APP='{{ inputs.app_dir|default('spikes/joni-tiptap-collab-demo') }}'; node - <<'NODE'\\nconst fs=require('fs'), cp=require('child_process');\\nconst app=process.env.APP || '{{ inputs.app_dir|default('spikes/joni-tiptap-collab-demo') }}';\\nconst out={kind:'joni_tiptap_spike_handoff', app_dir:app, ci_report:'.workflow/joni-tiptap-spike/ci-report.md', review:'.workflow/joni-tiptap-spike/review.md', status:'approved', updated_at:new Date().toISOString()};\\ntry{out.git_status=cp.execSync('git status --short',{encoding:'utf8'}).trim().split('\\\\n').filter(Boolean).slice(0,50)}catch{}\\nfs.mkdirSync('.workflow/joni-tiptap-spike',{recursive:true});\\nfs.writeFileSync('.workflow/joni-tiptap-spike/handoff.json', JSON.stringify(out,null,2)+'\\\\n');\\nconsole.log(JSON.stringify(out));\\nNODE\"\n    ]\n\n    start -> prepare\n    prepare -> implement [condition=\"outcome=succeeded\"]\n    prepare -> prepare [loop_restart=true]\n    implement -> verify [condition=\"outcome=succeeded\"]\n    implement -> implement [loop_restart=true]\n    verify -> review [condition=\"outcome=succeeded\"]\n    verify -> implement [label=\"Fix\"]\n    review -> review_gate [condition=\"outcome=succeeded\"]\n    review -> implement [label=\"Fix\"]\n    review_gate -> handoff [condition=\"outcome=succeeded\"]\n    review_gate -> implement [label=\"Fix\"]\n    handoff -> exit [condition=\"outcome=succeeded\"]\n    handoff -> review [label=\"Fix\"]\n}\n",
+    "workflow_slug": "joni-tiptap-spike-acp-legacy",
+    "source_directory": "/root/maestro-os",
+    "labels": {
+      "purpose": "joni-tiptap-spike",
+      "initiated_by": "miles",
+      "project": "maestro-os"
+    },
+    "provenance": {
+      "server": {
+        "version": "0.236.0-nightly.0"
+      },
+      "client": {
+        "user_agent": "fabro-cli/0.236.0-nightly.0",
+        "name": "fabro-cli",
+        "version": "0.236.0-nightly.0"
+      },
+      "subject": {
+        "kind": "user",
+        "identity": {
+          "issuer": "fabro:dev",
+          "subject": "dev"
+        },
+        "login": "dev",
+        "auth_method": "dev_token"
+      }
+    },
+    "manifest_blob": "b2346257b453d24d21899caa7a1ecb92d68a1fe18489c8e2b703af1578ca927e",
+    "definition_blob": "6ea62042c1504a68e91dab4ef433e50e8635f4258dc0600a3ffb564d4abbfb63",
+    "git": {
+      "origin_url": "https://github.com/kimprobably/maestro-os",
+      "branch": "main",
+      "sha": "be9c90211d286316bd19027a2aa9cc25f9557d9a",
+      "dirty": "dirty",
+      "push_outcome": {
+        "type": "not_attempted"
+      }
+    }
+  },
+  "web_url": "https://fabro-maestro-production.up.railway.app/runs/01KRYVE1ZVS80XG5EN8SFGPH64",
+  "start": null,
+  "status": {
+    "kind": "starting"
+  },
+  "status_updated_at": "2026-05-19T00:51:06.129840965Z",
+  "last_event_at": "2026-05-19T00:51:09.289525938Z",
+  "pending_control": null,
+  "checkpoints": [],
+  "conclusion": null,
+  "sandbox": {
+    "provider": "daytona",
+    "image": "buildpack-deps:noble",
+    "snapshot": "maestro-code-factory-v8",
+    "runtime": {
+      "id": "fabro-01KRYVE1ZVS80XG5EN8SFGPH64",
+      "working_directory": "/home/daytona/workspace/maestro-os",
+      "repo_cloned": true,
+      "clone_origin_url": "https://github.com/kimprobably/maestro-os",
+      "clone_branch": "main",
+      "workspace_root": "/home/daytona/workspace",
+      "repos_root": "/home/daytona/repos",
+      "primary_repo_path": "/home/daytona/repos/kimprobably/maestro-os",
+      "primary_repo_link": "/home/daytona/workspace/maestro-os"
+    }
+  },
+  "pull_request": null,
+  "superseded_by": null,
+  "pending_interviews": {},
+  "stages": {}
+}

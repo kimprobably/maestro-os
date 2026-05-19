@@ -1,0 +1,81 @@
+digraph JoniTipTapSpikeAcp {
+    graph [
+        goal="Build a tiny Joni-to-TipTap collaborative editor spike with streaming mock LinkedIn post generation",
+        persona="code-factory",
+        inputs="goal_path, app_dir",
+        outputs="app_dir, review_report, handoff_json",
+        default_max_retries=2,
+        retry_target="implement",
+        fallback_retry_target="implement"
+    ]
+    rankdir=LR
+
+    start [shape=Mdiamond, label="Start"]
+    exit  [shape=Msquare, label="Exit"]
+
+    prepare [
+        label="Prepare Spike Workspace",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="prepare",
+        script="APP='{{ inputs.app_dir|default('spikes/joni-tiptap-collab-demo') }}'; GOAL='{{ inputs.goal_path|default('docs/superpowers/plans/2026-05-17-joni-tiptap-collab-spike.md') }}'; mkdir -p .workflow/joni-tiptap-spike \"$APP\"; test -s \"$GOAL\"; cp \"$GOAL\" .workflow/joni-tiptap-spike/goal.md; printf '{\"app_dir\":\"%s\",\"goal_path\":\"%s\"}\n' \"$APP\" \"$GOAL\" > .workflow/joni-tiptap-spike/input.json; echo joni-tiptap-spike-prepared"
+    ]
+
+    implement [
+        label="Implement Spike",
+        shape=box,
+        backend="acp",
+        acp_command="codex --acp --stdio",
+        goal_gate=true,
+        retry_target="implement",
+        prompt="@../../prompts/code/joni-tiptap-spike-implement.md"
+    ]
+
+    verify [
+        label="Native Verification",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="implement",
+        script="APP='{{ inputs.app_dir|default('spikes/joni-tiptap-collab-demo') }}'; test -d \"$APP\"; test -f \"$APP/package.json\"; test -f \"$APP/README.md\"; (cd \"$APP\" && npm install && npm run typecheck --if-present && npm test --if-present && npm run build); grep -Eiq 'Joni|TipTap|collab|stream' \"$APP/README.md\"; mkdir -p .workflow/joni-tiptap-spike; printf '# CI Report\n\nstatus=ok\napp_dir=%s\n' \"$APP\" > .workflow/joni-tiptap-spike/ci-report.md; echo native-verification-ok"
+    ]
+
+    review [
+        label="Spike Review",
+        shape=box,
+        backend="acp",
+        acp_command="codex --acp --stdio",
+        goal_gate=true,
+        retry_target="implement",
+        prompt="@../../prompts/code/joni-tiptap-spike-review.md"
+    ]
+
+    review_gate [
+        label="Review Gate",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="implement",
+        script="test -s .workflow/joni-tiptap-spike/review.md; grep -Eq '^VERDICT:[[:space:]]*APPROVED' .workflow/joni-tiptap-spike/review.md; echo review-approved"
+    ]
+
+    handoff [
+        label="Publish Handoff",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="review",
+        script="APP='{{ inputs.app_dir|default('spikes/joni-tiptap-collab-demo') }}'; node - <<'NODE'\nconst fs=require('fs'), cp=require('child_process');\nconst app=process.env.APP || '{{ inputs.app_dir|default('spikes/joni-tiptap-collab-demo') }}';\nconst out={kind:'joni_tiptap_spike_handoff', app_dir:app, ci_report:'.workflow/joni-tiptap-spike/ci-report.md', review:'.workflow/joni-tiptap-spike/review.md', status:'approved', updated_at:new Date().toISOString()};\ntry{out.git_status=cp.execSync('git status --short',{encoding:'utf8'}).trim().split('\\n').filter(Boolean).slice(0,50)}catch{}\nfs.mkdirSync('.workflow/joni-tiptap-spike',{recursive:true});\nfs.writeFileSync('.workflow/joni-tiptap-spike/handoff.json', JSON.stringify(out,null,2)+'\\n');\nconsole.log(JSON.stringify(out));\nNODE"
+    ]
+
+    start -> prepare
+    prepare -> implement [condition="outcome=succeeded"]
+    prepare -> prepare [loop_restart=true]
+    implement -> verify [condition="outcome=succeeded"]
+    implement -> implement [loop_restart=true]
+    verify -> review [condition="outcome=succeeded"]
+    verify -> implement [label="Fix"]
+    review -> review_gate [condition="outcome=succeeded"]
+    review -> implement [label="Fix"]
+    review_gate -> handoff [condition="outcome=succeeded"]
+    review_gate -> implement [label="Fix"]
+    handoff -> exit [condition="outcome=succeeded"]
+    handoff -> review [label="Fix"]
+}
