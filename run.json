@@ -3479,7 +3479,7 @@
     "kind": "running"
   },
   "status_updated_at": "2026-05-19T06:49:40.831561914Z",
-  "last_event_at": "2026-05-19T06:59:46.059208735Z",
+  "last_event_at": "2026-05-19T06:59:48.254271490Z",
   "pending_control": null,
   "checkpoints": [
     {
@@ -3679,9 +3679,9 @@
       }
     },
     {
-      "seq": 0,
+      "seq": 407,
       "checkpoint": {
-        "timestamp": "2026-05-19T06:59:46.091257402Z",
+        "timestamp": "2026-05-19T06:59:48.251773695Z",
         "current_node": "research_fanout",
         "completed_nodes": [
           "start",
@@ -3692,6 +3692,129 @@
         ],
         "node_retries": {},
         "context_values": {
+          "failure_class": "",
+          "graph.fallback_retry_target": "architecture_consensus",
+          "internal.run_id": "01KRZFYBCJ0VCK5DGWSWCHKH8B",
+          "graph.secret_policy": "never print environment variables or credential values; credential checks must be presence-only true/false checks; do not run environment dump commands.",
+          "parallel.branch_count": 4,
+          "command.output": "blob://sha256/22265a3883bfed66dc51f371d2dfa01e7b489b1f9775f63631e0f3c9eb64f794",
+          "graph.goal": "Build Joni Capture, a phone-first iPhone app for capturing rambled LinkedIn ideas, handing them to Joni for draft preparation, monitoring Joni activity and analytics, and supporting an AI content interviewer mode.",
+          "graph.outputs": "research_pack,spec,architecture,swift_app,ios_quality_report,appium_report,release_handoff",
+          "graph.model_stylesheet": "\n            *                  { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: low; }\n            .research          { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: high; }\n            .design            { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: high; }\n            .spec              { provider: openrouter; model: google/gemini-3.1-pro-preview; reasoning_effort: high; }\n            .architecture      { provider: openrouter; model: qwen/qwen3.6-plus; reasoning_effort: high; }\n            .coding            { provider: openrouter; model: google/gemini-3.1-pro-preview; reasoning_effort: high; }\n            .review            { provider: openrouter; model: google/gemini-3.1-pro-preview; reasoning_effort: high; }\n            .verify            { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: medium; }\n            .security          { provider: openrouter; model: google/gemini-3.1-pro-preview; reasoning_effort: high; }\n            .simplify          { provider: openrouter; model: google/gemini-3.1-pro-preview; reasoning_effort: high; }\n            .macos             { provider: openrouter; model: google/gemini-3.1-pro-preview; reasoning_effort: high; }\n            #spec_codex        { provider: openrouter; model: google/gemini-3.1-pro-preview; reasoning_effort: high; }\n            #spec_claude       { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: high; }\n            #spec_kimi         { provider: openrouter; model: moonshotai/kimi-k2.6; reasoning_effort: high; }\n            #spec_deepseek     { provider: openrouter; model: deepseek/deepseek-v4-pro; reasoning_effort: high; }\n            #arch_codex        { provider: openrouter; model: qwen/qwen3.6-plus; reasoning_effort: high; }\n            #arch_claude       { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: high; }\n        ",
+          "internal.retry_count.run_input_gate": 0,
+          "internal.retry_count.start": 0,
+          "internal.work_dir": "/home/daytona/workspace/maestro-os",
+          "graph.retry_target": "spec_consensus",
+          "graph.rankdir": "LR",
+          "current_node": "research_fanout",
+          "failure_signature": "",
+          "internal.thread_id": "prompt_quality_gate",
+          "graph.persona": "iphone-app-factory",
+          "internal.fidelity": "compact",
+          "internal.retry_count.prompt_quality_gate": 0,
+          "parallel.results": [
+            {
+              "id": "app_store_research",
+              "status": "succeeded",
+              "head_sha": "68f200b545482b90aa559d9b020e991a6f64c618"
+            },
+            {
+              "id": "reddit_research",
+              "status": "succeeded",
+              "head_sha": "a6e6140be62ab4a59a405dd38a67216a91ffef17"
+            },
+            {
+              "id": "competitor_research",
+              "status": "succeeded",
+              "head_sha": "48ea35af36716da836a3f9a5f358b67a0fd9f243"
+            },
+            {
+              "id": "design_pattern_research",
+              "status": "succeeded",
+              "head_sha": "f4b63d4ce94d00a35fb482d304426870cba3813a"
+            }
+          ],
+          "thread.start.current_node": "run_input_gate",
+          "graph.default_max_retries": "2",
+          "internal.node_visit_count": 1,
+          "thread.prompt_quality_gate.current_node": "research_fanout",
+          "graph.inputs": "app_type,target_audience,app_name,bundle_id,app_dir,spec_kitty_feature,boilerplate_repo,max_competitors,use_mobbin,ios_validation_mode,allow_macos_deferred",
+          "thread.run_input_gate.current_node": "bootstrap",
+          "internal.retry_count.bootstrap": 0,
+          "outcome": "succeeded",
+          "thread.bootstrap.current_node": "prompt_quality_gate",
+          "internal.retry_count.research_fanout": 0
+        },
+        "node_outcomes": {
+          "research_fanout": {
+            "status": "succeeded",
+            "jump_to_node": "research_join",
+            "notes": "Parallel node dispatched 4 branches (4 succeeded, 0 failed)",
+            "usage": null
+          },
+          "start": {
+            "status": "succeeded",
+            "usage": null
+          },
+          "bootstrap": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/0a1f191165f396cf4a20c1b485fd6c0bb1fb8ce144fe05e56e3f96fd656302c8"
+            },
+            "notes": "Script completed: node scripts/iphone-app-factory/bootstrap.mjs --app-dir 'apps/joni-capture-iphone' --app-name 'Joni Capture' --bundle-id 'com.maestro.jonicapture' --boilerplate-repo 'SwiftAIBoilerplatePro/SwiftAIBoilerplatePro-Distribution'",
+            "usage": null
+          },
+          "prompt_quality_gate": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/22265a3883bfed66dc51f371d2dfa01e7b489b1f9775f63631e0f3c9eb64f794"
+            },
+            "notes": "Script completed: node scripts/iphone-app-factory/promptfoo-prompt-quality.mjs --config evals/iphone-app-factory/prompt-quality.yaml --registry evals/iphone-app-factory/prompt-registry.json --out .workflow/iphone-app-factory/evals/prompt-quality.json --allow-fallback true --accepted-risk-promptfoo-failure false",
+            "usage": null
+          },
+          "run_input_gate": {
+            "status": "succeeded",
+            "context_updates": {
+              "command.output": "blob://sha256/4b9612434adb2d34c5ce252355a5dd3a63d86799a618c61d5ecc1c081962e95a"
+            },
+            "notes": "Script completed: node scripts/iphone-app-factory/run-input-gate.mjs --app-type 'iPhone productivity and creator-operator tool. Read docs/superpowers/specs/2026-05-19-joni-capture-iphone-design.md and contexts/iphone-app-factory/joni-capture/feature-context.md. Build a lock-screen/action-button voice capture app for Joni, the LinkedIn agent. It must capture rambled post ideas, transcribe or queue them, submit through a configurable Joni ingestion client, classify post type, prepare evaluated LinkedIn drafts in Tim voice, show Joni activity and analytics, and include interviewer mode for structured notes. No LinkedIn publishing or mutation.' --target-audience 'Tim Keen and operator-founders who capture ideas on the move and want a private agent-assisted LinkedIn drafting workflow with visible status, draft review, and analytics.' --app-name 'Joni Capture' --bundle-id 'com.maestro.jonicapture' --app-dir 'apps/joni-capture-iphone' --spec-kitty-feature 'joni-capture-iphone-app' --ios-validation-mode 'github' --allow-macos-deferred 'false'",
+            "usage": null
+          }
+        },
+        "next_node_id": "research_join",
+        "git_commit_sha": "9dced75c7755dbb916772a0bffc6d4de1f1787b3",
+        "node_visits": {
+          "start": 1,
+          "research_fanout": 1,
+          "run_input_gate": 1,
+          "prompt_quality_gate": 1,
+          "bootstrap": 1
+        }
+      },
+      "diff": {
+        "summary": {
+          "files_changed": 4896,
+          "additions": 347765,
+          "deletions": 0
+        }
+      }
+    },
+    {
+      "seq": 0,
+      "checkpoint": {
+        "timestamp": "2026-05-19T06:59:48.284829554Z",
+        "current_node": "research_join",
+        "completed_nodes": [
+          "start",
+          "run_input_gate",
+          "bootstrap",
+          "prompt_quality_gate",
+          "research_fanout",
+          "research_join"
+        ],
+        "node_retries": {},
+        "context_values": {
+          "parallel.fan_in.best_id": "app_store_research",
           "thread.run_input_gate.current_node": "bootstrap",
           "internal.retry_count.start": 0,
           "parallel.results": [
@@ -3716,15 +3839,17 @@
               "head_sha": "f4b63d4ce94d00a35fb482d304426870cba3813a"
             }
           ],
+          "internal.retry_count.research_join": 0,
           "thread.prompt_quality_gate.current_node": "research_fanout",
           "internal.fidelity": "compact",
           "command.output": "blob://sha256/22265a3883bfed66dc51f371d2dfa01e7b489b1f9775f63631e0f3c9eb64f794",
           "internal.run_id": "01KRZFYBCJ0VCK5DGWSWCHKH8B",
-          "current_node": "research_fanout",
+          "current_node": "research_join",
           "graph.inputs": "app_type,target_audience,app_name,bundle_id,app_dir,spec_kitty_feature,boilerplate_repo,max_competitors,use_mobbin,ios_validation_mode,allow_macos_deferred",
-          "internal.thread_id": "prompt_quality_gate",
+          "internal.thread_id": "research_fanout",
           "graph.goal": "Build Joni Capture, a phone-first iPhone app for capturing rambled LinkedIn ideas, handing them to Joni for draft preparation, monitoring Joni activity and analytics, and supporting an AI content interviewer mode.",
           "internal.retry_count.prompt_quality_gate": 0,
+          "parallel.fan_in.best_head_sha": "68f200b545482b90aa559d9b020e991a6f64c618",
           "parallel.branch_count": 4,
           "graph.fallback_retry_target": "architecture_consensus",
           "graph.persona": "iphone-app-factory",
@@ -3733,11 +3858,13 @@
           "graph.secret_policy": "never print environment variables or credential values; credential checks must be presence-only true/false checks; do not run environment dump commands.",
           "graph.default_max_retries": "2",
           "failure_signature": "",
+          "parallel.fan_in.best_outcome": "succeeded",
           "graph.retry_target": "spec_consensus",
           "internal.node_visit_count": 1,
           "graph.outputs": "research_pack,spec,architecture,swift_app,ios_quality_report,appium_report,release_handoff",
           "graph.rankdir": "LR",
           "internal.retry_count.bootstrap": 0,
+          "thread.research_fanout.current_node": "research_join",
           "thread.bootstrap.current_node": "prompt_quality_gate",
           "internal.retry_count.run_input_gate": 0,
           "internal.retry_count.research_fanout": 0,
@@ -3746,6 +3873,16 @@
           "outcome": "succeeded"
         },
         "node_outcomes": {
+          "research_join": {
+            "status": "succeeded",
+            "context_updates": {
+              "parallel.fan_in.best_head_sha": "68f200b545482b90aa559d9b020e991a6f64c618",
+              "parallel.fan_in.best_id": "app_store_research",
+              "parallel.fan_in.best_outcome": "succeeded"
+            },
+            "notes": "Selected best candidate: app_store_research",
+            "usage": null
+          },
           "run_input_gate": {
             "status": "succeeded",
             "context_updates": {
@@ -3781,11 +3918,12 @@
             "usage": null
           }
         },
-        "next_node_id": "research_join",
+        "next_node_id": "research_synthesis",
         "node_visits": {
           "research_fanout": 1,
           "start": 1,
           "run_input_gate": 1,
+          "research_join": 1,
           "prompt_quality_gate": 1,
           "bootstrap": 1
         }
@@ -3843,6 +3981,29 @@
       },
       "state": "succeeded"
     },
+    "research_join@1": {
+      "first_event_seq": 410,
+      "prompt": null,
+      "response": null,
+      "completion": null,
+      "provider_used": null,
+      "diff": null,
+      "script_invocation": null,
+      "script_timing": null,
+      "parallel_results": null,
+      "output": null,
+      "started_at": "2026-05-19T06:59:48.254271490Z",
+      "handler": "parallel.fan_in",
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "total_tokens": 0,
+        "reasoning_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "state": "running"
+    },
     "reddit_research@1": {
       "first_event_seq": 178,
       "prompt": null,
@@ -3872,7 +4033,12 @@
       "first_event_seq": 48,
       "prompt": null,
       "response": null,
-      "completion": null,
+      "completion": {
+        "outcome": "succeeded",
+        "notes": "Parallel node dispatched 4 branches (4 succeeded, 0 failed)",
+        "failure_reason": null,
+        "timestamp": "2026-05-19T06:59:46.091149306Z"
+      },
       "provider_used": {
         "mode": "agent",
         "provider": "openrouter",
@@ -3906,6 +4072,7 @@
       "output": null,
       "started_at": "2026-05-19T06:50:15.281480297Z",
       "handler": "parallel",
+      "duration_ms": 570777,
       "usage": {
         "input_tokens": 241005,
         "output_tokens": 9631,
@@ -3919,7 +4086,7 @@
         "provider": "openrouter",
         "model_id": "anthropic/claude-haiku-4-5"
       },
-      "state": "running"
+      "state": "succeeded"
     },
     "prompt_quality_gate@1": {
       "first_event_seq": 38,
