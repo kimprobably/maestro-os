@@ -1,0 +1,128 @@
+name: Send Release Distribution Emails
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Release tag to notify buyers about (e.g. v2.0.0)'
+        required: true
+        type: string
+
+jobs:
+  notify-buyers:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Resolve release metadata
+        id: release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          EVENT_NAME: ${{ github.event_name }}
+          EVENT_TAG: ${{ github.event.release.tag_name }}
+          EVENT_TITLE: ${{ github.event.release.name }}
+          EVENT_URL: ${{ github.event.release.html_url }}
+          EVENT_BODY: ${{ github.event.release.body }}
+          DISPATCH_TAG: ${{ inputs.tag }}
+        run: |
+          set -euo pipefail
+
+          if [ "$EVENT_NAME" = "workflow_dispatch" ]; then
+            TAG="$DISPATCH_TAG"
+            RELEASE_JSON=$(gh api "repos/$GITHUB_REPOSITORY/releases/tags/$TAG")
+            RELEASE_TITLE=$(printf '%s' "$RELEASE_JSON" | jq -r '.name // ""')
+            RELEASE_URL=$(printf '%s' "$RELEASE_JSON" | jq -r '.html_url // ""')
+            RELEASE_BODY=$(printf '%s' "$RELEASE_JSON" | jq -r '.body // ""')
+          else
+            TAG="$EVENT_TAG"
+            RELEASE_TITLE="$EVENT_TITLE"
+            RELEASE_URL="$EVENT_URL"
+            RELEASE_BODY="$EVENT_BODY"
+          fi
+
+          VERSION="${TAG#v}"
+
+          # Multi-line values need heredoc syntax in GITHUB_OUTPUT.
+          {
+            echo "version=$VERSION"
+            echo "url=$RELEASE_URL"
+            echo "title<<RELEASE_TITLE_EOF"
+            echo "$RELEASE_TITLE"
+            echo "RELEASE_TITLE_EOF"
+            echo "body<<RELEASE_BODY_EOF"
+            echo "$RELEASE_BODY"
+            echo "RELEASE_BODY_EOF"
+          } >> "$GITHUB_OUTPUT"
+
+          echo "Resolved tag=$TAG version=$VERSION"
+          echo "Title: $RELEASE_TITLE"
+          echo "URL:   $RELEASE_URL"
+
+      - name: Send distribution emails
+        env:
+          BASE_URL: ${{ secrets.BASE_URL }}
+          ADMIN_SECRET: ${{ secrets.ADMIN_SECRET }}
+          VERSION: ${{ steps.release.outputs.version }}
+          HEADLINE: ${{ steps.release.outputs.title }}
+          CHANGELOG_URL: ${{ steps.release.outputs.url }}
+          BODY: ${{ steps.release.outputs.body }}
+        run: |
+          set -euo pipefail
+
+          # Build the JSON payload with jq so every value (including the
+          # multi-line release body, which contains backticks, parens, and
+          # other shell metacharacters) is escaped correctly. Extract the
+          # bullet list from the body as the `features` array, falling back
+          # to a single placeholder entry when there are no bullets.
+          PAYLOAD=$(jq -n \
+            --arg version "$VERSION" \
+            --arg headline "$HEADLINE" \
+            --arg body "$BODY" \
+            --arg changelogUrl "$CHANGELOG_URL" \
+            '{
+              version: $version,
+              headline: $headline,
+              features: (
+                $body
+                | split("\n")
+                | map(select(startswith("- ") or startswith("* ")))
+                | map(ltrimstr("- ") | ltrimstr("* "))
+                | if length == 0 then ["See changelog for details"] else . end
+              ),
+              changelogUrl: $changelogUrl
+            }')
+
+          echo "Payload summary:"
+          printf '%s' "$PAYLOAD" | jq '{version, headline, changelogUrl, featureCount: (.features | length)}'
+
+          # Dump response headers to /tmp/curl-headers.txt for debugging
+          # (3xx responses surface their Location target there).
+          #
+          # -L                            — follow redirects
+          # --post301/302/303             — re-send POST on 301/302/303 too
+          #                                 (307/308 preserve method by default)
+          # --max-redirs 5                — safety cap
+          # -D /tmp/curl-headers.txt      — dump headers from every hop
+          RESPONSE=$(curl -sS -L \
+            --post301 --post302 --post303 \
+            --max-redirs 5 \
+            -D /tmp/curl-headers.txt \
+            -w "\n%{http_code}" -X POST \
+            "$BASE_URL/api/distribution/send" \
+            -H "Content-Type: application/json" \
+            -H "x-admin-secret: $ADMIN_SECRET" \
+            --data-binary "$PAYLOAD")
+
+          HTTP_CODE=$(printf '%s' "$RESPONSE" | tail -1)
+          RESPONSE_BODY=$(printf '%s' "$RESPONSE" | sed '$d')
+
+          echo "Status: $HTTP_CODE"
+          echo "Response: $RESPONSE_BODY"
+          echo ""
+          echo "=== curl response headers (all hops) ==="
+          cat /tmp/curl-headers.txt || true
+
+          if [ "$HTTP_CODE" != "200" ]; then
+            echo "::error::Distribution email API returned $HTTP_CODE"
+            exit 1
+          fi
