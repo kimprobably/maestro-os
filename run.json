@@ -510,7 +510,7 @@
     "kind": "running"
   },
   "status_updated_at": "2026-05-19T00:51:09.862277161Z",
-  "last_event_at": "2026-05-19T00:51:12.610443762Z",
+  "last_event_at": "2026-05-19T00:51:33.728044609Z",
   "pending_control": null,
   "checkpoints": [
     {
@@ -556,9 +556,9 @@
       "diff": {}
     },
     {
-      "seq": 0,
+      "seq": 27,
       "checkpoint": {
-        "timestamp": "2026-05-19T00:51:12.689854983Z",
+        "timestamp": "2026-05-19T00:51:16.090357175Z",
         "current_node": "prepare",
         "completed_nodes": [
           "start",
@@ -566,33 +566,29 @@
         ],
         "node_retries": {},
         "context_values": {
-          "current_node": "prepare",
-          "graph.inputs": "goal_path, app_dir",
-          "graph.fallback_retry_target": "implement",
-          "internal.node_visit_count": 1,
+          "failure_signature": "",
+          "internal.thread_id": "start",
           "thread.start.current_node": "prepare",
           "internal.retry_count.prepare": 0,
-          "internal.fidelity": "compact",
-          "graph.outputs": "app_dir, review_report, handoff_json",
-          "graph.persona": "code-factory",
           "outcome": "succeeded",
           "graph.rankdir": "LR",
-          "internal.work_dir": "/home/daytona/workspace/maestro-os",
-          "graph.goal": "Build a tiny Joni-to-TipTap collaborative editor spike: mock Joni LinkedIn post generation streams into a collaborative TipTap/Yjs document. No production deploy or real LinkedIn/Hermes mutation.",
-          "internal.run_id": "01KRYVE1ZVS80XG5EN8SFGPH64",
-          "internal.thread_id": "start",
-          "graph.default_max_retries": "2",
-          "graph.retry_target": "implement",
-          "internal.retry_count.start": 0,
+          "command.output": "blob://sha256/3c2f49ed7098ba6f4c6440d4f6186581ec415b239ad66815d848b7a19588fd7b",
+          "current_node": "prepare",
           "failure_class": "",
-          "failure_signature": "",
-          "command.output": "blob://sha256/3c2f49ed7098ba6f4c6440d4f6186581ec415b239ad66815d848b7a19588fd7b"
+          "graph.default_max_retries": "2",
+          "graph.goal": "Build a tiny Joni-to-TipTap collaborative editor spike: mock Joni LinkedIn post generation streams into a collaborative TipTap/Yjs document. No production deploy or real LinkedIn/Hermes mutation.",
+          "graph.retry_target": "implement",
+          "graph.inputs": "goal_path, app_dir",
+          "internal.fidelity": "compact",
+          "graph.outputs": "app_dir, review_report, handoff_json",
+          "internal.run_id": "01KRYVE1ZVS80XG5EN8SFGPH64",
+          "internal.work_dir": "/home/daytona/workspace/maestro-os",
+          "graph.fallback_retry_target": "implement",
+          "graph.persona": "code-factory",
+          "internal.retry_count.start": 0,
+          "internal.node_visit_count": 1
         },
         "node_outcomes": {
-          "start": {
-            "status": "succeeded",
-            "usage": null
-          },
           "prepare": {
             "status": "succeeded",
             "context_updates": {
@@ -600,18 +596,57 @@
             },
             "notes": "Script completed: APP='spikes/joni-tiptap-collab-demo'; GOAL='docs/superpowers/plans/2026-05-17-joni-tiptap-collab-spike.md'; mkdir -p .workflow/joni-tiptap-spike \"$APP\"; test -s \"$GOAL\"; cp \"$GOAL\" .workflow/joni-tiptap-spike/goal.md; printf '{\"app_dir\":\"%s\",\"goal_path\":\"%s\"}\n' \"$APP\" \"$GOAL\" > .workflow/joni-tiptap-spike/input.json; echo joni-tiptap-spike-prepared",
             "usage": null
+          },
+          "start": {
+            "status": "succeeded",
+            "usage": null
           }
         },
         "next_node_id": "implement",
+        "git_commit_sha": "d19b3b3aafa830b33f00ee8fa284632df254692c",
         "node_visits": {
-          "start": 1,
-          "prepare": 1
+          "prepare": 1,
+          "start": 1
         }
       },
-      "diff": {}
+      "diff": {
+        "summary": {
+          "files_changed": 0,
+          "additions": 0,
+          "deletions": 0
+        }
+      }
     }
   ],
-  "conclusion": null,
+  "conclusion": {
+    "timestamp": "2026-05-19T00:51:33.743298157Z",
+    "status": "failed",
+    "duration_ms": 23870,
+    "failure": {
+      "reason": "workflow_error",
+      "detail": {
+        "message": "loop_restart blocked: failure_class=deterministic (requires transient_infra), failure_reason=ACP turn failed",
+        "category": "deterministic"
+      }
+    },
+    "final_git_commit_sha": "d19b3b3aafa830b33f00ee8fa284632df254692c",
+    "stages": [
+      {
+        "stage_id": "start",
+        "stage_label": "start",
+        "duration_ms": 0,
+        "retries": 0
+      },
+      {
+        "stage_id": "prepare",
+        "stage_label": "prepare",
+        "duration_ms": 1717,
+        "retries": 0
+      }
+    ],
+    "total_retries": 0,
+    "diff": {}
+  },
   "sandbox": {
     "provider": "daytona",
     "image": "buildpack-deps:noble",
@@ -636,7 +671,12 @@
       "first_event_seq": 20,
       "prompt": null,
       "response": null,
-      "completion": null,
+      "completion": {
+        "outcome": "succeeded",
+        "notes": "Script completed: APP='spikes/joni-tiptap-collab-demo'; GOAL='docs/superpowers/plans/2026-05-17-joni-tiptap-collab-spike.md'; mkdir -p .workflow/joni-tiptap-spike \"$APP\"; test -s \"$GOAL\"; cp \"$GOAL\" .workflow/joni-tiptap-spike/goal.md; printf '{\"app_dir\":\"%s\",\"goal_path\":\"%s\"}\n' \"$APP\" \"$GOAL\" > .workflow/joni-tiptap-spike/input.json; echo joni-tiptap-spike-prepared",
+        "failure_reason": null,
+        "timestamp": "2026-05-19T00:51:12.688795636Z"
+      },
       "provider_used": null,
       "diff": null,
       "script_invocation": {
@@ -659,6 +699,7 @@
       "termination": "exited",
       "started_at": "2026-05-19T00:51:10.892786133Z",
       "handler": "command",
+      "duration_ms": 1717,
       "usage": {
         "input_tokens": 0,
         "output_tokens": 0,
@@ -667,7 +708,41 @@
         "cache_read_tokens": 0,
         "cache_write_tokens": 0
       },
-      "state": "running"
+      "state": "succeeded"
+    },
+    "implement@1": {
+      "first_event_seq": 30,
+      "prompt": null,
+      "response": null,
+      "completion": {
+        "outcome": "failed",
+        "notes": null,
+        "failure_reason": "ACP turn failed",
+        "timestamp": "2026-05-19T00:51:33.727070651Z"
+      },
+      "provider_used": {
+        "mode": "acp",
+        "provider": "openrouter",
+        "model": "anthropic/claude-haiku-4-5",
+        "command": "codex --acp --stdio"
+      },
+      "diff": null,
+      "script_invocation": null,
+      "script_timing": null,
+      "parallel_results": null,
+      "output": null,
+      "started_at": "2026-05-19T00:51:33.559330433Z",
+      "handler": "agent",
+      "duration_ms": 17551,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "total_tokens": 0,
+        "reasoning_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "state": "failed"
     },
     "start@1": {
       "first_event_seq": 16,
