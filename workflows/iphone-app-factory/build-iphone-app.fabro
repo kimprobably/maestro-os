@@ -22,7 +22,7 @@ digraph BuildIPhoneApp {
             .macos             { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }
             #spec_codex        { provider: openrouter; model: google/gemini-3.1-pro-preview; reasoning_effort: high; }
             #spec_claude       { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: high; }
-            #spec_kimi         { provider: openrouter; model: moonshotai/kimi-k2.6; reasoning_effort: high; }
+            #spec_kimi         { provider: openrouter; model: google/gemini-3.1-flash-lite; reasoning_effort: high; }
             #spec_deepseek     { provider: openrouter; model: deepseek/deepseek-v4-pro; reasoning_effort: high; }
             #arch_codex        { provider: openrouter; model: qwen/qwen3.6-plus; reasoning_effort: high; }
             #arch_claude       { provider: openrouter; model: anthropic/claude-haiku-4-5; reasoning_effort: high; }
@@ -81,7 +81,7 @@ digraph BuildIPhoneApp {
     spec_fanout [label="Adversarial Spec Fan-Out", shape=component, join_policy="wait_all", max_parallel=1]
     spec_codex [label="Gemini Spec", class="spec", fidelity="truncate", prompt="@../../prompts/iphone-app-factory/spec-candidate.md"]
     spec_claude [label="Claude Spec", class="spec", fidelity="truncate", prompt="@../../prompts/iphone-app-factory/spec-candidate.md"]
-    spec_kimi [label="Kimi Spec", class="spec", fidelity="truncate", prompt="@../../prompts/iphone-app-factory/spec-candidate.md"]
+    spec_kimi [label="Gemini Flash Spec", class="spec", fidelity="truncate", prompt="@../../prompts/iphone-app-factory/spec-candidate.md"]
     spec_deepseek [label="DeepSeek Spec", class="spec", fidelity="truncate", prompt="@../../prompts/iphone-app-factory/spec-candidate.md"]
     spec_join [label="Spec Join", shape=tripleoctagon, join_policy="wait_all"]
 

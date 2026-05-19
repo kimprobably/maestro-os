@@ -13,7 +13,8 @@ function requireFile(path) {
 }
 
 const graph = requireFile(workflow);
-const buildHaystack = `${graph}\n${requireFile("workflows/iphone-app-factory/build-iphone-app.toml")}\n${requireFile("workflows/iphone-app-factory/build-iphone-app.daytona.toml")}`;
+const openrouterGraph = requireFile("workflows/iphone-app-factory/build-iphone-app.openrouter.fabro");
+const buildHaystack = `${graph}\n${openrouterGraph}\n${requireFile("workflows/iphone-app-factory/build-iphone-app.toml")}\n${requireFile("workflows/iphone-app-factory/build-iphone-app.daytona.toml")}`;
 for (const token of [
   "research_fanout",
   "run_input_gate",
@@ -43,7 +44,7 @@ for (const token of [
   ".review            { provider: openrouter",
   ".verify            { provider: openrouter",
   ".security          { provider: openrouter",
-  "#spec_kimi         { provider: openrouter",
+  "#spec_kimi         { provider: openrouter; model: google/gemini-3.1-flash-lite;",
   "#spec_deepseek     { provider: openrouter",
   "MOBBIN_EMAIL",
   "MOBBIN_PASSWORD",
@@ -55,6 +56,15 @@ for (const token of [
 
 for (const token of ["provider: anthropic", "claude-sonnet-4-5"]) {
   if (graph.includes(token)) failures.push(`workflow must not depend on unavailable Claude CLI route: ${token}`);
+}
+
+for (const [name, body] of [
+  [workflow, graph],
+  ["workflows/iphone-app-factory/build-iphone-app.openrouter.fabro", openrouterGraph],
+]) {
+  if (/#spec_kimi\s+\{[^}]*moonshotai\/kimi-k2\.6/.test(body)) {
+    failures.push(`${name} must not route spec_kimi to Kimi; Joni Capture exceeded Kimi context during spec fanout`);
+  }
 }
 
 const promptDir = "prompts/iphone-app-factory";
