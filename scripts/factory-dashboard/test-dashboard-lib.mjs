@@ -9,6 +9,7 @@ import {
   buildFactoryDashboard,
   defaultRunLedgerSources,
   discoverReportArtifacts,
+  displayLocalPath,
   parseJsonlEvents,
   readJsonlEvents,
   readRunLedgerSource,
@@ -294,7 +295,8 @@ test("renderer auto-discovers default Hermes JSONL run ledger", () => {
     assert.equal(health.production.runs.total, 1);
     assert.equal(health.production.runs.completed, 1);
     assert.equal(health.production.runs.source_connected, true);
-    assert.equal(health.sources.run_ledger, ledgerPath);
+    assert.equal(health.sources.run_ledger, "$HERMES_HOME/profiles/maestro-operator/state/fabro-run-ledger.jsonl");
+    assert.doesNotMatch(readFileSync(jsonOut, "utf8"), new RegExp(ledgerPath.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")));
     assert.ok(!health.attention_items.some((item) => item.title === "Run ledger not connected"));
   } finally {
     rmSync(root, { recursive: true, force: true });
@@ -308,6 +310,22 @@ test("default run ledger sources include profile and legacy Hermes paths", () =>
     "/tmp/hermes/state/fabro-run-ledger.jsonl",
     "/tmp/hermes/state/fabro-run-ledger.sqlite",
   ]);
+});
+
+test("local paths render with stable environment placeholders", () => {
+  assert.equal(
+    displayLocalPath("/tmp/hermes/profiles/maestro-operator/state/fabro-run-ledger.jsonl", {
+      hermesHome: "/tmp/hermes",
+      home: "/Users/someone",
+    }),
+    "$HERMES_HOME/profiles/maestro-operator/state/fabro-run-ledger.jsonl",
+  );
+  assert.equal(
+    displayLocalPath("/Users/someone/.hermes/profiles/maestro-operator/state/fabro-run-ledger.jsonl", {
+      home: "/Users/someone",
+    }),
+    "$HOME/.hermes/profiles/maestro-operator/state/fabro-run-ledger.jsonl",
+  );
 });
 
 test("sqlite run ledger reader maps current run rows", (t) => {

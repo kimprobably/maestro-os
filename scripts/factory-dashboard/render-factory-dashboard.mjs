@@ -3,6 +3,7 @@
 import {
   buildFactoryDashboard,
   discoverReportArtifacts,
+  displayLocalPath,
   readJsonFile,
   readDefaultRunLedgerEvents,
   readRunLedgerSource,
@@ -54,7 +55,7 @@ function main() {
     sources: {
       eval_index: args.evalIndex,
       reports_root: args.reportsRoot,
-      run_ledger: ledger.source,
+      run_ledger: displayLocalPath(ledger.source),
     },
   });
 

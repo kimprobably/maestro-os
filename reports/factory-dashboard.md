@@ -1,6 +1,6 @@
 # Factory Dashboard
 
-Generated: 2026-05-19T01:58:25.901Z
+Generated: 2026-05-19T04:58:46.550Z
 Overall: **ATTENTION REQUIRED**
 
 ## Owner Rollup
@@ -91,4 +91,4 @@ Eval index generated: 2026-05-19T01:58:06.174Z
 | --- | --- |
 | Eval Index | reports/eval-index.json |
 | Reports Root | reports |
-| Run Ledger | /Users/timlife/.hermes/profiles/maestro-operator/state/fabro-run-ledger.jsonl |
+| Run Ledger | $HOME/.hermes/profiles/maestro-operator/state/fabro-run-ledger.jsonl |

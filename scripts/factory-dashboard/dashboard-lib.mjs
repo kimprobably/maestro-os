@@ -76,6 +76,30 @@ function escapeCell(value) {
   return String(value ?? "").replaceAll("|", "\\|").replaceAll("\n", " ");
 }
 
+export function displayLocalPath(path, options = {}) {
+  if (!path) return null;
+  const absolutePath = resolve(path);
+  const hermesHome = options.hermesHome || process.env.HERMES_HOME;
+  if (hermesHome) {
+    const absoluteHermesHome = resolve(hermesHome);
+    if (absolutePath === absoluteHermesHome) return "$HERMES_HOME";
+    if (absolutePath.startsWith(`${absoluteHermesHome}/`)) {
+      return `$HERMES_HOME/${normalizePath(relative(absoluteHermesHome, absolutePath))}`;
+    }
+  }
+
+  const home = options.home || homedir();
+  if (home) {
+    const absoluteHome = resolve(home);
+    if (absolutePath === absoluteHome) return "$HOME";
+    if (absolutePath.startsWith(`${absoluteHome}/`)) {
+      return `$HOME/${normalizePath(relative(absoluteHome, absolutePath))}`;
+    }
+  }
+
+  return normalizePath(path);
+}
+
 export function parseJsonlEvents(text, source = "run-ledger.jsonl") {
   const events = [];
   const issues = [];
