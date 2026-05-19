@@ -1,0 +1,194 @@
+{
+  "name": "Swift AI Boilerplate Pro",
+  "description": "Production-ready iOS boilerplate with SwiftUI, modular SPM architecture, and comprehensive integrations",
+  "version": "1.2.1",
+  "type": "ios",
+  "framework": "swiftui",
+  "language": "swift",
+  "packageManager": "spm",
+  "features": [
+    "swiftui",
+    "swift-concurrency",
+    "spm-packages",
+    "mvvm-architecture",
+    "supabase-auth",
+    "revenuecat-payments",
+    "chat-feature",
+    "design-system",
+    "dependency-injection",
+    "comprehensive-testing",
+    "crashlytics",
+    "profile-photos"
+  ],
+  "structure": {
+    "app": "SwiftAIBoilerplatePro (main app target)",
+    "packages": {
+      "core": "Core utilities and shared code",
+      "auth": "Authentication and session management",
+      "payments": "RevenueCat subscription management",
+      "storage": "Local and remote data persistence",
+      "networking": "HTTP client and API layer",
+      "ai": "LLM and AI integrations",
+      "designSystem": "UI components and theme",
+      "featureChat": "Chat feature module",
+      "featureSettings": "Settings feature module"
+    },
+    "composition": "Dependency injection container",
+    "resources": "Assets, configurations, and localization"
+  },
+  "dependencies": {
+    "supabase": {
+      "package": "supabase-swift",
+      "version": "2.x",
+      "modules": ["Supabase", "PostgREST", "Auth", "Storage"]
+    },
+    "revenuecat": {
+      "package": "purchases-ios",
+      "version": "5.x",
+      "modules": ["RevenueCat"]
+    },
+    "firebase": {
+      "package": "firebase-ios-sdk",
+      "version": "11.x",
+      "modules": ["FirebaseCrashlytics"]
+    }
+  },
+  "architecture": {
+    "patterns": [
+      "mvvm",
+      "repository-pattern",
+      "protocol-oriented-design",
+      "dependency-injection",
+      "composition-root",
+      "clean-architecture"
+    ],
+    "dataFlow": [
+      "async-await",
+      "async-stream",
+      "combine-publishers",
+      "observable-objects"
+    ],
+    "stateManagement": [
+      "swiftui-state",
+      "observable-objects",
+      "environment-objects",
+      "state-objects"
+    ],
+    "testing": [
+      "xctest",
+      "mock-protocols",
+      "test-doubles",
+      "integration-tests"
+    ]
+  },
+  "conventions": {
+    "fileNaming": "PascalCase",
+    "testNaming": "PascalCase with Tests suffix",
+    "variableNaming": "camelCase",
+    "constantNaming": "camelCase",
+    "typeNaming": "PascalCase",
+    "protocolNaming": "PascalCase",
+    "enumNaming": "PascalCase"
+  },
+  "quality": {
+    "swift": {
+      "version": "5.9+",
+      "strictConcurrency": true,
+      "strictTyping": true,
+      "noImplicitSelfInClosures": true
+    },
+    "xcode": {
+      "version": "15.0+",
+      "warningsAsErrors": false,
+      "analyzeStaticCode": true
+    },
+    "testing": {
+      "unitTests": "required",
+      "snapshotTests": "optional",
+      "uiTests": "included",
+      "coverage": ">70%"
+    },
+    "codeReview": {
+      "linterRules": "SwiftLint (optional)",
+      "formatting": "SwiftFormat (optional)",
+      "documentation": "required for public APIs"
+    }
+  },
+  "performance": {
+    "lazyLoading": true,
+    "imageOptimization": true,
+    "memoryManagement": "ARC with weak/unowned",
+    "concurrency": "async/await, actors",
+    "caching": "aggressive with invalidation"
+  },
+  "deployment": {
+    "testflight": "recommended for beta",
+    "appstore": "production target",
+    "minimum-ios": "17.0",
+    "supported-devices": ["iPhone", "iPad"]
+  },
+  "integrations": {
+    "authentication": {
+      "provider": "Supabase Auth",
+      "features": ["email", "apple-sign-in", "google-sign-in"],
+      "sessionManagement": "JWT with refresh tokens"
+    },
+    "payments": {
+      "provider": "RevenueCat",
+      "features": ["subscriptions", "offerings", "entitlements"],
+      "storeKit": "StoreKit 2 via RevenueCat"
+    },
+    "backend": {
+      "provider": "Supabase",
+      "features": ["database", "realtime", "storage", "edge-functions"]
+    },
+    "ai": {
+      "provider": "Proxy LLM Server",
+      "features": ["streaming-chat", "async-responses"]
+    },
+    "analytics": {
+      "crashlytics": "Firebase Crashlytics",
+      "customEvents": "optional"
+    }
+  },
+  "configuration": {
+    "xcconfig": {
+      "app": "Config/App.xcconfig",
+      "secrets": "Config/Secrets.xcconfig",
+      "generated": "SwiftAIBoilerplatePro/Generated/Configuration.swift"
+    },
+    "scripts": {
+      "updateConfig": "scripts/update-config.sh",
+      "runTests": "scripts/run-tests.sh"
+    }
+  },
+  "instructions": {
+    "setup": [
+      "Copy Config/Secrets.example.xcconfig to Config/Secrets.xcconfig",
+      "Update Secrets.xcconfig with your API keys",
+      "Run ./scripts/update-config.sh",
+      "Open SwiftAIBoilerplatePro.xcodeproj",
+      "Build and run (Cmd+R)"
+    ],
+    "development": [
+      "Follow .cursor/rules/ for code quality",
+      "Use docs/ for integration guides",
+      "Run tests before committing",
+      "Update CHANGELOG.md for user-facing changes"
+    ],
+    "testing": [
+      "Unit tests: Cmd+U",
+      "UI tests: Run from Test Navigator",
+      "Integration tests: See docs/foundations/TestingStrategy.md"
+    ]
+  },
+  "documentation": {
+    "architecture": "docs/foundations/Architecture.md",
+    "designSystem": "docs/foundations/DesignSystem.md",
+    "testing": "docs/foundations/TestingStrategy.md",
+    "integrations": "docs/integrations/",
+    "modules": "docs/modules/",
+    "recipes": "docs/recipes/"
+  }
+}
+
