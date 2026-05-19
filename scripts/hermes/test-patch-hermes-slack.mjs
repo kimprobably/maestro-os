@@ -265,14 +265,16 @@ test("Slack patch installs missed mention recovery sweeper", () => {
   });
 });
 
-test("Slack patch posts a visible ack independently of agent processing", () => {
+test("Slack patch adds an immediate emoji ack independently of agent processing", () => {
   withTempPythonPackage(({ dir, slackPath }) => {
     runPatch(dir);
     compile(slackPath);
 
     const patched = readFileSync(slackPath, "utf8");
-    assert.match(patched, /async def _maestro_post_visible_ack/);
-    assert.match(patched, /await self\._maestro_post_visible_ack/);
+    assert.match(patched, /async def _maestro_add_ingress_reaction/);
+    assert.match(patched, /await self\._maestro_add_ingress_reaction/);
+    assert.doesNotMatch(patched, /Got it - working on this/);
+    assert.doesNotMatch(patched, /_maestro_post_visible_ack/);
 
     runPythonInline(
       `
@@ -280,30 +282,25 @@ import asyncio
 from types import SimpleNamespace
 from gateway.platforms.slack import SlackGateway
 
-class Client:
-    def __init__(self):
-        self.posts = []
-    async def chat_postMessage(self, **kwargs):
-        self.posts.append(kwargs)
-        return {"ts": "177.ack"}
-
 async def main():
     gateway = SlackGateway()
     gateway.config = SimpleNamespace(extra={})
-    client = Client()
-    gateway._get_client = lambda channel_id: client
-    ok = await gateway._maestro_post_visible_ack(
+    reactions = []
+    async def add_reaction(channel_id, ts, emoji):
+        reactions.append((channel_id, ts, emoji))
+        return True
+    gateway._add_reaction = add_reaction
+
+    ok = await gateway._maestro_add_ingress_reaction(
         "C123456789",
         "1779130250.583759",
         "1779130250.583759",
     )
     assert ok is True
-    assert client.posts == [{
-        "channel": "C123456789",
-        "text": "Got it - working on this.",
-        "thread_ts": "1779130250.583759",
-    }]
-    assert "177.ack" in gateway._bot_message_ts
+    assert reactions == [("C123456789", "1779130250.583759", "eyes")]
+    assert gateway._maestro_thread_roots_by_channel == {
+        "C123456789": ["1779130250.583759"]
+    }
 
 asyncio.run(main())
 `,

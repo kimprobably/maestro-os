@@ -227,14 +227,28 @@ def main() -> None:
     if ledger_marker not in text:
         raise SystemExit(f"Failed to apply Slack ledger patch marker in {path}.")
 
-    visible_ack_marker = "Maestro patch v6: visible Slack ingress ack"
-    visible_ack_needle = """        _should_react = (is_dm or is_mentioned) and self._reactions_enabled()
+    ingress_reaction_marker = "Maestro patch v7: immediate Slack ingress reaction"
+    ingress_reaction_needle = """        _should_react = (is_dm or is_mentioned) and self._reactions_enabled()
         if _should_react:
             self._reacting_message_ids.add(ts)
 
         await self.handle_message(msg_event)
 """
-    visible_ack_patch = """        _should_react = (is_dm or is_mentioned) and self._reactions_enabled()
+    ingress_reaction_patch = """        _should_react = (is_dm or is_mentioned) and self._reactions_enabled()
+        if _should_react:
+            self._reacting_message_ids.add(ts)
+            # Maestro patch v7: immediate Slack ingress reaction.
+            # The operator wants an emoji-only acknowledgement, but it must
+            # happen before the agent/model/tool path can stall.
+            await self._maestro_add_ingress_reaction(
+                channel_id,
+                ts,
+                thread_ts,
+            )
+
+        await self.handle_message(msg_event)
+"""
+    legacy_visible_ack_patch = """        _should_react = (is_dm or is_mentioned) and self._reactions_enabled()
         if _should_react:
             self._reacting_message_ids.add(ts)
 
@@ -253,13 +267,16 @@ def main() -> None:
 
         await self.handle_message(msg_event)
 """
-    if visible_ack_marker not in text:
-        if visible_ack_needle not in text:
+    if ingress_reaction_marker not in text:
+        if legacy_visible_ack_patch in text:
+            text = text.replace(legacy_visible_ack_patch, ingress_reaction_patch, 1)
+        elif ingress_reaction_needle in text:
+            text = text.replace(ingress_reaction_needle, ingress_reaction_patch, 1)
+        else:
             raise SystemExit(
                 f"Expected Slack adapter message-dispatch block not found in {path}. "
-                "Upstream may have moved; re-derive the visible ack patch."
+                "Upstream may have moved; re-derive the ingress reaction patch."
             )
-        text = text.replace(visible_ack_needle, visible_ack_patch, 1)
 
     sweeper_marker = "Maestro patch v5: missed mention recovery sweeper"
 
@@ -326,16 +343,10 @@ def main() -> None:
 
     sweeper_helper = r'''    # ----- Maestro missed-mention recovery -----
 
-    def _maestro_visible_ack_enabled(self) -> bool:
-        raw = os.getenv("SLACK_VISIBLE_ACK", "")
+    def _maestro_ingress_reaction_timeout(self) -> float:
+        raw = os.getenv("SLACK_INGRESS_REACTION_TIMEOUT", "")
         if not raw:
-            raw = str((self.config.extra or {}).get("visible_ack", "true"))
-        return raw.strip().lower() not in {"0", "false", "no", "off"}
-
-    def _maestro_visible_ack_timeout(self) -> float:
-        raw = os.getenv("SLACK_VISIBLE_ACK_TIMEOUT", "")
-        if not raw:
-            raw = str((self.config.extra or {}).get("visible_ack_timeout", "2.0"))
+            raw = str((self.config.extra or {}).get("ingress_reaction_timeout", "2.0"))
         try:
             timeout = float(raw)
         except (TypeError, ValueError):
@@ -364,61 +375,36 @@ def main() -> None:
         if len(roots) > cap:
             del roots[: len(roots) - cap]
 
-    async def _maestro_post_visible_ack(
+    async def _maestro_add_ingress_reaction(
         self,
         channel_id: str,
         ts: str,
         thread_ts: str | None,
-        recovered: bool = False,
     ) -> bool:
-        """Post a short Slack-visible receipt before agent processing starts."""
-        if not self._maestro_visible_ack_enabled():
-            return False
+        """Add the emoji-only ingress receipt before agent processing starts."""
         if not channel_id or not ts:
             return False
 
         root_ts = thread_ts or ts
         self._maestro_note_thread_root(channel_id, root_ts)
 
-        ack_text = os.getenv("SLACK_VISIBLE_ACK_TEXT", "")
-        if not ack_text:
-            ack_text = str((self.config.extra or {}).get("visible_ack_text", "") or "")
-        if not ack_text:
-            ack_text = "Got it - working on this."
-
-        kwargs = {
-            "channel": channel_id,
-            "text": ack_text,
-            "thread_ts": root_ts,
-        }
-
         try:
-            result = await asyncio.wait_for(
-                self._get_client(channel_id).chat_postMessage(**kwargs),
-                timeout=self._maestro_visible_ack_timeout(),
+            reacted = await asyncio.wait_for(
+                self._add_reaction(channel_id, ts, "eyes"),
+                timeout=self._maestro_ingress_reaction_timeout(),
             )
-            ack_ts = str((result or {}).get("ts") or "")
-            if ack_ts:
-                self._bot_message_ts.add(ack_ts)
-                self._bot_message_ts.add(root_ts)
-                self._maestro_note_thread_root(channel_id, root_ts)
-                bot_ts_max = int(getattr(self, "_BOT_TS_MAX", 5000) or 5000)
-                if len(self._bot_message_ts) > bot_ts_max:
-                    excess = len(self._bot_message_ts) - bot_ts_max // 2
-                    for old_ts in list(self._bot_message_ts)[:excess]:
-                        self._bot_message_ts.discard(old_ts)
             logger.info(
-                "[Slack] Visible ack posted: channel=%s ts=%s thread_ts=%s recovered=%s",
+                "[Slack] Ingress reaction ack: channel=%s ts=%s thread_ts=%s ok=%s",
                 channel_id,
                 ts,
                 root_ts,
-                bool(recovered),
+                bool(reacted),
             )
-            return True
+            return bool(reacted)
         except asyncio.CancelledError:
             raise
         except Exception as exc:
-            logger.debug("[Slack] visible ack failed for %s/%s: %s", channel_id, ts, exc, exc_info=True)
+            logger.debug("[Slack] ingress reaction failed for %s/%s: %s", channel_id, ts, exc, exc_info=True)
             return False
 
     def _maestro_mention_sweep_interval(self) -> float:
@@ -629,6 +615,59 @@ def main() -> None:
                 "Upstream may have moved; re-derive the mention sweeper helper patch."
             )
         text = text.replace(helper_insert_needle, sweeper_helper + helper_insert_needle, 1)
+
+    reaction_helper = r'''    def _maestro_ingress_reaction_timeout(self) -> float:
+        raw = os.getenv("SLACK_INGRESS_REACTION_TIMEOUT", "")
+        if not raw:
+            raw = str((self.config.extra or {}).get("ingress_reaction_timeout", "2.0"))
+        try:
+            timeout = float(raw)
+        except (TypeError, ValueError):
+            timeout = 2.0
+        return max(0.25, min(timeout, 5.0))
+
+    async def _maestro_add_ingress_reaction(
+        self,
+        channel_id: str,
+        ts: str,
+        thread_ts: str | None,
+    ) -> bool:
+        """Add the emoji-only ingress receipt before agent processing starts."""
+        if not channel_id or not ts:
+            return False
+
+        root_ts = thread_ts or ts
+        self._maestro_note_thread_root(channel_id, root_ts)
+
+        try:
+            reacted = await asyncio.wait_for(
+                self._add_reaction(channel_id, ts, "eyes"),
+                timeout=self._maestro_ingress_reaction_timeout(),
+            )
+            logger.info(
+                "[Slack] Ingress reaction ack: channel=%s ts=%s thread_ts=%s ok=%s",
+                channel_id,
+                ts,
+                root_ts,
+                bool(reacted),
+            )
+            return bool(reacted)
+        except asyncio.CancelledError:
+            raise
+        except Exception as exc:
+            logger.debug("[Slack] ingress reaction failed for %s/%s: %s", channel_id, ts, exc, exc_info=True)
+            return False
+
+'''
+    if "async def _maestro_add_ingress_reaction" not in text:
+        helper_insert_needle = """    def _maestro_mention_sweep_interval(self) -> float:
+"""
+        if helper_insert_needle not in text:
+            raise SystemExit(
+                f"Expected Slack adapter mention-sweeper helper block not found in {path}. "
+                "Upstream may have moved; re-derive the ingress reaction helper patch."
+            )
+        text = text.replace(helper_insert_needle, reaction_helper + helper_insert_needle, 1)
 
     helper_needle = """    # ----- Thread context fetching -----
 """
