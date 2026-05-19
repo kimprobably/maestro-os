@@ -137,7 +137,7 @@ export function categorizeArtifact(path) {
 export function discoverReportArtifacts(reportsRoot = "reports", options = {}) {
   const repoRoot = resolve(options.repoRoot || process.cwd());
   const absoluteReportsRoot = isAbsolute(reportsRoot) ? reportsRoot : resolve(repoRoot, reportsRoot);
-  const exclude = new Set((options.excludePaths || ["reports/factory-dashboard.md"]).map(normalizePath));
+  const exclude = new Set((options.excludePaths || ["reports/factory-dashboard.md", "reports/factory-health.json"]).map(normalizePath));
   const artifacts = [];
 
   function visit(dir) {
@@ -267,6 +267,7 @@ function buildAttentionItems({ quality, artifacts, runs, ledgerIssues, runLedger
       severity: "high",
       title: "Eval index missing",
       detail: "Run npm run eval:index so factory quality can be rolled up.",
+      action: "Assign Quincy to regenerate the eval index and report why it was missing.",
     });
   }
 
@@ -275,6 +276,7 @@ function buildAttentionItems({ quality, artifacts, runs, ledgerIssues, runLedger
       severity: "high",
       title: `Missing blocking eval evidence (${quality.missing_blocking})`,
       detail: detailList(quality.missing_blocking_ids),
+      action: "Assign Quincy to connect normalized result emission for these evals and rerun npm run eval:index.",
     });
   }
 
@@ -283,6 +285,7 @@ function buildAttentionItems({ quality, artifacts, runs, ledgerIssues, runLedger
       severity: "high",
       title: `Failed blocking evals (${quality.failed_ids.length})`,
       detail: detailList(quality.failed_ids),
+      action: "Assign Quincy to inspect the failing eval artifacts, patch the smallest responsible surface, and rerun the gate.",
     });
   }
 
@@ -291,6 +294,7 @@ function buildAttentionItems({ quality, artifacts, runs, ledgerIssues, runLedger
       severity: "medium",
       title: `Fallback-only evals need review (${quality.fallback_only_ids.length})`,
       detail: detailList(quality.fallback_only_ids),
+      action: "Either restore primary runner evidence or create an accepted-risk waiver with compensating control.",
     });
   }
 
@@ -299,6 +303,7 @@ function buildAttentionItems({ quality, artifacts, runs, ledgerIssues, runLedger
       severity: "medium",
       title: `Eval index issues (${quality.index_issues.length})`,
       detail: detailList(quality.index_issues.map((issue) => issue.type || issue.message || "index issue")),
+      action: "Fix registry/result mismatches before treating the quality rollup as trustworthy.",
     });
   }
 
@@ -312,6 +317,7 @@ function buildAttentionItems({ quality, artifacts, runs, ledgerIssues, runLedger
           return `${run.run_id}${suffix}`;
         }),
       ),
+      action: "Assign Quincy to classify each failed run and convert recurring causes into evals, rules, or backlog items.",
     });
   }
 
@@ -320,6 +326,7 @@ function buildAttentionItems({ quality, artifacts, runs, ledgerIssues, runLedger
       severity: "medium",
       title: `Possibly stuck Fabro runs (${runs.stale_runs.length})`,
       detail: detailList(runs.stale_runs.map((run) => run.run_id)),
+      action: "Assign Quincy to inspect run projection and event cursors, then resume, fork, or escalate.",
     });
   }
 
@@ -328,6 +335,7 @@ function buildAttentionItems({ quality, artifacts, runs, ledgerIssues, runLedger
       severity: "medium",
       title: "Run ledger not connected",
       detail: "Pass --run-ledger with the Hermes Fabro run ledger JSONL path to include run production and failure data.",
+      action: "Wire the Hermes Fabro run ledger into npm run factory:dashboard so daily health includes production state.",
     });
   }
 
@@ -336,6 +344,7 @@ function buildAttentionItems({ quality, artifacts, runs, ledgerIssues, runLedger
       severity: "medium",
       title: `Run ledger parse issues (${ledgerIssues.length})`,
       detail: detailList(ledgerIssues.map((issue) => (issue.line ? `${issue.source}:${issue.line}` : issue.source))),
+      action: "Repair malformed ledger records or point the dashboard at the correct ledger path.",
     });
   }
 
@@ -344,10 +353,73 @@ function buildAttentionItems({ quality, artifacts, runs, ledgerIssues, runLedger
       severity: "medium",
       title: "No factory artifacts discovered",
       detail: "The reports directory did not contain generated factory output.",
+      action: "Run the factory workflow or point the dashboard at the report root that contains generated artifacts.",
     });
   }
 
   return items;
+}
+
+function percent(numerator, denominator) {
+  if (!denominator) return 100;
+  return Math.round((numerator / denominator) * 100);
+}
+
+function buildOwnerActions(attentionItems) {
+  return attentionItems.slice(0, 3).map((item) => ({
+    severity: item.severity,
+    title: item.title,
+    why_it_matters: item.detail || "Review required.",
+    action: item.action || "Assign Quincy to inspect and report the next concrete action.",
+  }));
+}
+
+function buildOwnerRollup({ status, quality, artifacts, runs, attentionItems }) {
+  const evalEvidenceCoverage = percent(quality.present_results, quality.blocking_registered);
+  const hasLearningInputs = runs.source_connected && quality.source_present;
+  const learningStatus = hasLearningInputs
+    ? attentionItems.length > 0
+      ? "attention"
+      : "working"
+    : "instrumentation_needed";
+
+  return {
+    status,
+    headline: status === "working" ? "Factory is operating within current gates." : "Factory needs owner attention.",
+    key_metrics: {
+      factory_status: status,
+      report_artifacts: artifacts.total,
+      fabro_runs_tracked: runs.total,
+      completed_runs: runs.completed,
+      failed_runs: runs.failed,
+      eval_evidence_coverage_pct: evalEvidenceCoverage,
+      missing_blocking_evals: quality.missing_blocking,
+      top_attention_items: Math.min(attentionItems.length, 3),
+    },
+    owner_actions: buildOwnerActions(attentionItems),
+    learning_loop: {
+      status: learningStatus,
+      rule: "Every repeated failure should become an eval, counterexample, workflow rule, agent rule, or backlog item.",
+      open_improvement_signals: attentionItems.filter((item) => item.severity === "high").length,
+    },
+  };
+}
+
+function buildAgentAccess() {
+  return {
+    daily_owner: "quincy",
+    render_command: "npm run factory:dashboard",
+    read_path: "reports/factory-health.json",
+    human_path: "reports/factory-dashboard.md",
+    required_outputs: ["reports/factory-dashboard.md", "reports/factory-health.json"],
+    report_policy: "Report owner_rollup.owner_actions, metric deltas, and escalation needs only. Do not dump logs or secrets.",
+    escalation_fields: [
+      "owner_rollup.owner_actions",
+      "quality.missing_blocking_ids",
+      "production.runs.failed_runs",
+      "production.runs.stale_runs",
+    ],
+  };
 }
 
 export function buildFactoryDashboard(options = {}) {
@@ -360,18 +432,22 @@ export function buildFactoryDashboard(options = {}) {
   const runLedgerConnected = Boolean(options.sources?.run_ledger) || ledgerEvents.length > 0 || ledgerIssues.length > 0;
   runs.source_connected = runLedgerConnected;
   const attentionItems = buildAttentionItems({ quality, artifacts, runs, ledgerIssues, runLedgerConnected });
+  const status = attentionItems.length > 0 ? "attention_required" : "working";
+  const ownerRollup = buildOwnerRollup({ status, quality, artifacts, runs, attentionItems });
 
   return {
     schema_version: 1,
     generated_at: now,
-    status: attentionItems.length > 0 ? "attention_required" : "working",
+    status,
     working: attentionItems.length === 0,
+    owner_rollup: ownerRollup,
     production: {
       artifacts,
       runs,
     },
     quality,
     attention_items: attentionItems,
+    agent_access: buildAgentAccess(),
     sources: {
       eval_index: options.sources?.eval_index || null,
       reports_root: options.sources?.reports_root || null,
@@ -392,7 +468,14 @@ function renderArtifactRows(artifacts) {
 function renderAttentionItems(items) {
   if (items.length === 0) return "No immediate attention items.";
   return items
-    .map((item, index) => `${index + 1}. **${item.title}** (${item.severity}) - ${item.detail || "Review required."}`)
+    .map((item, index) => `${index + 1}. **${item.title}** (${item.severity}) - ${item.detail || "Review required."}\n   Action: ${item.action || "Inspect and report the next concrete action."}`)
+    .join("\n");
+}
+
+function renderOwnerActions(actions) {
+  if (actions.length === 0) return "No owner action required.";
+  return actions
+    .map((item, index) => `${index + 1}. **${item.title}** (${item.severity}) - ${item.action}`)
     .join("\n");
 }
 
@@ -419,6 +502,7 @@ export function renderFactoryDashboard(dashboard) {
   const quality = dashboard.quality;
   const artifacts = dashboard.production.artifacts;
   const runs = dashboard.production.runs;
+  const owner = dashboard.owner_rollup;
   const runStreamStatus = runs.source_connected
     ? runs.failed === 0 && runs.stale_active === 0
       ? "working"
@@ -432,6 +516,24 @@ export function renderFactoryDashboard(dashboard) {
 
 Generated: ${dashboard.generated_at}
 Overall: **${statusLabel}**
+
+## Owner Rollup
+
+${owner.headline}
+
+| Metric | Value |
+| --- | ---: |
+| Factory Status | ${owner.key_metrics.factory_status} |
+| Report Artifacts | ${owner.key_metrics.report_artifacts} |
+| Fabro Runs Tracked | ${owner.key_metrics.fabro_runs_tracked} |
+| Completed Runs | ${owner.key_metrics.completed_runs} |
+| Failed Runs | ${owner.key_metrics.failed_runs} |
+| Eval Evidence Coverage | ${owner.key_metrics.eval_evidence_coverage_pct}% |
+| Missing Blocking Evals | ${owner.key_metrics.missing_blocking_evals} |
+
+### Owner Actions
+
+${renderOwnerActions(owner.owner_actions)}
 
 ## Is The Factory Working?
 

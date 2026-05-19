@@ -1,0 +1,185 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-05-19T00:50:54.754Z",
+  "status": "attention_required",
+  "working": false,
+  "owner_rollup": {
+    "status": "attention_required",
+    "headline": "Factory needs owner attention.",
+    "key_metrics": {
+      "factory_status": "attention_required",
+      "report_artifacts": 9,
+      "fabro_runs_tracked": 0,
+      "completed_runs": 0,
+      "failed_runs": 0,
+      "eval_evidence_coverage_pct": 0,
+      "missing_blocking_evals": 8,
+      "top_attention_items": 2
+    },
+    "owner_actions": [
+      {
+        "severity": "high",
+        "title": "Missing blocking eval evidence (8)",
+        "why_it_matters": "consumer-radar.product-quality, enhancement-discovery.workflow-quality, iphone-factory.prompt-quality, hermes.skill-promotion-quality, eval.meta.fallback-masking, workflow-builder.eval-coverage, iphone-feature.context-intake.call, iphone-feature.implementation.call",
+        "action": "Assign Quincy to connect normalized result emission for these evals and rerun npm run eval:index."
+      },
+      {
+        "severity": "medium",
+        "title": "Run ledger not connected",
+        "why_it_matters": "Pass --run-ledger with the Hermes Fabro run ledger JSONL path to include run production and failure data.",
+        "action": "Wire the Hermes Fabro run ledger into npm run factory:dashboard so daily health includes production state."
+      }
+    ],
+    "learning_loop": {
+      "status": "instrumentation_needed",
+      "rule": "Every repeated failure should become an eval, counterexample, workflow rule, agent rule, or backlog item.",
+      "open_improvement_signals": 1
+    }
+  },
+  "production": {
+    "artifacts": {
+      "total": 9,
+      "bytes_total": 22084,
+      "by_category": {
+        "quality": 3,
+        "review": 4,
+        "eval": 2
+      },
+      "recent": [
+        {
+          "path": "reports/eval-dashboard.md",
+          "category": "eval",
+          "bytes": 749,
+          "modified_at": "2026-05-18T22:19:54.040Z"
+        },
+        {
+          "path": "reports/eval-index.json",
+          "category": "eval",
+          "bytes": 3345,
+          "modified_at": "2026-05-18T22:19:44.266Z"
+        },
+        {
+          "path": "reports/consumer-radar/reviews/qwen-feedback.json",
+          "category": "review",
+          "bytes": 4209,
+          "modified_at": "2026-05-18T14:43:58.771Z"
+        },
+        {
+          "path": "reports/consumer-radar/reviews/kimi-feedback.json",
+          "category": "review",
+          "bytes": 2910,
+          "modified_at": "2026-05-18T14:43:58.769Z"
+        },
+        {
+          "path": "reports/consumer-radar/reviews/deepseek-feedback.json",
+          "category": "review",
+          "bytes": 3421,
+          "modified_at": "2026-05-18T14:43:58.766Z"
+        },
+        {
+          "path": "reports/consumer-radar/review-consensus.json",
+          "category": "review",
+          "bytes": 520,
+          "modified_at": "2026-05-18T14:43:58.765Z"
+        },
+        {
+          "path": "reports/consumer-radar/quality/qlty-report.json",
+          "category": "quality",
+          "bytes": 1150,
+          "modified_at": "2026-05-18T14:43:58.764Z"
+        },
+        {
+          "path": "reports/consumer-radar/quality/native-checks.json",
+          "category": "quality",
+          "bytes": 1551,
+          "modified_at": "2026-05-18T14:43:58.763Z"
+        }
+      ]
+    },
+    "runs": {
+      "total": 0,
+      "completed": 0,
+      "failed": 0,
+      "active": 0,
+      "stale_active": 0,
+      "unknown": 0,
+      "by_status": {},
+      "failed_runs": [],
+      "stale_runs": [],
+      "recent": [],
+      "source_connected": false
+    }
+  },
+  "quality": {
+    "source_present": true,
+    "source_created_at": "2026-05-18T22:19:44.262Z",
+    "total_registered": 8,
+    "blocking_registered": 8,
+    "present_results": 0,
+    "passed": 0,
+    "failed": 0,
+    "fallback_only": 0,
+    "waived": 0,
+    "missing_blocking": 8,
+    "missing_blocking_ids": [
+      "consumer-radar.product-quality",
+      "enhancement-discovery.workflow-quality",
+      "iphone-factory.prompt-quality",
+      "hermes.skill-promotion-quality",
+      "eval.meta.fallback-masking",
+      "workflow-builder.eval-coverage",
+      "iphone-feature.context-intake.call",
+      "iphone-feature.implementation.call"
+    ],
+    "failed_ids": [],
+    "fallback_only_ids": [],
+    "waived_ids": [],
+    "blocking_failure_ids": [
+      "consumer-radar.product-quality",
+      "enhancement-discovery.workflow-quality",
+      "iphone-factory.prompt-quality",
+      "hermes.skill-promotion-quality",
+      "eval.meta.fallback-masking",
+      "workflow-builder.eval-coverage",
+      "iphone-feature.context-intake.call",
+      "iphone-feature.implementation.call"
+    ],
+    "index_issues": []
+  },
+  "attention_items": [
+    {
+      "severity": "high",
+      "title": "Missing blocking eval evidence (8)",
+      "detail": "consumer-radar.product-quality, enhancement-discovery.workflow-quality, iphone-factory.prompt-quality, hermes.skill-promotion-quality, eval.meta.fallback-masking, workflow-builder.eval-coverage, iphone-feature.context-intake.call, iphone-feature.implementation.call",
+      "action": "Assign Quincy to connect normalized result emission for these evals and rerun npm run eval:index."
+    },
+    {
+      "severity": "medium",
+      "title": "Run ledger not connected",
+      "detail": "Pass --run-ledger with the Hermes Fabro run ledger JSONL path to include run production and failure data.",
+      "action": "Wire the Hermes Fabro run ledger into npm run factory:dashboard so daily health includes production state."
+    }
+  ],
+  "agent_access": {
+    "daily_owner": "quincy",
+    "render_command": "npm run factory:dashboard",
+    "read_path": "reports/factory-health.json",
+    "human_path": "reports/factory-dashboard.md",
+    "required_outputs": [
+      "reports/factory-dashboard.md",
+      "reports/factory-health.json"
+    ],
+    "report_policy": "Report owner_rollup.owner_actions, metric deltas, and escalation needs only. Do not dump logs or secrets.",
+    "escalation_fields": [
+      "owner_rollup.owner_actions",
+      "quality.missing_blocking_ids",
+      "production.runs.failed_runs",
+      "production.runs.stale_runs"
+    ]
+  },
+  "sources": {
+    "eval_index": "reports/eval-index.json",
+    "reports_root": "reports",
+    "run_ledger": null
+  }
+}
