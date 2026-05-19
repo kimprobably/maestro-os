@@ -42,6 +42,20 @@ copy_profile_skills() {
   cp -R "$profile_skills_src/." "$profile_dir/skills/"
 }
 
+sync_base_auth() {
+  local profile="$1"
+  local profile_dir="$2"
+  local base_auth="$hermes_home/profiles/$base_profile/auth.json"
+  local target_auth="$profile_dir/auth.json"
+
+  if [ ! -f "$base_auth" ]; then
+    return 0
+  fi
+
+  install -m 0600 "$base_auth" "$target_auth"
+  printf 'synced base auth for worker profile %s\n' "$profile"
+}
+
 retire_legacy_profile() {
   local legacy_profile="$1"
   local replacement_profile="$2"
@@ -76,6 +90,7 @@ install_worker() {
   fi
 
   cp "$soul_src" "$profile_dir/SOUL.md"
+  sync_base_auth "$profile" "$profile_dir"
   copy_worker_skills "$profile_dir"
   copy_profile_skills "$profile" "$profile_dir"
   printf 'installed worker profile %s\n' "$profile"

@@ -23,6 +23,8 @@ test("quincy profile is installed as a specialist worker", async () => {
   assert.match(installer, /install_worker joni/);
   assert.match(installer, /copy_worker_skills/);
   assert.match(installer, /copy_profile_skills/);
+  assert.match(installer, /sync_base_auth/);
+  assert.match(installer, /install -m 0600 "\$base_auth" "\$target_auth"/);
   assert.match(entrypoint, /install-worker-profiles\.sh/);
   assert.match(entrypoint, /render-honcho-config\.mjs/);
   assert.match(entrypoint, /mobbin\["enabled"\] = bool\(enabled_env\)/);
