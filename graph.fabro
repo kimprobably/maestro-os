@@ -1,0 +1,80 @@
+digraph JoniTipTapSpikeCodexCommand {
+    graph [
+        goal="Build a tiny Joni-to-TipTap collaborative editor spike with streaming mock LinkedIn post generation",
+        persona="code-factory",
+        inputs="goal_path, app_dir",
+        outputs="app_dir, review_report, handoff_json",
+        default_max_retries=1,
+        retry_target="implement",
+        fallback_retry_target="implement"
+    ]
+    rankdir=LR
+
+    start [shape=Mdiamond, label="Start"]
+    exit  [shape=Msquare, label="Exit"]
+
+    prepare [
+        label="Prepare Spike Workspace",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="prepare",
+        script="APP='{{ inputs.app_dir|default('spikes/joni-tiptap-collab-demo') }}'; GOAL='{{ inputs.goal_path|default('docs/superpowers/plans/2026-05-17-joni-tiptap-collab-spike.md') }}'; mkdir -p .workflow/joni-tiptap-spike \"$APP\"; test -s \"$GOAL\"; cp \"$GOAL\" .workflow/joni-tiptap-spike/goal.md; printf '{\"app_dir\":\"%s\",\"goal_path\":\"%s\"}\n' \"$APP\" \"$GOAL\" > .workflow/joni-tiptap-spike/input.json; echo joni-tiptap-spike-prepared"
+    ]
+
+    implement [
+        label="Implement Spike via Codex CLI",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="implement",
+        timeout="7200s",
+        script="set -eu\nmkdir -p .workflow/joni-tiptap-spike\ncat > .workflow/joni-tiptap-spike/implement.prompt.md <<'PROMPT'\n# Implement the Joni + TipTap collaborative editor spike\n\nYou are running inside a Fabro Daytona worker in the Maestro repo. Build the smallest useful throwaway spike, not a production product.\n\nRead the source plan first: `docs/superpowers/plans/2026-05-17-joni-tiptap-collab-spike.md`.\n\nCreate the app at `spikes/joni-tiptap-collab-demo`.\n\nRequired scope:\n- Standalone local demo only.\n- React + TypeScript or React + JSX with Vite.\n- TipTap editor.\n- Yjs/Hocuspocus collaboration so two browser sessions share/edit one doc.\n- Mock Joni SSE endpoint such as `GET /api/joni/stream?topic=...` returning LinkedIn-post-like chunks.\n- UI: user enters a topic, clicks \u201cAsk Joni\u201d, mock stream chunks insert into the TipTap document, and a second browser tab/window sees the same document.\n- README with setup, run commands, two-window manual verification, architecture notes, limitations, and next steps for swapping mock Joni for real Hermes/Joni streaming.\n- Build/typecheck/test scripts compatible with: `npm install`, `npm run typecheck --if-present`, `npm test --if-present`, `npm run build`.\n\nForbidden:\n- No real Hermes/Joni call.\n- No real LinkedIn auth, posting, scraping, importing, customer data, deploy, or outbound mutation.\n- No secrets.\n\nWhen done, leave changed files in the workspace and summarize verification commands run in your final Codex message.\nPROMPT\nUX_USE_MOBBIN_MCP=false CODEX_EXEC_TIMEOUT_MS=3600000 node scripts/iphone-app-factory/run-codex-prompt.mjs --prompt .workflow/joni-tiptap-spike/implement.prompt.md --stage joni-tiptap-implement --out .workflow/joni-tiptap-spike/codex-implement.json --rendered-prompt-out .workflow/joni-tiptap-spike/implement.rendered.md --last-message-out .workflow/joni-tiptap-spike/implement.last-message.md --model gpt-5.3-codex"
+    ]
+
+    verify [
+        label="Native Verification",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="implement",
+        timeout="1800s",
+        script="set -eu\nAPP='spikes/joni-tiptap-collab-demo'\ntest -d \"$APP\"\ntest -f \"$APP/package.json\"\ntest -f \"$APP/README.md\"\n(cd \"$APP\" && npm install && npm run typecheck --if-present && npm test --if-present && npm run build)\ngrep -Eiq 'Joni|TipTap|Tiptap|collab|stream|Hocuspocus|Yjs' \"$APP/README.md\"\nmkdir -p .workflow/joni-tiptap-spike\nprintf '# CI Report\n\nstatus=ok\napp_dir=%s\nverified_at=%s\n' \"$APP\" \"$(date -u +%Y-%m-%dT%H:%M:%SZ)\" > .workflow/joni-tiptap-spike/ci-report.md\necho native-verification-ok"
+    ]
+
+    review [
+        label="Codex Review",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="implement",
+        timeout="7200s",
+        script="set -eu\nmkdir -p .workflow/joni-tiptap-spike\ncat > .workflow/joni-tiptap-spike/review.prompt.md <<'PROMPT'\n# Review the Joni + TipTap collaborative editor spike\n\nReview `spikes/joni-tiptap-collab-demo` against `docs/superpowers/plans/2026-05-17-joni-tiptap-collab-spike.md`.\n\nApprove only if all are true:\n1. It is a small standalone local spike.\n2. It uses TipTap for the editor.\n3. It uses Yjs/Hocuspocus or equivalent local collaboration so two browser sessions can share one document.\n4. It has a mock Joni SSE stream producing LinkedIn-post-like chunks.\n5. The UI can stream mock chunks into the TipTap document.\n6. README documents setup, run commands, two-window verification, architecture, limitations, and next steps for real Hermes/Joni streaming.\n7. `npm install`, `npm run typecheck --if-present`, `npm test --if-present`, and `npm run build` pass, or optional missing scripts are intentionally absent and compatible with `--if-present`.\n8. No secrets, real LinkedIn, customer data, public publishing, or production deploy behavior.\n\nRun verification commands yourself. Write `.workflow/joni-tiptap-spike/review.md`.\n\nFirst line must be exactly one of:\n- `VERDICT: APPROVED`\n- `VERDICT: REJECTED`\n\nThen include evidence commands run, files inspected, risks, and next steps. If rejected, list the smallest fixes needed.\nPROMPT\nUX_USE_MOBBIN_MCP=false CODEX_EXEC_TIMEOUT_MS=3600000 node scripts/iphone-app-factory/run-codex-prompt.mjs --prompt .workflow/joni-tiptap-spike/review.prompt.md --stage joni-tiptap-review --out .workflow/joni-tiptap-spike/codex-review.json --rendered-prompt-out .workflow/joni-tiptap-spike/review.rendered.md --last-message-out .workflow/joni-tiptap-spike/review.last-message.md --model gpt-5.3-codex"
+    ]
+
+    review_gate [
+        label="Review Gate",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="implement",
+        script="set -eu\ntest -s .workflow/joni-tiptap-spike/review.md\ngrep -Eq '^VERDICT:[[:space:]]*APPROVED' .workflow/joni-tiptap-spike/review.md\necho review-approved"
+    ]
+
+    handoff [
+        label="Publish Handoff",
+        shape=parallelogram,
+        goal_gate=true,
+        retry_target="review",
+        script="set -eu\nAPP='spikes/joni-tiptap-collab-demo'\nnode - <<'NODE'\nconst fs = require('fs');\nconst cp = require('child_process');\nconst app = 'spikes/joni-tiptap-collab-demo';\nconst out = {\n  kind: 'joni_tiptap_spike_handoff',\n  app_dir: app,\n  ci_report: '.workflow/joni-tiptap-spike/ci-report.md',\n  review: '.workflow/joni-tiptap-spike/review.md',\n  status: 'approved',\n  updated_at: new Date().toISOString(),\n};\ntry {\n  out.git_status = cp.execSync('git status --short', {encoding: 'utf8'}).trim().split('\n').filter(Boolean).slice(0, 80);\n} catch {}\nfs.mkdirSync('.workflow/joni-tiptap-spike', {recursive: true});\nfs.writeFileSync('.workflow/joni-tiptap-spike/handoff.json', JSON.stringify(out, null, 2) + '\n');\nconsole.log(JSON.stringify(out));\nNODE"
+    ]
+
+    start -> prepare
+    prepare -> implement [condition="outcome=succeeded"]
+    prepare -> prepare [loop_restart=true]
+    implement -> verify [condition="outcome=succeeded"]
+    implement -> implement [loop_restart=true]
+    verify -> review [condition="outcome=succeeded"]
+    verify -> implement [label="Fix"]
+    review -> review_gate [condition="outcome=succeeded"]
+    review -> implement [label="Fix"]
+    review_gate -> handoff [condition="outcome=succeeded"]
+    review_gate -> implement [label="Fix"]
+    handoff -> exit [condition="outcome=succeeded"]
+    handoff -> review [label="Fix"]
+}
