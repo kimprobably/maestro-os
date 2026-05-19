@@ -1,0 +1,827 @@
+{
+  "title": "Implement WakeTask's viral completion and accountability feature pack after Object Proof missions...",
+  "spec": {
+    "run_id": "01KRZEPS6S3PPX145GKNWCZAQ8",
+    "settings": {
+      "project": {
+        "name": "maestro-os",
+        "description": null,
+        "metadata": {}
+      },
+      "workflow": {
+        "name": null,
+        "description": null,
+        "graph": "workflow.fabro",
+        "metadata": {}
+      },
+      "run": {
+        "goal": {
+          "type": "inline",
+          "value": "Implement WakeTask's viral completion and accountability feature pack after Object Proof missions land"
+        },
+        "working_dir": null,
+        "metadata": {
+          "app": "waketask",
+          "topic": "task-alarm-viral-share-accountability",
+          "factory": "iphone-app-feature-iteration",
+          "control_plane": "railway"
+        },
+        "inputs": {
+          "ios_validation_mode": "github",
+          "target_audience": "Heavy sleepers and consumer iPhone users who need forced engagement to wake up reliably",
+          "fabro_server": "https://fabro-maestro-production.up.railway.app/api/v1",
+          "app_domain": "task_alarm",
+          "context_paths": "contexts/iphone-app-factory/waketask,contexts/iphone-app-factory/waketask/screenshots",
+          "base_branch": "feature/waketask-object-proof-program-20260519",
+          "app_dir": "apps/waketask-ios",
+          "allow_macos_deferred": "false",
+          "bundle_id": "com.keen.waketask",
+          "app_name": "WakeTask",
+          "feature_goal": "Turn completed WakeTask missions into viral-ready proof moments: shareable completion cards, funny mission result copy, streak/reward feedback, and a lightweight accountability-friend concept that can be validated without requiring a backend or a second shipped app.",
+          "run_branch": "feature/waketask-viral-share-accountability-20260519",
+          "use_design_corpus": "true",
+          "use_mobbin_mcp": "true",
+          "repo_url": "https://github.com/kimprobably/waketask-ios.git",
+          "required_capabilities": "shareable_completion_card,mission_result_story_templates,streak_reward_feedback,accountability_friend_lightweight_flow,privacy_safe_share_payload",
+          "max_competitors": "12"
+        },
+        "model": {
+          "provider": "openrouter",
+          "name": "anthropic/claude-haiku-4-5",
+          "fallbacks": [],
+          "controls": {
+            "reasoning_effort": null,
+            "speed": null
+          }
+        },
+        "git": {
+          "author": null
+        },
+        "prepare": {
+          "commands": [],
+          "timeout_ms": 300000
+        },
+        "execution": {
+          "mode": "normal",
+          "approval": "prompt"
+        },
+        "checkpoint": {
+          "exclude_globs": []
+        },
+        "clone": {
+          "enabled": true
+        },
+        "run_branch": {
+          "enabled": true,
+          "push": true
+        },
+        "meta_branch": {
+          "enabled": true,
+          "push": true
+        },
+        "sandbox": {
+          "provider": "daytona",
+          "preserve": false,
+          "stop_on_terminal": true,
+          "devcontainer": false,
+          "env": {
+            "APP_DIR": "apps/waketask-ios",
+            "PROMPTFOO_DISABLE_TELEMETRY": "1",
+            "CLAUDE_CODE_OAUTH_TOKEN": "{{ env.CLAUDE_CODE_OAUTH_TOKEN }}",
+            "GH_TOKEN": "{{ env.GH_TOKEN }}",
+            "DAYTONA_API_URL": "{{ env.DAYTONA_API_URL }}",
+            "UX_RUN_BRANCH": "feature/waketask-viral-share-accountability-20260519",
+            "FABRO_SLACK_CHANNEL_ID": "{{ env.FABRO_SLACK_CHANNEL_ID }}",
+            "CODEX_MCP_CREDENTIALS_JSON_BASE64": "{{ env.CODEX_MCP_CREDENTIALS_JSON_BASE64 }}",
+            "UX_IOS_VALIDATION_MODE": "github",
+            "CLAUDE_CODE_CREDENTIALS_JSON_BASE64": "{{ env.CLAUDE_CODE_CREDENTIALS_JSON_BASE64 }}",
+            "OPENAI_API_KEY": "{{ env.OPENAI_API_KEY }}",
+            "CODEX_AUTH_JSON_BASE64": "{{ env.CODEX_AUTH_JSON_BASE64 }}",
+            "UX_REPO_URL": "https://github.com/kimprobably/waketask-ios.git",
+            "LINEAR_API_KEY": "{{ env.LINEAR_API_KEY }}",
+            "FEATURE_CONTEXT_PATHS": "contexts/iphone-app-factory/waketask,contexts/iphone-app-factory/waketask/screenshots",
+            "UX_USE_MOBBIN_MCP": "true",
+            "FEATURE_REQUIRED_CAPABILITIES": "shareable_completion_card,mission_result_story_templates,streak_reward_feedback,accountability_friend_lightweight_flow,privacy_safe_share_payload",
+            "FABRO_SERVER": "https://fabro-maestro-production.up.railway.app/api/v1",
+            "UX_APP_DIR": "apps/waketask-ios",
+            "OPENROUTER_API_KEY": "{{ env.OPENROUTER_API_KEY }}",
+            "FABRO_DEV_TOKEN": "{{ env.FABRO_DEV_TOKEN }}",
+            "APIFY_APPSTORE_ACTOR": "crawlerbros/appstore-scraper",
+            "UX_BASE_BRANCH": "feature/waketask-object-proof-program-20260519",
+            "APIFY_INSTAGRAM_ACTOR": "apify/instagram-scraper",
+            "DAYTONA_API_KEY": "{{ env.DAYTONA_API_KEY }}",
+            "LINEAR_API_URL": "{{ env.LINEAR_API_URL }}",
+            "FEATURE_ALLOW_CI_DEFERRED": "false",
+            "GITHUB_TOKEN": "{{ env.GITHUB_TOKEN }}",
+            "UX_RUN_ID": "feature/waketask-viral-share-accountability-20260519",
+            "FEATURE_WORKFLOW_ROOT": ".workflow/existing-app-feature",
+            "APIFY_TIKTOK_ACTOR": "clockworks/tiktok-scraper",
+            "APIFY_TOKEN": "{{ env.APIFY_TOKEN }}",
+            "UX_ALLOW_MACOS_DEFERRED": "false",
+            "FABRO_SLACK_BOT_TOKEN": "{{ env.FABRO_SLACK_BOT_TOKEN }}"
+          },
+          "docker": {
+            "image": "buildpack-deps:noble",
+            "network_mode": null,
+            "memory_limit": 4000000000,
+            "cpu_quota": 200000,
+            "env_vars": {}
+          },
+          "daytona": {
+            "auto_stop_interval": 30,
+            "labels": {
+              "purpose": "code-factory",
+              "project": "maestro-os"
+            },
+            "volumes": [],
+            "snapshot": {
+              "name": "maestro-code-factory-v8",
+              "cpu": 2,
+              "memory_gb": 4,
+              "disk_gb": 10,
+              "dockerfile": {
+                "type": "inline",
+                "value": "FROM ubuntu:24.04\n\nENV DEBIAN_FRONTEND=noninteractive\nENV BUN_INSTALL=/root/.bun\nENV PATH=\"/root/.fabro/bin:/root/.bun/bin:/root/.local/bin:/root/.qlty/bin:${PATH}\"\nWORKDIR /home/daytona\n\nRUN apt-get update && apt-get install -y --no-install-recommends bash ca-certificates curl gh git jq openssh-client python3 python3-pip pipx ripgrep shellcheck sqlite3 unzip xz-utils && rm -rf /var/lib/apt/lists/*\n\nRUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash - && apt-get update && apt-get install -y --no-install-recommends nodejs && npm install -g @anthropic-ai/claude-code@2.1.141 @openai/codex promptfoo && npm cache clean --force && rm -rf /var/lib/apt/lists/*\n\nRUN curl -fsSL https://bun.sh/install | bash -s \"bun-v1.2.22\" && ln -sf /root/.bun/bin/bun /usr/local/bin/bun\n\nRUN pipx install spec-kitty-cli==3.1.8 && curl -fsSL https://qlty.sh | sh && ln -sf /root/.qlty/bin/qlty /usr/local/bin/qlty\n\nRUN set -eux; target=\"x86_64-unknown-linux-gnu\"; asset=\"fabro-${target}.tar.gz\"; url=\"$(curl -fsSL https://api.github.com/repos/fabro-sh/fabro/releases/latest | jq -r --arg asset \"$asset\" '.assets[] | select(.name == $asset) | .browser_download_url')\"; test -n \"$url\"; curl -fsSL \"$url\" -o /tmp/fabro.tar.gz; tar -xzf /tmp/fabro.tar.gz -C /tmp; install -m 0755 \"/tmp/fabro-${target}/fabro\" /usr/local/bin/fabro; rm -rf /tmp/fabro.tar.gz \"/tmp/fabro-${target}\"; fabro --version\n\nCMD [\"/bin/bash\"]\n"
+              }
+            },
+            "network": "allow_all"
+          }
+        },
+        "notifications": {},
+        "interviews": {
+          "provider": null,
+          "slack": null
+        },
+        "agent": {
+          "permissions": "full",
+          "mcps": {}
+        },
+        "hooks": [],
+        "scm": {
+          "provider": null,
+          "owner": null,
+          "repository": null,
+          "github": null
+        },
+        "pull_request": null,
+        "artifacts": {
+          "include": [
+            ".workflow/existing-app-feature/**",
+            ".workflow/object-proof-program/**",
+            "apps/waketask-ios/**",
+            "reports/ios/**",
+            "reports/evals/**",
+            ".github/workflows/**"
+          ]
+        },
+        "integrations": {
+          "github": {
+            "permissions": {
+              "issues": "write",
+              "pull_requests": "write",
+              "contents": "write",
+              "metadata": "read",
+              "actions": "read"
+            }
+          }
+        }
+      }
+    },
+    "graph": {
+      "name": "IterateExistingAppFeatures",
+      "nodes": {
+        "validation_child": {
+          "id": "validation_child",
+          "attrs": {
+            "model": {
+              "String": "gpt-5.3-codex-spark"
+            },
+            "label": {
+              "String": "Validation Child"
+            },
+            "provider": {
+              "String": "openai"
+            },
+            "manager.max_cycles": {
+              "Integer": 360
+            },
+            "type": {
+              "String": "stack.manager_loop"
+            },
+            "backend": {
+              "String": "cli"
+            },
+            "manager.poll_interval": {
+              "Duration": {
+                "secs": 5,
+                "nanos": 0
+              }
+            },
+            "stack.child_workflow": {
+              "String": "./feature-validation-stage.fabro"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            }
+          }
+        },
+        "research_child": {
+          "id": "research_child",
+          "attrs": {
+            "manager.poll_interval": {
+              "Duration": {
+                "secs": 2,
+                "nanos": 0
+              }
+            },
+            "backend": {
+              "String": "cli"
+            },
+            "provider": {
+              "String": "openai"
+            },
+            "stack.child_workflow": {
+              "String": "./feature-research-stage.fabro"
+            },
+            "type": {
+              "String": "stack.manager_loop"
+            },
+            "manager.max_cycles": {
+              "Integer": 240
+            },
+            "model": {
+              "String": "gpt-5.3-codex-spark"
+            },
+            "label": {
+              "String": "Research Child"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            }
+          }
+        },
+        "publish_postmortem_child": {
+          "id": "publish_postmortem_child",
+          "attrs": {
+            "manager.max_cycles": {
+              "Integer": 240
+            },
+            "type": {
+              "String": "stack.manager_loop"
+            },
+            "label": {
+              "String": "Publish And Postmortem Child"
+            },
+            "provider": {
+              "String": "openai"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "model": {
+              "String": "gpt-5.3-codex-spark"
+            },
+            "stack.child_workflow": {
+              "String": "./feature-publish-postmortem-stage.fabro"
+            },
+            "manager.poll_interval": {
+              "Duration": {
+                "secs": 2,
+                "nanos": 0
+              }
+            },
+            "backend": {
+              "String": "cli"
+            }
+          }
+        },
+        "context_intake_child": {
+          "id": "context_intake_child",
+          "attrs": {
+            "provider": {
+              "String": "openai"
+            },
+            "model": {
+              "String": "gpt-5.3-codex-spark"
+            },
+            "type": {
+              "String": "stack.manager_loop"
+            },
+            "label": {
+              "String": "Context Intake Child"
+            },
+            "manager.max_cycles": {
+              "Integer": 180
+            },
+            "stack.child_workflow": {
+              "String": "./feature-context-intake-stage.fabro"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "manager.poll_interval": {
+              "Duration": {
+                "secs": 2,
+                "nanos": 0
+              }
+            },
+            "backend": {
+              "String": "cli"
+            }
+          }
+        },
+        "feature_spec_child": {
+          "id": "feature_spec_child",
+          "attrs": {
+            "backend": {
+              "String": "cli"
+            },
+            "stack.child_workflow": {
+              "String": "./feature-spec-stage.fabro"
+            },
+            "manager.poll_interval": {
+              "Duration": {
+                "secs": 2,
+                "nanos": 0
+              }
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "type": {
+              "String": "stack.manager_loop"
+            },
+            "model": {
+              "String": "gpt-5.3-codex-spark"
+            },
+            "label": {
+              "String": "Feature Spec Child"
+            },
+            "manager.max_cycles": {
+              "Integer": 240
+            },
+            "provider": {
+              "String": "openai"
+            }
+          }
+        },
+        "existing_app_audit_child": {
+          "id": "existing_app_audit_child",
+          "attrs": {
+            "type": {
+              "String": "stack.manager_loop"
+            },
+            "manager.max_cycles": {
+              "Integer": 240
+            },
+            "stack.child_workflow": {
+              "String": "./feature-existing-app-audit-stage.fabro"
+            },
+            "model": {
+              "String": "gpt-5.3-codex-spark"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "backend": {
+              "String": "cli"
+            },
+            "label": {
+              "String": "Existing App Audit Child"
+            },
+            "provider": {
+              "String": "openai"
+            },
+            "manager.poll_interval": {
+              "Duration": {
+                "secs": 2,
+                "nanos": 0
+              }
+            }
+          }
+        },
+        "exit": {
+          "id": "exit",
+          "attrs": {
+            "label": {
+              "String": "Exit"
+            },
+            "backend": {
+              "String": "cli"
+            },
+            "model": {
+              "String": "gpt-5.3-codex-spark"
+            },
+            "provider": {
+              "String": "openai"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "shape": {
+              "String": "Msquare"
+            }
+          }
+        },
+        "implementation_plan_child": {
+          "id": "implementation_plan_child",
+          "attrs": {
+            "backend": {
+              "String": "cli"
+            },
+            "stack.child_workflow": {
+              "String": "./feature-implementation-plan-stage.fabro"
+            },
+            "label": {
+              "String": "Implementation Plan Child"
+            },
+            "provider": {
+              "String": "openai"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "model": {
+              "String": "gpt-5.3-codex-spark"
+            },
+            "manager.max_cycles": {
+              "Integer": 240
+            },
+            "manager.poll_interval": {
+              "Duration": {
+                "secs": 2,
+                "nanos": 0
+              }
+            },
+            "type": {
+              "String": "stack.manager_loop"
+            }
+          }
+        },
+        "implementation_child": {
+          "id": "implementation_child",
+          "attrs": {
+            "manager.poll_interval": {
+              "Duration": {
+                "secs": 10,
+                "nanos": 0
+              }
+            },
+            "backend": {
+              "String": "cli"
+            },
+            "label": {
+              "String": "Implementation Child"
+            },
+            "type": {
+              "String": "stack.manager_loop"
+            },
+            "provider": {
+              "String": "openai"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "stack.child_workflow": {
+              "String": "./feature-implementation-stage.fabro"
+            },
+            "manager.max_cycles": {
+              "Integer": 1000
+            },
+            "model": {
+              "String": "gpt-5.3-codex-spark"
+            }
+          }
+        },
+        "feature_workflow_preflight": {
+          "id": "feature_workflow_preflight",
+          "attrs": {
+            "manager.max_cycles": {
+              "Integer": 120
+            },
+            "stack.child_workflow": {
+              "String": "./feature-workflow-preflight-stage.fabro"
+            },
+            "type": {
+              "String": "stack.manager_loop"
+            },
+            "provider": {
+              "String": "openai"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            },
+            "manager.poll_interval": {
+              "Duration": {
+                "secs": 1,
+                "nanos": 0
+              }
+            },
+            "model": {
+              "String": "gpt-5.3-codex-spark"
+            },
+            "backend": {
+              "String": "cli"
+            },
+            "label": {
+              "String": "Feature Workflow Preflight"
+            }
+          }
+        },
+        "start": {
+          "id": "start",
+          "attrs": {
+            "label": {
+              "String": "Start"
+            },
+            "shape": {
+              "String": "Mdiamond"
+            },
+            "model": {
+              "String": "gpt-5.3-codex-spark"
+            },
+            "provider": {
+              "String": "openai"
+            },
+            "backend": {
+              "String": "cli"
+            },
+            "reasoning_effort": {
+              "String": "low"
+            }
+          }
+        }
+      },
+      "edges": [
+        {
+          "from": "start",
+          "to": "feature_workflow_preflight",
+          "attrs": {}
+        },
+        {
+          "from": "feature_workflow_preflight",
+          "to": "context_intake_child",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "feature_workflow_preflight",
+          "to": "feature_workflow_preflight",
+          "attrs": {
+            "label": {
+              "String": "Fix Workflow/Environment"
+            }
+          }
+        },
+        {
+          "from": "context_intake_child",
+          "to": "research_child",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "context_intake_child",
+          "to": "context_intake_child",
+          "attrs": {
+            "label": {
+              "String": "Fix Context"
+            }
+          }
+        },
+        {
+          "from": "research_child",
+          "to": "existing_app_audit_child",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "research_child",
+          "to": "context_intake_child",
+          "attrs": {
+            "label": {
+              "String": "Research Context Fix"
+            }
+          }
+        },
+        {
+          "from": "existing_app_audit_child",
+          "to": "feature_spec_child",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "existing_app_audit_child",
+          "to": "context_intake_child",
+          "attrs": {
+            "label": {
+              "String": "Audit Context Fix"
+            }
+          }
+        },
+        {
+          "from": "feature_spec_child",
+          "to": "implementation_plan_child",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "feature_spec_child",
+          "to": "feature_spec_child",
+          "attrs": {
+            "label": {
+              "String": "Fix Feature Spec"
+            }
+          }
+        },
+        {
+          "from": "implementation_plan_child",
+          "to": "implementation_child",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "implementation_plan_child",
+          "to": "feature_spec_child",
+          "attrs": {
+            "label": {
+              "String": "Fix Mapping"
+            }
+          }
+        },
+        {
+          "from": "implementation_child",
+          "to": "validation_child",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "implementation_child",
+          "to": "implementation_child",
+          "attrs": {
+            "label": {
+              "String": "Fix Implementation"
+            }
+          }
+        },
+        {
+          "from": "validation_child",
+          "to": "publish_postmortem_child",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "validation_child",
+          "to": "implementation_child",
+          "attrs": {
+            "label": {
+              "String": "Fix Validation Failures"
+            }
+          }
+        },
+        {
+          "from": "publish_postmortem_child",
+          "to": "exit",
+          "attrs": {
+            "condition": {
+              "String": "outcome=succeeded"
+            }
+          }
+        },
+        {
+          "from": "publish_postmortem_child",
+          "to": "publish_postmortem_child",
+          "attrs": {
+            "label": {
+              "String": "Complete Handoff/Postmortem"
+            }
+          }
+        }
+      ],
+      "attrs": {
+        "model_stylesheet": {
+          "String": "\n            *       { backend: cli; provider: openai; model: gpt-5.3-codex-spark; reasoning_effort: low; }\n            .spec   { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            .build  { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            .review { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n        "
+        },
+        "persona": {
+          "String": "existing-iphone-app-feature-orchestrator"
+        },
+        "artifact_root": {
+          "String": ".workflow/existing-app-feature"
+        },
+        "retry_target": {
+          "String": "feature_spec_child"
+        },
+        "secret_policy": {
+          "String": "no secrets; credential checks are presence-only; do not print environment variables or credential values"
+        },
+        "goal": {
+          "String": "Implement WakeTask's viral completion and accountability feature pack after Object Proof missions land"
+        },
+        "inputs": {
+          "String": "repo_url,base_branch,run_branch,app_name,bundle_id,app_dir,app_domain,target_audience,feature_goal,required_capabilities,context_paths,max_competitors,use_mobbin_mcp,use_design_corpus,ios_validation_mode,allow_macos_deferred,fabro_server"
+        },
+        "outputs": {
+          "String": "context_pack,research_pack,existing_app_audit,feature_spec,implementation_plan,implementation_evidence,validation_report,publish_handoff,postmortem"
+        },
+        "rankdir": {
+          "String": "LR"
+        },
+        "default_max_retries": {
+          "Integer": 2
+        }
+      }
+    },
+    "graph_source": "digraph IterateExistingAppFeatures {\n    graph [\n        goal=\"Implement a product feature iteration in an existing iPhone app with context-driven specs, real behavior changes, validation evidence, and postmortem learning\",\n        persona=\"existing-iphone-app-feature-orchestrator\",\n        inputs=\"repo_url,base_branch,run_branch,app_name,bundle_id,app_dir,app_domain,target_audience,feature_goal,required_capabilities,context_paths,max_competitors,use_mobbin_mcp,use_design_corpus,ios_validation_mode,allow_macos_deferred,fabro_server\",\n        outputs=\"context_pack,research_pack,existing_app_audit,feature_spec,implementation_plan,implementation_evidence,validation_report,publish_handoff,postmortem\",\n        artifact_root=\".workflow/existing-app-feature\",\n        secret_policy=\"no secrets; credential checks are presence-only; do not print environment variables or credential values\",\n        default_max_retries=2,\n        retry_target=\"feature_spec_child\",\n        model_stylesheet=\"\n            *       { backend: cli; provider: openai; model: gpt-5.3-codex-spark; reasoning_effort: low; }\n            .spec   { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            .build  { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n            .review { backend: cli; provider: openai; model: gpt-5.3-codex; reasoning_effort: high; }\n        \"\n    ]\n    rankdir=LR\n\n    start [shape=Mdiamond, label=\"Start\"]\n    exit  [shape=Msquare, label=\"Exit\"]\n\n    feature_workflow_preflight [\n        label=\"Feature Workflow Preflight\",\n        type=\"stack.manager_loop\",\n        stack.child_workflow=\"./feature-workflow-preflight-stage.fabro\",\n        manager.max_cycles=120,\n        manager.poll_interval=\"1s\"\n    ]\n\n    context_intake_child [\n        label=\"Context Intake Child\",\n        type=\"stack.manager_loop\",\n        stack.child_workflow=\"./feature-context-intake-stage.fabro\",\n        manager.max_cycles=180,\n        manager.poll_interval=\"2s\"\n    ]\n\n    research_child [\n        label=\"Research Child\",\n        type=\"stack.manager_loop\",\n        stack.child_workflow=\"./feature-research-stage.fabro\",\n        manager.max_cycles=240,\n        manager.poll_interval=\"2s\"\n    ]\n\n    existing_app_audit_child [\n        label=\"Existing App Audit Child\",\n        type=\"stack.manager_loop\",\n        stack.child_workflow=\"./feature-existing-app-audit-stage.fabro\",\n        manager.max_cycles=240,\n        manager.poll_interval=\"2s\"\n    ]\n\n    feature_spec_child [\n        label=\"Feature Spec Child\",\n        type=\"stack.manager_loop\",\n        stack.child_workflow=\"./feature-spec-stage.fabro\",\n        manager.max_cycles=240,\n        manager.poll_interval=\"2s\"\n    ]\n\n    implementation_plan_child [\n        label=\"Implementation Plan Child\",\n        type=\"stack.manager_loop\",\n        stack.child_workflow=\"./feature-implementation-plan-stage.fabro\",\n        manager.max_cycles=240,\n        manager.poll_interval=\"2s\"\n    ]\n\n    implementation_child [\n        label=\"Implementation Child\",\n        type=\"stack.manager_loop\",\n        stack.child_workflow=\"./feature-implementation-stage.fabro\",\n        manager.max_cycles=1000,\n        manager.poll_interval=\"10s\"\n    ]\n\n    validation_child [\n        label=\"Validation Child\",\n        type=\"stack.manager_loop\",\n        stack.child_workflow=\"./feature-validation-stage.fabro\",\n        manager.max_cycles=360,\n        manager.poll_interval=\"5s\"\n    ]\n\n    publish_postmortem_child [\n        label=\"Publish And Postmortem Child\",\n        type=\"stack.manager_loop\",\n        stack.child_workflow=\"./feature-publish-postmortem-stage.fabro\",\n        manager.max_cycles=240,\n        manager.poll_interval=\"2s\"\n    ]\n\n    start -> feature_workflow_preflight\n    feature_workflow_preflight -> context_intake_child [condition=\"outcome=succeeded\"]\n    feature_workflow_preflight -> feature_workflow_preflight [label=\"Fix Workflow/Environment\"]\n    context_intake_child -> research_child [condition=\"outcome=succeeded\"]\n    context_intake_child -> context_intake_child [label=\"Fix Context\"]\n    research_child -> existing_app_audit_child [condition=\"outcome=succeeded\"]\n    research_child -> context_intake_child [label=\"Research Context Fix\"]\n    existing_app_audit_child -> feature_spec_child [condition=\"outcome=succeeded\"]\n    existing_app_audit_child -> context_intake_child [label=\"Audit Context Fix\"]\n    feature_spec_child -> implementation_plan_child [condition=\"outcome=succeeded\"]\n    feature_spec_child -> feature_spec_child [label=\"Fix Feature Spec\"]\n    implementation_plan_child -> implementation_child [condition=\"outcome=succeeded\"]\n    implementation_plan_child -> feature_spec_child [label=\"Fix Mapping\"]\n    implementation_child -> validation_child [condition=\"outcome=succeeded\"]\n    implementation_child -> implementation_child [label=\"Fix Implementation\"]\n    validation_child -> publish_postmortem_child [condition=\"outcome=succeeded\"]\n    validation_child -> implementation_child [label=\"Fix Validation Failures\"]\n    publish_postmortem_child -> exit [condition=\"outcome=succeeded\"]\n    publish_postmortem_child -> publish_postmortem_child [label=\"Complete Handoff/Postmortem\"]\n}\n",
+    "workflow_slug": "iterate-existing-app-features",
+    "source_directory": "/Users/timlife/Documents/claude code/maestro-os",
+    "labels": {
+      "control_plane": "railway",
+      "app": "waketask",
+      "topic": "task-alarm-viral-share-accountability",
+      "factory": "iphone-app-feature-iteration"
+    },
+    "provenance": {
+      "server": {
+        "version": "0.236.0-nightly.0"
+      },
+      "client": {
+        "user_agent": "fabro-cli/0.232.0-nightly.0",
+        "name": "fabro-cli",
+        "version": "0.232.0-nightly.0"
+      },
+      "subject": {
+        "kind": "user",
+        "identity": {
+          "issuer": "fabro:dev",
+          "subject": "dev"
+        },
+        "login": "dev",
+        "auth_method": "dev_token"
+      }
+    },
+    "manifest_blob": "de69a153365edcc4b2eb52c72bc4fa455cd180c5408788be02af235b61decde6",
+    "definition_blob": "eb03c2804574a0f34380740ab48fb3605af3487d58ae92b5351f8bd7390a417e",
+    "git": {
+      "origin_url": "https://github.com/kimprobably/maestro-os",
+      "branch": "feature/object-proof-program-workflow",
+      "sha": "45433d06b61cd3313b397771e7682c578278c1f2",
+      "dirty": "dirty",
+      "push_outcome": {
+        "type": "not_attempted"
+      }
+    }
+  },
+  "web_url": "https://fabro-maestro-production.up.railway.app/runs/01KRZEPS6S3PPX145GKNWCZAQ8",
+  "start": null,
+  "status": {
+    "kind": "starting"
+  },
+  "status_updated_at": "2026-05-19T06:27:54.866403492Z",
+  "last_event_at": "2026-05-19T06:27:58.197402173Z",
+  "pending_control": null,
+  "checkpoints": [],
+  "conclusion": null,
+  "sandbox": {
+    "provider": "daytona",
+    "image": "buildpack-deps:noble",
+    "snapshot": "maestro-code-factory-v8",
+    "runtime": {
+      "id": "fabro-01KRZEPS6S3PPX145GKNWCZAQ8",
+      "working_directory": "/home/daytona/workspace/maestro-os",
+      "repo_cloned": true,
+      "clone_origin_url": "https://github.com/kimprobably/maestro-os",
+      "clone_branch": "feature/object-proof-program-workflow",
+      "workspace_root": "/home/daytona/workspace",
+      "repos_root": "/home/daytona/repos",
+      "primary_repo_path": "/home/daytona/repos/kimprobably/maestro-os",
+      "primary_repo_link": "/home/daytona/workspace/maestro-os"
+    }
+  },
+  "pull_request": null,
+  "superseded_by": null,
+  "pending_interviews": {},
+  "stages": {}
+}
