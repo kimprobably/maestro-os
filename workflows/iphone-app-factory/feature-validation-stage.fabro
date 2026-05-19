@@ -38,7 +38,7 @@ digraph FeatureValidationStage {
         label="Screenshot Evidence Gate",
         shape=parallelogram,
         retry_target="ios_quality_gate",
-        script="node scripts/iphone-app-factory/ios-screenshot-manifest-gate.mjs --manifest reports/ios/screenshots/manifest.json --phase after --require-before-after false"
+        script="node scripts/iphone-app-factory/ios-screenshot-manifest-gate.mjs --manifest reports/ios/screenshots/manifest.json --phase after --require-before-after false --allow-deferred '{{ inputs.allow_macos_deferred|default('false') }}'"
     ]
     appium_exploratory_gate [
         label="Appium Exploratory Gate",

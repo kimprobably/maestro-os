@@ -240,10 +240,24 @@ function hasHostedIosDeferral(report) {
     && (evidence.includes("daytona") || evidence.includes("worker"));
 }
 
+function isMissingCaptureOnlyFailure(report) {
+  const hasMissingManifest = report.failures.some((failure) => failure.startsWith("missing screenshot manifest "));
+  return hasMissingManifest
+    && report.checked_screens.length === 0
+    && report.failures.every((failure) => (
+      failure.startsWith("missing screenshot manifest ")
+      || failure.startsWith("missing required screen ")
+    ));
+}
+
 const manifestPath = argValue("--manifest", DEFAULT_MANIFEST);
 const phase = argValue("--phase", "after");
 const requireBeforeAfter = booleanArg("--require-before-after", false);
 const skipFileExistence = booleanArg("--skip-file-existence", false);
+const allowDeferred = booleanArg(
+  "--allow-deferred",
+  process.env.UX_ALLOW_MACOS_DEFERRED || process.env.FEATURE_ALLOW_CI_DEFERRED || "false",
+);
 const maxBlankScore = numberArg("--max-blank-score", DEFAULT_MAX_BLANK_SCORE);
 const outPath = argValue("--out", DEFAULT_OUT);
 
@@ -254,8 +268,10 @@ const report = validateManifest({
   skipFileExistence,
   maxBlankScore,
 });
+report.allow_deferred = allowDeferred;
 
-if (!report.ok && hasHostedIosDeferral(report)) {
+if (!report.ok && (hasHostedIosDeferral(report) || (allowDeferred && isMissingCaptureOnlyFailure(report)))) {
+  report.deferred_failures = [...report.failures];
   report.ok = true;
   report.deferred_to_hosted_ios = true;
   report.deferral_reason = "Screenshot capture requires hosted macOS/iOS execution; Daytona cannot produce simulator screenshots.";

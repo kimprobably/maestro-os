@@ -310,6 +310,20 @@ test("allows missing screenshot files when --skip-file-existence true is explici
   });
 });
 
+test("accepts missing hosted iOS screenshots when deferred validation is explicit", () => {
+  withTempDir((dir) => {
+    const result = runGate(dir, ["--allow-deferred", "true"]);
+
+    assert.equal(result.status, 0, result.stderr);
+    const report = readDefaultReport(dir);
+    assert.equal(report.ok, true);
+    assert.equal(report.allow_deferred, true);
+    assert.equal(report.deferred_to_hosted_ios, true);
+    assert.match(report.deferral_reason, /hosted macOS\/iOS/);
+    assert.deepEqual(report.failures, []);
+  });
+});
+
 test("rejects URL image paths without reporting query or fragment secrets", () => {
   withTempDir((dir) => {
     const manifest = validManifest({

@@ -110,6 +110,7 @@ test("feature workflow stages use deterministic gates", () => {
   const validation = read("workflows/iphone-app-factory/feature-validation-stage.fabro");
   assert.match(validation, /publish_app_branch_for_ci/);
   assert.match(validation, /publish-existing-app-branch\.mjs --out \.workflow\/existing-app-feature\/validation\/pre-ci-publish\.json/);
+  assert.match(validation, /ios-screenshot-manifest-gate\.mjs[\s\S]*--allow-deferred '\{\{ inputs\.allow_macos_deferred\|default\('false'\) \}\}'/);
   assert.match(validation, /ios_quality_gate -> publish_app_branch_for_ci \[condition="outcome=succeeded"\]/);
   assert.match(validation, /publish_app_branch_for_ci -> ci_trigger_gate \[condition="outcome=succeeded"\]/);
 });
